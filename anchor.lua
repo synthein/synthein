@@ -8,6 +8,8 @@ function Anchor.create()
 	self.x = 50
 	self.y = 50
 	self.body = love.physics.newBody(world, self.x, self.y, "static")
+	self.shape = love.physics.newRectangleShape(20, 20)
+	self.fixture = love.physics.newFixture(self.body, self.shape)
 
 	return self
 end

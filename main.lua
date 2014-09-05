@@ -1,19 +1,21 @@
-require("player")
-require("anchor")
+Player = require("player")
+Anchor = require("anchor")
 
 function love.load()
-    WIDTH, HEIGHT = love.graphics.getDimensions()
+	world = love.physics.newWorld()
     
-	player = Player.create()
-	anchor = Anchor.create()
+	player = Player.create(world)
+	anchor = Anchor.create(world)
 end
 
 function love.update(dt)
+	world:update(dt)
 	player:update()
 	anchor:update()
 end
 
 function love.draw()
+	love.graphics.print(player.body:getX().." "..player.body:getY().." "..player.body:getAngle(), 1, 1)
 	player:draw()
 	anchor:draw()
 end

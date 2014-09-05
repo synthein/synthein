@@ -7,6 +7,7 @@ function Anchor.create()
 	self.image = love.graphics.newImage("anchor.png")
 	self.x = 50
 	self.y = 50
+	self.body = love.physics.newBody(world, self.x, self.y, "static")
 
 	return self
 end

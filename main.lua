@@ -27,4 +27,5 @@ end
 
 function love.keypressed(key)
 	if key == "escape" then love.event.push("quit") end
+	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 end

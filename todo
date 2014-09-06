@@ -1,5 +1,7 @@
 [X] render with the player at the center
 [X] clean up code to an acceptable standard
 [X] make sure the meter setting is right
+[X] fix resolution problems in fullscreen
 [ ] add a compass pointing to the anchor
 [ ] try connecting blocks to the player
+[ ] add zoom

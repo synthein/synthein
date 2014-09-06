@@ -1,13 +1,18 @@
 local Player = require("player")
 local Anchor = require("anchor")
+local Block = require("block")
 
 function love.load()
 	love.physics.setMeter(20) -- there are 20 pixels per meter
 	world = love.physics.newWorld()
     
 	compass = love.graphics.newImage("compass.png")
-	player = Player.create(world, 100, 100)
+	player = Player.create(world, 0, -100)
 	anchor = Anchor.create(world, 0, 0)
+	blocks = {}
+	for i=1,10 do
+		blocks[i] = Block.create(world, i*30, i*30)
+	end
 end
 
 function love.update(dt)
@@ -23,6 +28,9 @@ end
 function love.draw()
 	player:draw()
 	anchor:draw(playerX, playerY)
+	for i=1,10 do
+		blocks[i]:draw(playerX, playerY)
+	end
 	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(player.body:getY(), player.body:getX())-math.pi/2, 1, 1, 25, 25)
 	love.graphics.print(player.body:getX().." "..player.body:getY().." "..player.body:getAngle(), 1, 1)
 end

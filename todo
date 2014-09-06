@@ -1,2 +1,5 @@
-* render with the player at the center
-* try connecting blocks to the player
+[X] render with the player at the center
+[X] clean up code to an acceptable standard
+[X] make sure the meter setting is right
+[ ] add a compass pointing to the anchor
+[ ] try connecting blocks to the player

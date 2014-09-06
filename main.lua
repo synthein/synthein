@@ -13,6 +13,11 @@ function love.load()
 	for i=1,10 do
 		blocks[i] = Block.create(world, i*30, i*30)
 	end
+
+	playerBlock1 = Block.create(world, player.body:getX()-20, player.body:getY())
+	playerBlock2 = Block.create(world, player.body:getX()+20, player.body:getY())
+	love.physics.newWeldJoint(player.body, playerBlock1.body, 0,0)
+	love.physics.newWeldJoint(player.body, playerBlock2.body, 0,0)
 end
 
 function love.update(dt)
@@ -31,6 +36,8 @@ function love.draw()
 	for i=1,10 do
 		blocks[i]:draw(playerX, playerY)
 	end
+	playerBlock1:draw(playerX, playerY)
+	playerBlock2:draw(playerX, playerY)
 	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(player.body:getY(), player.body:getX())-math.pi/2, 1, 1, 25, 25)
 	love.graphics.print(player.body:getX().." "..player.body:getY().." "..player.body:getAngle(), 1, 1)
 end

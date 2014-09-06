@@ -1,15 +1,14 @@
-Player = {}
+local Block = require("block")
+
+local Player = {}
 Player.__index = Player
+setmetatable(Player, Block)
 
 function Player.create(world, x, y)
-	local self = setmetatable({}, Player)
+	local self = Block.create(world, x, y)
+	setmetatable(self, Player)
 
 	self.image = love.graphics.newImage("player.png")
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
-	self.body = love.physics.newBody(world, x, y, "dynamic")
-	self.shape = love.physics.newRectangleShape(self.width, self.height)
-	self.fixture = love.physics.newFixture(self.body, self.shape)
 
 	self.thrust = 150
 	self.torque = 350

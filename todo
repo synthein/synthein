@@ -3,5 +3,8 @@
 [X] make sure the meter setting is right
 [X] fix resolution problems in fullscreen
 [X] add a compass pointing to the anchor
-[ ] try connecting blocks to the player
+[X] try connecting blocks to the player
+[ ] add a way for users to connect blocks to the ship
+[ ] add engines
 [ ] add zoom
+[ ] garbage collection for entities

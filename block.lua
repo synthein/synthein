@@ -1,4 +1,4 @@
-Block = {}
+local Block = {}
 Block.__index = Block
 
 function Block.create(world, x, y)
@@ -11,6 +11,9 @@ function Block.create(world, x, y)
 	self.shape = love.physics.newRectangleShape(self.width, self.height)
 	self.fixture = love.physics.newFixture(self.body, self.shape)
 
+	self.body:setAngularDamping(0.2)
+	self.body:setLinearDamping(0.1)
+
 	return self
 end
 
@@ -22,6 +25,9 @@ function Block:draw(offsetX, offsetY)
 	                   love.graphics.getWidth()/2 - offsetX + self.body:getX(),
 					   love.graphics.getHeight()/2 - offsetY + self.body:getY(),
 					   self.body:getAngle()-math.pi/2, 1, 1, 10, 10)
+end
+
+function Block:fly() -- move the block to a particular location smoothly
 end
 
 return Block

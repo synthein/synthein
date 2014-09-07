@@ -2,7 +2,8 @@ local Block = {}
 Block.__index = Block
 
 function Block.create(world, x, y)
-	local self = setmetatable({}, Block)
+	local self = {}
+	setmetatable(self, Block)
 	
 	self.image = love.graphics.newImage("block.png")
 	self.width = self.image:getWidth()
@@ -17,9 +18,6 @@ function Block.create(world, x, y)
 	return self
 end
 
-function Block:update(dt)
-end
-
 function Block:draw(offsetX, offsetY)
 	love.graphics.draw(self.image,
 	                   love.graphics.getWidth()/2 - offsetX + self.body:getX(),
@@ -27,7 +25,10 @@ function Block:draw(offsetX, offsetY)
 					   self.body:getAngle()-math.pi/2, 1, 1, 10, 10)
 end
 
-function Block:fly() -- move the block to a particular location smoothly
+function Block:fly(x, y, angle) -- move the block to a particular location smoothly
+	-- right now this is anything but smooth...
+	self.body:setPosition(x, y)
+	self.body:setAngle(angle)
 end
 
 return Block

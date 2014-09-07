@@ -39,8 +39,13 @@ end
 function love.keypressed(key)
 	if key == "escape" then love.event.push("quit") end
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
-	if key == "c" then --debug
+	
+	--------------------
+	-- Debug Commands --
+	--------------------
+	if key == "c" then
 		struct1 = Structure.create(blocks[1])
 		struct1:addBlock(blocks[2], blocks[1], "right")
 	end
+	--------------------
 end

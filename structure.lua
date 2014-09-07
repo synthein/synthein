@@ -18,6 +18,9 @@ end
 -- side is which side of connectionnPoint to attach block to.
 -- jointType is the type of Box2d joint to use.
 function Structure:addBlock(block, connectionPoint, side)
+	-- Don't add the block to the structure if it is already here.
+	if self:findBlock(block) then return end
+	
 	if side == "right" then
 		block:fly(connectionPoint.body:getX() + connectionPoint.width,
 		          connectionPoint.body:getY(), connectionPoint.body:getAngle())
@@ -29,13 +32,24 @@ function Structure:addBlock(block, connectionPoint, side)
 end
 
 function Structure:removeBlock(block)
+	member, index = self:findBlock(block) 
+	if member then
+		member.joint:destroy()
+		table.remove(self.members, i)
+	end
+end
+
+-- Check if a block is in this structure.
+-- If it is, return the block and its location in the members table.
+-- If it is not, return nil.
+function Structure:findBlock(block)
 	for i, member in ipairs(self.members) do
 		if member == block then
-			member.joint:destroy()
-			table.remove(self.members, i)
-			break
+			return member, i
 		end
 	end
+
+	return nil
 end
 
 function Structure:addHinge()

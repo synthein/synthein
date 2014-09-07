@@ -8,7 +8,7 @@ function Player.create(world, x, y)
 	local self = Block.create(world, x, y)
 	setmetatable(self, Player)
 
-	self.image = love.graphics.newImage("player.png")
+	self.image = love.graphics.newImage("res/images/player.png")
 
 	self.thrust = 150
 	self.torque = 350

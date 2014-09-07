@@ -5,6 +5,7 @@
 [X] add a compass pointing to the anchor
 [X] try connecting blocks to the player
 [X] add a structure class to keep track of blocks and joints
+[ ] add a "fly home" button
 [ ] add a way for users to connect blocks to the ship
 [ ] add engines
 [ ] add zoom

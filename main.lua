@@ -7,7 +7,7 @@ function love.load()
 	love.physics.setMeter(20) -- there are 20 pixels per meter
 	world = love.physics.newWorld()
     
-	compass = love.graphics.newImage("compass.png")
+	compass = love.graphics.newImage("res/images/compass.png")
 	player = Player.create(world, 0, -100)
 	anchor = Anchor.create(world, 0, 0)
 

@@ -5,7 +5,7 @@ function Block.create(world, x, y)
 	local self = {}
 	setmetatable(self, Block)
 	
-	self.image = love.graphics.newImage("block.png")
+	self.image = love.graphics.newImage("res/images/block.png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 	self.body = love.physics.newBody(world, x, y, "dynamic")

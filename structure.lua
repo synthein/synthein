@@ -28,13 +28,13 @@ function Structure:addBlock(block, connectionPoint, side)
 	
 	-- Add the new member to our list and store the block and joint associated
 	-- with it.
-	table.insert(self.members, {block = block, joint = love.physics.newWeldJoint(block.body, connectionPoint.body, 0, 0)})
+	table.insert(self.members, {block = block, joints = love.physics.newWeldJoint(block.body, connectionPoint.body, 0, 0)})
 end
 
 function Structure:removeBlock(block)
 	member, index = self:findBlock(block) 
 	if member then
-		member.joint:destroy()
+		member.joints:destroy()
 		table.remove(self.members, i)
 	end
 end
@@ -44,11 +44,13 @@ end
 -- If it is not, return nil.
 function Structure:findBlock(block)
 	for i, member in ipairs(self.members) do
-		if member == block then
+		if member.block == block then
+			print("found it!") --debug
 			return member, i
 		end
 	end
 
+	print("the block was not in the structure")
 	return nil
 end
 

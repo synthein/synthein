@@ -15,6 +15,7 @@ function love.load()
 	for i=1,10 do
 		blocks[i] = Block.create(world, i*30, i*30)
 	end
+	struct1 = Structure.create(blocks[1])
 end
 
 function love.update(dt)
@@ -44,8 +45,10 @@ function love.keypressed(key)
 	-- Debug Commands --
 	--------------------
 	if key == "c" then
-		struct1 = Structure.create(blocks[1])
 		struct1:addBlock(blocks[2], blocks[1], "right")
+	end
+	if key == "x" then
+		struct1:removeBlock(blocks[2])
 	end
 	--------------------
 end

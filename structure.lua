@@ -73,9 +73,12 @@ function Structure:removeBlock(block)
 end
 
 function Structure:removeLastBlock()
-	self.members[#self.members].block.isInStructure = false
-	self.members[#self.members].joints:destroy()
-	table.remove(self.members)
+	-- Don't try to remove a member if the structure is already empty.
+	if #self.members > 0 then
+		self.members[#self.members].block.isInStructure = false
+		self.members[#self.members].joints:destroy()
+		table.remove(self.members)
+	end
 end
 
 -- Check if a block is in this structure.

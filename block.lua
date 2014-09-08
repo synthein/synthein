@@ -15,6 +15,8 @@ function Block.create(world, x, y)
 	self.body:setAngularDamping(0.2)
 	self.body:setLinearDamping(0.1)
 
+	self.isInStructure = false
+
 	return self
 end
 

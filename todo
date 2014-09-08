@@ -5,8 +5,13 @@
 [X] add a compass pointing to the anchor
 [X] try connecting blocks to the player
 [X] add a structure class to keep track of blocks and joints
-[ ] add a "fly home" button
+[X] have structures handle input
+[X] make it possible to add blocks to any point in the structure
+[X] make structures able to give thrust commands to player blocks and engines
+[ ] add a Structure:destroy() function
 [ ] add a way for users to connect blocks to the ship
 [ ] add engines
+[ ] make structures smart enough to know which engines to activate
+[ ] add a "fly home" button
 [ ] add zoom
 [ ] garbage collection for entities

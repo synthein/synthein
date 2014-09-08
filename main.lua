@@ -9,6 +9,7 @@ function love.load()
     
 	compass = love.graphics.newImage("res/images/compass.png")
 	player = Player.create(world, 0, -100)
+	playerShip = Structure.createPlayerShip(player)
 	anchor = Anchor.create(world, 0, 0)
 
 	blocks = {}
@@ -16,6 +17,11 @@ function love.load()
 		blocks[i] = Block.create(world, i*30, i*30)
 	end
 	struct1 = Structure.create(blocks[1])
+	struct1:addBlock(blocks[2], blocks[1], "left")
+	struct1:addBlock(blocks[3], blocks[2], "bottom")
+	struct1:addBlock(blocks[4], blocks[3], "right")
+	struct1:addBlock(blocks[5], blocks[4], "bottom")
+	struct1:addBlock(blocks[6], blocks[5], "left")
 end
 
 function love.update(dt)
@@ -25,6 +31,7 @@ function love.update(dt)
 	playerY = player.body:getY()
 
 	player:update(dt)
+	playerShip:handleInput()
 end
 
 function love.draw()
@@ -44,11 +51,8 @@ function love.keypressed(key)
 	--------------------
 	-- Debug Commands --
 	--------------------
-	if key == "c" then
-		struct1:addBlock(blocks[2], blocks[1], "right")
-	end
 	if key == "x" then
-		struct1:removeBlock(blocks[2])
+		struct1:removeLastBlock()
 	end
 	--------------------
 end

@@ -9,6 +9,18 @@ function Structure.create(block)
 	-- with and the joint connecting it to another block in the structure.
 	self.members = { [1] = {block = block, joints = nil}}
 
+	player.isInStructure = true
+	self.isPlayerShip = false
+
+	return self
+end
+
+function Structure.createPlayerShip(player)
+	local self = Structure.create(player)
+
+	player.isInStructure = true
+	self.isPlayerShip = true
+
 	return self
 end
 
@@ -21,22 +33,49 @@ function Structure:addBlock(block, connectionPoint, side)
 	-- Don't add the block to the structure if it is already here.
 	if self:findBlock(block) then return end
 	
+	if side == "top" then
+		block:fly(connectionPoint.body:getX(),
+		          connectionPoint.body:getY() - connectionPoint.height,
+				  connectionPoint.body:getAngle())
+	end
+	if side == "bottom" then
+		block:fly(connectionPoint.body:getX(),
+		          connectionPoint.body:getY() + connectionPoint.width,
+				  connectionPoint.body:getAngle())
+	end
 	if side == "right" then
 		block:fly(connectionPoint.body:getX() + connectionPoint.width,
-		          connectionPoint.body:getY(), connectionPoint.body:getAngle())
+		          connectionPoint.body:getY(),
+				  connectionPoint.body:getAngle())
+	end
+	if side == "left" then
+		block:fly(connectionPoint.body:getX() - connectionPoint.width,
+		          connectionPoint.body:getY(),
+				  connectionPoint.body:getAngle())
 	end
 	
 	-- Add the new member to our list and store the block and joint associated
 	-- with it.
 	table.insert(self.members, {block = block, joints = love.physics.newWeldJoint(block.body, connectionPoint.body, 0, 0)})
+	block.isInStructure = true
+end
+
+function Structure:addHinge()
 end
 
 function Structure:removeBlock(block)
 	member, index = self:findBlock(block) 
 	if member then
+		member.block.isInStructure = false
 		member.joints:destroy()
 		table.remove(self.members, i)
 	end
+end
+
+function Structure:removeLastBlock()
+	self.members[#self.members].block.isInStructure = false
+	self.members[#self.members].joints:destroy()
+	table.remove(self.members)
 end
 
 -- Check if a block is in this structure.
@@ -45,16 +84,33 @@ end
 function Structure:findBlock(block)
 	for i, member in ipairs(self.members) do
 		if member.block == block then
-			print("found it!") --debug
 			return member, i
 		end
 	end
 
-	print("the block was not in the structure")
 	return nil
 end
 
-function Structure:addHinge()
+-- todo:
+-- don't use members[1]
+-- don't call this function from love.update()
+function Structure:handleInput()
+	if love.keyboard.isDown("up") then
+		self.members[1].block.body:applyForce(
+			self.members[1].block.thrust*math.cos(self.members[1].block.body:getAngle()-math.pi/2),
+			self.members[1].block.thrust*math.sin(self.members[1].block.body:getAngle()-math.pi/2))
+	end
+	if love.keyboard.isDown("down") then
+		self.members[1].block.body:applyForce(
+			-self.members[1].block.thrust*math.cos(self.members[1].block.body:getAngle()-math.pi/2),
+		    -self.members[1].block.thrust*math.sin(self.members[1].block.body:getAngle()-math.pi/2))
+	end
+	if love.keyboard.isDown("left") then
+		self.members[1].block.body:applyTorque(-self.members[1].block.torque)
+	end
+	if love.keyboard.isDown("right") then
+		self.members[1].block.body:applyTorque(self.members[1].block.torque)
+	end
 end
 
 return Structure

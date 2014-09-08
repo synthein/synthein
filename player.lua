@@ -19,23 +19,6 @@ function Player.create(world, x, y)
 end
 
 function Player:update(dt)
-	if love.keyboard.isDown("up") then
-		self.body:applyForce(
-			self.thrust*math.cos(self.body:getAngle()-math.pi/2),
-			self.thrust*math.sin(self.body:getAngle()-math.pi/2))
-	end
-	if love.keyboard.isDown("down") then
-		self.body:applyForce(
-			-self.thrust*math.cos(self.body:getAngle()-math.pi/2),
-		    -self.thrust*math.sin(self.body:getAngle()-math.pi/2))
-	end
-	if love.keyboard.isDown("left") then
-		self.body:applyTorque(-self.torque)
-	end
-
-	if love.keyboard.isDown("right") then
-		self.body:applyTorque(self.torque)
-	end
 end
 
 function Player:draw()

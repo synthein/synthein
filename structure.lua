@@ -7,7 +7,7 @@ function Structure.create(block)
 	
 	-- Each member in the structure remembers the block object it is associated
 	-- with and the joint connecting it to another block in the structure.
-	self.members = { [1] = {block = block, joints = nil}}
+	self.members = { [1] = {block = block, joint = nil}}
 
 	player.isInStructure = true
 	self.isPlayerShip = false
@@ -56,29 +56,11 @@ function Structure:addBlock(block, connectionPoint, side)
 	
 	-- Add the new member to our list and store the block and joint associated
 	-- with it.
-	table.insert(self.members, {block = block, joints = love.physics.newWeldJoint(block.body, connectionPoint.body, 0, 0)})
+	table.insert(self.members, {block = block, joint = love.physics.newWeldJoint(block.body, connectionPoint.body, 0, 0)})
 	block.isInStructure = true
 end
 
 function Structure:addHinge()
-end
-
-function Structure:removeBlock(block)
-	member, index = self:findBlock(block) 
-	if member then
-		member.block.isInStructure = false
-		member.joints:destroy()
-		table.remove(self.members, i)
-	end
-end
-
-function Structure:removeLastBlock()
-	-- Don't try to remove a member if the structure is already empty.
-	if #self.members > 0 then
-		self.members[#self.members].block.isInStructure = false
-		self.members[#self.members].joints:destroy()
-		table.remove(self.members)
-	end
 end
 
 -- Check if a block is in this structure.
@@ -92,6 +74,35 @@ function Structure:findBlock(block)
 	end
 
 	return nil
+end
+
+function Structure:removeBlock(block)
+	member, index = self:findBlock(block) 
+	if member then
+		member.block.isInStructure = false
+		member.joint:destroy()
+		table.remove(self.members, i)
+	end
+end
+
+function Structure:removeLastBlock()
+	-- Don't try to remove a member if the structure is already empty.
+	if #self.members > 1 then
+		self.members[#self.members].block.isInStructure = false
+		self.members[#self.members].joint:destroy()
+		table.remove(self.members)
+	elseif #self.members == 1 then
+		self:destroy()
+	end
+end
+
+function Structure:destroy()
+	for i, member in ipairs(self.members) do
+		if member.joint then
+			member.joint:destroy()
+		end
+		table.remove(self.members, i)
+	end
 end
 
 -- todo:

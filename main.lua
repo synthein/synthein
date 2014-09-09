@@ -14,14 +14,8 @@ function love.load()
 
 	blocks = {}
 	for i=1,10 do
-		blocks[i] = Block.create(world, i*30, i*30)
+		blocks[i] = Block.create(world, i*35, i*35)
 	end
-	struct1 = Structure.create(blocks[1])
-	struct1:addBlock(blocks[2], blocks[1], "left")
-	struct1:addBlock(blocks[3], blocks[2], "bottom")
-	struct1:addBlock(blocks[4], blocks[3], "right")
-	struct1:addBlock(blocks[5], blocks[4], "bottom")
-	struct1:addBlock(blocks[6], blocks[5], "left")
 end
 
 function love.update(dt)
@@ -51,8 +45,6 @@ function love.keypressed(key)
 	--------------------
 	-- Debug Commands --
 	--------------------
-	if key == "x" then
-		struct1:removeLastBlock()
-	end
+	
 	--------------------
 end

@@ -1,13 +1,13 @@
+local Part = require("part")
+
 local Block = {}
 Block.__index = Block
+setmetatable(Block, Part)
 
 function Block.create(world, x, y)
-	local self = {}
+	local self = Part.create("block")
 	setmetatable(self, Block)
 	
-	self.image = love.graphics.newImage("res/images/block.png")
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
 	self.body = love.physics.newBody(world, x, y, "dynamic")
 	self.shape = love.physics.newRectangleShape(self.width, self.height)
 	self.fixture = love.physics.newFixture(self.body, self.shape)
@@ -15,22 +15,7 @@ function Block.create(world, x, y)
 	self.body:setAngularDamping(0.2)
 	self.body:setLinearDamping(0.1)
 
-	self.isInStructure = false
-
 	return self
-end
-
-function Block:draw(offsetX, offsetY)
-	love.graphics.draw(self.image,
-	                   love.graphics.getWidth()/2 - offsetX + self.body:getX(),
-					   love.graphics.getHeight()/2 - offsetY + self.body:getY(),
-					   self.body:getAngle()-math.pi/2, 1, 1, 10, 10)
-end
-
-function Block:fly(x, y, angle) -- move the block to a particular location smoothly
-	-- right now this is anything but smooth...
-	self.body:setPosition(x, y)
-	self.body:setAngle(angle)
 end
 
 return Block

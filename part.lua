@@ -9,8 +9,6 @@ function Part.create(imageName)
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.isInStructure = false
-
 	return self
 end
 

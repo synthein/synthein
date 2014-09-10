@@ -8,8 +8,8 @@ function love.load()
 	world = love.physics.newWorld()
     
 	compass = love.graphics.newImage("res/images/compass.png")
-	player = Player.create(world, 0, -100)
-	playerShip = Structure.createPlayerShip(player)
+	playerShip = Structure.createPlayerShip(Player.create(), world, 0, -100)
+	
 	anchor = Anchor.create(world, 0, 0)
 
 	blocks = {}
@@ -21,21 +21,20 @@ end
 function love.update(dt)
 	world:update(dt)
 
-	playerX = player.body:getX()
-	playerY = player.body:getY()
+	playerX = playerShip.body:getX()
+	playerY = playerShip.body:getY()
 
-	player:update(dt)
 	playerShip:handleInput()
 end
 
 function love.draw()
-	player:draw()
+	playerShip:draw()
 	anchor:draw(playerX, playerY)
 	for i=1,10 do
 		blocks[i]:draw(playerX, playerY)
 	end
-	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(player.body:getY(), player.body:getX())-math.pi/2, 1, 1, 25, 25)
-	love.graphics.print(player.body:getX().." "..player.body:getY().." "..player.body:getAngle(), 1, 1)
+	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(playerShip.body:getY(), playerShip.body:getX())-math.pi/2, 1, 1, 25, 25)
+	love.graphics.print(playerShip.body:getX().." "..playerShip.body:getY().." "..playerShip.body:getAngle(), 1, 1)
 end
 
 function love.keypressed(key)

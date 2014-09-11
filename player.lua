@@ -19,7 +19,7 @@ end
 function Player:update(dt)
 end
 
-function Player:draw(angle)
+function Player:draw(x, y, angle)
 	love.graphics.draw(self.image, love.graphics.getWidth()/2,
 	                   love.graphics.getHeight()/2, angle,
 					   1, 1, self.width/2, self.height/2)

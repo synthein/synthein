@@ -6,15 +6,15 @@ local Structure = require("structure")
 function love.load()
 	love.physics.setMeter(20) -- there are 20 pixels per meter
 	world = love.physics.newWorld()
-    
+
 	compass = love.graphics.newImage("res/images/compass.png")
 	playerShip = Structure.createPlayerShip(Player.create(), world, 0, -100)
-	
-	anchor = Anchor.create(world, 0, 0)
+
+	anchor = Structure.createAnchor(Anchor.create(), world, 0, 0)
 
 	blocks = {}
 	for i=1,10 do
-		blocks[i] = Block.create(world, i*35, i*35)
+		blocks[i] = Structure.create(Block.create(), world, i*35, i*35)
 	end
 end
 
@@ -29,7 +29,7 @@ end
 
 function love.draw()
 	playerShip:draw()
-	anchor:draw(playerX, playerY)
+	anchor:draw(angle, playerX, playerY)
 	for i=1,10 do
 		blocks[i]:draw(playerX, playerY)
 	end
@@ -40,10 +40,10 @@ end
 function love.keypressed(key)
 	if key == "escape" then love.event.push("quit") end
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
-	
+
 	--------------------
 	-- Debug Commands --
 	--------------------
-	
+
 	--------------------
 end

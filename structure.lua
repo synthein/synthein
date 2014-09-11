@@ -6,7 +6,7 @@ Structure.__index = Structure
 function Structure.create(part, world, x, y)
 	local self = {}
 	setmetatable(self, Structure)
-	
+
 	self.body = love.physics.newBody(world, x, y, "dynamic")
 
 	self.body:setAngularDamping(0.2)
@@ -29,6 +29,15 @@ function Structure.createPlayerShip(player, world, x, y)
 	return self
 end
 
+function Structure.createAnchor(anchor, world, x, y)
+	local self = Structure.create(anchor, world, x, y)
+
+	self.isAnchor = true
+	self.body:setType("static")
+
+	return self
+end
+
 -- Add a part to the structure.
 -- part is a part object to add to the structure.
 -- connectionPoint is the part object to attach part to.
@@ -37,28 +46,32 @@ end
 function Structure:addpart(part, connectionPoint, side)
 	-- Don't add the part to the structure if it is already here.
 	if self:findpart(part) then return end
-	
+
 	if side == "top" then
-		part:fly(connectionPoint.body:getX(),
-		          connectionPoint.body:getY() - connectionPoint.height,
-				  connectionPoint.body:getAngle())
+		part:fly(
+			connectionPoint.body:getX(),
+			connectionPoint.body:getY() - connectionPoint.height,
+			connectionPoint.body:getAngle())
 	end
 	if side == "bottom" then
-		part:fly(connectionPoint.body:getX(),
-		          connectionPoint.body:getY() + connectionPoint.width,
-				  connectionPoint.body:getAngle())
+		part:fly(
+			connectionPoint.body:getX(),
+			connectionPoint.body:getY() + connectionPoint.width,
+			connectionPoint.body:getAngle())
 	end
 	if side == "right" then
-		part:fly(connectionPoint.body:getX() + connectionPoint.width,
-		          connectionPoint.body:getY(),
-				  connectionPoint.body:getAngle())
+		part:fly(
+			connectionPoint.body:getX() + connectionPoint.width,
+			connectionPoint.body:getY(),
+			connectionPoint.body:getAngle())
 	end
 	if side == "left" then
-		part:fly(connectionPoint.body:getX() - connectionPoint.width,
-		          connectionPoint.body:getY(),
-				  connectionPoint.body:getAngle())
+		part:fly(
+			connectionPoint.body:getX() - connectionPoint.width,
+			connectionPoint.body:getY(),
+			connectionPoint.body:getAngle())
 	end
-	
+
 	-- Add the new member to our list and store the part and joint associated
 	-- with it.
 	table.insert(self.parts, {part = part, joint = love.physics.newWeldJoint(part.body, connectionPoint.body, 0, 0)})
@@ -71,7 +84,7 @@ end
 -- Check if a part is in this structure.
 -- If it is, return the part and its location in the parts table.
 -- If it is not, return nil.
-function Structure:findpart(part)
+function Structure:findPart(part)
 	for i, member in ipairs(self.parts) do
 		if member.part == part then
 			return member, i
@@ -81,8 +94,8 @@ function Structure:findpart(part)
 	return nil
 end
 
-function Structure:removepart(part)
-	member, index = self:findpart(part) 
+function Structure:removePart(part)
+	member, index = self:findpart(part)
 	if member then
 		member.part.isInStructure = false
 		member.joint:destroy()
@@ -90,7 +103,7 @@ function Structure:removepart(part)
 	end
 end
 
-function Structure:removeLastpart()
+function Structure:removeLastPart()
 	-- Don't try to remove a member if the structure is already empty.
 	if #self.parts > 1 then
 		self.parts[#self.parts].part.isInStructure = false
@@ -112,7 +125,8 @@ end
 
 function Structure:draw()
 	for i, part in ipairs(self.parts) do
-		part:draw(self.body:getAngle())
+		part:draw(self.body:getX(), self.body:getY(), self.body:getAngle(),
+		          playerX, playerY)
 	end
 end
 

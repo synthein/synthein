@@ -1,4 +1,5 @@
 local Part = require("part")
+require("util")
 
 local Structure = {}
 Structure.__index = Structure
@@ -31,10 +32,14 @@ end
 
 -- Merge another structure into this one.
 -- structure is the structure to merge
--- connectionPoint is the block to connect the structure to
--- side is the side of connectionPoint to add the structure to
-function Structure:merge(structure, part, connectionPoint, side)
-	-- structure:fly()
+-- connectionPointA is the block that will connect to this this structure
+-- connectionPointB is the block to connect the structure to
+-- side is the side of connectionPointB to add the structure to
+function Structure:merge(structure, connectionPointA, connectionPointB, side)
+	--ax, ay = structure:computeAbsCoords(connectionPointA)
+	--bx, by = structure:computeAbsCoords(connectionPointB)
+
+	--structure:fly()
 	for i, part in ipairs(structure.parts) do
 		structure:removePart(part)
 		self:addPart(part, structure.body:getX(), structure.body:getY())
@@ -43,8 +48,8 @@ end
 
 function Structure:addPart(part, x, y)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()
-	local width = math.abs(x1 - x2)
-	local height = math.abs(y1 - y4)
+	local width = math.abs(x1 - x3)
+	local height = math.abs(y1 - y3)
 	local shape = love.physics.newRectangleShape(x, y, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
 	table.insert(self.parts, part)
@@ -98,17 +103,11 @@ end
 function Structure:computeAbsCoords(index)
 	local relX = self.partCoords[index].x
 	local relY = self.partCoords[index].y
-	local r = math.sqrt(relX^2 + relY^2)
-	local t
-
-	if r ~= 0 then
-		t = math.atan2(relY, relX)
-	else
-		t = 0
-	end
-
-	local absX = self.body:getX() + r * math.cos(self.body:getAngle() + t)
-	local absY = self.body:getY() + r * math.sin(self.body:getAngle() + t)
+	local r = vectorMagnitude(relX, relY)
+	local t = vectorAngle(relX, relY)
+	local x, y = vectorComponents(r, t, self.body:getAngle())
+	local absX = self.body:getX() + x
+	local absY = self.body:getY() + y
 
 	return absX, absY
 end

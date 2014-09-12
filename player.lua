@@ -9,9 +9,9 @@ function Player.create()
 	setmetatable(self, Player)
 
 	self.shape = love.physics.newRectangleShape(self.width, self.height)
-
 	self.thrust = 150
 	self.torque = 350
+	self.type = "player"
 
 	return self
 end

@@ -11,6 +11,7 @@ function Part.create(imageName)
 	self.shape = nil
 	self.thrust = 0
 	self.torque = 0
+	self.type = "generic"
 
 	return self
 end

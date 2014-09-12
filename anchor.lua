@@ -9,6 +9,7 @@ function Anchor.create()
 	setmetatable(self, Anchor)
 
 	self.shape = love.physics.newRectangleShape(self.width, self.height)
+	self.type = "anchor"
 
 	return self
 end

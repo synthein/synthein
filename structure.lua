@@ -7,37 +7,24 @@ function Structure.create(part, world, x, y)
 	local self = {}
 	setmetatable(self, Structure)
 
-	self.body = love.physics.newBody(world, x, y, "dynamic")
+	if part.type == "player" then
+		self.body = love.physics.newBody(world, x, y, "dynamic")
+		self.body:setAngularDamping(1)
+		self.body:setLinearDamping(0.5)
+		self.thrust = part.thrust
+		self.torque = part.torque
+	elseif part.type == "anchor" then
+		self.body = love.physics.newBody(world, x, y, "static")
+	else
+		self.body = love.physics.newBody(world, x, y, "dynamic")
+		self.body:setAngularDamping(0.2)
+		self.body:setLinearDamping(0.1)
+	end
 
-	self.body:setAngularDamping(0.2)
-	self.body:setLinearDamping(0.1)
-
+	self.type = part.type -- type can be "player", "anchor", or "generic"
 	self.parts = {part}
 	self.partCoords = { {x = 0, y = 0} }
 	self.fixtures = {love.physics.newFixture(self.body, part.shape)}
-
-	self.thrust = part.thrust
-	self.torque = part.torque
-
-	return self
-end
-
-function Structure.createPlayerShip(player, world, x, y)
-	local self = Structure.create(player, world, x, y)
-
-	self.isPlayerShip = true
-
-	self.body:setAngularDamping(1)
-	self.body:setLinearDamping(0.5)
-
-	return self
-end
-
-function Structure.createAnchor(anchor, world, x, y)
-	local self = Structure.create(anchor, world, x, y)
-
-	self.isAnchor = true
-	self.body:setType("static")
 
 	return self
 end

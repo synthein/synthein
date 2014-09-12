@@ -34,7 +34,7 @@ end
 -- connectionPoint is the block to connect the structure to
 -- side is the side of connectionPoint to add the structure to
 function Structure:merge(structure, part, connectionPoint, side)
-	--structure.fly()
+	-- structure:fly()
 	for i, part in ipairs(structure.parts) do
 		structure:removePart(part)
 		self:addPart(part, structure.body:getX(), structure.body:getY())
@@ -93,22 +93,30 @@ function Structure:fly(x, y, angle)
 	self.body:setAngle(angle)
 end
 
+-- Find the absolute coordinates of a part given the x and y offset values of
+-- the part and the absolute coordinates and angle of the structure it is in.
+function Structure:computeAbsCoords(index)
+	local relX = self.partCoords[index].x
+	local relY = self.partCoords[index].y
+	local r = math.sqrt(relX^2 + relY^2)
+	local t
+
+	if r ~= 0 then
+		t = math.atan2(relY, relX)
+	else
+		t = 0
+	end
+
+	local absX = self.body:getX() + r * math.cos(self.body:getAngle() + t)
+	local absY = self.body:getY() + r * math.sin(self.body:getAngle() + t)
+
+	return absX, absY
+end
+
 function Structure:draw()
 	for i, part in ipairs(self.parts) do
-		local x = self.partCoords[i].x
-		local y = self.partCoords[i].y
-		local r = math.sqrt(x^2 + y^2)
-		local t
-		if r ~= 0 then
-			t = math.atan2(y, x)
-		else
-			t = 0
-		end
-
-		part:draw(
-			self.body:getX() + r * math.cos(self.body:getAngle() + t),
-			self.body:getY() + r * math.sin(self.body:getAngle() + t),
-			self.body:getAngle(), playerX, playerY)
+		local x, y = self:computeAbsCoords(i)
+		part:draw(x, y,	self.body:getAngle(), playerX, playerY)
 	end
 end
 

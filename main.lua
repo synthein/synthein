@@ -16,6 +16,11 @@ function love.load()
 	for i=1,10 do
 		blocks[i] = Structure.create(Block.create(), world, i*35, i*35)
 	end
+
+	for i=4,10 do
+		blocks[1]:merge(blocks[i], blocks[i].parts[1], nil, nil)
+	end
+
 end
 
 function love.update(dt)
@@ -34,7 +39,6 @@ function love.draw()
 		blocks[i]:draw(playerX, playerY)
 	end
 	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(playerShip.body:getY(), playerShip.body:getX())-math.pi/2, 1, 1, 25, 25)
-	love.graphics.print(playerShip.body:getX().." "..playerShip.body:getY().." "..playerShip.body:getAngle(), 1, 1)
 end
 
 function love.keypressed(key)

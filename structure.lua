@@ -13,6 +13,7 @@ function Structure.create(part, world, x, y)
 	self.body:setLinearDamping(0.1)
 
 	self.parts = {part}
+	self.partCoords = { {x = 0, y = 0} }
 	self.fixtures = {love.physics.newFixture(self.body, part.shape)}
 
 	self.thrust = part.thrust
@@ -26,6 +27,9 @@ function Structure.createPlayerShip(player, world, x, y)
 
 	self.isPlayerShip = true
 
+	self.body:setAngularDamping(1)
+	self.body:setLinearDamping(0.5)
+
 	return self
 end
 
@@ -38,56 +42,39 @@ function Structure.createAnchor(anchor, world, x, y)
 	return self
 end
 
--- Add a part to the structure.
--- part is a part object to add to the structure.
--- connectionPoint is the part object to attach part to.
--- side is which side of connectionnPoint to attach part to.
--- jointType is the type of Box2d joint to use.
-function Structure:addpart(part, connectionPoint, side)
-	-- Don't add the part to the structure if it is already here.
-	if self:findpart(part) then return end
+-- Merge another structure into this one.
+-- structure is the structure to merge
+-- connectionPoint is the block to connect the structure to
+-- side is the side of connectionPoint to add the structure to
+function Structure:merge(structure, part, connectionPoint, side)
+	--structure.fly()
+	for i, part in ipairs(structure.parts) do
+		structure:removePart(part)
+		self:addPart(part, structure.body:getX(), structure.body:getY())
+	end
+end
 
-	if side == "top" then
-		part:fly(
-			connectionPoint.body:getX(),
-			connectionPoint.body:getY() - connectionPoint.height,
-			connectionPoint.body:getAngle())
-	end
-	if side == "bottom" then
-		part:fly(
-			connectionPoint.body:getX(),
-			connectionPoint.body:getY() + connectionPoint.width,
-			connectionPoint.body:getAngle())
-	end
-	if side == "right" then
-		part:fly(
-			connectionPoint.body:getX() + connectionPoint.width,
-			connectionPoint.body:getY(),
-			connectionPoint.body:getAngle())
-	end
-	if side == "left" then
-		part:fly(
-			connectionPoint.body:getX() - connectionPoint.width,
-			connectionPoint.body:getY(),
-			connectionPoint.body:getAngle())
-	end
-
-	-- Add the new member to our list and store the part and joint associated
-	-- with it.
-	table.insert(self.parts, {part = part, joint = love.physics.newWeldJoint(part.body, connectionPoint.body, 0, 0)})
-	part.isInStructure = true
+function Structure:addPart(part, x, y)
+	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()
+	local width = math.abs(x1 - x2)
+	local height = math.abs(y1 - y4)
+	local shape = love.physics.newRectangleShape(x, y, width, height)
+	local fixture = love.physics.newFixture(self.body, shape)
+	table.insert(self.parts, part)
+	table.insert(self.partCoords, {x = x, y = y})
+	table.insert(self.fixtures, fixture)
 end
 
 function Structure:addHinge()
 end
 
 -- Check if a part is in this structure.
--- If it is, return the part and its location in the parts table.
+-- If it is, return the index of the part.
 -- If it is not, return nil.
-function Structure:findPart(part)
-	for i, member in ipairs(self.parts) do
-		if member.part == part then
-			return member, i
+function Structure:findPart(query)
+	for i, part in ipairs(self.parts) do
+		if part == query then
+			return i
 		end
 	end
 
@@ -95,54 +82,61 @@ function Structure:findPart(part)
 end
 
 function Structure:removePart(part)
-	member, index = self:findpart(part)
-	if member then
-		member.part.isInStructure = false
-		member.joint:destroy()
+	i = self:findPart(part)
+	if i then
+		self.fixtures[i]:destroy()
 		table.remove(self.parts, i)
-	end
-end
-
-function Structure:removeLastPart()
-	-- Don't try to remove a member if the structure is already empty.
-	if #self.parts > 1 then
-		self.parts[#self.parts].part.isInStructure = false
-		self.parts[#self.parts].joint:destroy()
-		table.remove(self.parts)
-	elseif #self.parts == 1 then
-		self:destroy()
+		table.remove(self.partCoords, i)
+		table.remove(self.fixtures, i)
 	end
 end
 
 function Structure:destroy()
-	for i, member in ipairs(self.parts) do
-		if member.joint then
-			member.joint:destroy()
-		end
-		table.remove(self.parts, i)
-	end
+	self.fixtures[1]:destroy()
+
+	table.remove(self.parts, 1)
+	table.remove(self.partCoords, 1)
+	table.remove(self.fixtrues, 1)
+end
+
+-- move the structure to a particular location smoothly
+function Structure:fly(x, y, angle)
+	-- right now this is anything but smooth...
+	self.body:setPosition(x, y)
+	self.body:setAngle(angle)
 end
 
 function Structure:draw()
 	for i, part in ipairs(self.parts) do
-		part:draw(self.body:getX(), self.body:getY(), self.body:getAngle(),
-		          playerX, playerY)
+		local x = self.partCoords[i].x
+		local y = self.partCoords[i].y
+		local r = math.sqrt(x^2 + y^2)
+		local t
+		if r ~= 0 then
+			t = math.atan2(y, x)
+		else
+			t = 0
+		end
+
+		part:draw(
+			self.body:getX() + r * math.cos(self.body:getAngle() + t),
+			self.body:getY() + r * math.sin(self.body:getAngle() + t),
+			self.body:getAngle(), playerX, playerY)
 	end
 end
 
 -- todo:
--- don't use parts[1]
 -- don't call this function from love.update()
 function Structure:handleInput()
 	if love.keyboard.isDown("up") then
 		self.body:applyForce(
-			self.thrust*math.cos(self.body:getAngle()-math.pi/2),
-			self.thrust*math.sin(self.body:getAngle()-math.pi/2))
+			self.thrust * math.cos(self.body:getAngle() - math.pi/2),
+			self.thrust * math.sin(self.body:getAngle() - math.pi/2))
 	end
 	if love.keyboard.isDown("down") then
 		self.body:applyForce(
-			-self.thrust*math.cos(self.body:getAngle()-math.pi/2),
-		    -self.thrust*math.sin(self.body:getAngle()-math.pi/2))
+			-self.thrust * math.cos(self.body:getAngle() - math.pi/2),
+		    -self.thrust * math.sin(self.body:getAngle() - math.pi/2))
 	end
 	if love.keyboard.isDown("left") then
 		self.body:applyTorque(-self.torque)

@@ -135,20 +135,30 @@ end
 -- todo:
 -- don't call this function from love.update()
 function Structure:handleInput()
-	if love.keyboard.isDown("up") then
+	if love.keyboard.isDown("w") then
 		self.body:applyForce(
 			self.thrust * math.cos(self.body:getAngle() - math.pi/2),
 			self.thrust * math.sin(self.body:getAngle() - math.pi/2))
 	end
-	if love.keyboard.isDown("down") then
+	if love.keyboard.isDown("s") then
 		self.body:applyForce(
 			-self.thrust * math.cos(self.body:getAngle() - math.pi/2),
 		    -self.thrust * math.sin(self.body:getAngle() - math.pi/2))
 	end
-	if love.keyboard.isDown("left") then
+	if love.keyboard.isDown("j") then
+		self.body:applyForce(
+			-self.thrust * math.cos(self.body:getAngle()),
+			-self.thrust * math.sin(self.body:getAngle()))
+	end
+	if love.keyboard.isDown("k") then
+		self.body:applyForce(
+			self.thrust * math.cos(self.body:getAngle()),
+			self.thrust * math.sin(self.body:getAngle()))
+	end
+	if love.keyboard.isDown("a") then
 		self.body:applyTorque(-self.torque)
 	end
-	if love.keyboard.isDown("right") then
+	if love.keyboard.isDown("d") then
 		self.body:applyTorque(self.torque)
 	end
 end

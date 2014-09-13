@@ -40,7 +40,33 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 	local bIndex = self:findPart(connectionPointB)
 	local relX, relY
 
-	if side == "right" then
+	-- Decide what coordinates to fly the structure to based on where
+	-- we want to connect it to
+	if side == "top" then
+		relX =
+			self.body:getX() + self.partCoords[bIndex].x-
+			structure.partCoords[aIndex].x
+		relY =
+			self.body:getY() + self.partCoords[bIndex].y -
+			connectionPointB.height/2 - connectionPointA.height/2 -
+			structure.partCoords[aIndex].y
+	elseif side == "bottom" then
+		relX =
+			self.body:getX() + self.partCoords[bIndex].x -
+			structure.partCoords[aIndex].x
+		relY =
+			self.body:getY() + self.partCoords[bIndex].y +
+			connectionPointB.height/2 + connectionPointA.height/2 -
+			structure.partCoords[aIndex].y
+	elseif side == "left" then
+		relX =
+			self.body:getX() + self.partCoords[bIndex].x -
+			connectionPointB.width/2 - connectionPointA.width/2 -
+			structure.partCoords[aIndex].x
+		relY =
+			self.body:getY() + self.partCoords[bIndex].y -
+			structure.partCoords[aIndex].y
+	elseif side == "right" then
 		relX =
 			self.body:getX() + self.partCoords[bIndex].x +
 			connectionPointB.width/2 + connectionPointA.width/2 -

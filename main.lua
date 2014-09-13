@@ -17,8 +17,8 @@ function love.load()
 		blocks[i] = Structure.create(Block.create(), world, i*35, i*35)
 	end
 
-	for i=4,10 do
-		blocks[1]:merge(blocks[i], blocks[i].parts[1], nil, nil)
+	for i=2,10 do
+		blocks[1]:merge(blocks[i], blocks[i].parts[1], blocks[1].parts[i-1], "right")
 	end
 
 end

@@ -36,13 +36,27 @@ end
 -- connectionPointB is the block to connect the structure to
 -- side is the side of connectionPointB to add the structure to
 function Structure:merge(structure, connectionPointA, connectionPointB, side)
-	--ax, ay = structure:computeAbsCoords(connectionPointA)
-	--bx, by = structure:computeAbsCoords(connectionPointB)
+	local aIndex = structure:findPart(connectionPointA)
+	local bIndex = self:findPart(connectionPointB)
+	local relX, relY
 
-	--structure:fly()
+	if side == "right" then
+		relX =
+			self.body:getX() + self.partCoords[bIndex].x +
+			connectionPointB.width/2 + connectionPointA.width/2 -
+			structure.partCoords[aIndex].x
+		relY =
+			self.body:getY() + self.partCoords[bIndex].y -
+			structure.partCoords[aIndex].y
+	end
+
+	local absX, absY = computeAbsCoords(relX, relY, self.body:getAngle())
+	structure:fly(absX, absY, self.body:getAngle())
+
 	for i, part in ipairs(structure.parts) do
+		self:addPart(part, structure.body:getX() + structure.partCoords[i].x,
+		             structure.body:getY() + structure.partCoords[i].y)
 		structure:removePart(part)
-		self:addPart(part, structure.body:getX(), structure.body:getY())
 	end
 end
 
@@ -50,10 +64,12 @@ function Structure:addPart(part, x, y)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()
 	local width = math.abs(x1 - x3)
 	local height = math.abs(y1 - y3)
-	local shape = love.physics.newRectangleShape(x, y, width, height)
+	local relX = x - self.body:getX()
+	local relY = y - self.body:getY()
+	local shape = love.physics.newRectangleShape(relX, relY, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
 	table.insert(self.parts, part)
-	table.insert(self.partCoords, {x = x, y = y})
+	table.insert(self.partCoords, {x = relX, y = relY})
 	table.insert(self.fixtures, fixture)
 end
 
@@ -100,21 +116,18 @@ end
 
 -- Find the absolute coordinates of a part given the x and y offset values of
 -- the part and the absolute coordinates and angle of the structure it is in.
-function Structure:computeAbsCoords(index)
-	local relX = self.partCoords[index].x
-	local relY = self.partCoords[index].y
-	local r = vectorMagnitude(relX, relY)
-	local t = vectorAngle(relX, relY)
-	local x, y = vectorComponents(r, t, self.body:getAngle())
-	local absX = self.body:getX() + x
-	local absY = self.body:getY() + y
+function Structure:getAbsPartCoords(index)
+	local x, y = computeAbsCoords(
+		self.partCoords[index].x,
+		self.partCoords[index].y,
+		self.body:getAngle())
 
-	return absX, absY
+	return self.body:getX() + x, self.body:getY() + y
 end
 
 function Structure:draw()
 	for i, part in ipairs(self.parts) do
-		local x, y = self:computeAbsCoords(i)
+		local x, y = self:getAbsPartCoords(i)
 		part:draw(x, y,	self.body:getAngle(), playerX, playerY)
 	end
 end

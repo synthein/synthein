@@ -158,34 +158,29 @@ function Structure:draw()
 	end
 end
 
--- todo:
--- don't call this function from love.update()
-function Structure:handleInput()
-	if love.keyboard.isDown("w") then
-		self.body:applyForce(
-			self.thrust * math.cos(self.body:getAngle() - math.pi/2),
-			self.thrust * math.sin(self.body:getAngle() - math.pi/2))
-	end
-	if love.keyboard.isDown("s") then
-		self.body:applyForce(
-			-self.thrust * math.cos(self.body:getAngle() - math.pi/2),
-		    -self.thrust * math.sin(self.body:getAngle() - math.pi/2))
-	end
-	if love.keyboard.isDown("j") then
-		self.body:applyForce(
-			-self.thrust * math.cos(self.body:getAngle()),
-			-self.thrust * math.sin(self.body:getAngle()))
-	end
-	if love.keyboard.isDown("k") then
-		self.body:applyForce(
-			self.thrust * math.cos(self.body:getAngle()),
-			self.thrust * math.sin(self.body:getAngle()))
-	end
-	if love.keyboard.isDown("a") then
-		self.body:applyTorque(-self.torque)
-	end
-	if love.keyboard.isDown("d") then
-		self.body:applyTorque(self.torque)
+function Structure:command(orders)
+	for i, order in ipairs(orders) do
+		if order == "forward" then
+			self.body:applyForce(
+				self.thrust * math.cos(self.body:getAngle() - math.pi/2),
+				self.thrust * math.sin(self.body:getAngle() - math.pi/2))
+		elseif order == "back" then
+			self.body:applyForce(
+				-self.thrust * math.cos(self.body:getAngle() - math.pi/2),
+			    -self.thrust * math.sin(self.body:getAngle() - math.pi/2))
+		elseif order == "left" then
+			self.body:applyTorque(-self.torque)
+		elseif order == "right" then
+			self.body:applyTorque(self.torque)
+		elseif order == "strafeLeft" then
+			self.body:applyForce(
+				-self.thrust * math.cos(self.body:getAngle()),
+				-self.thrust * math.sin(self.body:getAngle()))
+		elseif order == "strafeRight" then
+			self.body:applyForce(
+				self.thrust * math.cos(self.body:getAngle()),
+				self.thrust * math.sin(self.body:getAngle()))
+		end
 	end
 end
 

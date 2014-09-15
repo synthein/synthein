@@ -18,20 +18,22 @@ function love.load()
 	for i=1,10 do
 		worldStructures[i] = Structure.create(Block.create(), world, i*35, i*35)
 	end
+
+	debugmode = true
 end
 
 function love.update(dt)
 	world:update(dt)
-	playerX = playerShip.body:getX()
-	playerY = playerShip.body:getY()
+	globalOffsetX = player1.structure.body:getX()
+	globalOffsetY = player1.structure.body:getY()
 	player1:handleInput()
 end
 
 function love.draw()
 	playerShip:draw()
-	anchor:draw(angle, playerX, playerY)
-	for i=1,10 do
-		worldStructures[i]:draw(playerX, playerY)
+	anchor:draw(angle, globalOffsetX, globalOffsetY)
+	for i, structure in ipairs(worldStructures) do
+		structure:draw(globalOffsetX, globalOffsetY)
 	end
 	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(playerShip.body:getY(), playerShip.body:getX())-math.pi/2, 1, 1, 25, 25)
 end
@@ -39,10 +41,17 @@ end
 function love.keypressed(key)
 	if key == "escape" then love.event.push("quit") end
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
+	if key == "f12" then debugmode = not debugmode end
 
 	--------------------
 	-- Debug Commands --
 	--------------------
-
+	if debugmode == true then
+		-- Spawn a block
+		if key == "u" then
+			table.insert(worldStructures, Structure.create(Block.create(),
+				world, globalOffsetX+30, globalOffsetY+30))
+		end
+	end
 	--------------------
 end

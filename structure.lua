@@ -154,7 +154,7 @@ end
 function Structure:draw()
 	for i, part in ipairs(self.parts) do
 		local x, y = self:getAbsPartCoords(i)
-		part:draw(x, y,	self.body:getAngle(), playerX, playerY)
+		part:draw(x, y,	self.body:getAngle(), globalOffsetX, globalOffsetY)
 	end
 end
 

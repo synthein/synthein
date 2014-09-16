@@ -26,11 +26,11 @@ function love.update(dt)
 	world:update(dt)
 	globalOffsetX = player1.structure.body:getX()
 	globalOffsetY = player1.structure.body:getY()
-	player1:handleInput()
+	player1:handleInput(dt)
 end
 
 function love.draw()
-	playerShip:draw()
+	player1:draw()
 	anchor:draw(angle, globalOffsetX, globalOffsetY)
 	for i, structure in ipairs(worldStructures) do
 		structure:draw(globalOffsetX, globalOffsetY)

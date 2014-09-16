@@ -1,3 +1,5 @@
+local Selection = require("selection")
+
 Input = {}
 Input.__index = Input
 
@@ -8,22 +10,28 @@ function Input.create(type, structure)
 	self.structure = structure
 
 	if type == "player1" then
-		self.forward = "w"
-		self.back = "s"
-		self.left = "a"
-		self.right = "d"
-		self.strafeLeft = "j"
-		self.strafeRight = "k"
+		self.forward = "up"
+		self.back = "down"
+		self.left = "left"
+		self.right = "right"
+		self.strafeLeft = "a"
+		self.strafeRight = "s"
+		self.selectPrevious = "d"
+		self.selectNext = "c"
+		self.confirmSelection = "return"
 	elseif type =="player2" then
 	elseif type == "AI" then
 	end
 
+	self.selectionKeyDown = false
+
 	return self
 end
 
-function Input:handleInput()
+function Input:handleInput(dt)
 	local orders = {}
 
+	-- Ship commands
 	if love.keyboard.isDown(self.forward) then
 		table.insert(orders, "forward")
 	end
@@ -44,6 +52,32 @@ function Input:handleInput()
 	end
 
 	self.structure:command(orders)
+
+	-- Selection commands
+	if not self.selectionKeyDown then
+		if love.keyboard.isDown(self.selectPrevious) then
+			self.selectionKeyDown = true
+		end
+		if love.keyboard.isDown(self.selectNext) then
+			self.selectionKeyDown = true
+		end
+		if love.keyboard.isDown(self.confirmSelection)  and not done then
+			self.selection = Selection.enableSelection(worldStructures)
+			self.selection:confirm()
+			self.selectionKeyDown = true
+		end
+	elseif not love.keyboard.isDown(self.selectPrevious) and
+	       not love.keyboard.isDown(self.selectNext) and
+	       not love.keyboard.isDown(self.confirmSelection) then
+		self.selectionKeyDown = false
+	end
+end
+
+function Input:draw()
+	self.structure:draw()
+	if self.selection then
+		self.selection:draw()
+	end
 end
 
 return Input

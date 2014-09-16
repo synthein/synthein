@@ -36,6 +36,15 @@ function love.draw()
 		structure:draw(globalOffsetX, globalOffsetY)
 	end
 	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(playerShip.body:getY(), playerShip.body:getX())-math.pi/2, 1, 1, 25, 25)
+
+	--------------------
+	---- Debug Info ----
+	--------------------
+	if debugmode == true then
+		love.graphics.print(globalOffsetX.."    "..globalOffsetY, 5, 5)
+		love.graphics.print("number of world structures: "..#worldStructures, 5, 20)
+	end
+	--------------------
 end
 
 function love.keypressed(key)
@@ -50,7 +59,7 @@ function love.keypressed(key)
 		-- Spawn a block
 		if key == "u" then
 			table.insert(worldStructures, Structure.create(Block.create(),
-				world, globalOffsetX+30, globalOffsetY+30))
+				world, globalOffsetX + 50, globalOffsetY - 100))
 		end
 	end
 	--------------------

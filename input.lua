@@ -59,34 +59,32 @@ function Input:handleInput(dt)
 	-- If the one of the selection keys is already down, don't react to them.
 	if not self.selectionKeyDown then
 
-		-- If select mode is not enabled, enable it.
-		if not self.selection then
-			if love.keyboard.isDown(self.selectPrevious) or
-			   love.keyboard.isDown(self.selectNext) or
-			   love.keyboard.isDown(self.confirmSelection) then
-					self.selection = Selection.enable(worldStructures)
-					self.selectionKeyDown = true
-			end
+		if love.keyboard.isDown(self.selectPrevious) or
+		   love.keyboard.isDown(self.selectNext) or
+		   love.keyboard.isDown(self.confirmSelection) then
+			-- If select mode is not enabled, enable it.
+			if not self.selection then
+				self.selection = Selection.enable(worldStructures)
 
-		-- If selection mode is enabled, then we can send commands to
-		-- self.selection.
-		else
-			if love.keyboard.isDown(self.selectPrevious) then
-				self.selection:previous()
-				self.selectionKeyDown = true
-			end
+			-- If selection mode is enabled, then we can send commands to
+			-- self.selection.
+			else
+				if love.keyboard.isDown(self.selectPrevious) then
+					self.selection:previous()
+				end
 
-			if love.keyboard.isDown(self.selectNext) then
-				self.selection:next()
-				self.selectionKeyDown = true
-			end
+				if love.keyboard.isDown(self.selectNext) then
+					self.selection:next()
+				end
 
-			if love.keyboard.isDown(self.confirmSelection) then
-				self.selection:confirm()
-				self.selectionKeyDown = true
-				-- Disable selection mode now that we are done.
-				self.selection = nil
+				if love.keyboard.isDown(self.confirmSelection) then
+					self.selection:confirm()
+					-- Disable selection mode now that we are done.
+					self.selection = nil
+				end
 			end
+			-- Lock out the selection keys until they are released.
+			self.selectionKeyDown = true
 		end
 
 	-- Once the selection keys are released, start listening for them again.

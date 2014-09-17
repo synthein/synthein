@@ -120,7 +120,7 @@ function Structure:findPart(query)
 end
 
 -- Find the specified part and destroy it. If there are no more parts in the
--- structure, then destroy the structure and return true. Otherwise return nil.
+-- structure, then destroy the structure and return 1. Otherwise return nil.
 -- ** Always check the return value and remove the reference to the structure
 -- if it is destroyed.
 function Structure:removePart(part)
@@ -133,9 +133,7 @@ function Structure:removePart(part)
 	end
 	if #self.parts == 0 then
 		self:destroy()
-		return true
-	else
-		return nil
+		return 1
 	end
 end
 

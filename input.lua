@@ -23,6 +23,7 @@ function Input.create(type, structure)
 	elseif type == "AI" then
 	end
 
+	self.selection = nil
 	self.selectionKeyDown = false
 
 	return self
@@ -54,18 +55,41 @@ function Input:handleInput(dt)
 	self.structure:command(orders)
 
 	-- Selection commands
+
+	-- If the one of the selection keys is already down, don't react to them.
 	if not self.selectionKeyDown then
-		if love.keyboard.isDown(self.selectPrevious) then
-			self.selectionKeyDown = true
+
+		-- If select mode is not enabled, enable it.
+		if not self.selection then
+			if love.keyboard.isDown(self.selectPrevious) or
+			   love.keyboard.isDown(self.selectNext) or
+			   love.keyboard.isDown(self.confirmSelection) then
+					self.selection = Selection.enable(worldStructures)
+					self.selectionKeyDown = true
+			end
+
+		-- If selection mode is enabled, then we can send commands to
+		-- self.selection.
+		else
+			if love.keyboard.isDown(self.selectPrevious) then
+				self.selection:previous()
+				self.selectionKeyDown = true
+			end
+
+			if love.keyboard.isDown(self.selectNext) then
+				self.selection:next()
+				self.selectionKeyDown = true
+			end
+
+			if love.keyboard.isDown(self.confirmSelection) then
+				self.selection:confirm()
+				self.selectionKeyDown = true
+				-- Disable selection mode now that we are done.
+				self.selection = nil
+			end
 		end
-		if love.keyboard.isDown(self.selectNext) then
-			self.selectionKeyDown = true
-		end
-		if love.keyboard.isDown(self.confirmSelection)  and not done then
-			self.selection = Selection.enableSelection(worldStructures)
-			self.selection:confirm()
-			self.selectionKeyDown = true
-		end
+
+	-- Once the selection keys are released, start listening for them again.
 	elseif not love.keyboard.isDown(self.selectPrevious) and
 	       not love.keyboard.isDown(self.selectNext) and
 	       not love.keyboard.isDown(self.confirmSelection) then
@@ -73,10 +97,10 @@ function Input:handleInput(dt)
 	end
 end
 
-function Input:draw()
+function Input:draw(globalOffsetX, globalOffsetY)
 	self.structure:draw()
 	if self.selection then
-		self.selection:draw()
+		self.selection:draw(globalOffsetX, globalOffsetY)
 	end
 end
 

@@ -30,11 +30,11 @@ function love.update(dt)
 end
 
 function love.draw()
-	player1:draw()
-	anchor:draw(angle, globalOffsetX, globalOffsetY)
+	anchor:draw(globalOffsetX, globalOffsetY)
 	for i, structure in ipairs(worldStructures) do
 		structure:draw(globalOffsetX, globalOffsetY)
 	end
+	player1:draw(globalOffsetX, globalOffsetY)
 	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(playerShip.body:getY(), playerShip.body:getX())-math.pi/2, 1, 1, 25, 25)
 
 	--------------------
@@ -43,6 +43,7 @@ function love.draw()
 	if debugmode == true then
 		love.graphics.print(globalOffsetX.."    "..globalOffsetY, 5, 5)
 		love.graphics.print("number of world structures: "..#worldStructures, 5, 20)
+		love.graphics.print("Are we in selection mode?  "..(player1.selection and "yes" or "no"), 5, 35)
 	end
 	--------------------
 end

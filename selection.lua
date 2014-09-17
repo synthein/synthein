@@ -13,6 +13,7 @@ end
 function Selection:confirm()
 	local choice = self.structureList[#self.structureList]
 	playerShip:merge(choice, choice.parts[1], playerShip.parts[#playerShip.parts], "right")
+	table.remove(self.structureList, #self.structureList)
 end
 
 function Selection:draw()

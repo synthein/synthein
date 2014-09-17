@@ -31,6 +31,9 @@ function Structure.create(part, world, x, y)
 end
 
 -- Merge another structure into this one.
+-- ** After calling this method, the merged structure will be destroyed and
+-- should be removed from any tables it is referenced in.
+-- Parameters:
 -- structure is the structure to merge
 -- connectionPointA is the block that will connect to this this structure
 -- connectionPointB is the block to connect the structure to
@@ -39,6 +42,8 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 	local aIndex = structure:findPart(connectionPointA)
 	local bIndex = self:findPart(connectionPointB)
 	local relX, relY
+
+	print(structure)--debug
 
 	-- Decide what coordinates to fly the structure to based on where
 	-- we want to connect it to
@@ -115,6 +120,10 @@ function Structure:findPart(query)
 	return nil
 end
 
+-- Find the specified part and destroy it. If there are no more parts in the
+-- structure, then destroy the structure and return true. Otherwise return nil.
+-- ** Always check the return value and remove the reference to the structure
+-- if it is destroyed.
 function Structure:removePart(part)
 	i = self:findPart(part)
 	if i then
@@ -123,14 +132,18 @@ function Structure:removePart(part)
 		table.remove(self.partCoords, i)
 		table.remove(self.fixtures, i)
 	end
+	if #self.parts == 0 then
+		self:destroy()
+		return true
+	else
+		return nil
+	end
 end
 
+-- Destroy this structure, removing the physics body from the world
 function Structure:destroy()
-	self.fixtures[1]:destroy()
-
-	table.remove(self.parts, 1)
-	table.remove(self.partCoords, 1)
-	table.remove(self.fixtrues, 1)
+	self.body:destroy()
+	self = nil
 end
 
 -- move the structure to a particular location smoothly

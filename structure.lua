@@ -43,46 +43,45 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 	local bIndex = self:findPart(connectionPointB)
 	local relX, relY
 
-	print(structure)--debug
-
 	-- Decide what coordinates to fly the structure to based on where
 	-- we want to connect it to
 	if side == "top" then
 		relX =
-			self.body:getX() + self.partCoords[bIndex].x-
+			self.partCoords[bIndex].x -
 			structure.partCoords[aIndex].x
 		relY =
-			self.body:getY() + self.partCoords[bIndex].y -
+			self.partCoords[bIndex].y -
 			connectionPointB.height/2 - connectionPointA.height/2 -
 			structure.partCoords[aIndex].y
 	elseif side == "bottom" then
 		relX =
-			self.body:getX() + self.partCoords[bIndex].x -
+			self.partCoords[bIndex].x -
 			structure.partCoords[aIndex].x
 		relY =
-			self.body:getY() + self.partCoords[bIndex].y +
+			self.partCoords[bIndex].y +
 			connectionPointB.height/2 + connectionPointA.height/2 -
 			structure.partCoords[aIndex].y
 	elseif side == "left" then
 		relX =
-			self.body:getX() + self.partCoords[bIndex].x -
+			self.partCoords[bIndex].x -
 			connectionPointB.width/2 - connectionPointA.width/2 -
 			structure.partCoords[aIndex].x
 		relY =
-			self.body:getY() + self.partCoords[bIndex].y -
+			self.partCoords[bIndex].y -
 			structure.partCoords[aIndex].y
 	elseif side == "right" then
 		relX =
-			self.body:getX() + self.partCoords[bIndex].x +
+			self.partCoords[bIndex].x +
 			connectionPointB.width/2 + connectionPointA.width/2 -
 			structure.partCoords[aIndex].x
 		relY =
-			self.body:getY() + self.partCoords[bIndex].y -
+			self.partCoords[bIndex].y -
 			structure.partCoords[aIndex].y
 	end
 
-	local absX, absY = computeAbsCoords(relX, relY, self.body:getAngle())
-	structure:fly(absX, absY, self.body:getAngle())
+	local absX, absY = computeAbsCoords(relX, relY, 0)
+	structure:fly(self.body:getX() + absX, self.body:getY() + absY,
+	              self.body:getAngle())
 
 	for i, part in ipairs(structure.parts) do
 		self:addPart(part, structure.body:getX() + structure.partCoords[i].x,

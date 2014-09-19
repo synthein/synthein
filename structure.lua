@@ -4,6 +4,8 @@ require("util")
 local Structure = {}
 Structure.__index = Structure
 
+Structure.PARTSIZE = 20
+
 function Structure.create(part, world, x, y)
 	local self = {}
 	setmetatable(self, Structure)
@@ -42,6 +44,7 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 	local aIndex = structure:findPart(connectionPointA)
 	local bIndex = self:findPart(connectionPointB)
 	local relX, relY
+	local orientation = "up"
 
 	-- Decide what coordinates to fly the structure to based on where
 	-- we want to connect it to
@@ -50,29 +53,25 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 			self.partCoords[bIndex].x -
 			structure.partCoords[aIndex].x
 		relY =
-			self.partCoords[bIndex].y -
-			connectionPointB.height/2 - connectionPointA.height/2 -
+			self.partCoords[bIndex].y -Structure.PARTSIZE -
 			structure.partCoords[aIndex].y
 	elseif side == "bottom" then
 		relX =
 			self.partCoords[bIndex].x -
 			structure.partCoords[aIndex].x
 		relY =
-			self.partCoords[bIndex].y +
-			connectionPointB.height/2 + connectionPointA.height/2 -
+			self.partCoords[bIndex].y +Structure.PARTSIZE -
 			structure.partCoords[aIndex].y
 	elseif side == "left" then
 		relX =
-			self.partCoords[bIndex].x -
-			connectionPointB.width/2 - connectionPointA.width/2 -
+			self.partCoords[bIndex].x -Structure.PARTSIZE -
 			structure.partCoords[aIndex].x
 		relY =
 			self.partCoords[bIndex].y -
 			structure.partCoords[aIndex].y
 	elseif side == "right" then
 		relX =
-			self.partCoords[bIndex].x +
-			connectionPointB.width/2 + connectionPointA.width/2 -
+			self.partCoords[bIndex].x +Structure.PARTSIZE -
 			structure.partCoords[aIndex].x
 		relY =
 			self.partCoords[bIndex].y -
@@ -82,24 +81,41 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 	local absX, absY = computeAbsCoords(relX, relY, 0)
 	structure:fly(self.body:getX() + absX, self.body:getY() + absY,
 	              self.body:getAngle())
-
-	for i, part in ipairs(structure.parts) do
-		self:addPart(part, structure.body:getX() + structure.partCoords[i].x,
-		             structure.body:getY() + structure.partCoords[i].y)
-		structure:removePart(part)
+	
+	for i=1,#structure.parts do
+		local x
+		local y
+		if orientation == "up" then 
+		x = structure.partCoords[1].x 
+		y = structure.partCoords[1].y
+		elseif orientation == "down" then 
+		x = -structure.partCoords[1].x 
+		y = -structure.partCoords[1].y
+		elseif orientation == "left" then 
+		x = structure.partCoords[1].y 
+		y = -structure.partCoords[1].x
+		elseif orientation == "right" then 
+		x = -structure.partCoords[1].y 
+		y = structure.partCoords[1].x
+		end
+		x = x + absX --temp
+		y = y + absY --temp
+		self:addPart(structure.parts[1], "up", x, y)
+		structure:removePart(structure.parts[1])
 	end
 end
 
-function Structure:addPart(part, x, y)
+-- Add one part to the structure.
+-- x, y are the coordinates in the structure 
+-- orientation is the orientation of the part according to the structure
+function Structure:addPart(part, orientation, x, y)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()
 	local width = math.abs(x1 - x3)
 	local height = math.abs(y1 - y3)
-	local relX = x - self.body:getX()
-	local relY = y - self.body:getY()
-	local shape = love.physics.newRectangleShape(relX, relY, width, height)
+	local shape = love.physics.newRectangleShape(x, y, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
 	table.insert(self.parts, part)
-	table.insert(self.partCoords, {x = relX, y = relY})
+	table.insert(self.partCoords, {x = x, y = y})
 	table.insert(self.fixtures, fixture)
 end
 

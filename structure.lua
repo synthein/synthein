@@ -43,64 +43,55 @@ end
 function Structure:merge(structure, connectionPointA, connectionPointB, side)
 	local aIndex = structure:findPart(connectionPointA)
 	local bIndex = self:findPart(connectionPointB)
-	local relX, relY
-	local orientation = "up"
-
-	-- Decide what coordinates to fly the structure to based on where
-	-- we want to connect it to
+	local orientation = "right" -- needs to be a function parameter
+	
+	-- cplX, cplY are the coordinates of the connection point from the old 
+	-- structure
+	local cplX, cplY = structure.partCoords[aIndex].x, 
+					   structure.partCoords[aIndex].y
+	-- offX, offY are the coordinates of the block that the other structure is 
+	-- attaching to
+	local offX, offY = self.partCoords[bIndex].x, 
+					   self.partCoords[bIndex].y
+					   
+	-- this is to account for which side of the block the structure is being 
+	-- attached to 
 	if side == "top" then
-		relX =
-			self.partCoords[bIndex].x -
-			structure.partCoords[aIndex].x
-		relY =
-			self.partCoords[bIndex].y -Structure.PARTSIZE -
-			structure.partCoords[aIndex].y
+		offY = offY - Structure.PARTSIZE
 	elseif side == "bottom" then
-		relX =
-			self.partCoords[bIndex].x -
-			structure.partCoords[aIndex].x
-		relY =
-			self.partCoords[bIndex].y +Structure.PARTSIZE -
-			structure.partCoords[aIndex].y
+		offY = offY + Structure.PARTSIZE
 	elseif side == "left" then
-		relX =
-			self.partCoords[bIndex].x -Structure.PARTSIZE -
-			structure.partCoords[aIndex].x
-		relY =
-			self.partCoords[bIndex].y -
-			structure.partCoords[aIndex].y
+		offX = offX - Structure.PARTSIZE
 	elseif side == "right" then
-		relX =
-			self.partCoords[bIndex].x +Structure.PARTSIZE -
-			structure.partCoords[aIndex].x
-		relY =
-			self.partCoords[bIndex].y -
-			structure.partCoords[aIndex].y
+		offX = offX + Structure.PARTSIZE
 	end
 
-	local absX, absY = computeAbsCoords(relX, relY, 0)
-	structure:fly(self.body:getX() + absX, self.body:getY() + absY,
+	-- this is placing the structure in about the right place
+	structure:fly(self.body:getX() + offX, self.body:getY() + offY,
 	              self.body:getAngle())
-	
+
+	-- structure.partCoords are the coordinates from the old structure
+	-- relX, relY are the new coordinates relative to the offset point
+	-- absX, absY are the new coordinates for the block
 	for i=1,#structure.parts do
-		local x
-		local y
+		local relX, relY
+		local absX, absY
 		if orientation == "up" then 
-		x = structure.partCoords[1].x 
-		y = structure.partCoords[1].y
+			relX =  structure.partCoords[1].x - cplX
+			relY =  structure.partCoords[1].y - cplY
 		elseif orientation == "down" then 
-		x = -structure.partCoords[1].x 
-		y = -structure.partCoords[1].y
+			relX = -structure.partCoords[1].x + cplX
+			relY = -structure.partCoords[1].y + cplY
 		elseif orientation == "left" then 
-		x = structure.partCoords[1].y 
-		y = -structure.partCoords[1].x
+			relX =  structure.partCoords[1].y - cplY
+			relY = -structure.partCoords[1].x + cplX
 		elseif orientation == "right" then 
-		x = -structure.partCoords[1].y 
-		y = structure.partCoords[1].x
+			relX = -structure.partCoords[1].y + cplY
+			relY =  structure.partCoords[1].x - cplX
 		end
-		x = x + absX --temp
-		y = y + absY --temp
-		self:addPart(structure.parts[1], "up", x, y)
+		absX = relX + offX
+		absY = relY + offY
+		self:addPart(structure.parts[1], "up", absX, absY)
 		structure:removePart(structure.parts[1])
 	end
 end

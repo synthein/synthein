@@ -24,8 +24,8 @@ end
 
 function love.update(dt)
 	world:update(dt)
-	globalOffsetX = player1.structure.body:getX()
-	globalOffsetY = player1.structure.body:getY()
+	globalOffsetX = player1.ship.body:getX()
+	globalOffsetY = player1.ship.body:getY()
 	player1:handleInput(dt)
 end
 

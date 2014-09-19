@@ -7,7 +7,7 @@ function Input.create(type, structure)
 	local self = {}
 	setmetatable(self, Input)
 
-	self.structure = structure
+	self.ship = structure
 
 	if type == "player1" then
 		self.forward = "up"
@@ -52,7 +52,7 @@ function Input:handleInput(dt)
 		table.insert(orders, "strafeRight")
 	end
 
-	self.structure:command(orders)
+	self.ship:command(orders)
 
 	-- Selection commands
 
@@ -64,7 +64,7 @@ function Input:handleInput(dt)
 		   love.keyboard.isDown(self.confirmSelection) then
 			-- If select mode is not enabled, enable it.
 			if not self.selection then
-				self.selection = Selection.enable(worldStructures)
+				self.selection = Selection.enable(worldStructures, self.ship, anchor)
 
 			-- If selection mode is enabled, then we can send commands to
 			-- self.selection.
@@ -78,9 +78,10 @@ function Input:handleInput(dt)
 				end
 
 				if love.keyboard.isDown(self.confirmSelection) then
-					self.selection:confirm()
-					-- Disable selection mode now that we are done.
-					self.selection = nil
+					if self.selection:confirm() == 1 then
+						-- Disable selection mode now that we are done.
+						self.selection = nil
+					end
 				end
 			end
 			-- Lock out the selection keys until they are released.
@@ -96,7 +97,7 @@ function Input:handleInput(dt)
 end
 
 function Input:draw(globalOffsetX, globalOffsetY)
-	self.structure:draw()
+	self.ship:draw()
 	if self.selection then
 		self.selection:draw(globalOffsetX, globalOffsetY)
 	end

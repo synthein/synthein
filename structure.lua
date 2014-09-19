@@ -137,6 +137,7 @@ function Structure:removePart(part)
 	end
 end
 
+-- todo: this function doesn't actually do anything. maybe remove it.
 -- Destroy this structure, removing the physics body from the world
 function Structure:destroy()
 	self.body:destroy()

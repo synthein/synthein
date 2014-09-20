@@ -1,11 +1,11 @@
 local Selection = require("selection")
 
-Input = {}
-Input.__index = Input
+Player = {}
+Player.__index = Player
 
-function Input.create(type, structure)
+function Player.create(type, structure)
 	local self = {}
-	setmetatable(self, Input)
+	setmetatable(self, Player)
 
 	self.ship = structure
 
@@ -29,7 +29,7 @@ function Input.create(type, structure)
 	return self
 end
 
-function Input:handleInput(dt)
+function Player:handleInput(dt)
 	local orders = {}
 
 	-- Ship commands
@@ -96,11 +96,11 @@ function Input:handleInput(dt)
 	end
 end
 
-function Input:draw(globalOffsetX, globalOffsetY)
+function Player:draw(globalOffsetX, globalOffsetY)
 	self.ship:draw()
 	if self.selection then
 		self.selection:draw(globalOffsetX, globalOffsetY)
 	end
 end
 
-return Input
+return Player

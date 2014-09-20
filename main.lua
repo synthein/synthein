@@ -1,7 +1,7 @@
 local Anchor = require("anchor")
 local Block = require("block")
-local Input = require("input")
-local PlayerBlock = require("player")
+local Player = require("player")
+local PlayerBlock = require("playerBlock")
 local Structure = require("structure")
 
 function love.load()
@@ -12,7 +12,7 @@ function love.load()
 	playerShip = Structure.create(PlayerBlock.create(), world, 0, -100)
 	anchor = Structure.create(Anchor.create(), world, 0, 0)
 
-	player1 = Input.create("player1", playerShip)
+	player1 = Player.create("player1", playerShip)
 
 	worldStructures = {}
 	for i=1,10 do

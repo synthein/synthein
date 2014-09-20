@@ -140,7 +140,7 @@ function Selection:confirm()
 		self.index = 0
 		self:next()
 	elseif self.mode == 6 then
-		self.structure:merge(self.annexee, self.annexeePart, self.orientation,
+		self.structure:annex(self.annexee, self.annexeePart, self.orientation,
 		                 self.structurePart, self.side)
 		table.remove(self.structureList, self.annexeeIndex)
 		return 1

@@ -32,30 +32,30 @@ function Structure.create(part, world, x, y)
 	return self
 end
 
--- Merge another structure into this one.
--- ** After calling this method, the merged structure will be destroyed and
+-- Annex another structure into this one.
+-- ** After calling this method, the annexed structure will be destroyed and
 -- should be removed from any tables it is referenced in.
 -- Parameters:
--- structure is the structure to merge
--- connectionPointA is the block that will connect to this this structure
--- connectionPointB is the block to connect the structure to
--- side is the side of connectionPointB to add the structure to
-function Structure:merge(structure, connectionPointA, orientation, 
-                         connectionPointB, side)
-	local aIndex = structure:findPart(connectionPointA)
-	local bIndex = self:findPart(connectionPointB)
-	
-	-- cplX, cplY are the coordinates of the connection point from the old 
+-- annexee is the structure to annex
+-- annexeePart is the block that will connect to this structure
+-- structurePart is the block to connect the structure to
+-- side is the side of structurePart to add the structure to
+function Structure:annex(anexee, anexeePart, orientation,
+                         structurePart, side)
+	local aIndex = anexee:findPart(anexeePart)
+	local bIndex = self:findPart(structurePart)
+
+	-- cplX, cplY are the coordinates of the connection point from the old
 	-- structure
-	local cplX, cplY = structure.partCoords[aIndex].x, 
-					   structure.partCoords[aIndex].y
-	-- offX, offY are the coordinates of the block that the other structure is 
+	local cplX, cplY = anexee.partCoords[aIndex].x,
+					   anexee.partCoords[aIndex].y
+	-- offX, offY are the coordinates of the block that the other structure is
 	-- attaching to
-	local offX, offY = self.partCoords[bIndex].x, 
+	local offX, offY = self.partCoords[bIndex].x,
 					   self.partCoords[bIndex].y
-					   
-	-- this is to account for which side of the block the structure is being 
-	-- attached to 
+
+	-- this is to account for which side of the block the structure is being
+	-- attached to
 	if side == 4 then
 		offY = offY - Structure.PARTSIZE
 	elseif side == 2 then
@@ -67,37 +67,37 @@ function Structure:merge(structure, connectionPointA, orientation,
 	end
 
 	-- this is placing the structure in about the right place
-	structure:fly(self.body:getX() + offX, self.body:getY() + offY,
+	anexee:fly(self.body:getX() + offX, self.body:getY() + offY,
 	              self.body:getAngle())
 
-	-- structure.partCoords are the coordinates from the old structure
+	-- anexee.partCoords are the coordinates from the old structure
 	-- relX, relY are the new coordinates relative to the offset point
 	-- absX, absY are the new coordinates for the block
-	for i=1,#structure.parts do
+	for i=1,#anexee.parts do
 		local relX, relY
 		local absX, absY
-		if orientation == 4 then 
-			relX =  structure.partCoords[1].x - cplX
-			relY =  structure.partCoords[1].y - cplY
-		elseif orientation == 2 then 
-			relX = -structure.partCoords[1].x + cplX
-			relY = -structure.partCoords[1].y + cplY
-		elseif orientation == 3 then 
-			relX =  structure.partCoords[1].y - cplY
-			relY = -structure.partCoords[1].x + cplX
-		elseif orientation == 1 then 
-			relX = -structure.partCoords[1].y + cplY
-			relY =  structure.partCoords[1].x - cplX
+		if orientation == 4 then
+			relX =  anexee.partCoords[1].x - cplX
+			relY =  anexee.partCoords[1].y - cplY
+		elseif orientation == 2 then
+			relX = -anexee.partCoords[1].x + cplX
+			relY = -anexee.partCoords[1].y + cplY
+		elseif orientation == 3 then
+			relX =  anexee.partCoords[1].y - cplY
+			relY = -anexee.partCoords[1].x + cplX
+		elseif orientation == 1 then
+			relX = -anexee.partCoords[1].y + cplY
+			relY =  anexee.partCoords[1].x - cplX
 		end
 		absX = relX + offX
 		absY = relY + offY
-		self:addPart(structure.parts[1], "up", absX, absY)
-		structure:removePart(structure.parts[1])
+		self:addPart(anexee.parts[1], "up", absX, absY)
+		anexee:removePart(anexee.parts[1])
 	end
 end
 
 -- Add one part to the structure.
--- x, y are the coordinates in the structure 
+-- x, y are the coordinates in the structure
 -- orientation is the orientation of the part according to the structure
 function Structure:addPart(part, orientation, x, y)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()

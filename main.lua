@@ -9,10 +9,16 @@ function love.load()
 	world = love.physics.newWorld()
 
 	compass = love.graphics.newImage("res/images/compass.png")
-	playerShip = Structure.create(PlayerBlock.create(), world, 0, -100)
-	anchor = Structure.create(Anchor.create(), world, 0, 0)
 
+	-- Create the player.
+	playerShip = Structure.create(PlayerBlock.create(), world, 0, -100)
 	player1 = Player.create("player1", playerShip)
+
+	-- Create the anchor.
+	anchor = Structure.create(Anchor.create(), world, -10, -10)
+	anchor:addPart(Anchor.create(), 1, 20, 0)
+	anchor:addPart(Anchor.create(), 1, 0, 20)
+	anchor:addPart(Anchor.create(), 1, 20, 20)
 
 	worldStructures = {}
 	for i=1,10 do

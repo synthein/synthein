@@ -18,17 +18,7 @@ function love.load()
 	for i=1,10 do
 		worldStructures[i] = Structure.create(Block.create(), world, i*35, i*35)
 	end
-<<<<<<< HEAD
 
-	worldStructures[1]:merge(worldStructures[2], worldStructures[2].parts[1],
-							 worldStructures[1].parts[1], "right")
-	table.remove(worldStructures, 2)
-	worldStructures[2]:merge(worldStructures[3], worldStructures[3].parts[1],
-							 worldStructures[2].parts[1], "right")
-	table.remove(worldStructures, 3)
-
-=======
->>>>>>> a557cacc2e5e3a65bc0efbe43373ab86ab6030d4
 	debugmode = true
 end
 

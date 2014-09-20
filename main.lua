@@ -1,7 +1,7 @@
 local Anchor = require("anchor")
 local Block = require("block")
 local Input = require("input")
-local Player = require("player")
+local PlayerBlock = require("player")
 local Structure = require("structure")
 
 function love.load()
@@ -9,7 +9,7 @@ function love.load()
 	world = love.physics.newWorld()
 
 	compass = love.graphics.newImage("res/images/compass.png")
-	playerShip = Structure.create(Player.create(), world, 0, -100)
+	playerShip = Structure.create(PlayerBlock.create(), world, 0, -100)
 	anchor = Structure.create(Anchor.create(), world, 0, 0)
 
 	player1 = Input.create("player1", playerShip)
@@ -19,13 +19,13 @@ function love.load()
 		worldStructures[i] = Structure.create(Block.create(), world, i*35, i*35)
 	end
 
-	worldStructures[1]:merge(worldStructures[2], worldStructures[2].parts[1], 
+	worldStructures[1]:merge(worldStructures[2], worldStructures[2].parts[1],
 							 worldStructures[1].parts[1], "right")
 	table.remove(worldStructures, 2)
-	worldStructures[2]:merge(worldStructures[3], worldStructures[3].parts[1], 
+	worldStructures[2]:merge(worldStructures[3], worldStructures[3].parts[1],
 							 worldStructures[2].parts[1], "right")
 	table.remove(worldStructures, 3)
-	
+
 	debugmode = true
 end
 

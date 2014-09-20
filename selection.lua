@@ -65,7 +65,7 @@ function Selection:previous()
 		else self.structure = self.structureList[self.index - 2] end
 
 		-- Don't select the same structure twice.
-		if self.index == self.annexeeIndex then
+		if self.index - 2  == self.annexeeIndex then
 			self:previous()
 			return
 		end
@@ -111,7 +111,7 @@ function Selection:next()
 		else self.structure = self.structureList[self.index - 2] end
 
 		-- Don't select the same structure twice.
-		if self.index == self.annexeeIndex then
+		if self.index - 2 == self.annexeeIndex then
 			self:next()
 			return
 		end

@@ -40,10 +40,10 @@ end
 -- connectionPointA is the block that will connect to this this structure
 -- connectionPointB is the block to connect the structure to
 -- side is the side of connectionPointB to add the structure to
-function Structure:merge(structure, connectionPointA, connectionPointB, side)
+function Structure:merge(structure, connectionPointA, orientation, 
+                         connectionPointB, side)
 	local aIndex = structure:findPart(connectionPointA)
 	local bIndex = self:findPart(connectionPointB)
-	local orientation = "right" -- needs to be a function parameter
 	
 	-- cplX, cplY are the coordinates of the connection point from the old 
 	-- structure
@@ -56,13 +56,13 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 					   
 	-- this is to account for which side of the block the structure is being 
 	-- attached to 
-	if side == "top" then
+	if side == 4 then
 		offY = offY - Structure.PARTSIZE
-	elseif side == "bottom" then
+	elseif side == 2 then
 		offY = offY + Structure.PARTSIZE
-	elseif side == "left" then
+	elseif side == 3 then
 		offX = offX - Structure.PARTSIZE
-	elseif side == "right" then
+	elseif side == 1 then
 		offX = offX + Structure.PARTSIZE
 	end
 
@@ -76,16 +76,16 @@ function Structure:merge(structure, connectionPointA, connectionPointB, side)
 	for i=1,#structure.parts do
 		local relX, relY
 		local absX, absY
-		if orientation == "up" then 
+		if orientation == 4 then 
 			relX =  structure.partCoords[1].x - cplX
 			relY =  structure.partCoords[1].y - cplY
-		elseif orientation == "down" then 
+		elseif orientation == 2 then 
 			relX = -structure.partCoords[1].x + cplX
 			relY = -structure.partCoords[1].y + cplY
-		elseif orientation == "left" then 
+		elseif orientation == 3 then 
 			relX =  structure.partCoords[1].y - cplY
 			relY = -structure.partCoords[1].x + cplX
-		elseif orientation == "right" then 
+		elseif orientation == 1 then 
 			relX = -structure.partCoords[1].y + cplY
 			relY =  structure.partCoords[1].x - cplX
 		end

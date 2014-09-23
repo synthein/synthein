@@ -1,5 +1,6 @@
 local Anchor = require("anchor")
 local Block = require("block")
+local Engine = require("engine")
 local Player = require("player")
 local PlayerBlock = require("playerBlock")
 local Structure = require("structure")
@@ -65,8 +66,15 @@ function love.keypressed(key)
 	if debugmode == true then
 		-- Spawn a block
 		if key == "u" then
-			table.insert(worldStructures, Structure.create(Block.create(),
-				world, globalOffsetX + 50, globalOffsetY - 100))
+			table.insert(worldStructures,
+				Structure.create(Block.create(), world,
+				globalOffsetX + 50, globalOffsetY - 100))
+		end
+		-- Spawn an engine
+		if key == "i" then
+			table.insert(worldStructures,
+				Structure.create(Engine.create(), world,
+				globalOffsetX + 112, globalOffsetY))
 		end
 	end
 	--------------------

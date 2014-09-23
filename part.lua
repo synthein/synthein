@@ -21,7 +21,7 @@ function Part:draw(x, y, angle, globalOffsetX, globalOffsetY)
 		self.image,
 		love.graphics.getWidth()/2 - globalOffsetX + x,
 		love.graphics.getHeight()/2 - globalOffsetY + y,
-		angle-math.pi/2, 1, 1, self.width/2, self.height/2)
+		angle, 1, 1, self.width/2, self.height/2)
 end
 
 return Part

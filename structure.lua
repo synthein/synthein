@@ -10,6 +10,8 @@ function Structure.create(part, world, x, y)
 	local self = {}
 	setmetatable(self, Structure)
 
+	self.thrust = 0
+
 	if part.type == "player" then
 		self.body = love.physics.newBody(world, x, y, "dynamic")
 		self.body:setAngularDamping(1)
@@ -105,12 +107,13 @@ function Structure:addPart(part, orientation, x, y)
 	local height = math.abs(y1 - y3)
 	local shape = love.physics.newRectangleShape(x, y, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
+
+	-- Add the part's thrust to the structure if it has any.
+	if part.thrust then self.thrust = self.thrust + part.thrust end
+
 	table.insert(self.parts, part)
 	table.insert(self.partCoords, {x = x, y = y})
 	table.insert(self.fixtures, fixture)
-end
-
-function Structure:addHinge()
 end
 
 -- Check if a part is in this structure.

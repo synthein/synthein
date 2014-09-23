@@ -48,9 +48,15 @@ function love.draw()
 	---- Debug Info ----
 	--------------------
 	if debugmode == true then
-		love.graphics.print(globalOffsetX.."    "..globalOffsetY, 5, 5)
-		love.graphics.print("number of world structures: "..#worldStructures, 5, 20)
-		love.graphics.print("Are we in selection mode?  "..(player1.selection and "yes" or "no"), 5, 35)
+		local debugString = string.format(
+			"%.3f    %.3f\n"..
+			"Number of world structures: %d\n"..
+			"Selection mode: %s\n",
+			globalOffsetX, globalOffsetY,
+			#worldStructures,
+			(player1.selection and player1.selection.mode or "no")
+		)
+		love.graphics.print(debugString, 5, 5)
 	end
 	--------------------
 end

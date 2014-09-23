@@ -19,13 +19,17 @@ function Selection.enable(structureList, ship, anchor)
 	-- 5 = the part within the structure
 	-- 6 = the side of the part within the structure
 	self.mode = 1
-	self.annexee = nil        -- the structure to annex
-	self.annexeeIndex = nil   -- the index of the annexee in structureList
-	self.annexeePart = nil    -- the part in annexee to connect to
-	self.orientation = nil    -- the orientation of the annexee
-	self.structure = nil      -- the structure we are adding to
-	self.structurePart = nil  -- the part in the structure to connect to
-	self.side = nil           -- the side to attach the annexee to
+
+	-- Instance variables of Selection:
+	-- self.annexee, the structure to annex
+	-- self.annexeeIndex, the index of the annexee in structureList
+	-- self.annexeePart, the part in annexee to connect to
+	-- self.annexeePartIndex, the index of the part in annexee
+	-- self.orientation, the orientation of the annexee
+	-- self.structure, the structure we are adding to
+	-- self.structurePart, the part in the structure to connect to
+	-- self.structurePartIndex, the index of the part in the structure
+	-- self.side, the side to attach the annexee to
 
 	if #structureList > 0 then
 		self.index = 1
@@ -49,6 +53,7 @@ function Selection:previous()
 	elseif self.mode == 2 then
 		if self.index < 1 then self.index = #self.annexee.parts end
 		self.annexeePart = self.annexee.parts[self.index]
+		self.annexeePartIndex = self.index
 
 	-- If we are selecting the side of the annexee block...
 	elseif self.mode == 3 then
@@ -74,6 +79,7 @@ function Selection:previous()
 	elseif self.mode == 5 then
 		if self.index < 1 then self.index = #self.structure.parts end
 		self.structurePart = self.structure.parts[self.index]
+		self.structurePartIndex = self.index
 
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
@@ -95,6 +101,7 @@ function Selection:next()
 	elseif self.mode == 2 then
 		if self.index > #self.annexee.parts then self.index = 1 end
 		self.annexeePart = self.annexee.parts[self.index]
+		self.annexeePartIndex = self.index
 
 	-- If we are selecting the side of the annexee block...
 	elseif self.mode == 3 then
@@ -120,6 +127,7 @@ function Selection:next()
 	elseif self.mode == 5 then
 		if self.index > #self.structure.parts then self.index = 1 end
 		self.structurePart = self.structure.parts[self.index]
+		self.structurePartIndex = self.index
 
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
@@ -170,14 +178,11 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 				self.annexee.body:getY(),
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 2 then
+		local x, y = self.annexee:getAbsPartCoords(self.annexeePartIndex)
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX +
-				self.annexee.body:getX() +
-				self.annexee.partCoords[self.index].x,
-			love.graphics.getHeight()/2 - globalOffsetY +
-				self.annexee.body:getY() +
-				self.annexee.partCoords[self.index].y,
+			love.graphics.getWidth()/2 - globalOffsetX + x,
+			love.graphics.getHeight()/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 4 then
 		print(self.index)
@@ -189,14 +194,11 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 				self.structure.body:getY(),
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 5 then
+		local x, y = self.structure:getAbsPartCoords(self.structurePartIndex)
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX +
-				self.structure.body:getX() +
-				self.structure.partCoords[self.index].x,
-			love.graphics.getHeight()/2 - globalOffsetY +
-				self.structure.body:getY() +
-				self.structure.partCoords[self.index].y,
+			love.graphics.getWidth()/2 - globalOffsetX + x,
+			love.graphics.getHeight()/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	end
 end

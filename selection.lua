@@ -1,3 +1,5 @@
+require("util")
+
 Selection = {}
 Selection.__index = Selection
 
@@ -184,6 +186,28 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 			love.graphics.getWidth()/2 - globalOffsetX + x,
 			love.graphics.getHeight()/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
+	elseif self.mode == 3 then
+		local x, y = self.annexee:getAbsPartCoords(self.annexeePartIndex)
+		local offsetX, offsetY -- move the cursor the side that we are selecting
+		if self.index == 1 then
+			offsetX, offsetY =
+				computeAbsCoords(10, 0, self.annexee.body:getAngle())
+		elseif self.index == 2 then
+			offsetX, offsetY =
+				computeAbsCoords(0, 10, self.annexee.body:getAngle())
+		elseif self.index == 3 then
+			offsetX, offsetY =
+				computeAbsCoords(-10, 0, self.annexee.body:getAngle())
+		elseif self.index == 4 then
+			offsetX, offsetY =
+				computeAbsCoords(0, -10, self.annexee.body:getAngle())
+		end
+		love.graphics.draw(
+			self.image,
+			love.graphics.getWidth()/2 - globalOffsetX + x + offsetX,
+			love.graphics.getHeight()/2 - globalOffsetY + y + offsetY,
+			0, 1, 1, self.width/2, self.width/2
+		)
 	elseif self.mode == 4 then
 		print(self.index)
 		love.graphics.draw(
@@ -200,6 +224,28 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 			love.graphics.getWidth()/2 - globalOffsetX + x,
 			love.graphics.getHeight()/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
+	elseif self.mode == 6 then
+		local x, y = self.structure:getAbsPartCoords(self.annexeePartIndex)
+		local offsetX, offsetY -- move the cursor the side that we are selecting
+		if self.index == 1 then
+			offsetX, offsetY =
+				computeAbsCoords(10, 0, self.annexee.body:getAngle())
+		elseif self.index == 2 then
+			offsetX, offsetY =
+				computeAbsCoords(0, 10, self.annexee.body:getAngle())
+		elseif self.index == 3 then
+			offsetX, offsetY =
+				computeAbsCoords(-10, 0, self.annexee.body:getAngle())
+		elseif self.index == 4 then
+			offsetX, offsetY =
+				computeAbsCoords(0, -10, self.annexee.body:getAngle())
+		end
+		love.graphics.draw(
+			self.image,
+			love.graphics.getWidth()/2 - globalOffsetX + x + offsetX,
+			love.graphics.getHeight()/2 - globalOffsetY + y + offsetY,
+			0, 1, 1, self.width/2, self.width/2
+		)
 	end
 end
 

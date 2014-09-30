@@ -33,7 +33,7 @@ function love.update(dt)
 	world:update(dt)
 	globalOffsetX = player1.ship.body:getX()
 	globalOffsetY = player1.ship.body:getY()
-	player1:handleInput(dt)
+	player1:handleInput()
 end
 
 function love.draw()
@@ -47,7 +47,7 @@ function love.draw()
 	--------------------
 	---- Debug Info ----
 	--------------------
-	if debugmode == true then
+	if debugmode then
 		local debugString = string.format(
 			"%.3f    %.3f\n"..
 			"Number of world structures: %d\n"..
@@ -62,7 +62,6 @@ function love.draw()
 end
 
 function love.keypressed(key)
-	if key == "escape" then love.event.push("quit") end
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 	if key == "f12" then debugmode = not debugmode end
 

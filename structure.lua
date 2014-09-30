@@ -29,6 +29,7 @@ function Structure.create(part, world, x, y)
 	self.type = part.type -- type can be "player", "anchor", or "generic"
 	self.parts = {part}
 	self.partCoords = { {x = 0, y = 0} }
+	self.partOrient = {1}
 	self.fixtures = {love.physics.newFixture(self.body, part.shape)}
 
 	return self
@@ -40,17 +41,18 @@ end
 -- Parameters:
 -- annexee is the structure to annex
 -- annexeePart is the block that will connect to this structure
+-- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
--- side is the side of structurePart to add the structure to
-function Structure:annex(anexee, anexeePart, orientation,
+-- side is the side of structurePart to add the annexee to
+function Structure:annex(annexee, annexeePart, orientation,
                          structurePart, side)
-	local aIndex = anexee:findPart(anexeePart)
+	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
 
 	-- cplX, cplY are the coordinates of the connection point from the old
 	-- structure
-	local cplX, cplY = anexee.partCoords[aIndex].x,
-					   anexee.partCoords[aIndex].y
+	local cplX, cplY = annexee.partCoords[aIndex].x,
+					   annexee.partCoords[aIndex].y
 	-- offX, offY are the coordinates of the block that the other structure is
 	-- attaching to
 	local offX, offY = self.partCoords[bIndex].x,
@@ -69,39 +71,51 @@ function Structure:annex(anexee, anexeePart, orientation,
 	end
 
 	-- this is placing the structure in about the right place
-	anexee:fly(self.body:getX() + offX, self.body:getY() + offY,
+	-- todo: remove this once we switch to the integer map system
+	annexee:fly(self.body:getX() + offX, self.body:getY() + offY,
 	              self.body:getAngle())
 
-	-- anexee.partCoords are the coordinates from the old structure
+	-- annexee.partCoords are the coordinates from the old structure
 	-- relX, relY are the new coordinates relative to the offset point
 	-- absX, absY are the new coordinates for the block
-	for i=1,#anexee.parts do
+	for i=1,#annexee.parts do
 		local relX, relY
 		local absX, absY
 		if orientation == 4 then
-			relX =  anexee.partCoords[1].x - cplX
-			relY =  anexee.partCoords[1].y - cplY
+			relX =  annexee.partCoords[1].x - cplX
+			relY =  annexee.partCoords[1].y - cplY
 		elseif orientation == 2 then
-			relX = -anexee.partCoords[1].x + cplX
-			relY = -anexee.partCoords[1].y + cplY
+			relX = -annexee.partCoords[1].x + cplX
+			relY = -annexee.partCoords[1].y + cplY
 		elseif orientation == 3 then
-			relX =  anexee.partCoords[1].y - cplY
-			relY = -anexee.partCoords[1].x + cplX
+			relX =  annexee.partCoords[1].y - cplY
+			relY = -annexee.partCoords[1].x + cplX
 		elseif orientation == 1 then
-			relX = -anexee.partCoords[1].y + cplY
-			relY =  anexee.partCoords[1].x - cplX
+			relX = -annexee.partCoords[1].y + cplY
+			relY =  annexee.partCoords[1].x - cplX
 		end
 		absX = relX + offX
 		absY = relY + offY
-		self:addPart(anexee.parts[1], "up", absX, absY)
-		anexee:removePart(anexee.parts[1])
+
+		-- Find out the orientation of the part based on the orientation of
+		-- both structures.
+		local partOrientation = side - orientation - 1
+		-- Make sure partOrientation is between 1 and 4
+		if partOrientation > 4 then
+			partOrientation = partOrientation - 4
+		elseif partOrientation < 1 then
+			partOrientation = partOrientation + 4
+		end
+
+		self:addPart(annexee.parts[1], absX, absY, partOrientation)
+		annexee:removePart(annexee.parts[1])
 	end
 end
 
 -- Add one part to the structure.
 -- x, y are the coordinates in the structure
 -- orientation is the orientation of the part according to the structure
-function Structure:addPart(part, orientation, x, y)
+function Structure:addPart(part, x, y, orientation)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()
 	local width = math.abs(x1 - x3)
 	local height = math.abs(y1 - y3)
@@ -113,6 +127,7 @@ function Structure:addPart(part, orientation, x, y)
 
 	table.insert(self.parts, part)
 	table.insert(self.partCoords, {x = x, y = y})
+	table.insert(self.partOrient, orientation)
 	table.insert(self.fixtures, fixture)
 end
 
@@ -175,7 +190,9 @@ end
 function Structure:draw()
 	for i, part in ipairs(self.parts) do
 		local x, y = self:getAbsPartCoords(i)
-		part:draw(x, y,	self.body:getAngle(), globalOffsetX, globalOffsetY)
+		part:draw(x, y,
+		          self.body:getAngle() + (self.partOrient[i] - 1) * math.pi/2,
+		          globalOffsetX, globalOffsetY)
 	end
 end
 

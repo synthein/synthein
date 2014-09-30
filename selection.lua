@@ -225,7 +225,7 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 			love.graphics.getHeight()/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 6 then
-		local x, y = self.structure:getAbsPartCoords(self.annexeePartIndex)
+		local x, y = self.structure:getAbsPartCoords(self.structurePartIndex)
 		local offsetX, offsetY -- move the cursor the side that we are selecting
 		if self.index == 1 then
 			offsetX, offsetY =

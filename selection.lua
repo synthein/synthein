@@ -209,7 +209,6 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 			0, 1, 1, self.width/2, self.width/2
 		)
 	elseif self.mode == 4 then
-		print(self.index)
 		love.graphics.draw(
 			self.image,
 			love.graphics.getWidth()/2 - globalOffsetX +

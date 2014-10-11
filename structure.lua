@@ -44,58 +44,43 @@ end
 -- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
 -- side is the side of structurePart to add the annexee to
-function Structure:annex(annexee, annexeePart, orientation,
-                         structurePart, side)
+function Structure:annex(annexee, annexeePart, orientation, structurePart, side)
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
 
-	-- cplX, cplY are the coordinates of the connection point from the old
-	-- structure
-	local cplX, cplY = annexee.partCoords[aIndex].x,
-					   annexee.partCoords[aIndex].y
-	-- offX, offY are the coordinates of the block that the other structure is
-	-- attaching to
-	local offX, offY = self.partCoords[bIndex].x,
-					   self.partCoords[bIndex].y
+	local offsetX, offsetY
 
-	-- this is to account for which side of the block the structure is being
-	-- attached to
-	if side == 4 then
-		offY = offY - Structure.PARTSIZE
+	if side == 1 then
+		offsetX = self.partCoords[bIndex].x + 1
+		offsetY = self.partCoords[bIndex].y
 	elseif side == 2 then
-		offY = offY + Structure.PARTSIZE
+		offsetX = self.partCoords[bIndex].x
+		offsetY = self.partCoords[bIndex].y + 1
 	elseif side == 3 then
-		offX = offX - Structure.PARTSIZE
-	elseif side == 1 then
-		offX = offX + Structure.PARTSIZE
+		offsetX = self.partCoords[bIndex].x - 1
+		offsetY = self.partCoords[bIndex].y
+	elseif side == 4 then
+		offsetX = self.partCoords[bIndex].x
+		offsetY = self.partCoords[bIndex].y - 1
 	end
 
-	-- this is placing the structure in about the right place
-	-- todo: remove this once we switch to the integer map system
-	annexee:fly(self.body:getX() + offX, self.body:getY() + offY,
-	              self.body:getAngle())
-
-	-- annexee.partCoords are the coordinates from the old structure
-	-- relX, relY are the new coordinates relative to the offset point
-	-- absX, absY are the new coordinates for the block
 	for i=1,#annexee.parts do
-		local relX, relY
-		local absX, absY
-		if orientation == 4 then
-			relX =  annexee.partCoords[1].x - cplX
-			relY =  annexee.partCoords[1].y - cplY
+
+		local x, y
+
+		if orientation == 1 then
+			x = offsetX + annexee.partCoords[1].x + annexee.partCoords[aIndex].x
+			y = offsetY + annexee.partCoords[1].y - annexee.partCoords[aIndex].y
 		elseif orientation == 2 then
-			relX = -annexee.partCoords[1].x + cplX
-			relY = -annexee.partCoords[1].y + cplY
+			x = offsetX + annexee.partCoords[1].x + annexee.partCoords[aIndex].x
+			y = offsetY + annexee.partCoords[1].y + annexee.partCoords[aIndex].y
 		elseif orientation == 3 then
-			relX =  annexee.partCoords[1].y - cplY
-			relY = -annexee.partCoords[1].x + cplX
-		elseif orientation == 1 then
-			relX = -annexee.partCoords[1].y + cplY
-			relY =  annexee.partCoords[1].x - cplX
+			x = offsetX + annexee.partCoords[1].x - annexee.partCoords[aIndex].x
+			y = offsetY + annexee.partCoords[1].y + annexee.partCoords[aIndex].y
+		elseif orientation == 4 then
+			x = offsetX + annexee.partCoords[1].x - annexee.partCoords[aIndex].x
+			y = offsetY + annexee.partCoords[1].y - annexee.partCoords[aIndex].y
 		end
-		absX = relX + offX
-		absY = relY + offY
 
 		-- Find out the orientation of the part based on the orientation of
 		-- both structures.
@@ -107,7 +92,7 @@ function Structure:annex(annexee, annexeePart, orientation,
 			partOrientation = partOrientation + 4
 		end
 
-		self:addPart(annexee.parts[1], absX, absY, partOrientation)
+		self:addPart(annexee.parts[1], x, y, partOrientation)
 		annexee:removePart(annexee.parts[1])
 	end
 end
@@ -119,7 +104,8 @@ function Structure:addPart(part, x, y, orientation)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()
 	local width = math.abs(x1 - x3)
 	local height = math.abs(y1 - y3)
-	local shape = love.physics.newRectangleShape(x, y, width, height)
+	local shape = love.physics.newRectangleShape(
+		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
 
 	-- Add the part's thrust to the structure if it has any.
@@ -180,8 +166,8 @@ end
 -- the part and the absolute coordinates and angle of the structure it is in.
 function Structure:getAbsPartCoords(index)
 	local x, y = computeAbsCoords(
-		self.partCoords[index].x,
-		self.partCoords[index].y,
+		self.partCoords[index].x*self.PARTSIZE,
+		self.partCoords[index].y*self.PARTSIZE,
 		self.body:getAngle())
 
 	return self.body:getX() + x, self.body:getY() + y

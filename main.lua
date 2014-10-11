@@ -17,9 +17,9 @@ function love.load()
 
 	-- Create the anchor.
 	anchor = Structure.create(Anchor.create(), world, -10, -10)
-	anchor:addPart(Anchor.create(), 20, 0, 1)
-	anchor:addPart(Anchor.create(), 0, 20, 1)
-	anchor:addPart(Anchor.create(), 20, 20, 1)
+	anchor:addPart(Anchor.create(), 1, 0, 1)
+	anchor:addPart(Anchor.create(), 0, 1, 1)
+	anchor:addPart(Anchor.create(), 1, 1, 1)
 
 	worldStructures = {}
 	for i=1,10 do

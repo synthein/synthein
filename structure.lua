@@ -44,51 +44,65 @@ end
 -- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
 -- side is the side of structurePart to add the annexee to
-function Structure:annex(annexee, annexeePart, orientation, structurePart, side)
+function Structure:annex(annexee, annexeePart, annexeeSide, structurePart, side)
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
 
-	local offsetX, offsetY
+	local structureOffsetX, structureOffsetY
 
 	if side == 1 then
-		offsetX = self.partCoords[bIndex].x + 1
-		offsetY = self.partCoords[bIndex].y
+		structureOffsetX = self.partCoords[bIndex].x
+		structureOffsetY = self.partCoords[bIndex].y - 1
 	elseif side == 2 then
-		offsetX = self.partCoords[bIndex].x
-		offsetY = self.partCoords[bIndex].y + 1
+		structureOffsetX = self.partCoords[bIndex].x + 1
+		structureOffsetY = self.partCoords[bIndex].y
 	elseif side == 3 then
-		offsetX = self.partCoords[bIndex].x - 1
-		offsetY = self.partCoords[bIndex].y
+		structureOffsetX = self.partCoords[bIndex].x
+		structureOffsetY = self.partCoords[bIndex].y + 1
 	elseif side == 4 then
-		offsetX = self.partCoords[bIndex].x
-		offsetY = self.partCoords[bIndex].y - 1
+		structureOffsetX = self.partCoords[bIndex].x - 1
+		structureOffsetY = self.partCoords[bIndex].y
 	end
+
+	local annexeeOrientation = side - annexeeSide
+			while annexeeOrientation < 1 do
+				annexeeOrientation = annexeeOrientation + 4
+			end
+
+			while annexeeOrientation >4 do
+				annexeeOrientation = annexeeOrientation -4
+			end
 
 	for i=1,#annexee.parts do
 
 		local x, y
+		local annexeeOffsetX = annexee.partCoords[1].x -
+							   annexee.partCoords[aIndex].x
+		local annexeeOffsetY = annexee.partCoords[1].y -
+							   annexee.partCoords[aIndex].y
 
-		if orientation == 1 then
-			x = offsetX + annexee.partCoords[1].x + annexee.partCoords[aIndex].x
-			y = offsetY + annexee.partCoords[1].y - annexee.partCoords[aIndex].y
-		elseif orientation == 2 then
-			x = offsetX + annexee.partCoords[1].x + annexee.partCoords[aIndex].x
-			y = offsetY + annexee.partCoords[1].y + annexee.partCoords[aIndex].y
-		elseif orientation == 3 then
-			x = offsetX + annexee.partCoords[1].x - annexee.partCoords[aIndex].x
-			y = offsetY + annexee.partCoords[1].y + annexee.partCoords[aIndex].y
-		elseif orientation == 4 then
-			x = offsetX + annexee.partCoords[1].x - annexee.partCoords[aIndex].x
-			y = offsetY + annexee.partCoords[1].y - annexee.partCoords[aIndex].y
+		if annexeeOrientation == 1 then
+			x = structureOffsetX + annexeeOffsetY
+			y = structureOffsetY - annexeeOffsetX
+		elseif annexeeOrientation == 2 then
+			x = structureOffsetX + annexeeOffsetX
+			y = structureOffsetY + annexeeOffsetY
+		elseif annexeeOrientation == 3 then
+			x = structureOffsetX - annexeeOffsetY
+			y = structureOffsetY + annexeeOffsetX
+		elseif annexeeOrientation == 4 then
+			x = structureOffsetX - annexeeOffsetX
+			y = structureOffsetY - annexeeOffsetY
 		end
 
 		-- Find out the orientation of the part based on the orientation of
 		-- both structures.
-		local partOrientation = side - orientation - 1
+		local partOrientation = annexeeOrientation + annexee.partOrient[1] + 2
 		-- Make sure partOrientation is between 1 and 4
-		if partOrientation > 4 then
+		while partOrientation > 4 do
 			partOrientation = partOrientation - 4
-		elseif partOrientation < 1 then
+		end
+		while partOrientation < 1 do
 			partOrientation = partOrientation + 4
 		end
 
@@ -141,6 +155,7 @@ function Structure:removePart(part)
 		table.remove(self.parts, i)
 		table.remove(self.partCoords, i)
 		table.remove(self.fixtures, i)
+		table.remove(self.partOrient, i)
 	end
 	if #self.parts == 0 then
 		self:destroy()

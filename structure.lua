@@ -44,27 +44,28 @@ end
 -- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
 -- side is the side of structurePart to add the annexee to
-function Structure:annex(annexee, annexeePart, annexeeSide, structurePart, side)
+function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
+	                     structureSide)
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
 
 	local structureOffsetX, structureOffsetY
 
-	if side == 1 then
+	if structureSide == 1 then
 		structureOffsetX = self.partCoords[bIndex].x
 		structureOffsetY = self.partCoords[bIndex].y - 1
-	elseif side == 2 then
+	elseif structureSide == 2 then
 		structureOffsetX = self.partCoords[bIndex].x + 1
 		structureOffsetY = self.partCoords[bIndex].y
-	elseif side == 3 then
+	elseif structureSide == 3 then
 		structureOffsetX = self.partCoords[bIndex].x
 		structureOffsetY = self.partCoords[bIndex].y + 1
-	elseif side == 4 then
+	elseif structureSide == 4 then
 		structureOffsetX = self.partCoords[bIndex].x - 1
 		structureOffsetY = self.partCoords[bIndex].y
 	end
 
-	local annexeeOrientation = side - annexeeSide
+	local annexeeOrientation = structureSide - annexeeSide
 			while annexeeOrientation < 1 do
 				annexeeOrientation = annexeeOrientation + 4
 			end

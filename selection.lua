@@ -35,7 +35,6 @@ function Selection.enable(structureList, ship, anchor)
 
 	if #structureList > 0 then
 		self.index = 1
-		self.annexee = self.structureList[self.index]
 		return self
 	else
 		return nil
@@ -49,27 +48,18 @@ function Selection:previous()
 	-- If we are selecting a structure to annex...
 	if self.mode == 1 then
 		if self.index < 1 then self.index = #self.structureList end
-		self.annexee = self.structureList[self.index]
 
 	-- If we are selecting the block within the annexee...
 	elseif self.mode == 2 then
 		if self.index < 1 then self.index = #self.annexee.parts end
-		self.annexeePart = self.annexee.parts[self.index]
-		self.annexeePartIndex = self.index
 
 	-- If we are selecting the side of the annexee block...
 	elseif self.mode == 3 then
 		if self.index < 1 then self.index = 4 end
-		self.orientation = self.index
 
 	-- If we are selecting the structure to add to...
 	elseif self.mode == 4 then
 		if self.index < 1 then self.index = #self.structureList + 2 end
-
-		-- The player's ship and the anchor are at the beginning of the list.
-		if self.index == 1 then self.structure = self.ship
-		elseif self.index == 2 then self.structure = self.anchor
-		else self.structure = self.structureList[self.index - 2] end
 
 		-- Don't select the same structure twice.
 		if self.index - 2  == self.annexeeIndex then
@@ -80,13 +70,11 @@ function Selection:previous()
 	-- If we are selecting a location to place the structure...
 	elseif self.mode == 5 then
 		if self.index < 1 then self.index = #self.structure.parts end
-		self.structurePart = self.structure.parts[self.index]
-		self.structurePartIndex = self.index
 
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
 		if self.index < 1 then self.index = 4 end
-		self.side = self.index
+
 	end
 end
 
@@ -97,27 +85,18 @@ function Selection:next()
 	-- If we are selecting a structure to add...
 	if self.mode == 1 then
 		if self.index > #self.structureList then self.index = 1	end
-		self.annexee = self.structureList[self.index]
 
 	-- If we are selecting the block within the annexee...
 	elseif self.mode == 2 then
 		if self.index > #self.annexee.parts then self.index = 1 end
-		self.annexeePart = self.annexee.parts[self.index]
-		self.annexeePartIndex = self.index
 
 	-- If we are selecting the side of the annexee block...
 	elseif self.mode == 3 then
 		if self.index > 4 then self.index = 1 end
-		self.orientation = self.index
 
 	-- If we are selecting the structure to add to...
 	elseif self.mode == 4 then
 		if self.index > #self.structureList + 2 then self.index = 1	end
-
-		-- The player's ship and the anchor are at the beginning of the list.
-		if self.index == 1 then self.structure = self.ship
-		elseif self.index == 2 then self.structure = self.anchor
-		else self.structure = self.structureList[self.index - 2] end
 
 		-- Don't select the same structure twice.
 		if self.index - 2 == self.annexeeIndex then
@@ -128,59 +107,76 @@ function Selection:next()
 	-- If we are selecting a location to place the structure...
 	elseif self.mode == 5 then
 		if self.index > #self.structure.parts then self.index = 1 end
-		self.structurePart = self.structure.parts[self.index]
-		self.structurePartIndex = self.index
 
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
 		if self.index > 4 then self.index = 1 end
-		self.side = self.index
 	end
 end
 
 -- Confirm the current selection.
--- Return 1 when we are done with selection self.mode.
+-- Return 1 when we are done with selection mode.
 function Selection:confirm()
 	if self.mode == 1 then
 		self.annexeeIndex = self.index
+		self.annexee = self.structureList[self.index]
+		-- Skip selection mode 2 if there is only one part to choose from.
+		if #self.annexee.parts == 1 then
+			self.index = 1
+			self.annexeePartIndex = self.index
+			self.annexeePart = self.annexee.parts[self.index]
+			self.mode = self.mode + 1
+		end
+	elseif self.mode == 2 then
+		self.annexeePartIndex = self.index
+		self.annexeePart = self.annexee.parts[self.index]
+	elseif self.mode == 3 then
+		self.annexeeSide = self.index
+	elseif self.mode == 4 then
+		-- The player's ship and the anchor are at the beginning of the list.
+		if self.index == 1 then self.structure = self.ship
+		elseif self.index == 2 then self.structure = self.anchor
+		else self.structure = self.structureList[self.index - 2] end
+		-- Skip selection mode 5 if there is only one part to choose from.
+		if #self.structure.parts == 1 then
+			self.index = 1
+			self.structurePartIndex = self.index
+			self.structurePart = self.structure.parts[self.index]
+			self.mode = self.mode + 1
+		end
+	elseif self.mode == 5 then
+		self.structurePartIndex = self.index
+		self.structurePart = self.structure.parts[self.index]
+	elseif self.mode == 6 then
+		self.structureSide = self.index
 	end
 
+	-- What to do next.
+	-- Go to the next mode.
 	if self.mode < 6 then
 		self.mode = self.mode + 1
 		self.index = 0
 		self:next()
+	-- Annex the structure and exit selection mode.
 	elseif self.mode == 6 then
-		self.structure:annex(self.annexee, self.annexeePart, self.orientation,
-		                 self.structurePart, self.side)
+		self.structure:annex(self.annexee, self.annexeePart, self.annexeeSide,
+						self.structurePart, self.structureSide)
 		table.remove(self.structureList, self.annexeeIndex)
 		return 1
-	end
-
-	-- Skip unnecessary selection modes.
-	if self.mode == 2 then
-		if #self.annexee.parts == 1 then
-			self:confirm()
-			return
-		end
-	elseif self.mode == 5 then
-		if #self.structure.parts == 1 then
-			self:confirm()
-			return
-		end
 	end
 end
 
 function Selection:draw(globalOffsetX, globalOffsetY)
 	if self.mode == 1 then
+		local x = self.structureList[self.index].body:getX()
+		local y = self.structureList[self.index].body:getY()
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX +
-				self.annexee.body:getX(),
-			love.graphics.getHeight()/2 - globalOffsetY +
-				self.annexee.body:getY(),
+			love.graphics.getWidth()/2 - globalOffsetX + x,
+			love.graphics.getHeight()/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 2 then
-		local x, y = self.annexee:getAbsPartCoords(self.annexeePartIndex)
+		local x, y = self.annexee:getAbsPartCoords(self.index)
 		love.graphics.draw(
 			self.image,
 			love.graphics.getWidth()/2 - globalOffsetX + x,
@@ -209,15 +205,24 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 			0, 1, 1, self.width/2, self.width/2
 		)
 	elseif self.mode == 4 then
+		local x, y
+		if self.index == 1 then
+			x = self.ship.body:getX()
+			y = self.ship.body:getY()
+		elseif self.index == 2 then
+			x = self.anchor.body:getX()
+			y = self.anchor.body:getY()
+		else
+			x = self.structureList[self.index - 2].body:getX()
+			y = self.structureList[self.index - 2].body:getY()
+		end
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX +
-				self.structure.body:getX(),
-			love.graphics.getHeight()/2 - globalOffsetY +
-				self.structure.body:getY(),
+			love.graphics.getWidth()/2 - globalOffsetX + x,
+			love.graphics.getHeight()/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 5 then
-		local x, y = self.structure:getAbsPartCoords(self.structurePartIndex)
+		local x, y = self.structure:getAbsPartCoords(self.index)
 		love.graphics.draw(
 			self.image,
 			love.graphics.getWidth()/2 - globalOffsetX + x,

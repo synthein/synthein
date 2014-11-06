@@ -66,6 +66,8 @@ function Player:handleInput()
 		else
 			self.selection = nil
 		end
+
+		self.cancelKeyDown = true
 	elseif not love.keyboard.isDown(self.cancel) then
 		self.cancelKeyDown = false
 	end

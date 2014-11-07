@@ -42,7 +42,20 @@ function love.draw()
 		structure:draw(globalOffsetX, globalOffsetY)
 	end
 	player1:draw(globalOffsetX, globalOffsetY)
-	love.graphics.draw(compass, love.graphics.getWidth()-60, love.graphics.getHeight()-60, math.atan2(playerShip.body:getY(), playerShip.body:getX())-math.pi/2, 1, 1, 25, 25)
+	love.graphics.draw(
+		compass,
+		love.graphics.getWidth()-60,
+	    love.graphics.getHeight()-60,
+		math.atan2(playerShip.body:getY(),
+		playerShip.body:getX())-math.pi/2,
+		1, 1, 25, 25)
+
+	if quitting then
+		love.graphics.print(
+			"Do you want to quit?",
+		    love.graphics.getWidth()/2-64,
+			love.graphics.getHeight()/2-30)
+	end
 
 	--------------------
 	---- Debug Info ----

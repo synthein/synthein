@@ -1,6 +1,7 @@
 local Anchor = require("anchor")
 local Block = require("block")
 local Engine = require("engine")
+local Gun = require("gun")
 local Player = require("player")
 local PlayerBlock = require("playerBlock")
 local Structure = require("structure")
@@ -93,6 +94,12 @@ function love.keypressed(key)
 			table.insert(worldStructures,
 				Structure.create(Engine.create(), world,
 				globalOffsetX + 112, globalOffsetY))
+		end
+		-- Spawn a gun
+		if key == "o" then
+			table.insert(worldStructures,
+				Structure.create(Gun.create(), world,
+				globalOffsetX + 50, globalOffsetY + 100))
 		end
 	end
 	--------------------

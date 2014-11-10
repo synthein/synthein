@@ -9,6 +9,7 @@ function Part.create(imageName)
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 	self.shape = nil
+	self.connectableSides = {true, true, true, true}
 	self.thrust = 0
 	self.torque = 0
 	self.type = "generic"

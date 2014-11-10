@@ -9,6 +9,12 @@ function Engine.create(world, x, y)
 	setmetatable(self, Engine)
 
 	self.shape = love.physics.newRectangleShape(self.width, self.height)
+
+	-- Engines can only connect to things on their top side.
+	self.connectableSides[2] = false
+	self.connectableSides[3] = false
+	self.connectableSides[4] = false
+
 	self.thrust = 250
 
 	return self

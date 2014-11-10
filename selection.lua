@@ -57,15 +57,15 @@ function Selection:previous()
 	elseif self.mode == 3 then
 		if self.index < 1 then self.index = 4 end
 
+		-- Don't select a side that isn't connectable to other objects
+		if not self.annexeePart.connectableSides[self.index] then self:previous() end
+
 	-- If we are selecting the structure to add to...
 	elseif self.mode == 4 then
 		if self.index < 1 then self.index = #self.structureList + 2 end
 
 		-- Don't select the same structure twice.
-		if self.index - 2  == self.annexeeIndex then
-			self:previous()
-			return
-		end
+		if self.index - 2  == self.annexeeIndex then self:previous() end
 
 	-- If we are selecting a location to place the structure...
 	elseif self.mode == 5 then
@@ -74,6 +74,9 @@ function Selection:previous()
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
 		if self.index < 1 then self.index = 4 end
+
+		-- Don't select a side that isn't connectable to other objects
+		if not self.structurePart.connectableSides[self.index] then self:previous() end
 
 	end
 end
@@ -94,15 +97,15 @@ function Selection:next()
 	elseif self.mode == 3 then
 		if self.index > 4 then self.index = 1 end
 
+		-- Don't select a side that isn't connectable to other objects
+		if not self.annexeePart.connectableSides[self.index] then self:next() end
+
 	-- If we are selecting the structure to add to...
 	elseif self.mode == 4 then
 		if self.index > #self.structureList + 2 then self.index = 1	end
 
 		-- Don't select the same structure twice.
-		if self.index - 2 == self.annexeeIndex then
-			self:next()
-			return
-		end
+		if self.index - 2 == self.annexeeIndex then	self:next() end
 
 	-- If we are selecting a location to place the structure...
 	elseif self.mode == 5 then
@@ -111,6 +114,10 @@ function Selection:next()
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
 		if self.index > 4 then self.index = 1 end
+
+		-- Don't select a side that isn't connectable to other objects
+		if not self.structurePart.connectableSides[self.index] then self:next() end
+
 	end
 end
 

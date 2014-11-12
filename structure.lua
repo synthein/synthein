@@ -123,9 +123,6 @@ function Structure:addPart(part, x, y, orientation)
 		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
 
-	-- Add the part's thrust to the structure if it has any.
-	if part.thrust then self.thrust = self.thrust + part.thrust end
-
 	table.insert(self.parts, part)
 	table.insert(self.partCoords, {x = x, y = y})
 	table.insert(self.partOrient, orientation)
@@ -199,27 +196,50 @@ function Structure:draw()
 end
 
 function Structure:command(orders)
+	local Fx, Fy -- The x and y components of the force
+	local direction -- The direction of the engines we want to activate
+
 	for i, order in ipairs(orders) do
+		-- Decide the force components based on the direction.
 		if order == "forward" then
-			self.body:applyForce(
-				self.thrust * math.cos(self.body:getAngle() - math.pi/2),
-				self.thrust * math.sin(self.body:getAngle() - math.pi/2))
+			Fx = self.thrust * math.cos(self.body:getAngle() - math.pi/2)
+			Fy = self.thrust * math.sin(self.body:getAngle() - math.pi/2)
+			direction = 1
 		elseif order == "back" then
-			self.body:applyForce(
-				-self.thrust * math.cos(self.body:getAngle() - math.pi/2),
-			    -self.thrust * math.sin(self.body:getAngle() - math.pi/2))
+			Fx = -self.thrust * math.cos(self.body:getAngle() - math.pi/2)
+			Fy = -self.thrust * math.sin(self.body:getAngle() - math.pi/2)
+			direction = 3
 		elseif order == "left" then
 			self.body:applyTorque(-self.torque)
 		elseif order == "right" then
 			self.body:applyTorque(self.torque)
 		elseif order == "strafeLeft" then
-			self.body:applyForce(
-				-self.thrust * math.cos(self.body:getAngle()),
-				-self.thrust * math.sin(self.body:getAngle()))
+			Fx = -self.thrust * math.cos(self.body:getAngle())
+			Fy = -self.thrust * math.sin(self.body:getAngle())
+			direction = 2
 		elseif order == "strafeRight" then
-			self.body:applyForce(
-				self.thrust * math.cos(self.body:getAngle()),
-				self.thrust * math.sin(self.body:getAngle()))
+			Fx = self.thrust * math.cos(self.body:getAngle())
+			Fy = self.thrust * math.sin(self.body:getAngle())
+			direction = 4
+		end
+
+		if order ~= "left" and order ~= "right" then
+			-- Apply the base force from the playerBlock.
+			self.body:applyForce(Fx, Fy, self.body:getX(), self.body:getY())
+
+			-- Apply the force for the engines
+			for i,part in ipairs(self.parts) do
+				-- Choose parts that have thrust and are pointed the right
+				-- direction, but exclude playerBlock, etc.
+				if part.thrust and
+				   self.partOrient[i] == direction and
+				   part.type == "generic" then
+					self.body:applyForce(
+						Fx, Fy,
+						self.body:getX() + self.partCoords[i].x*self.PARTSIZE,
+						self.body:getY() + self.partCoords[i].y*self.PARTSIZE)
+				end
+			end
 		end
 	end
 end

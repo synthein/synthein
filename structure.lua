@@ -18,15 +18,17 @@ function Structure.create(part, world, x, y)
 		self.body:setLinearDamping(0.5)
 		self.thrust = part.thrust
 		self.torque = part.torque
+		self.type = "ship"
 	elseif part.type == "anchor" then
 		self.body = love.physics.newBody(world, x, y, "static")
+		self.type = "anchor"
 	else
 		self.body = love.physics.newBody(world, x, y, "dynamic")
 		self.body:setAngularDamping(0.2)
 		self.body:setLinearDamping(0.1)
+		self.type = "generic"
 	end
 
-	self.type = part.type -- type can be "player", "anchor", or "generic"
 	self.parts = {part}
 	self.partCoords = { {x = 0, y = 0} }
 	self.partOrient = {1}
@@ -186,15 +188,6 @@ function Structure:getAbsPartCoords(index)
 	return self.body:getX() + x, self.body:getY() + y
 end
 
-function Structure:draw()
-	for i, part in ipairs(self.parts) do
-		local x, y = self:getAbsPartCoords(i)
-		part:draw(x, y,
-		          self.body:getAngle() + (self.partOrient[i] - 1) * math.pi/2,
-		          globalOffsetX, globalOffsetY)
-	end
-end
-
 function Structure:command(orders)
 	local Fx, Fy -- The x and y components of the force
 	local direction -- The direction of the engines we want to activate
@@ -209,18 +202,18 @@ function Structure:command(orders)
 			Fx = -self.thrust * math.cos(self.body:getAngle() - math.pi/2)
 			Fy = -self.thrust * math.sin(self.body:getAngle() - math.pi/2)
 			direction = 3
+		elseif order == "strafeLeft" then
+			Fx = -self.thrust * math.cos(self.body:getAngle())
+			Fy = -self.thrust * math.sin(self.body:getAngle())
+			direction = 4
+		elseif order == "strafeRight" then
+			Fx = self.thrust * math.cos(self.body:getAngle())
+			Fy = self.thrust * math.sin(self.body:getAngle())
+			direction = 2
 		elseif order == "left" then
 			self.body:applyTorque(-self.torque)
 		elseif order == "right" then
 			self.body:applyTorque(self.torque)
-		elseif order == "strafeLeft" then
-			Fx = -self.thrust * math.cos(self.body:getAngle())
-			Fy = -self.thrust * math.sin(self.body:getAngle())
-			direction = 2
-		elseif order == "strafeRight" then
-			Fx = self.thrust * math.cos(self.body:getAngle())
-			Fy = self.thrust * math.sin(self.body:getAngle())
-			direction = 4
 		end
 
 		if order ~= "left" and order ~= "right" then
@@ -234,13 +227,31 @@ function Structure:command(orders)
 				if part.thrust and
 				   self.partOrient[i] == direction and
 				   part.type == "generic" then
+					part.isActive = true
 					self.body:applyForce(
 						Fx, Fy,
-						self.body:getX() + self.partCoords[i].x*self.PARTSIZE,
-						self.body:getY() + self.partCoords[i].y*self.PARTSIZE)
+						self.body:getX() + self.partCoords[i].x * self.PARTSIZE,
+						self.body:getY() + self.partCoords[i].y * self.PARTSIZE)
 				end
 			end
 		end
+	end
+end
+
+function Structure:update()
+	for k, part in ipairs(self.parts) do
+		if part.isActive then
+			part.isActive = false
+		end
+	end
+end
+
+function Structure:draw()
+	for i, part in ipairs(self.parts) do
+		local x, y = self:getAbsPartCoords(i)
+		part:draw(x, y,
+				self.body:getAngle() + (self.partOrient[i] - 1) * math.pi/2,
+				globalOffsetX, globalOffsetY)
 	end
 end
 

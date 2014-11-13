@@ -228,10 +228,7 @@ function Structure:command(orders)
 				   self.partOrient[i] == direction and
 				   part.type == "generic" then
 					part.isActive = true
-					self.body:applyForce(
-						Fx, Fy,
-						self.body:getX() + self.partCoords[i].x * self.PARTSIZE,
-						self.body:getY() + self.partCoords[i].y * self.PARTSIZE)
+					self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
 				end
 			end
 		end

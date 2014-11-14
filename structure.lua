@@ -157,24 +157,11 @@ function Structure:removePart(part)
 		table.remove(self.fixtures, i)
 		table.remove(self.partOrient, i)
 	end
+
+	-- Signal to the calling function that the structure is empty.
 	if #self.parts == 0 then
-		self:destroy()
 		return 1
 	end
-end
-
--- todo: this function doesn't actually do anything. maybe remove it.
--- Destroy this structure, removing the physics body from the world
-function Structure:destroy()
-	self.body:destroy()
-	self = nil
-end
-
--- move the structure to a particular location smoothly
-function Structure:fly(x, y, angle)
-	-- right now this is anything but smooth...
-	self.body:setPosition(x, y)
-	self.body:setAngle(angle)
 end
 
 -- Find the absolute coordinates of a part given the x and y offset values of

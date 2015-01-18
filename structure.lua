@@ -176,34 +176,12 @@ function Structure:getAbsPartCoords(index)
 end
 
 function Structure:command(orders)
-	local Fx, Fy -- The x and y components of the force
-	local direction -- The direction of the engines we want to activate
+	-- The x and y components of the force
+	local Fx = self.thrust * math.cos(self.body:getAngle() - math.pi/2)
+	local Fy = self.thrust * math.sin(self.body:getAngle() - math.pi/2)
 
 	for i, order in ipairs(orders) do
-		-- Decide the force components based on the direction.
 		if order == "forward" then
-			Fx = self.thrust * math.cos(self.body:getAngle() - math.pi/2)
-			Fy = self.thrust * math.sin(self.body:getAngle() - math.pi/2)
-			direction = 1
-		elseif order == "back" then
-			Fx = -self.thrust * math.cos(self.body:getAngle() - math.pi/2)
-			Fy = -self.thrust * math.sin(self.body:getAngle() - math.pi/2)
-			direction = 3
-		elseif order == "strafeLeft" then
-			Fx = -self.thrust * math.cos(self.body:getAngle())
-			Fy = -self.thrust * math.sin(self.body:getAngle())
-			direction = 4
-		elseif order == "strafeRight" then
-			Fx = self.thrust * math.cos(self.body:getAngle())
-			Fy = self.thrust * math.sin(self.body:getAngle())
-			direction = 2
-		elseif order == "left" then
-			self.body:applyTorque(-self.torque)
-		elseif order == "right" then
-			self.body:applyTorque(self.torque)
-		end
-
-		if order ~= "left" and order ~= "right" then
 			-- Apply the base force from the playerBlock.
 			self.body:applyForce(Fx, Fy, self.body:getX(), self.body:getY())
 
@@ -212,12 +190,70 @@ function Structure:command(orders)
 				-- Choose parts that have thrust and are pointed the right
 				-- direction, but exclude playerBlock, etc.
 				if part.thrust and
-				   self.partOrient[i] == direction and
-				   part.type == "generic" then
+				part.type == "generic" and
+				self.partOrient[i] == 1 then
 					part.isActive = true
 					self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
 				end
 			end
+		elseif order == "back" then
+			self.body:applyForce(-Fx, -Fy, self.body:getX(), self.body:getY())
+
+			for i,part in ipairs(self.parts) do
+				if part.thrust and
+				part.type == "generic" and
+				self.partOrient[i] == 3 then
+					part.isActive = true
+					self.body:applyForce(-Fx, -Fy, self:getAbsPartCoords(i))
+				end
+			end
+		elseif order == "strafeLeft" then
+			self.body:applyForce(Fy, -Fx, self.body:getX(), self.body:getY())
+
+			for i,part in ipairs(self.parts) do
+				if part.thrust and
+				part.type == "generic" and
+				self.partOrient[i] == 4 then
+					part.isActive = true
+					self.body:applyForce(Fy, -Fx, self:getAbsPartCoords(i))
+				end
+			end
+		elseif order == "strafeRight" then
+			self.body:applyForce(-Fy, Fx, self.body:getX(), self.body:getY())
+
+			for i,part in ipairs(self.parts) do
+				if part.thrust and
+				part.type == "generic" and
+				self.partOrient[i] == 2 then
+					part.isActive = true
+					self.body:applyForce(-Fy, Fx, self:getAbsPartCoords(i))
+				end
+			end
+		elseif order == "left" then
+			self.body:applyTorque(-self.torque)
+
+			for i,part in ipairs(self.parts) do
+				if part.thrust and part.type == "generic" then
+					if self.partOrient[i] == 1 and self.partCoords[i].x > 0 then
+						part.isActive = true
+						self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
+
+					elseif self.partOrient[i] == 2 and self.partCoords[i].y > 0 then
+						part.isActive = true
+						self.body:applyForce(-Fy, Fx, self:getAbsPartCoords(i))
+
+					elseif self.partOrient[i] == 3 and self.partCoords[i].x < 0 then
+						part.isActive = true
+						self.body:applyForce(-Fx, -Fy, self:getAbsPartCoords(i))
+
+					elseif self.partOrient[i] == 4 and self.partCoords[i].y < 0 then
+						part.isActive = true
+						self.body:applyForce(Fy, -Fx, self:getAbsPartCoords(i))
+					end
+				end
+			end
+		elseif order == "right" then
+			self.body:applyTorque(self.torque)
 		end
 	end
 end

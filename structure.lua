@@ -254,6 +254,27 @@ function Structure:command(orders)
 			end
 		elseif order == "right" then
 			self.body:applyTorque(self.torque)
+
+			for i,part in ipairs(self.parts) do
+				if part.thrust and part.type == "generic" then
+					if self.partOrient[i] == 1 and self.partCoords[i].x < 0 then
+						part.isActive = true
+						self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
+
+					elseif self.partOrient[i] == 2 and self.partCoords[i].y < 0 then
+						part.isActive = true
+						self.body:applyForce(-Fy, Fx, self:getAbsPartCoords(i))
+
+					elseif self.partOrient[i] == 3 and self.partCoords[i].x > 0 then
+						part.isActive = true
+						self.body:applyForce(-Fx, -Fy, self:getAbsPartCoords(i))
+
+					elseif self.partOrient[i] == 4 and self.partCoords[i].y > 0 then
+						part.isActive = true
+						self.body:applyForce(Fy, -Fx, self:getAbsPartCoords(i))
+					end
+				end
+			end
 		end
 	end
 end

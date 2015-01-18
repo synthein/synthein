@@ -56,9 +56,7 @@ function Selection:previous()
 	-- If we are selecting the side of the annexee block...
 	elseif self.mode == 3 then
 		if self.index < 1 then self.index = 4 end
-
-		-- Don't select a side that isn't connectable to other objects
-		if not self.annexeePart.connectableSides[self.index] then self:previous() end
+		if not self:isSideConnectable() then self:previous() end
 
 	-- If we are selecting the structure to add to...
 	elseif self.mode == 4 then
@@ -74,9 +72,7 @@ function Selection:previous()
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
 		if self.index < 1 then self.index = 4 end
-
-		-- Don't select a side that isn't connectable to other objects
-		if not self.structurePart.connectableSides[self.index] then self:previous() end
+		if not self:isSideConnectable() then self:previous() end
 
 	end
 end
@@ -96,9 +92,7 @@ function Selection:next()
 	-- If we are selecting the side of the annexee block...
 	elseif self.mode == 3 then
 		if self.index > 4 then self.index = 1 end
-
-		-- Don't select a side that isn't connectable to other objects
-		if not self.annexeePart.connectableSides[self.index] then self:next() end
+		if not self:isSideConnectable() then self:next() end
 
 	-- If we are selecting the structure to add to...
 	elseif self.mode == 4 then
@@ -114,9 +108,7 @@ function Selection:next()
 	-- If we are selecting the side of the block in the structure...
 	elseif self.mode == 6 then
 		if self.index > 4 then self.index = 1 end
-
-		-- Don't select a side that isn't connectable to other objects
-		if not self.structurePart.connectableSides[self.index] then self:next() end
+		if not self:isSideConnectable() then self:next() end
 
 	end
 end
@@ -258,6 +250,31 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 			0, 1, 1, self.width/2, self.width/2
 		)
 	end
+end
+
+function Selection:isSideConnectable()
+	local connectable = false
+	local sideToCheck
+
+	if self.mode == 3 then
+		sideToCheck =
+			self.index - self.annexee.partOrient[self.annexeePartIndex] + 1
+		if sideToCheck == 0 then sideToCheck = 4 end
+
+		if self.annexeePart.connectableSides[sideToCheck] then
+			connectable = true
+		end
+	elseif self.mode == 6 then
+		sideToCheck =
+			self.index - self.structure.partOrient[self.structurePartIndex] + 1
+		if sideToCheck == 0 then sideToCheck = 4 end
+
+		if self.structurePart.connectableSides[sideToCheck] then
+			connectable = true
+		end
+	end
+
+	return connectable
 end
 
 return Selection

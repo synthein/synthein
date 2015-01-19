@@ -258,7 +258,8 @@ function Selection:isSideConnectable()
 
 	if self.mode == 3 then
 		sideToCheck =
-			self.index - self.annexee.partOrient[self.annexeePartIndex] + 1
+			(self.index - self.annexee.partOrient[self.annexeePartIndex]
+			+ 1) % 4
 		if sideToCheck == 0 then sideToCheck = 4 end
 
 		if self.annexeePart.connectableSides[sideToCheck] then
@@ -266,7 +267,8 @@ function Selection:isSideConnectable()
 		end
 	elseif self.mode == 6 then
 		sideToCheck =
-			self.index - self.structure.partOrient[self.structurePartIndex] + 1
+			(self.index - self.structure.partOrient[self.structurePartIndex]
+			+ 1) % 4
 		if sideToCheck == 0 then sideToCheck = 4 end
 
 		if self.structurePart.connectableSides[sideToCheck] then

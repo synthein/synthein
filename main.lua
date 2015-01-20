@@ -22,6 +22,10 @@ function love.update(dt)
 
 	globalOffsetX = player1.ship.body:getX()
 	globalOffsetY = player1.ship.body:getY()
+
+	if debugmode == true then
+		Debug.mouse(globalOffsetX, globalOffsetY)
+	end
 end
 
 function love.draw()
@@ -63,12 +67,6 @@ function love.draw()
 		love.graphics.print(debugString, 5, 5)
 	end
 	--------------------
-end
-
-function love.mousepressed(x, y, button)
-	if debugmode == true then
-		Debug.mouse(x, y, button)
-	end
 end
 
 function love.keypressed(key)

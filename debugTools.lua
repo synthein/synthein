@@ -26,8 +26,34 @@ function Debug.keyboard(key, globalOffsetX, globalOffsetY)
 	end
 end
 
-function Debug.mouse(button)
-	print("not yet implemented")
+function Debug.mouse(globalOffsetX, globalOffsetY)
+	if love.mouse.isDown("m") then
+		mouseX, mouseY = love.mouse.getPosition()
+
+		if not Debug.mouseJoint then
+			for i, structure in ipairs(worldStructures) do
+				for j, part in ipairs(structure.parts) do
+					partX, partY = structure:getAbsPartCoords(j)
+
+					if (mouseX - SCREEN_WIDTH/2 + globalOffsetX) < (partX + part.width/2) and
+					   (mouseX - SCREEN_WIDTH/2 + globalOffsetX) > (partX - part.width/2) and
+					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) < (partY + part.height/2) and
+					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) > (partY - part.height/2) then
+						Debug.mouseJoint = love.physics.newMouseJoint(
+							structure.body, mouseX - SCREEN_WIDTH/2 + globalOffsetX, mouseY - SCREEN_HEIGHT/2 + globalOffsetY)
+						break
+					end
+				end
+				if Debug.mouseJoint then break end
+			end
+		else
+			Debug.mouseJoint:setTarget(mouseX - SCREEN_WIDTH/2 + globalOffsetX, mouseY - SCREEN_HEIGHT/2 + globalOffsetY)
+		end
+
+	elseif Debug.mouseJoint then
+		Debug.mouseJoint:destroy()
+		Debug.mouseJoint = nil
+	end
 end
 
 return Debug

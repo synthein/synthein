@@ -17,8 +17,8 @@ function PlayerBlock.create()
 end
 
 function PlayerBlock:draw(x, y, angle)
-	love.graphics.draw(self.image, love.graphics.getWidth()/2,
-	                   love.graphics.getHeight()/2, angle,
+	love.graphics.draw(self.image, SCREEN_WIDTH/2,
+	                   SCREEN_HEIGHT/2, angle,
 					   1, 1, self.width/2, self.height/2)
 end
 

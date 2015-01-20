@@ -32,8 +32,8 @@ function Engine:draw(x, y, angle, globalOffsetX, globalOffsetY)
 
 	love.graphics.draw(
 		image,
-		love.graphics.getWidth()/2 - globalOffsetX + x,
-		love.graphics.getHeight()/2 - globalOffsetY + y,
+		SCREEN_WIDTH/2 - globalOffsetX + x,
+		SCREEN_HEIGHT/2 - globalOffsetY + y,
 		angle, 1, 1, self.width/2, self.height/2)
 end
 

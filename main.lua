@@ -1,44 +1,33 @@
-local Anchor = require("anchor")
-local Block = require("block")
-local Engine = require("engine")
-local Gun = require("gun")
+local Debug = require("debugTools")
+local InitWorld = require("initWorld")
 local Player = require("player")
-local PlayerBlock = require("playerBlock")
 local Structure = require("structure")
 
+local globalOffsetX
+local globalOffsetY
+
 function love.load()
-	love.physics.setMeter(20) -- there are 20 pixels per meter
-	world = love.physics.newWorld()
-
+	SCREEN_WIDTH = love.graphics.getWidth()
+	SCREEN_HEIGHT = love.graphics.getHeight()
 	compass = love.graphics.newImage("res/images/compass.png")
-
-	-- Create the player.
-	playerShip = Structure.create(PlayerBlock.create(), world, 0, -100)
-	player1 = Player.create("player1", playerShip)
-
-	-- Create the anchor.
-	anchor = Structure.create(Anchor.create(), world, -10, -10)
-	anchor:addPart(Anchor.create(), 1, 0, 1)
-	anchor:addPart(Anchor.create(), 0, 1, 1)
-	anchor:addPart(Anchor.create(), 1, 1, 1)
-
-	worldStructures = {}
-	for i=1,10 do
-		worldStructures[i] = Structure.create(Block.create(), world, i*35, i*35)
-	end
-
 	debugmode = true
+
+	world, worldStructures, anchor, player1, playerShip = InitWorld.init()
 end
 
 function love.update(dt)
 	world:update(dt)
-	globalOffsetX = player1.ship.body:getX()
-	globalOffsetY = player1.ship.body:getY()
 	playerShip:update()
 	player1:handleInput()
+
+	globalOffsetX = player1.ship.body:getX()
+	globalOffsetY = player1.ship.body:getY()
 end
 
 function love.draw()
+	SCREEN_WIDTH = love.graphics.getWidth()
+	SCREEN_HEIGHT = love.graphics.getHeight()
+
 	anchor:draw(globalOffsetX, globalOffsetY)
 	for i, structure in ipairs(worldStructures) do
 		structure:draw(globalOffsetX, globalOffsetY)
@@ -46,8 +35,8 @@ function love.draw()
 	player1:draw(globalOffsetX, globalOffsetY)
 	love.graphics.draw(
 		compass,
-		love.graphics.getWidth()-60,
-	    love.graphics.getHeight()-60,
+		SCREEN_WIDTH-60,
+	    SCREEN_HEIGHT-60,
 		math.atan2(playerShip.body:getY(),
 		playerShip.body:getX())-math.pi/2,
 		1, 1, 25, 25)
@@ -55,8 +44,8 @@ function love.draw()
 	if quitting then
 		love.graphics.print(
 			"Do you want to quit?",
-		    love.graphics.getWidth()/2-64,
-			love.graphics.getHeight()/2-30)
+		    SCREEN_WIDTH/2-64,
+			SCREEN_HEIGHT/2-30)
 	end
 
 	--------------------
@@ -76,32 +65,17 @@ function love.draw()
 	--------------------
 end
 
+function love.mousepressed(x, y, button)
+	if debugmode == true then
+		Debug.mouse(x, y, button)
+	end
+end
+
 function love.keypressed(key)
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 	if key == "f12" then debugmode = not debugmode end
 
-	--------------------
-	-- Debug Commands --
-	--------------------
 	if debugmode == true then
-		-- Spawn a block
-		if key == "u" then
-			table.insert(worldStructures,
-				Structure.create(Block.create(), world,
-				globalOffsetX + 50, globalOffsetY - 100))
-		end
-		-- Spawn an engine
-		if key == "i" then
-			table.insert(worldStructures,
-				Structure.create(Engine.create(), world,
-				globalOffsetX + 112, globalOffsetY))
-		end
-		-- Spawn a gun
-		if key == "o" then
-			table.insert(worldStructures,
-				Structure.create(Gun.create(), world,
-				globalOffsetX + 50, globalOffsetY + 100))
-		end
+		Debug.keyboard(key, globalOffsetX, globalOffsetY)
 	end
-	--------------------
 end

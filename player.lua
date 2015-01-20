@@ -1,6 +1,6 @@
 local Selection = require("selection")
 
-Player = {}
+local Player = {}
 Player.__index = Player
 
 function Player.create(type, structure)

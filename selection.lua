@@ -1,6 +1,6 @@
-require("util")
+local Util = require("util")
 
-Selection = {}
+local Selection = {}
 Selection.__index = Selection
 
 function Selection.enable(structureList, ship, anchor)
@@ -171,15 +171,15 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 		local y = self.structureList[self.index].body:getY()
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX + x,
-			love.graphics.getHeight()/2 - globalOffsetY + y,
+			SCREEN_WIDTH/2 - globalOffsetX + x,
+			SCREEN_HEIGHT/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 2 then
 		local x, y = self.annexee:getAbsPartCoords(self.index)
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX + x,
-			love.graphics.getHeight()/2 - globalOffsetY + y,
+			SCREEN_WIDTH/2 - globalOffsetX + x,
+			SCREEN_HEIGHT/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 3 then
 		local x, y = self.annexee:getAbsPartCoords(self.annexeePartIndex)
@@ -199,8 +199,8 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 		end
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX + x + offsetX,
-			love.graphics.getHeight()/2 - globalOffsetY + y + offsetY,
+			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
+			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
 			0, 1, 1, self.width/2, self.width/2
 		)
 	elseif self.mode == 4 then
@@ -217,15 +217,15 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 		end
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX + x,
-			love.graphics.getHeight()/2 - globalOffsetY + y,
+			SCREEN_WIDTH/2 - globalOffsetX + x,
+			SCREEN_HEIGHT/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 5 then
 		local x, y = self.structure:getAbsPartCoords(self.index)
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX + x,
-			love.graphics.getHeight()/2 - globalOffsetY + y,
+			SCREEN_WIDTH/2 - globalOffsetX + x,
+			SCREEN_HEIGHT/2 - globalOffsetY + y,
 			0, 1, 1, self.width/2, self.width/2)
 	elseif self.mode == 6 then
 		local x, y = self.structure:getAbsPartCoords(self.structurePartIndex)
@@ -245,8 +245,8 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 		end
 		love.graphics.draw(
 			self.image,
-			love.graphics.getWidth()/2 - globalOffsetX + x + offsetX,
-			love.graphics.getHeight()/2 - globalOffsetY + y + offsetY,
+			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
+			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
 			0, 1, 1, self.width/2, self.width/2
 		)
 	end

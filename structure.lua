@@ -1,5 +1,5 @@
 local Part = require("part")
-require("util")
+local Util = require("util")
 
 local Structure = {}
 Structure.__index = Structure
@@ -167,7 +167,7 @@ end
 -- Find the absolute coordinates of a part given the x and y offset values of
 -- the part and the absolute coordinates and angle of the structure it is in.
 function Structure:getAbsPartCoords(index)
-	local x, y = computeAbsCoords(
+	local x, y = Util.computeAbsCoords(
 		self.partCoords[index].x*self.PARTSIZE,
 		self.partCoords[index].y*self.PARTSIZE,
 		self.body:getAngle())
@@ -287,7 +287,7 @@ function Structure:update()
 	end
 end
 
-function Structure:draw()
+function Structure:draw(globalOffsetX, globalOffsetY)
 	for i, part in ipairs(self.parts) do
 		local x, y = self:getAbsPartCoords(i)
 		part:draw(x, y,

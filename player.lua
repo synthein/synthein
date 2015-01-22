@@ -134,7 +134,7 @@ function Player:handleInput()
 end
 
 function Player:draw(globalOffsetX, globalOffsetY)
-	self.ship:draw()
+	self.ship:draw(globalOffsetX, globalOffsetY)
 	if self.selection then
 		self.selection:draw(globalOffsetX, globalOffsetY)
 	end

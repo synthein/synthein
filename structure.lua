@@ -76,13 +76,14 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 				annexeeOrientation = annexeeOrientation -4
 			end
 
+			local annexeeX = annexee.partCoords[aIndex].x
+			local annexeeY = annexee.partCoords[aIndex].y
+
 	for i=1,#annexee.parts do
 
 		local x, y
-		local annexeeOffsetX = annexee.partCoords[1].x -
-							   annexee.partCoords[aIndex].x
-		local annexeeOffsetY = annexee.partCoords[1].y -
-							   annexee.partCoords[aIndex].y
+		local annexeeOffsetX = annexee.partCoords[1].x - annexeeX
+		local annexeeOffsetY = annexee.partCoords[1].y - annexeeY
 
 		if annexeeOrientation == 1 then
 			x = structureOffsetX + annexeeOffsetY

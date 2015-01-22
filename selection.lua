@@ -186,16 +186,16 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 		local offsetX, offsetY -- move the cursor the side that we are selecting
 		if self.index == 1 then
 			offsetX, offsetY =
-				computeAbsCoords(0, -10, self.annexee.body:getAngle())
+				Util.computeAbsCoords(0, -10, self.annexee.body:getAngle())
 		elseif self.index == 2 then
 			offsetX, offsetY =
-				computeAbsCoords(10, 0, self.annexee.body:getAngle())
+				Util.computeAbsCoords(10, 0, self.annexee.body:getAngle())
 		elseif self.index == 3 then
 			offsetX, offsetY =
-				computeAbsCoords(0, 10, self.annexee.body:getAngle())
+				Util.computeAbsCoords(0, 10, self.annexee.body:getAngle())
 		elseif self.index == 4 then
 			offsetX, offsetY =
-				computeAbsCoords(-10, 0, self.annexee.body:getAngle())
+				Util.computeAbsCoords(-10, 0, self.annexee.body:getAngle())
 		end
 		love.graphics.draw(
 			self.image,
@@ -232,16 +232,16 @@ function Selection:draw(globalOffsetX, globalOffsetY)
 		local offsetX, offsetY -- move the cursor the side that we are selecting
 		if self.index == 1 then
 			offsetX, offsetY =
-				computeAbsCoords(0, -10, self.structure.body:getAngle())
+				Util.computeAbsCoords(0, -10, self.structure.body:getAngle())
 		elseif self.index == 2 then
 			offsetX, offsetY =
-				computeAbsCoords(10, 0, self.structure.body:getAngle())
+				Util.computeAbsCoords(10, 0, self.structure.body:getAngle())
 		elseif self.index == 3 then
 			offsetX, offsetY =
-				computeAbsCoords(0, 10, self.structure.body:getAngle())
+				Util.computeAbsCoords(0, 10, self.structure.body:getAngle())
 		elseif self.index == 4 then
 			offsetX, offsetY =
-				computeAbsCoords(-10, 0, self.structure.body:getAngle())
+				Util.computeAbsCoords(-10, 0, self.structure.body:getAngle())
 		end
 		love.graphics.draw(
 			self.image,

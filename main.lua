@@ -3,8 +3,9 @@ local InitWorld = require("initWorld")
 local Player = require("player")
 local Structure = require("structure")
 
-local globalOffsetX
-local globalOffsetY
+-- These are global for now.
+--local globalOffsetX
+--local globalOffsetY
 
 function love.load()
 	SCREEN_WIDTH = love.graphics.getWidth()
@@ -18,11 +19,12 @@ end
 function love.update(dt)
 	world:update(dt)
 	playerShip:update()
-	player1:handleInput()
+	player1:handleInput(globalOffsetX, globalOffsetY)
 
 	globalOffsetX = player1.ship.body:getX()
 	globalOffsetY = player1.ship.body:getY()
 
+	-- TODO: move this to love.mousepressed()
 	if debugmode == true then
 		Debug.mouse(globalOffsetX, globalOffsetY)
 	end
@@ -77,3 +79,8 @@ function love.keypressed(key)
 		Debug.keyboard(key, globalOffsetX, globalOffsetY)
 	end
 end
+
+function love.mousepressed(x, y, button)
+	player1:mousepressed(x, y, button)
+end
+

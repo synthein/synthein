@@ -1,3 +1,5 @@
+local Selection = require("selection")
+
 local Player = {}
 Player.__index = Player
 
@@ -22,6 +24,7 @@ function Player.create(type, structure)
 	elseif type == "AI" then
 	end
 
+	self.selection = nil
 	self.cancelKeyDown = false
 	self.selectionKeyDown = false
 	self.isBuilding = false
@@ -48,6 +51,14 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 			end
 
 		elseif love.keyboard.isDown(self.cancel) then
+			-- If selection mode is not enabled, quit the game when the cancel key
+			-- is pressed.
+			if not self.selection then
+				quitting = true
+				-- If selection mode is enabled, just leave selection mode.
+			else
+				self.selection = nil
+			end
 			self.cancelKeyDown = true
 		end
 
@@ -82,49 +93,49 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 	self.ship:command(orders)
 
 	-----------------------
-	-- isBuilding commands --
+	-- Building commands --
 	-----------------------
 
-	-- Deprecated keyboard isBuilding commands
---	-- If the one of the selection keys is already down, don't react to them.
---	if not self.selectionKeyDown then
---
---		if love.keyboard.isDown(self.selectPrevious) or
---		   love.keyboard.isDown(self.selectNext) or
---		   love.keyboard.isDown(self.confirm) then
---			-- If select mode is not enabled, enable it.
---			if not self.selection then
---				self.selection = Selection.enable(worldStructures, self.ship,
---				                                  anchor)
---
---			-- If selection mode is enabled, then we can send commands to
---			-- self.selection.
---			else
---				if love.keyboard.isDown(self.selectPrevious) then
---					self.selection:previous()
---				end
---
---				if love.keyboard.isDown(self.selectNext) then
---					self.selection:next()
---				end
---
---				if love.keyboard.isDown(self.confirm) then
---					if self.selection:confirm() == 1 then
---						-- Disable selection mode when we are done.
---						self.selection = nil
---					end
---				end
---			end
---			-- Lock out the selection keys until they are released.
---			self.selectionKeyDown = true
---		end
---
---	-- Once the selection keys are released, start listening for them again.
---	elseif not love.keyboard.isDown(self.selectPrevious) and
---	       not love.keyboard.isDown(self.selectNext) and
---	       not love.keyboard.isDown(self.confirm) then
---		self.selectionKeyDown = false
---	end
+	--	TODO: remove these
+	-- If the one of the selection keys is already down, don't react to them.
+	if not self.selectionKeyDown then
+
+		if love.keyboard.isDown(self.selectPrevious) or
+		   love.keyboard.isDown(self.selectNext) or
+		   love.keyboard.isDown(self.confirm) then
+			-- If select mode is not enabled, enable it.
+			if not self.selection then
+				self.selection = Selection.enable(worldStructures, self.ship,
+				                                  anchor)
+
+			-- If selection mode is enabled, then we can send commands to
+			-- self.selection.
+			else
+				if love.keyboard.isDown(self.selectPrevious) then
+					self.selection:previous()
+				end
+
+				if love.keyboard.isDown(self.selectNext) then
+					self.selection:next()
+				end
+
+				if love.keyboard.isDown(self.confirm) then
+					if self.selection:confirm() == 1 then
+						-- Disable selection mode when we are done.
+						self.selection = nil
+					end
+				end
+			end
+			-- Lock out the selection keys until they are released.
+			self.selectionKeyDown = true
+		end
+
+	-- Once the selection keys are released, start listening for them again.
+	elseif not love.keyboard.isDown(self.selectPrevious) and
+	       not love.keyboard.isDown(self.selectNext) and
+	       not love.keyboard.isDown(self.confirm) then
+		self.selectionKeyDown = false
+	end
 end
 
 function Player:mousepressed(mouseX, mouseY, button)

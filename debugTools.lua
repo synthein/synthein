@@ -33,7 +33,7 @@ function Debug.mouse(globalOffsetX, globalOffsetY)
 		if not Debug.mouseJoint then
 			for i, structure in ipairs(worldStructures) do
 				for j, part in ipairs(structure.parts) do
-					partX, partY = structure:getAbsPartCoords(j)
+					local partX, partY = structure:getAbsPartCoords(j)
 
 					if (mouseX - SCREEN_WIDTH/2 + globalOffsetX) < (partX + part.width/2) and
 					   (mouseX - SCREEN_WIDTH/2 + globalOffsetX) > (partX - part.width/2) and

@@ -143,6 +143,7 @@ function Player:mousepressed(mouseX, mouseY, button)
 		if not self.isBuilding then
 			self.isBuilding = true
 
+			-- We are picking an annexee.
 			-- TODO: put this in a separate function
 			for i, structure in ipairs(worldStructures) do
 				for j, part in ipairs(structure.parts) do
@@ -165,6 +166,7 @@ function Player:mousepressed(mouseX, mouseY, button)
 			end
 
 		else
+			-- We are picking the structure that will annex the part.
 			-- TODO: put this in a separate function
 			for i, structure in ipairs(worldStructures) do
 				for j, part in ipairs(structure.parts) do
@@ -181,12 +183,12 @@ function Player:mousepressed(mouseX, mouseY, button)
 				end
 				if self.structure then break end
 			end
-			if self.structure and self.annexee then
+			if self.structure and self.annexee and self.structure ~= self.annexee then
 				self.structure:annex(self.annexee, self.annexeePart, 1,
 									 self.structurePart, 1)
 				table.remove(worldStructures, self.annexeeIndex)
-				self.structure, self.annexee = nil
 			end
+			self.structure, self.annexee = nil
 			self.isBuilding = false
 		end
 	end

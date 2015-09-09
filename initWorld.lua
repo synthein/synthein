@@ -1,7 +1,7 @@
 local Anchor = require("anchor")
 local Block = require("block")
 local Player = require("player")
-local PlayerBlock = require("playerBlock")
+local ControlBlock = require("controlBlock")
 local Structure = require("structure")
 
 local InitWorld = {}
@@ -22,7 +22,7 @@ function InitWorld.init()
 	anchor:addPart(Anchor.create(), 1, 1, 1)
 
 	-- Create the player.
-	local playerShip = Structure.create(PlayerBlock.create(), world, 0, -100)
+	local playerShip = Structure.create(ControlBlock.create(), world, 0, -100)
 	local player1 = Player.create("player1", playerShip)
 
 	return world, worldStructures, anchor, player1, playerShip

@@ -183,13 +183,13 @@ function Structure:command(orders)
 
 	for i, order in ipairs(orders) do
 		if order == "forward" then
-			-- Apply the base force from the playerBlock.
+			-- Apply the base force from the controlBlock.
 			self.body:applyForce(Fx, Fy, self.body:getX(), self.body:getY())
 
 			-- Apply the force for the engines
 			for i,part in ipairs(self.parts) do
 				-- Choose parts that have thrust and are pointed the right
-				-- direction, but exclude playerBlock, etc.
+				-- direction, but exclude controlBlock, etc.
 				if part.thrust and
 				part.type == "generic" and
 				self.partOrient[i] == 1 then

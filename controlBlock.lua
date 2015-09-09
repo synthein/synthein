@@ -1,12 +1,12 @@
 local Part = require("part")
 
-local PlayerBlock = {}
-PlayerBlock.__index = PlayerBlock
-setmetatable(PlayerBlock, Part)
+local ControlBlock = {}
+ControlBlock.__index = ControlBlock
+setmetatable(ControlBlock, Part)
 
-function PlayerBlock.create()
+function ControlBlock.create()
 	local self = Part.create("player")
-	setmetatable(self, PlayerBlock)
+	setmetatable(self, ControlBlock)
 
 	self.shape = love.physics.newRectangleShape(self.width, self.height)
 	self.thrust = 150
@@ -16,10 +16,10 @@ function PlayerBlock.create()
 	return self
 end
 
-function PlayerBlock:draw(x, y, angle)
+function ControlBlock:draw(x, y, angle)
 	love.graphics.draw(self.image, SCREEN_WIDTH/2,
 	                   SCREEN_HEIGHT/2, angle,
 					   1, 1, self.width/2, self.height/2)
 end
 
-return PlayerBlock
+return ControlBlock

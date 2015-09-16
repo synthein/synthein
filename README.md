@@ -22,3 +22,7 @@ Next, on **UNIX-like** systems, run love from the command line with the director
 On **Windows**, drag the game directory onto ```love.exe```.
 
 For more information, see the [LÖVE wiki guide](https://www.love2d.org/wiki/Getting_Started#Running_Games) on running LÖVE games.
+
+## License
+
+The code and assets of Synthein are distributed under the terms of the GPL v3, included in the LICENSE file.

@@ -61,10 +61,10 @@ function love.draw()
 		local debugString = string.format(
 			"%.3f    %.3f\n"..
 			"Number of world structures: %d\n"..
-			"Selection mode: %s\n",
+			"Build mode: %s\n",
 			globalOffsetX, globalOffsetY,
 			#worldStructures,
-			(player1.selection and player1.selection.mode or "no")
+			(player1.isBuilding and "yes" or "no")
 		)
 		love.graphics.print(debugString, 5, 5)
 	end

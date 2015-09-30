@@ -1,4 +1,5 @@
 local Selection = require("selection")
+local Util = require("util")
 
 local Player = {}
 Player.__index = Player
@@ -96,7 +97,7 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 	-- Building commands --
 	-----------------------
 
-	--	TODO: remove these
+	--	TODO: remove these (use mouse controls instead)
 	-- If the one of the selection keys is already down, don't react to them.
 	if not self.selectionKeyDown then
 
@@ -139,6 +140,10 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 end
 
 function Player:mousepressed(mouseX, mouseY, button)
+	-- Convert the mouseX and Y coordinates to coordinates in the world.
+	mouseWorldX = mouseX - SCREEN_WIDTH/2 + globalOffsetX
+	mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
+
 	if button == "l" then
 		if not self.isBuilding then
 			self.isBuilding = true
@@ -149,10 +154,8 @@ function Player:mousepressed(mouseX, mouseY, button)
 				for j, part in ipairs(structure.parts) do
 					local partX, partY = structure:getAbsPartCoords(j)
 
-					if (mouseX - SCREEN_WIDTH/2 + globalOffsetX) < (partX + part.width/2) and
-					   (mouseX - SCREEN_WIDTH/2 + globalOffsetX) > (partX - part.width/2) and
-					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) < (partY + part.height/2) and
-					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) > (partY - part.height/2) then
+					if Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY) <
+					   Util.vectorMagnitude(part.width/2, 0) then
 						self.annexee = structure
 						self.annexeePart = part
 						self.annexeeIndex = i
@@ -172,10 +175,8 @@ function Player:mousepressed(mouseX, mouseY, button)
 				for j, part in ipairs(structure.parts) do
 					local partX, partY = structure:getAbsPartCoords(j)
 
-					if (mouseX - SCREEN_WIDTH/2 + globalOffsetX) < (partX + part.width/2) and
-					   (mouseX - SCREEN_WIDTH/2 + globalOffsetX) > (partX - part.width/2) and
-					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) < (partY + part.height/2) and
-					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) > (partY - part.height/2) then
+					if Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY) <
+					   Util.vectorMagnitude(part.width/2, part.height/2) then
 						self.structure = structure
 						self.structurePart = part
 						break

@@ -11,7 +11,7 @@ Planned features:
 
 ![screenshot](http://i.imgur.com/MC4t7gE.png)
 
-## Installing
+## Running
 
 Synthein is developed using the LÖVE framework. To run the game:
 

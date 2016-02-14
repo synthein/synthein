@@ -27,7 +27,7 @@ function Debug.keyboard(key, globalOffsetX, globalOffsetY)
 end
 
 function Debug.mouse(globalOffsetX, globalOffsetY)
-	if love.mouse.isDown("m") then
+	if love.mouse.isDown(3) then
 		mouseX, mouseY = love.mouse.getPosition()
 
 		if not Debug.mouseJoint then

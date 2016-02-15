@@ -37,6 +37,12 @@ function Structure.create(part, world, x, y)
 	return self
 end
 
+-- The table set to nill.
+
+function Structure:destroy()
+	
+	end
+
 -- Annex another structure into this one.
 -- ** After calling this method, the annexed structure will be destroyed and
 -- should be removed from any tables it is referenced in.
@@ -50,7 +56,6 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	                     structureSide)
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
-
 	local structureOffsetX, structureOffsetY
 
 	if structureSide == 1 then
@@ -115,6 +120,10 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	end
 end
 
+function Structure:removeSection(part)	
+
+end
+
 -- Add one part to the structure.
 -- x, y are the coordinates in the structure
 -- orientation is the orientation of the part according to the structure
@@ -173,7 +182,8 @@ function Structure:getAbsPartCoords(index)
 		self.partCoords[index].y*self.PARTSIZE,
 		self.body:getAngle())
 
-	return self.body:getX() + x, self.body:getY() + y
+	return self.body:getX() + x, self.body:getY() + y, 
+		   self.body:getAngle() % (2*math.pi)
 end
 
 function Structure:command(orders)
@@ -183,13 +193,13 @@ function Structure:command(orders)
 
 	for i, order in ipairs(orders) do
 		if order == "forward" then
-			-- Apply the base force from the controlBlock.
+			-- Apply the base force from the playerBlock.
 			self.body:applyForce(Fx, Fy, self.body:getX(), self.body:getY())
 
 			-- Apply the force for the engines
 			for i,part in ipairs(self.parts) do
 				-- Choose parts that have thrust and are pointed the right
-				-- direction, but exclude controlBlock, etc.
+				-- direction, but exclude playerBlock, etc.
 				if part.thrust and
 				part.type == "generic" and
 				self.partOrient[i] == 1 then

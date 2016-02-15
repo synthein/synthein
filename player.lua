@@ -11,14 +11,15 @@ function Player.create(type, structure)
 	self.ship = structure
 
 	if type == "player1" then
-		self.forward = "up"
-		self.back = "down"
-		self.left = "left"
-		self.right = "right"
-		self.strafeLeft = "a"
-		self.strafeRight = "s"
-		self.selectPrevious = "d"
+		self.forward = "w"
+		self.back = "s"
+		self.left = "a"
+		self.right = "d"
+		self.strafeLeft = "q"
+		self.strafeRight = "e"
+		self.selectPrevious = "v"
 		self.selectNext = "c"
+		self.removePart = "x"
 		self.confirm = "return"
 		self.cancel = "escape"
 	elseif type =="player2" then
@@ -29,6 +30,7 @@ function Player.create(type, structure)
 	self.cancelKeyDown = false
 	self.selectionKeyDown = false
 	self.isBuilding = false
+	self.isRemoving = false
 	self.partX = nil
 	self.partY = nil
 
@@ -103,7 +105,8 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 
 		if love.keyboard.isDown(self.selectPrevious) or
 		   love.keyboard.isDown(self.selectNext) or
-		   love.keyboard.isDown(self.confirm) then
+		   love.keyboard.isDown(self.confirm) or
+		   love.keyboard.isDown(self.removePart) then
 			-- If select mode is not enabled, enable it.
 			if not self.selection then
 				self.selection = Selection.enable(worldStructures, self.ship,
@@ -129,6 +132,11 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 			end
 			-- Lock out the selection keys until they are released.
 			self.selectionKeyDown = true
+
+			if not self.isremoving and 
+				   love.keyboard.isDown(self.removePart) then
+				self.isremoving = true
+			end
 		end
 
 	-- Once the selection keys are released, start listening for them again.
@@ -144,49 +152,25 @@ function Player:mousepressed(mouseX, mouseY, button)
 	mouseWorldX = mouseX - SCREEN_WIDTH/2 + globalOffsetX
 	mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
 
-	if button == "l" then
+	if button == 1 then
 		if not self.isBuilding then
 			self.isBuilding = true
 
-			-- We are picking an annexee.
-			-- TODO: put this in a separate function
-			for i, structure in ipairs(worldStructures) do
-				for j, part in ipairs(structure.parts) do
-					local partX, partY = structure:getAbsPartCoords(j)
+			self.annexee, self.annexeePart, annexeePartSideClicked, 
+			self.annexeeIndex = Player:partIndex(mouseX,mouseY,0)
 
-					if Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY) <
-					   Util.vectorMagnitude(part.width/2, 0) then
-						self.annexee = structure
-						self.annexeePart = part
-						self.annexeeIndex = i
-						break
-					end
-				end
-				if self.annexee then break end
-			end
 			if not self.annexee then
 				self.isBuilding = false
 			end
 
 		else
-			-- We are picking the structure that will annex the part.
-			-- TODO: put this in a separate function
-			for i, structure in ipairs(worldStructures) do
-				for j, part in ipairs(structure.parts) do
-					local partX, partY = structure:getAbsPartCoords(j)
+			self.structure, self.structurePart, structurePartSideClicked = 
+			Player:partIndex(mouseX,mouseY,1)
 
-					if Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY) <
-					   Util.vectorMagnitude(part.width/2, part.height/2) then
-						self.structure = structure
-						self.structurePart = part
-						break
-					end
-				end
-				if self.structure then break end
-			end
-			if self.structure and self.annexee and self.structure ~= self.annexee then
-				self.structure:annex(self.annexee, self.annexeePart, 1,
-									 self.structurePart, 1)
+			if self.structure and self.annexee then
+				self.structure:annex(self.annexee, self.annexeePart, 
+									 annexeePartSideClicked,
+									 self.structurePart, structurePartSideClicked)
 				table.remove(worldStructures, self.annexeeIndex)
 			end
 			self.structure, self.annexee = nil
@@ -202,4 +186,32 @@ function Player:draw(globalOffsetX, globalOffsetY)
 	end
 end
 
+function Player:partIndex(mouseX,mouseY,nonWorldStructures)
+	if nonWorldStructures then
+	
+	end
+	for i, structure in ipairs(worldStructures) do
+				local part, partSide = self:partIndexPartsLoop(mouseX, mouseY, 
+															   structure)
+				if part and partSide then
+				return structure, part, partSide, i
+				end
+	end
+end
+
+function Player:partIndexPartsLoop(mouseX,mouseY,structure)
+	for j, part in ipairs(structure.parts) do
+		local partX, partY, partAngle = structure:getAbsPartCoords(j)
+		if Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY) <
+		   part.width/2 then
+			local partSide = Util.vectorAngle(
+				(mouseX - SCREEN_WIDTH/2 + globalOffsetX) - partX, 
+				(mouseY - SCREEN_HEIGHT/2 + globalOffsetY) - partY) - partAngle 
+			partSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
+			return part, partSide
+		end
+	end
+end
+
 return Player
+

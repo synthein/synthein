@@ -80,7 +80,7 @@ function love.keypressed(key)
 	end
 end
 
-function love.mousepressed(x, y, button)
+function love.mousepressed(x, y, button, istouch)
 	player1:mousepressed(x, y, button)
 end
 

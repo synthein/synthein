@@ -8,7 +8,7 @@ function Anchor.create()
 	local self = Part.create("anchor")
 	setmetatable(self, Anchor)
 
-	self.shape = love.physics.newRectangleShape(self.width, self.height)
+	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "anchor"
 
 	return self

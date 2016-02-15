@@ -10,7 +10,7 @@ function Engine.create(world, x, y)
 
 	self.isActive = false
 	self.imageActive = love.graphics.newImage("res/images/engineActive.png")
-	self.shape = love.physics.newRectangleShape(self.width, self.height)
+	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[2] = false

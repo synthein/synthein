@@ -8,7 +8,7 @@ function ControlBlock.create()
 	local self = Part.create("player")
 	setmetatable(self, ControlBlock)
 
-	self.shape = love.physics.newRectangleShape(self.width, self.height)
+	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.thrust = 150
 	self.torque = 350
 	self.type = "player"

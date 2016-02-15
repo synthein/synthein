@@ -32,7 +32,7 @@ function Structure.create(part, world, x, y)
 	self.parts = {part}
 	self.partCoords = { {x = 0, y = 0} }
 	self.partOrient = {1}
-	self.fixtures = {love.physics.newFixture(self.body, part.shape)}
+	self.fixtures = {love.physics.newFixture(self.body, part.physicsShape)}
 
 	return self
 end
@@ -128,7 +128,7 @@ end
 -- x, y are the coordinates in the structure
 -- orientation is the orientation of the part according to the structure
 function Structure:addPart(part, x, y, orientation)
-	local x1, y1, x2, y2, x3, y3, x4, y4 = part.shape:getPoints()
+	local x1, y1, x2, y2, x3, y3, x4, y4 = part.physicsShape:getPoints()
 	local width = math.abs(x1 - x3)
 	local height = math.abs(y1 - y3)
 	local shape = love.physics.newRectangleShape(

@@ -8,7 +8,7 @@ function Gun.create(world, x, y)
 	local self = Part.create("gun")
 	setmetatable(self, Gun)
 
-	self.shape = love.physics.newRectangleShape(self.width, self.height)
+	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 
 	-- Guns can only connect to things on their bottom side.
 	self.connectableSides[1] = false

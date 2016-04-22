@@ -8,7 +8,7 @@ function Part.create(imageName)
 	self.image = love.graphics.newImage("res/images/"..imageName..".png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
-	self.shape = nil
+	self.physicsShape = nil
 	self.connectableSides = {true, true, true, true}
 	self.thrust = 0
 	self.torque = 0

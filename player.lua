@@ -180,6 +180,9 @@ function Player:mousepressed(mouseX, mouseY, button)
 	if button == 1 then
 		self:build(mouseWorldX, mouseWorldY)
 	end
+	if button == 2 then
+		world:removeSection(world:getStructure(mouseWorldX, mouseWorldY))
+	end
 end
 
 function Player:draw(globalOffsetX, globalOffsetY)

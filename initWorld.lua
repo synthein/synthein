@@ -21,7 +21,7 @@ function InitWorld.init(physics)
 	-- Create the player.
 	local playerShip = Structure.create(ControlBlock.create(), physics, 0, -100)
 
-	return worldStructures, anchor, playerShip
+	return worldStructures, anchor, playerShip, physics
 end
 
 return InitWorld

@@ -17,13 +17,12 @@ function World:getPlayerShip()
 	return self.playerShip
 end
 
-function World:getStructure(mouseWorldX,mouseWorldY,nonWorldStructures)
-	if nonWorldStructures then
-		local part, partSide = player:getPartIndex(mouseWorldX, mouseWorldY, 
-													   player)
-		if part and partSide then
-			return structure, part, partSide, i
-		end
+function World:getStructure(mouseWorldX,mouseWorldY)
+	local part, partSide = self.playerShip:getPartIndex(mouseWorldX, mouseWorldY, 
+												   player)
+	if part and partSide then
+		return self.playerShip, part, partSide, i
+	end
 --		for i, structure in ipairs(player) do
 --			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY, 
 --														   structure)
@@ -31,11 +30,11 @@ function World:getStructure(mouseWorldX,mouseWorldY,nonWorldStructures)
 --			return structure, part, partSide, i
 --			end
 --		end
-		local part, partSide = anchor:getPartIndex(mouseWorldX, mouseWorldY, 
-													   anchor)
-		if part and partSide then
-			return structure, part, partSide, i
-		end
+	local part, partSide = self.anchor:getPartIndex(mouseWorldX, mouseWorldY, 
+												   anchor)
+	if part and partSide then
+		return self.anchor, part, partSide, i
+	end
 --		for i, structure in ipairs(anchor) do
 --			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY, 
 --														   structure)
@@ -43,7 +42,13 @@ function World:getStructure(mouseWorldX,mouseWorldY,nonWorldStructures)
 --			return structure, part, partSide, i
 --			end
 --		end
+	structure, part, partSide, i = self:getWorldSructure(mouseWorldX, mouseWorldY)
+	if structure and part and partSide and i then
+		return structure, part, partSide, i
 	end
+end
+
+function World:getWorldSructure(mouseWorldX, mouseWorldY)
 	for i, structure in ipairs(self.worldStructures) do
 		local part, partSide = structure:getPartIndex(mouseWorldX, mouseWorldY)
 		if part and partSide then
@@ -51,6 +56,8 @@ function World:getStructure(mouseWorldX,mouseWorldY,nonWorldStructures)
 		end
 	end
 end
+
+
 
 function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
 					 structure, structurePart, structurePartSideClicked)

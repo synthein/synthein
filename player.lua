@@ -153,7 +153,7 @@ function Player:build(mouseWorldX, mouseWorldY)
 		self.isBuilding = true
 
 		self.annexee, self.annexeePart, self.annexeePartSideClicked, 
-		self.annexeeIndex = world:getStructure(mouseWorldX,mouseWorldY,false)
+		self.annexeeIndex = world:getWorldSructure(mouseWorldX, mouseWorldY)
 
 		if not self.annexee then
 			self.isBuilding = false
@@ -161,7 +161,7 @@ function Player:build(mouseWorldX, mouseWorldY)
 
 	else
 		self.structure, self.structurePart, self.structurePartSideClicked = 
-		world:getStructure(mouseWorldX,mouseWorldY,false)
+		world:getStructure(mouseWorldX,mouseWorldY)
 		if self.structure and self.annexee and
 		   self.structure ~= self.annexee then
 			world:annex(self.annexee, self.annexeePart, self.annexeePartSideClicked, annexeeIndex,

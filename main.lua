@@ -1,24 +1,30 @@
 local Debug = require("debugTools")
-local InitWorld = require("initWorld")
 local Player = require("player")
 local Structure = require("structure")
+local World = require("world")
 
 -- These are global for now.
 --local globalOffsetX
 --local globalOffsetY
+
+local physics
+local player1
 
 function love.load()
 	SCREEN_WIDTH = love.graphics.getWidth()
 	SCREEN_HEIGHT = love.graphics.getHeight()
 	compass = love.graphics.newImage("res/images/compass.png")
 	debugmode = true
-
-	world, worldStructures, anchor, player1, playerShip = InitWorld.init()
+	
+	love.physics.setMeter(20) -- there are 20 pixels per meter
+	physics = love.physics.newWorld()
+	world = World.create(physics)
+	player1 = Player.create("player1", world:getPlayerShip())
 end
 
 function love.update(dt)
+	physics:update(dt)
 	world:update(dt)
-	playerShip:update()
 	player1:handleInput(globalOffsetX, globalOffsetY)
 
 	globalOffsetX = player1.ship.body:getX()
@@ -34,17 +40,12 @@ function love.draw()
 	SCREEN_WIDTH = love.graphics.getWidth()
 	SCREEN_HEIGHT = love.graphics.getHeight()
 
-	anchor:draw(globalOffsetX, globalOffsetY)
-	for i, structure in ipairs(worldStructures) do
-		structure:draw(globalOffsetX, globalOffsetY)
-	end
-	player1:draw(globalOffsetX, globalOffsetY)
+	world:draw()
 	love.graphics.draw(
 		compass,
 		SCREEN_WIDTH-60,
 	    SCREEN_HEIGHT-60,
-		math.atan2(playerShip.body:getY(),
-		playerShip.body:getX())-math.pi/2,
+		math.atan2(globalOffsetY, globalOffsetX)-math.pi/2,
 		1, 1, 25, 25)
 
 	if quitting then
@@ -63,7 +64,7 @@ function love.draw()
 			"Number of world structures: %d\n"..
 			"Build mode: %s\n",
 			globalOffsetX, globalOffsetY,
-			#worldStructures,
+			#world.worldStructures,
 			(player1.isBuilding and "yes" or "no")
 		)
 		love.graphics.print(debugString, 5, 5)

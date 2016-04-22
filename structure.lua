@@ -6,24 +6,24 @@ Structure.__index = Structure
 
 Structure.PARTSIZE = 20
 
-function Structure.create(part, world, x, y)
+function Structure.create(part, physics, x, y)
 	local self = {}
 	setmetatable(self, Structure)
 
 	self.thrust = 0
 
 	if part.type == "player" then
-		self.body = love.physics.newBody(world, x, y, "dynamic")
+		self.body = love.physics.newBody(physics, x, y, "dynamic")
 		self.body:setAngularDamping(1)
 		self.body:setLinearDamping(0.5)
 		self.thrust = part.thrust
 		self.torque = part.torque
 		self.type = "ship"
 	elseif part.type == "anchor" then
-		self.body = love.physics.newBody(world, x, y, "static")
+		self.body = love.physics.newBody(physics, x, y, "static")
 		self.type = "anchor"
 	else
-		self.body = love.physics.newBody(world, x, y, "dynamic")
+		self.body = love.physics.newBody(physics, x, y, "dynamic")
 		self.body:setAngularDamping(0.2)
 		self.body:setLinearDamping(0.1)
 		self.type = "generic"
@@ -286,6 +286,20 @@ function Structure:command(orders)
 					end
 				end
 			end
+		end
+	end
+end
+
+function Structure:getPartIndex(locationX,locationY)
+	for j, part in ipairs(self.parts) do
+		local partX, partY, partAngle = self:getAbsPartCoords(j)
+		if Util.vectorMagnitude(locationX - partX, locationY - partY) <
+		   part.width/2 then
+			local partSide = Util.vectorAngle(
+				locationX - partX, 
+				locationY - partY) - partAngle 
+			partSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
+			return part, partSide
 		end
 	end
 end

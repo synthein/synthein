@@ -1,5 +1,6 @@
 local Selection = require("selection")
 local Util = require("util")
+local World = require("world")
 
 local Player = {}
 Player.__index = Player
@@ -147,35 +148,37 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 	end
 end
 
-function Player:mousepressed(mouseX, mouseY, button)
-	-- Convert the mouseX and Y coordinates to coordinates in the world.
-	mouseWorldX = mouseX - SCREEN_WIDTH/2 + globalOffsetX
-	mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
+function Player:build(mouseWorldX, mouseWorldY)
+	if not self.isBuilding then
+		self.isBuilding = true
 
-	if button == 1 then
-		if not self.isBuilding then
-			self.isBuilding = true
+		self.annexee, self.annexeePart, self.annexeePartSideClicked, 
+		self.annexeeIndex = world:getStructure(mouseWorldX,mouseWorldY,false)
 
-			self.annexee, self.annexeePart, annexeePartSideClicked, 
-			self.annexeeIndex = Player:partIndex(mouseX,mouseY,0)
-
-			if not self.annexee then
-				self.isBuilding = false
-			end
-
-		else
-			self.structure, self.structurePart, structurePartSideClicked = 
-			Player:partIndex(mouseX,mouseY,1)
-
-			if self.structure and self.annexee then
-				self.structure:annex(self.annexee, self.annexeePart, 
-									 annexeePartSideClicked,
-									 self.structurePart, structurePartSideClicked)
-				table.remove(worldStructures, self.annexeeIndex)
-			end
-			self.structure, self.annexee = nil
+		if not self.annexee then
 			self.isBuilding = false
 		end
+
+	else
+		self.structure, self.structurePart, self.structurePartSideClicked = 
+		world:getStructure(mouseWorldX,mouseWorldY,false)
+		if self.structure and self.annexee and
+		   self.structure ~= self.annexee then
+			world:annex(self.annexee, self.annexeePart, self.annexeePartSideClicked, annexeeIndex,
+						self.structure, self.structurePart, self.structurePartSideClicked)
+		end
+		self.structure, self.annexee = nil
+		self.isBuilding = false
+	end
+end
+
+function Player:mousepressed(mouseX, mouseY, button)
+	-- Convert the mouseX and Y coordinates to coordinates in the world.
+	local mouseWorldX = mouseX - SCREEN_WIDTH/2 + globalOffsetX
+	local mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
+
+	if button == 1 then
+		self:build(mouseWorldX, mouseWorldY)
 	end
 end
 
@@ -183,33 +186,6 @@ function Player:draw(globalOffsetX, globalOffsetY)
 	self.ship:draw(globalOffsetX, globalOffsetY)
 	if self.selection then
 		self.selection:draw(globalOffsetX, globalOffsetY)
-	end
-end
-
-function Player:partIndex(mouseX,mouseY,nonWorldStructures)
-	if nonWorldStructures then
-	
-	end
-	for i, structure in ipairs(worldStructures) do
-				local part, partSide = self:partIndexPartsLoop(mouseX, mouseY, 
-															   structure)
-				if part and partSide then
-				return structure, part, partSide, i
-				end
-	end
-end
-
-function Player:partIndexPartsLoop(mouseX,mouseY,structure)
-	for j, part in ipairs(structure.parts) do
-		local partX, partY, partAngle = structure:getAbsPartCoords(j)
-		if Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY) <
-		   part.width/2 then
-			local partSide = Util.vectorAngle(
-				(mouseX - SCREEN_WIDTH/2 + globalOffsetX) - partX, 
-				(mouseY - SCREEN_HEIGHT/2 + globalOffsetY) - partY) - partAngle 
-			partSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
-			return part, partSide
-		end
 	end
 end
 

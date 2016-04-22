@@ -4,11 +4,13 @@ local InitWorld = require("initWorld")
 local World = {}
 World.__index = World
 
+local physics
+
 function World.create(physics)
 	self = {}
 	setmetatable(self, World)
 	
-	self.worldStructures, self.anchor, self.playerShip = InitWorld.init(physics)
+	self.worldStructures, self.anchor, self.playerShip, self.physics = InitWorld.init(physics)
 
 	return self
 end
@@ -57,7 +59,11 @@ function World:getWorldSructure(mouseWorldX, mouseWorldY)
 	end
 end
 
-
+function World:removeSection(structure, part)
+print(self.physics)
+	local newStructure = structure:removeSection(self.physics, part)
+	table.insert(self.worldStructures, newStructure)
+end
 
 function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
 					 structure, structurePart, structurePartSideClicked)

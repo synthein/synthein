@@ -120,13 +120,20 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	end
 end
 
-function Structure:removeSection(part)	
-
+function Structure:removeSection(physics, part)
+	--If there is only one block in the structure then esacpe.
+	if #self.parts == 1 then
+		return nil
+	end
+	local index = self:findPart(part)
+	local x, y = self:getAbsPartCoords(index)
+	self:removePart(part)
+	return Structure.create(part, physics, x, y)
 end
 
 -- Add one part to the structure.
--- x, y are the coordinates in the structure
--- orientation is the orientation of the part according to the structure
+-- x, y are the coordinates in the structure.
+-- orientation is the orientation of the part according to the structure.
 function Structure:addPart(part, x, y, orientation)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.physicsShape:getPoints()
 	local width = math.abs(x1 - x3)

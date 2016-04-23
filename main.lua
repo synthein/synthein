@@ -3,12 +3,13 @@ local Player = require("player")
 local Structure = require("structure")
 local World = require("world")
 
+local physics
+local player1
 -- These are global for now.
 --local globalOffsetX
 --local globalOffsetY
-
-local physics
-local player1
+local mouseWorldX
+local mouseWorldY
 
 function love.load()
 	SCREEN_WIDTH = love.graphics.getWidth()
@@ -20,6 +21,9 @@ function love.load()
 	physics = love.physics.newWorld()
 	world = World.create(physics)
 	player1 = Player.create("player1", world:getPlayerShip())
+
+	Debug.setWorld(world)
+	Debug.setPlayer(player1)
 end
 
 function love.update(dt)
@@ -29,11 +33,10 @@ function love.update(dt)
 
 	globalOffsetX = player1.ship.body:getX()
 	globalOffsetY = player1.ship.body:getY()
+	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + globalOffsetX
+	mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + globalOffsetY
 
-	-- TODO: move this to love.mousepressed()
-	if debugmode == true then
-		Debug.mouse(globalOffsetX, globalOffsetY)
-	end
+	if debugmode then Debug.update(mouseWorldX, mouseWorldY) end
 end
 
 function love.draw()
@@ -55,21 +58,8 @@ function love.draw()
 			SCREEN_HEIGHT/2-30)
 	end
 
-	--------------------
-	---- Debug Info ----
-	--------------------
-	if debugmode then
-		local debugString = string.format(
-			"%.3f    %.3f\n"..
-			"Number of world structures: %d\n"..
-			"Build mode: %s\n",
-			globalOffsetX, globalOffsetY,
-			#world.worldStructures,
-			(player1.isBuilding and "yes" or "no")
-		)
-		love.graphics.print(debugString, 5, 5)
-	end
-	--------------------
+	-- Print debug info.
+	if debugmode then Debug.draw() end
 end
 
 function love.keypressed(key)
@@ -83,5 +73,12 @@ end
 
 function love.mousepressed(x, y, button, istouch)
 	player1:mousepressed(x, y, button)
+
+	if debugmode == true then
+		Debug.mousepressed(x, y, button, mouseWorldX, mouseWorldY)
+	end
 end
 
+function love.mousereleased(x, y, button, istouch)
+	Debug.mousereleased(button)
+end

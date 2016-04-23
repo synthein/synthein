@@ -4,8 +4,8 @@ local InitWorld = require("initWorld")
 local World = {}
 World.__index = World
 
-local physics
-
+-- The world object contains all of the state information about the game world
+-- and is responsible for updating and drawing everything in the game world.
 function World.create(physics)
 	self = {}
 	setmetatable(self, World)
@@ -44,13 +44,13 @@ function World:getStructure(mouseWorldX,mouseWorldY)
 --			return structure, part, partSide, i
 --			end
 --		end
-	structure, part, partSide, i = self:getWorldSructure(mouseWorldX, mouseWorldY)
+	structure, part, partSide, i = self:getWorldStructure(mouseWorldX, mouseWorldY)
 	if structure and part and partSide and i then
 		return structure, part, partSide, i
 	end
 end
 
-function World:getWorldSructure(mouseWorldX, mouseWorldY)
+function World:getWorldStructure(mouseWorldX, mouseWorldY)
 	for i, structure in ipairs(self.worldStructures) do
 		local part, partSide = structure:getPartIndex(mouseWorldX, mouseWorldY)
 		if part and partSide then
@@ -60,17 +60,15 @@ function World:getWorldSructure(mouseWorldX, mouseWorldY)
 end
 
 function World:removeSection(structure, part)
-print(self.physics)
 	local newStructure = structure:removeSection(self.physics, part)
 	table.insert(self.worldStructures, newStructure)
 end
 
 function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
 					 structure, structurePart, structurePartSideClicked)
-			structure:annex(annexee, annexeePart, 
-								 annexeePartSideClicked,
-								 structurePart, structurePartSideClicked)
-			table.remove(self.worldStructures, annexeeIndex)
+	structure:annex(annexee, annexeePart, annexeePartSideClicked,
+	                structurePart, structurePartSideClicked)
+	table.remove(self.worldStructures, annexeeIndex)
 end
 
 function World:update(dt)

@@ -5,54 +5,77 @@ local Structure = require("structure")
 
 local Debug = {}
 
+-- This should be called when the game is initialized so that the debug tools
+-- have access to the game world (It needs to look through the objects in the,
+-- manipulate them, add new ones, etc.).
+function Debug.setWorld(world)
+	Debug.world = world
+end
+
+-- Similarly, give the debug tools access to the player so it can print debug
+-- into about it.
+function Debug.setPlayer(player)
+	Debug.player1 = player
+end
+
+-- Print debug info.
+function Debug.draw()
+	local debugString = string.format(
+		"%.3f    %.3f\n"..
+		"Number of world structures: %d\n"..
+		"Build mode: %s\n",
+		globalOffsetX, globalOffsetY,
+		#Debug.world.worldStructures,
+		(Debug.player1.isBuilding and "yes" or "no")
+	)
+	love.graphics.print(debugString, 5, 5)
+end
+
+function Debug.update(mouseWorldX, mouseWorldY)
+	if Debug.mouseJoint then
+		Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
+	end
+end
+
 function Debug.keyboard(key, globalOffsetX, globalOffsetY)
 	-- Spawn a block
 	if key == "u" then
-		table.insert(worldStructures,
-		Structure.create(Block.create(), world,
+		table.insert(Debug.world.worldStructures,
+		Structure.create(Block.create(), Debug.world.physics,
 		globalOffsetX + 50, globalOffsetY - 100))
 	end
 	-- Spawn an engine
 	if key == "i" then
-		table.insert(worldStructures,
-		Structure.create(Engine.create(), world,
+		table.insert(Debug.world.worldStructures,
+		Structure.create(Engine.create(), Debug.world.physics,
 		globalOffsetX + 112, globalOffsetY))
 	end
 	-- Spawn a gun
 	if key == "o" then
-		table.insert(worldStructures,
-		Structure.create(Gun.create(), world,
+		table.insert(Debug.world.worldStructures,
+		Structure.create(Gun.create(), Debug.world.physics,
 		globalOffsetX + 50, globalOffsetY + 100))
 	end
 end
 
-function Debug.mouse(globalOffsetX, globalOffsetY)
-	if love.mouse.isDown(3) then
-		mouseX, mouseY = love.mouse.getPosition()
-
-		if not Debug.mouseJoint then
-			for i, structure in ipairs(worldStructures) do
-				for j, part in ipairs(structure.parts) do
-					local partX, partY = structure:getAbsPartCoords(j)
-
-					if (mouseX - SCREEN_WIDTH/2 + globalOffsetX) < (partX + part.width/2) and
-					   (mouseX - SCREEN_WIDTH/2 + globalOffsetX) > (partX - part.width/2) and
-					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) < (partY + part.height/2) and
-					   (mouseY - SCREEN_HEIGHT/2 + globalOffsetY) > (partY - part.height/2) then
-						Debug.mouseJoint = love.physics.newMouseJoint(
-							structure.body, mouseX - SCREEN_WIDTH/2 + globalOffsetX, mouseY - SCREEN_HEIGHT/2 + globalOffsetY)
-						break
-					end
-				end
-				if Debug.mouseJoint then break end
-			end
-		else
-			Debug.mouseJoint:setTarget(mouseX - SCREEN_WIDTH/2 + globalOffsetX, mouseY - SCREEN_HEIGHT/2 + globalOffsetY)
+function Debug.mousepressed(mouseX, mouseY, button, mouseWorldX, mouseWorldY)
+	if button == 3 then
+		structure = Debug.world:getWorldStructure(mouseWorldX, mouseWorldY)
+		if structure then
+			Debug.mouseJoint = love.physics.newMouseJoint(structure.body, mouseWorldX, mouseWorldY)
+			Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
+			print(Debug.mouseJoint)
 		end
+	end
+end
 
-	elseif Debug.mouseJoint then
-		Debug.mouseJoint:destroy()
-		Debug.mouseJoint = nil
+function Debug.mousereleased(button)
+	if button == 3 then
+		if Debug.mouseJoint then
+			Debug.mouseJoint:destroy()
+			Debug.mouseJoint = nil
+			print(Debug.mouseJoint)
+		end
 	end
 end
 

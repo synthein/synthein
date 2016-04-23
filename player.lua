@@ -153,7 +153,7 @@ function Player:build(mouseWorldX, mouseWorldY)
 		self.isBuilding = true
 
 		self.annexee, self.annexeePart, self.annexeePartSideClicked, 
-		self.annexeeIndex = world:getWorldSructure(mouseWorldX, mouseWorldY)
+		self.annexeeIndex = world:getWorldStructure(mouseWorldX, mouseWorldY)
 
 		if not self.annexee then
 			self.isBuilding = false

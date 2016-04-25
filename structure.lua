@@ -250,6 +250,8 @@ function Structure:command(orders)
 			--Turn on flame.
 			if appliedForceX ~= 0 or  appliedForceY ~=0 then
 				part.isActive = true
+			else
+				part.isActive = false
 			end
 		end
 		--Thrust multiplier
@@ -275,11 +277,6 @@ function Structure:getPartIndex(locationX,locationY)
 end
 
 function Structure:update()
-	for k, part in ipairs(self.parts) do
-		if part.isActive then
-			part.isActive = false
-		end
-	end
 end
 
 function Structure:draw(globalOffsetX, globalOffsetY)

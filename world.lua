@@ -1,5 +1,6 @@
 local Structure = require("structure")
 local InitWorld = require("initWorld")
+local AI = require("ai")
 
 local World = {}
 World.__index = World
@@ -10,8 +11,12 @@ function World.create(physics)
 	self = {}
 	setmetatable(self, World)
 	
-	self.worldStructures, self.anchor, self.playerShip, self.physics = InitWorld.init(physics)
-
+	self.worldStructures, self.anchor, self.playerShip, self.aiShips, self.physics = InitWorld.init(physics)
+	
+	self.ais = {}
+	for i, aiShip in ipairs(self.aiShips) do
+		table.insert(self.ais, AI.create(aiShip))
+	end
 	return self
 end
 
@@ -37,6 +42,7 @@ function World:getStructure(mouseWorldX,mouseWorldY)
 	if part and partSide then
 		return self.anchor, part, partSide, i
 	end
+	
 --		for i, structure in ipairs(anchor) do
 --			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY, 
 --														   structure)
@@ -44,6 +50,10 @@ function World:getStructure(mouseWorldX,mouseWorldY)
 --			return structure, part, partSide, i
 --			end
 --		end
+	structure, part, partSide, i = self:getAIShips(mouseWorldX, mouseWorldY)
+	if structure and part and partSide and i then
+		return structure, part, partSide, i
+	end
 	structure, part, partSide, i = self:getWorldStructure(mouseWorldX, mouseWorldY)
 	if structure and part and partSide and i then
 		return structure, part, partSide, i
@@ -52,6 +62,15 @@ end
 
 function World:getWorldStructure(mouseWorldX, mouseWorldY)
 	for i, structure in ipairs(self.worldStructures) do
+		local part, partSide = structure:getPartIndex(mouseWorldX, mouseWorldY)
+		if part and partSide then
+			return structure, part, partSide, i
+		end
+	end
+end
+
+function World:getAIShips(mouseWorldX, mouseWorldY)
+	for i, structure in ipairs(self.aiShips) do
 		local part, partSide = structure:getPartIndex(mouseWorldX, mouseWorldY)
 		if part and partSide then
 			return structure, part, partSide, i
@@ -74,13 +93,18 @@ function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
 end
 
 function World:update(dt)
-	self.playerShip:update(dt)
+	for i, ai in ipairs(self.ais) do
+		ai:update(dt, self.playerShip)
+	end
 end
 
 function World:draw()
 	self.anchor:draw(globalOffsetX, globalOffsetY)
 	for i, structure in ipairs(self.worldStructures) do
 		structure:draw(globalOffsetX, globalOffsetY)
+	end
+	for i, aiShip in ipairs(self.aiShips) do
+		aiShip:draw(globalOffsetX, globalOffsetY)
 	end
 	self.playerShip:draw(globalOffsetX, globalOffsetY)
 end

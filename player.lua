@@ -24,7 +24,6 @@ function Player.create(type, structure)
 		self.confirm = "return"
 		self.cancel = "escape"
 	elseif type =="player2" then
-	elseif type == "AI" then
 	end
 
 	self.selection = nil

@@ -10,14 +10,10 @@ function Structure.create(part, physics, x, y)
 	local self = {}
 	setmetatable(self, Structure)
 
-	self.thrust = 0
-
 	if part.type == "player" then
 		self.body = love.physics.newBody(physics, x, y, "dynamic")
 		self.body:setAngularDamping(1)
 		self.body:setLinearDamping(0.5)
-		self.thrust = part.thrust
-		self.torque = part.torque
 		self.type = "ship"
 	elseif part.type == "anchor" then
 		self.body = love.physics.newBody(physics, x, y, "static")
@@ -195,104 +191,68 @@ end
 
 function Structure:command(orders)
 	-- The x and y components of the force
-	local Fx = self.thrust * math.cos(self.body:getAngle() - math.pi/2)
-	local Fy = self.thrust * math.sin(self.body:getAngle() - math.pi/2)
+	local directionX = math.cos(self.body:getAngle() - math.pi/2)
+	local directionY = math.sin(self.body:getAngle() - math.pi/2)
 
-	for i, order in ipairs(orders) do
-		if order == "forward" then
-			-- Apply the base force from the playerBlock.
-			self.body:applyForce(Fx, Fy, self.body:getX(), self.body:getY())
-
+	for i,part in ipairs(self.parts) do
+		if part.thrust then
+		
+		local appliedForceX = 0
+		local appliedForceY = 0
+		local perpendicular = 0
+		local parallel = 0
+		local rotate = 0
+		for j, order in ipairs(orders) do
+			if order == "forward" then parallel = parallel + 1 end
+			if order == "back" then parallel = parallel - 1 end
+			if order == "strafeLeft" then perpendicular = perpendicular - 1 end
+			if order == "strafeRight" then perpendicular = perpendicular + 1 end
+			if order == "right" then rotate = rotate - 1 end
+			if order == "left" then rotate = rotate + 1 end
+		end
+		
 			-- Apply the force for the engines
-			for i,part in ipairs(self.parts) do
 				-- Choose parts that have thrust and are pointed the right
 				-- direction, but exclude playerBlock, etc.
-				if part.thrust and
-				part.type == "generic" and
-				self.partOrient[i] == 1 then
-					part.isActive = true
-					self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
-				end
+
+		if part.type == "player" then
+			appliedForceX = directionX * parallel + -directionY * perpendicular
+			appliedForceY = directionY * parallel + directionX * perpendicular
+		elseif part.type == "generic" then
+			partParallel = Util.sign(self.partCoords[i].x)
+			partPerpendicular = Util.sign(self.partCoords[i].y)
+			perpendicular = perpendicular + rotate * partPerpendicular
+			parallel = parallel + rotate * partParallel
+			
+			--Set to 0 if engine is going backwards.
+			if self.partOrient[i] < 3 then
+				if parallel < 0 then parallel = 0 end
+				if perpendicular < 0 then	perpendicular = 0 end
+			elseif self.partOrient[i] > 2 then 
+				if parallel > 0 then	parallel = 0 end
+				if perpendicular > 0 then	perpendicular = 0 end
 			end
-		elseif order == "back" then
-			self.body:applyForce(-Fx, -Fy, self.body:getX(), self.body:getY())
-
-			for i,part in ipairs(self.parts) do
-				if part.thrust and
-				part.type == "generic" and
-				self.partOrient[i] == 3 then
-					part.isActive = true
-					self.body:applyForce(-Fx, -Fy, self:getAbsPartCoords(i))
-				end
+			--Limit to -1, 0 , 1.
+			parallel = Util.sign(parallel)
+			perpendicular = Util.sign(perpendicular)
+			--Moving forward and backward.
+			if self.partOrient[i] % 2 == 1 then
+				appliedForceX = directionX * parallel
+				appliedForceY = directionY * parallel
+			--Moving side to side.
+			elseif self.partOrient[i] % 2 == 0 then
+				appliedForceX = -directionY * perpendicular
+				appliedForceY = directionX * perpendicular
 			end
-		elseif order == "strafeLeft" then
-			self.body:applyForce(Fy, -Fx, self.body:getX(), self.body:getY())
-
-			for i,part in ipairs(self.parts) do
-				if part.thrust and
-				part.type == "generic" and
-				self.partOrient[i] == 4 then
-					part.isActive = true
-					self.body:applyForce(Fy, -Fx, self:getAbsPartCoords(i))
-				end
+			--Turn on flame.
+			if appliedForceX ~= 0 or  appliedForceY ~=0 then
+				part.isActive = true
 			end
-		elseif order == "strafeRight" then
-			self.body:applyForce(-Fy, Fx, self.body:getX(), self.body:getY())
-
-			for i,part in ipairs(self.parts) do
-				if part.thrust and
-				part.type == "generic" and
-				self.partOrient[i] == 2 then
-					part.isActive = true
-					self.body:applyForce(-Fy, Fx, self:getAbsPartCoords(i))
-				end
-			end
-		elseif order == "left" then
-			self.body:applyTorque(-self.torque)
-
-			for i,part in ipairs(self.parts) do
-				if part.thrust and part.type == "generic" then
-					if self.partOrient[i] == 1 and self.partCoords[i].x > 0 then
-						part.isActive = true
-						self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
-
-					elseif self.partOrient[i] == 2 and self.partCoords[i].y > 0 then
-						part.isActive = true
-						self.body:applyForce(-Fy, Fx, self:getAbsPartCoords(i))
-
-					elseif self.partOrient[i] == 3 and self.partCoords[i].x < 0 then
-						part.isActive = true
-						self.body:applyForce(-Fx, -Fy, self:getAbsPartCoords(i))
-
-					elseif self.partOrient[i] == 4 and self.partCoords[i].y < 0 then
-						part.isActive = true
-						self.body:applyForce(Fy, -Fx, self:getAbsPartCoords(i))
-					end
-				end
-			end
-		elseif order == "right" then
-			self.body:applyTorque(self.torque)
-
-			for i,part in ipairs(self.parts) do
-				if part.thrust and part.type == "generic" then
-					if self.partOrient[i] == 1 and self.partCoords[i].x < 0 then
-						part.isActive = true
-						self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
-
-					elseif self.partOrient[i] == 2 and self.partCoords[i].y < 0 then
-						part.isActive = true
-						self.body:applyForce(-Fy, Fx, self:getAbsPartCoords(i))
-
-					elseif self.partOrient[i] == 3 and self.partCoords[i].x > 0 then
-						part.isActive = true
-						self.body:applyForce(-Fx, -Fy, self:getAbsPartCoords(i))
-
-					elseif self.partOrient[i] == 4 and self.partCoords[i].y > 0 then
-						part.isActive = true
-						self.body:applyForce(Fy, -Fx, self:getAbsPartCoords(i))
-					end
-				end
-			end
+		end
+		--Thrust multiplier
+		local Fx = appliedForceX * part.thrust
+		local Fy = appliedForceY * part.thrust
+		self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
 		end
 	end
 end

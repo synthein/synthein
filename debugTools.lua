@@ -23,9 +23,11 @@ function Debug.draw()
 	local debugString = string.format(
 		"%.3f    %.3f\n"..
 		"Number of world structures: %d\n"..
+		"Number of ship parts: %d\n"..
 		"Build mode: %s\n",
 		globalOffsetX, globalOffsetY,
 		#Debug.world.worldStructures,
+		#Debug.world.playerShip.parts,
 		(Debug.player1.isBuilding and "yes" or "no")
 	)
 	love.graphics.print(debugString, 5, 5)

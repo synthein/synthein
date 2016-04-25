@@ -60,8 +60,10 @@ function World:getWorldStructure(mouseWorldX, mouseWorldY)
 end
 
 function World:removeSection(structure, part)
-	local newStructure = structure:removeSection(self.physics, part)
-	table.insert(self.worldStructures, newStructure)
+	if part.type == "generic" then
+		local newStructure = structure:removeSection(self.physics, part)
+		table.insert(self.worldStructures, newStructure)
+	end
 end
 
 function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,

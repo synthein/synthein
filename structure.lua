@@ -6,7 +6,7 @@ Structure.__index = Structure
 
 Structure.PARTSIZE = 20
 
-function Structure.create(part, physics, x, y)
+function Structure.create(part, physics, x, y, angle)
 	local self = {}
 	setmetatable(self, Structure)
 
@@ -24,12 +24,14 @@ function Structure.create(part, physics, x, y)
 		self.body:setLinearDamping(0.1)
 		self.type = "generic"
 	end
-
+	if angle then
+		self.body:setAngle(angle)
+	end
 	self.parts = {part}
 	self.partCoords = { {x = 0, y = 0} }
 	self.partOrient = {1}
 	self.fixtures = {love.physics.newFixture(self.body, part.physicsShape)}
-
+	
 	return self
 end
 
@@ -122,9 +124,9 @@ function Structure:removeSection(physics, part)
 		return nil
 	end
 	local index = self:findPart(part)
-	local x, y = self:getAbsPartCoords(index)
+	local x, y , angle = self:getAbsPartCoords(index)
 	self:removePart(part)
-	return Structure.create(part, physics, x, y)
+	return Structure.create(part, physics, x, y, angle)
 end
 
 -- Add one part to the structure.
@@ -207,8 +209,8 @@ function Structure:command(orders)
 			if order == "back" then parallel = parallel - 1 end
 			if order == "strafeLeft" then perpendicular = perpendicular - 1 end
 			if order == "strafeRight" then perpendicular = perpendicular + 1 end
-			if order == "right" then rotate = rotate - 1 end
-			if order == "left" then rotate = rotate + 1 end
+			if order == "right" then rotate = rotate + 1 end
+			if order == "left" then rotate = rotate - 1 end
 		end
 		
 			-- Apply the force for the engines
@@ -218,11 +220,12 @@ function Structure:command(orders)
 		if part.type == "player" then
 			appliedForceX = directionX * parallel + -directionY * perpendicular
 			appliedForceY = directionY * parallel + directionX * perpendicular
+			self.body:applyTorque(rotate * part.torque)
 		elseif part.type == "generic" then
 			partParallel = Util.sign(self.partCoords[i].x)
 			partPerpendicular = Util.sign(self.partCoords[i].y)
-			perpendicular = perpendicular + rotate * partPerpendicular
-			parallel = parallel + rotate * partParallel
+			perpendicular = perpendicular - rotate * partPerpendicular
+			parallel = parallel - rotate * partParallel
 			
 			--Set to 0 if engine is going backwards.
 			if self.partOrient[i] < 3 then

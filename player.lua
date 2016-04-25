@@ -181,7 +181,10 @@ function Player:mousepressed(mouseX, mouseY, button)
 		self:build(mouseWorldX, mouseWorldY)
 	end
 	if button == 2 then
-		world:removeSection(world:getStructure(mouseWorldX, mouseWorldY))
+		local structure, part = world:getStructure(mouseWorldX, mouseWorldY)
+		if structure and part then
+			world:removeSection(structure, part)
+		end
 	end
 end
 

@@ -22,4 +22,16 @@ function Util.computeAbsCoords(x, y, angle)
 	return Util.vectorComponents(r, t, angle)
 end
 
+function Util.sign(x)
+   if x<0 then
+     return -1
+   elseif x>0 then
+     return 1
+   else
+     return 0
+   end
+end
+
+
+
 return Util

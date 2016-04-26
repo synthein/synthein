@@ -195,23 +195,27 @@ function Structure:command(orders)
 	-- The x and y components of the force
 	local directionX = math.cos(self.body:getAngle() - math.pi/2)
 	local directionY = math.sin(self.body:getAngle() - math.pi/2)
+		
+	local perpendicular = 0
+	local parallel = 0
+	local rotate = 0
+	local shoot = false
+
+	for j, order in ipairs(orders) do
+		if order == "forward" then parallel = parallel + 1 end
+		if order == "back" then parallel = parallel - 1 end
+		if order == "strafeLeft" then perpendicular = perpendicular - 1 end
+		if order == "strafeRight" then perpendicular = perpendicular + 1 end
+		if order == "right" then rotate = rotate + 1 end
+		if order == "left" then rotate = rotate - 1 end
+		if order == "shoot" then shoot = true end
+	end
 
 	for i,part in ipairs(self.parts) do
 		if part.thrust then
-		
+
 		local appliedForceX = 0
 		local appliedForceY = 0
-		local perpendicular = 0
-		local parallel = 0
-		local rotate = 0
-		for j, order in ipairs(orders) do
-			if order == "forward" then parallel = parallel + 1 end
-			if order == "back" then parallel = parallel - 1 end
-			if order == "strafeLeft" then perpendicular = perpendicular - 1 end
-			if order == "strafeRight" then perpendicular = perpendicular + 1 end
-			if order == "right" then rotate = rotate + 1 end
-			if order == "left" then rotate = rotate - 1 end
-		end
 		
 			-- Apply the force for the engines
 				-- Choose parts that have thrust and are pointed the right
@@ -259,6 +263,11 @@ function Structure:command(orders)
 		local Fy = appliedForceY * part.thrust
 		self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
 		end
+		
+		if part.gun and shoot and not part.recharge then 
+			part:shot()
+			world:shoot(self, part)
+		end
 	end
 end
 
@@ -276,7 +285,12 @@ function Structure:getPartIndex(locationX,locationY)
 	end
 end
 
-function Structure:update()
+function Structure:update(dt)
+	for i, part in ipairs(self.parts) do
+		if part.update then
+			part:update(dt)
+		end
+	end
 end
 
 function Structure:draw(globalOffsetX, globalOffsetY)

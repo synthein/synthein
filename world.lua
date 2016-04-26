@@ -1,6 +1,7 @@
 local Structure = require("structure")
 local InitWorld = require("initWorld")
 local AI = require("ai")
+local Shot = require("shot")
 
 local World = {}
 World.__index = World
@@ -17,6 +18,7 @@ function World.create(physics)
 	for i, aiShip in ipairs(self.aiShips) do
 		table.insert(self.ais, AI.create(aiShip))
 	end
+	self.shots = {}
 	return self
 end
 
@@ -92,10 +94,36 @@ function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
 	table.remove(self.worldStructures, annexeeIndex)
 end
 
+function World:shoot(structure, part)
+	local index = structure:findPart(part)
+	local x, y, angle = structure:getAbsPartCoords(index)
+	table.insert(self.shots, Shot.create(x, y, angle, structure, part))
+end
+
 function World:update(dt)
+	for i, structure in ipairs(self.worldStructures) do
+		structure:update(dt, self.playerShip)
+	end
+	self.playerShip:update(dt)
+	self.anchor:update(dt)
 	for i, ai in ipairs(self.ais) do
 		ai:update(dt, self.playerShip)
 	end
+	for i, shot in ipairs(self.shots) do
+		shotX, shotY, shotTime = shot:update(dt)
+		local structureHit, partHit = self:getStructure(shotX,shotY)
+		local hit = structureHit and structureHit ~= shot.sourceStructure and 
+					partHit and partHit ~=shot.sourcePart
+		if shot.destroy == true or hit then
+			table.remove(self.shots, i)
+		end
+		self:partDamage(structure, part)
+	end
+	
+end
+
+function World.partDamage(structure, part)
+
 end
 
 function World:draw()
@@ -107,6 +135,9 @@ function World:draw()
 		aiShip:draw(globalOffsetX, globalOffsetY)
 	end
 	self.playerShip:draw(globalOffsetX, globalOffsetY)
+	for i, shot in ipairs(self.shots) do
+		shot:draw(globalOffsetX, globalOffsetY)
+	end
 end
 
 return World

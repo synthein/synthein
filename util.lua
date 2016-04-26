@@ -10,16 +10,16 @@ function Util.vectorAngle(x, y)
 	return t
 end
 
-function Util.vectorComponents(r, t, angle)
-	local x = r * math.cos(angle + t)
-	local y = r * math.sin(angle + t)
+function Util.vectorComponents(r, angle)
+	local x = r * math.cos(angle)
+	local y = r * math.sin(angle)
 	return x, y
 end
 
 function Util.computeAbsCoords(x, y, angle)
 	local r = Util.vectorMagnitude(x, y)
 	local t = Util.vectorAngle(x, y)
-	return Util.vectorComponents(r, t, angle)
+	return Util.vectorComponents(r, t + angle)
 end
 
 function Util.sign(x)

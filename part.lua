@@ -12,6 +12,7 @@ function Part.create(imageName)
 	self.connectableSides = {true, true, true, true}
 	self.thrust = 0
 	self.torque = 0
+	self.gun = false
 	self.type = "generic"
 
 	return self

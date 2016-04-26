@@ -1,4 +1,7 @@
 local Part = require("part")
+local Block = require("block")
+local Engine = require("engine")
+local Gun = require("gun")
 local Util = require("util")
 
 local Structure = {}
@@ -6,7 +9,7 @@ Structure.__index = Structure
 
 Structure.PARTSIZE = 20
 
-function Structure.create(part, physics, x, y, angle)
+function Structure.create(part, physics, x, y, angle, ship)
 	local self = {}
 	setmetatable(self, Structure)
 
@@ -31,7 +34,68 @@ function Structure.create(part, physics, x, y, angle)
 	self.partCoords = { {x = 0, y = 0} }
 	self.partOrient = {1}
 	self.fixtures = {love.physics.newFixture(self.body, part.physicsShape)}
-	
+	if ship then
+		local contents, size
+		if ship < 10 then
+			local file = string.format("res/ships/BasicShip%d.txt", ship)
+			contents, size = love.filesystem.read(file)
+		end
+		if contents and size then
+			local j, k, x, y, baseJ, baseK
+			j = 0
+			k = 0
+			for i = 1, size do
+				local c = contents:sub(i,i)
+				j = j + 1
+				if c == '\n' then 
+					j = 0
+					k = k + 1
+				elseif c == 'B' then
+					baseJ = j
+					baseK = k
+				end
+			end
+		
+			j = 0
+			k = 0
+			for i = 1, size do
+				local c = contents:sub(i,i)
+				local nc = contents:sub(i + 1, i + 1)
+				local angle = 1
+				j = j + 1
+				x = (j - baseJ)/2
+				y = k - baseK
+				if c == '\n' then 
+					j = 0
+					k = k + 1
+				elseif c == 'b' then
+					self:addPart(Block.create(world), x, y, 1)
+				elseif c == 'e' then
+					if nc == '1' then
+						angle = 1
+					elseif nc == '2' then
+						angle = 2
+					elseif nc == '3' then
+						angle = 3
+					elseif nc == '4' then
+						angle = 4
+					end
+					self:addPart(Engine.create(world), x, y, angle)
+				elseif c == 'g' then
+					if nc == '1' then
+						angle = 1
+					elseif nc == '2' then
+						angle = 2
+					elseif nc == '3' then
+						angle = 3
+					elseif nc == '4' then
+						angle = 4
+					end
+					self:addPart(Gun.create(world), x, y, angle)
+				end
+			end
+		end
+	end
 	return self
 end
 

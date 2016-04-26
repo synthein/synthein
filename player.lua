@@ -23,6 +23,7 @@ function Player.create(type, structure)
 		self.removePart = "x"
 		self.confirm = "return"
 		self.cancel = "escape"
+		self.shoot = "space"
 	elseif type =="player2" then
 	end
 
@@ -91,6 +92,9 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 	end
 	if love.keyboard.isDown(self.strafeRight) then
 		table.insert(orders, "strafeRight")
+	end
+	if love.keyboard.isDown(self.shoot) then
+		table.insert(orders, "shoot")
 	end
 
 	self.ship:command(orders)

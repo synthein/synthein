@@ -20,15 +20,18 @@ function AI:update(dt, playerShip)
 	local angle = Util.vectorAngle(playerX - aiX, playerY - aiY)
 	angle = aiAngle - angle - math.pi/2
 	if angle > math.pi then angle = angle - 2 * math.pi end
-	if angle  < -math.pi/10 then
+	if angle  < -math.pi/15 then
 		table.insert(orders, "right")
-	elseif angle > math.pi/10 then
+	elseif angle > math.pi/15 then
 		table.insert(orders, "left")
+	else 
+		table.insert(orders, "shoot")
 	end
 	if Util.vectorMagnitude(playerX - aiX, playerY - aiY) > 10 * 20 then
 		table.insert(orders, "forward")
 	end
 	self.ship:command(orders)
+	self.ship:update(dt)
 end
 
 function AI:draw(globalOffsetX, globalOffsetY)

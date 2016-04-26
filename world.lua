@@ -16,7 +16,7 @@ function World.create(physics)
 	
 	self.ais = {}
 	for i, aiShip in ipairs(self.aiShips) do
-		table.insert(self.ais, AI.create(aiShip))
+		table.insert(self.ais, AI.create(aiShip, 2))
 	end
 	self.shots = {}
 	return self

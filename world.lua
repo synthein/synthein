@@ -26,8 +26,8 @@ function World:getPlayerShip()
 	return self.playerShip
 end
 
-function World:getStructure(mouseWorldX,mouseWorldY)
-	local part, partSide = self.playerShip:getPartIndex(mouseWorldX, mouseWorldY, 
+function World:getStructure(locationX,locationY)
+	local part, partSide = self.playerShip:getPartIndex(locationX, locationY, 
 												   player)
 	if part and partSide then
 		return self.playerShip, part, partSide, i
@@ -39,7 +39,7 @@ function World:getStructure(mouseWorldX,mouseWorldY)
 --			return structure, part, partSide, i
 --			end
 --		end
-	local part, partSide = self.anchor:getPartIndex(mouseWorldX, mouseWorldY, 
+	local part, partSide = self.anchor:getPartIndex(locationX, locationY, 
 												   anchor)
 	if part and partSide then
 		return self.anchor, part, partSide, i
@@ -52,28 +52,28 @@ function World:getStructure(mouseWorldX,mouseWorldY)
 --			return structure, part, partSide, i
 --			end
 --		end
-	structure, part, partSide, i = self:getAIShips(mouseWorldX, mouseWorldY)
+	structure, part, partSide, i = self:getAIShips(locationX, locationY)
 	if structure and part and partSide and i then
 		return structure, part, partSide, i
 	end
-	structure, part, partSide, i = self:getWorldStructure(mouseWorldX, mouseWorldY)
+	structure, part, partSide, i = self:getWorldStructure(locationX, locationY)
 	if structure and part and partSide and i then
 		return structure, part, partSide, i
 	end
 end
 
-function World:getWorldStructure(mouseWorldX, mouseWorldY)
+function World:getWorldStructure(locationX, locationY)
 	for i, structure in ipairs(self.worldStructures) do
-		local part, partSide = structure:getPartIndex(mouseWorldX, mouseWorldY)
+		local part, partSide = structure:getPartIndex(locationX, locationY)
 		if part and partSide then
 			return structure, part, partSide, i
 		end
 	end
 end
 
-function World:getAIShips(mouseWorldX, mouseWorldY)
+function World:getAIShips(locationX, locationY)
 	for i, structure in ipairs(self.aiShips) do
-		local part, partSide = structure:getPartIndex(mouseWorldX, mouseWorldY)
+		local part, partSide = structure:getPartIndex(locationX, locationY)
 		if part and partSide then
 			return structure, part, partSide, i
 		end

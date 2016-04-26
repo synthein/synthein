@@ -13,9 +13,18 @@ function Part.create(imageName)
 	self.thrust = 0
 	self.torque = 0
 	self.gun = false
+	self.destroy = false
 	self.type = "generic"
+	self.health = 10
 
 	return self
+end
+
+function Part:takeDamage()
+	self.health = self.health - 1
+	if self.health <= 0 then 
+		self.destroy = true
+	end
 end
 
 function Part:draw(x, y, angle, globalOffsetX, globalOffsetY)

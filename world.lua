@@ -102,12 +102,20 @@ end
 
 function World:update(dt)
 	for i, structure in ipairs(self.worldStructures) do
+		if #structure.parts == 0 then
+			table.remove(self.worldStructures, i)
+		else
 		structure:update(dt, self.playerShip)
+		end
 	end
 	self.playerShip:update(dt)
 	self.anchor:update(dt)
 	for i, ai in ipairs(self.ais) do
+		if #ai.ship.parts == 0 then
+			table.remove(self.ais, i)
+		else
 		ai:update(dt, self.playerShip)
+		end
 	end
 	for i, shot in ipairs(self.shots) do
 		shotX, shotY, shotTime = shot:update(dt)
@@ -116,14 +124,19 @@ function World:update(dt)
 					partHit and partHit ~=shot.sourcePart
 		if shot.destroy == true or hit then
 			table.remove(self.shots, i)
+			if hit then
+				self:partDamage(structureHit, partHit)
+			end
 		end
-		self:partDamage(structure, part)
 	end
 	
 end
 
-function World.partDamage(structure, part)
-
+function World:partDamage(structure, part)
+	part:takeDamage()
+	if part.destroy then
+		local empty = structure:removePart(part)
+	end
 end
 
 function World:draw()

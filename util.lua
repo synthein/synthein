@@ -32,6 +32,27 @@ function Util.sign(x)
    end
 end
 
+function Util.absVal(x)
+	if x < 0 then
+		x = -x
+	end
+	return x
+end
 
+function Util.max(a, b)
+	if a > b then
+		return a
+	else
+		return b
+	end
+end
+
+function Util.min(a,b)
+	if a < b then
+		return a
+	else
+		return b
+	end
+end
 
 return Util

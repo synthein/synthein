@@ -42,8 +42,11 @@ end
 function love.draw()
 	SCREEN_WIDTH = love.graphics.getWidth()
 	SCREEN_HEIGHT = love.graphics.getHeight()
-
+	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + globalOffsetX
+	mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + globalOffsetY
+	
 	world:draw()
+	player1:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 	love.graphics.draw(
 		compass,
 		SCREEN_WIDTH-60,
@@ -80,5 +83,9 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch)
-	Debug.mousereleased(button)
+	player1:mousereleased(x, y, button)
+
+	if debugmode == true then
+		Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
+	end
 end

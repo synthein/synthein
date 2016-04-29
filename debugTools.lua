@@ -28,7 +28,7 @@ function Debug.draw()
 		globalOffsetX, globalOffsetY,
 		#Debug.world.worldStructures,
 		#Debug.world.playerShip.parts,
-		(Debug.player1.isBuilding and "yes" or "no")
+		(Debug.player1.build and "yes" or "no")
 	)
 	love.graphics.print(debugString, 5, 5)
 end
@@ -71,7 +71,7 @@ function Debug.mousepressed(mouseX, mouseY, button, mouseWorldX, mouseWorldY)
 	end
 end
 
-function Debug.mousereleased(button)
+function Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
 	if button == 3 then
 		if Debug.mouseJoint then
 			Debug.mouseJoint:destroy()

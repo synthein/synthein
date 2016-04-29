@@ -63,9 +63,9 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		end
 	end
 	if self.annexeePart and self:isSideConnectable(self.annexeePart, self.annexeePartSide) then
-		local x, y = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
+		local x, y, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
 		local offsetX, offsetY -- move the cursor the side that we are selecting
-		local angle = (self.annexeePartSide - 2) * math.pi/2 + self.annexee.body:getAngle()
+		local angle = (self.annexeePartSide - 2) * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.image,
@@ -76,9 +76,9 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		)
 	end
 	if self.mode == 4 and self:isSideConnectable(self.structurePart, self.structurePartSide) then
-		local x, y = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
+		local x, y, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
 		local offsetX, offsetY -- move the cursor the side that we are selecting
-		local angle = (self.structurePartSide - 2) * math.pi/2 + self.structure.body:getAngle()
+		local angle = (self.structurePartSide - 2) * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.image,
@@ -116,15 +116,16 @@ end
 
 function Building:released(mouseWorldX, mouseWorldY)
 	if self.mode == 2 then
-			
+		
 		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
 		local partSide = Util.vectorAngle(
 			mouseWorldX - partX, 
-			mouseWorldY - partY) - partAngle
+			mouseWorldY - partY) - partAngle 
 		local a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
 		a = Util.absVal(a)
 		b = Util.absVal(b)
 		self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
+
 		if not self:isSideConnectable(self.annexeePart, self.annexeePartSide) then
 			return true --end build
 		end

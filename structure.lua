@@ -118,6 +118,8 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	                     structureSide)
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
+	annexeeSide = (annexeeSide - annexee.partOrient[aIndex]) % 4 + 1
+	structureSide = (structureSide - self.partOrient[bIndex]) % 4 + 1
 	local structureOffsetX, structureOffsetY
 
 	if structureSide == 1 then
@@ -252,7 +254,8 @@ function Structure:getAbsPartCoords(index)
 		self.body:getAngle())
 
 	return self.body:getX() + x, self.body:getY() + y, 
-		   self.body:getAngle() % (2*math.pi)
+		   self.body:getAngle() + (self.partOrient[index] - 1) * math.pi/2 
+				% (2*math.pi)
 end
 
 function Structure:command(orders)
@@ -359,10 +362,8 @@ end
 
 function Structure:draw(globalOffsetX, globalOffsetY)
 	for i, part in ipairs(self.parts) do
-		local x, y = self:getAbsPartCoords(i)
-		part:draw(x, y,
-				self.body:getAngle() + (self.partOrient[i] - 1) * math.pi/2,
-				globalOffsetX, globalOffsetY)
+		local x, y, angle = self:getAbsPartCoords(i)
+		part:draw(x, y, angle, globalOffsetX, globalOffsetY)
 	end
 end
 

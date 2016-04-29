@@ -1,4 +1,4 @@
-local Selection = require("selection")
+local Building = require("building")
 local Util = require("util")
 local World = require("world")
 
@@ -34,6 +34,7 @@ function Player.create(type, structure)
 	self.isRemoving = false
 	self.partX = nil
 	self.partY = nil
+	self.build = nil
 
 	return self
 end
@@ -98,82 +99,6 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 	end
 
 	self.ship:command(orders)
-
-	-----------------------
-	-- Building commands --
-	-----------------------
-
-	--	TODO: remove these (use mouse controls instead)
-	-- If the one of the selection keys is already down, don't react to them.
-	if not self.selectionKeyDown then
-
-		if love.keyboard.isDown(self.selectPrevious) or
-		   love.keyboard.isDown(self.selectNext) or
-		   love.keyboard.isDown(self.confirm) or
-		   love.keyboard.isDown(self.removePart) then
-			-- If select mode is not enabled, enable it.
-			if not self.selection then
-				self.selection = Selection.enable(worldStructures, self.ship,
-				                                  anchor)
-
-			-- If selection mode is enabled, then we can send commands to
-			-- self.selection.
-			else
-				if love.keyboard.isDown(self.selectPrevious) then
-					self.selection:previous()
-				end
-
-				if love.keyboard.isDown(self.selectNext) then
-					self.selection:next()
-				end
-
-				if love.keyboard.isDown(self.confirm) then
-					if self.selection:confirm() == 1 then
-						-- Disable selection mode when we are done.
-						self.selection = nil
-					end
-				end
-			end
-			-- Lock out the selection keys until they are released.
-			self.selectionKeyDown = true
-
-			if not self.isremoving and 
-				   love.keyboard.isDown(self.removePart) then
-				self.isremoving = true
-			end
-		end
-
-	-- Once the selection keys are released, start listening for them again.
-	elseif not love.keyboard.isDown(self.selectPrevious) and
-	       not love.keyboard.isDown(self.selectNext) and
-	       not love.keyboard.isDown(self.confirm) then
-		self.selectionKeyDown = false
-	end
-end
-
-function Player:build(mouseWorldX, mouseWorldY)
-	if not self.isBuilding then
-		self.isBuilding = true
-
-		self.annexee, self.annexeePart, 
-			self.annexeePartSideClicked, self.annexeeIndex
-			= world:getWorldStructure(mouseWorldX, mouseWorldY)
-
-		if not self.annexee then
-			self.isBuilding = false
-		end
-
-	else
-		self.structure, self.structurePart, self.structurePartSideClicked = 
-		world:getStructure(mouseWorldX,mouseWorldY)
-		if self.structure and self.annexee and
-		   self.structure ~= self.annexee then
-			world:annex(self.annexee, self.annexeePart, self.annexeePartSideClicked, self.annexeeIndex,
-						self.structure, self.structurePart, self.structurePartSideClicked)
-		end
-		self.structure, self.annexee = nil
-		self.isBuilding = false
-	end
 end
 
 function Player:mousepressed(mouseX, mouseY, button)
@@ -182,7 +107,13 @@ function Player:mousepressed(mouseX, mouseY, button)
 	local mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
 
 	if button == 1 then
-		self:build(mouseWorldX, mouseWorldY)
+		if not self.build then
+			self.build = Building.create(world)
+		end
+			if self.build:pressed(mouseWorldX, mouseWorldY) then
+				self.build = nil
+			end
+		
 	end
 	if button == 2 then
 		local structure, part = world:getStructure(mouseWorldX, mouseWorldY)
@@ -192,10 +123,23 @@ function Player:mousepressed(mouseX, mouseY, button)
 	end
 end
 
-function Player:draw(globalOffsetX, globalOffsetY)
-	self.ship:draw(globalOffsetX, globalOffsetY)
-	if self.selection then
-		self.selection:draw(globalOffsetX, globalOffsetY)
+function Player:mousereleased(mouseX, mouseY, button)
+	-- Convert the mouseX and Y coordinates to coordinates in the world.
+	local mouseWorldX = mouseX - SCREEN_WIDTH/2 + globalOffsetX
+	local mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
+
+	if button == 1 then
+		if self.build then
+			if self.build:released(mouseWorldX, mouseWorldY) then
+				self.build = nil
+			end
+		end
+	end
+end
+
+function Player:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
+	if self.build then
+		self.build:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 	end
 end
 

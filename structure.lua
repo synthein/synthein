@@ -224,22 +224,28 @@ function Structure:findPart(query)
 end
 
 -- Find the specified part and destroy it. If there are no more parts in the
--- structure, then destroy the structure and return 1. Otherwise return nil.
--- ** Always check the return value and remove the reference to the structure
--- if it is destroyed.
+-- structure, then mark this structure for destruction.
 function Structure:removePart(part)
-	i = self:findPart(part)
-	if i then
-		self.fixtures[i]:destroy()
-		table.remove(self.parts, i)
-		table.remove(self.partCoords, i)
-		table.remove(self.fixtures, i)
-		table.remove(self.partOrient, i)
+	local partIndex
+
+	-- Find out if the argument is a part object or index.
+	if type(part) == "table" then
+		partIndex = self:findPart(part)
+	elseif type(part) == "number" then
+		partIndex = part
+	else
+		error("Argument to Structure:removePart is not a part.")
 	end
 
-	-- Signal to the calling function that the structure is empty.
+	-- Destroy the part.
+	self.fixtures[partIndex]:destroy()
+	table.remove(self.parts, partIndex)
+	table.remove(self.partCoords, partIndex)
+	table.remove(self.fixtures, partIndex)
+	table.remove(self.partOrient, partIndex)
+
 	if #self.parts == 0 then
-		return 1
+		self.isDestroyed = true
 	end
 end
 

@@ -1,7 +1,8 @@
-local Structure = require("structure")
-local InitWorld = require("initWorld")
 local AI = require("ai")
+local InitWorld = require("initWorld")
+local Particles = require("particles")
 local Shot = require("shot")
+local Structure = require("structure")
 
 local World = {}
 World.__index = World
@@ -18,7 +19,9 @@ function World.create(physics)
 	for i, aiShip in ipairs(self.aiShips) do
 		table.insert(self.ais, AI.create(aiShip, 2))
 	end
+
 	self.shots = {}
+	self.particles = {}
 	return self
 end
 
@@ -100,7 +103,18 @@ function World:shoot(structure, part)
 	table.insert(self.shots, Shot.create(x, y, angle, structure, part))
 end
 
+function World:partDamage(structure, part)
+	part:takeDamage()
+	if part.destroy then
+		local partIndex = structure:findPart(part)
+		x, y = structure:getAbsPartCoords(partIndex)
+		table.insert(self.particles, Particles.newExplosion(x, y))
+		structure:removePart(partIndex)
+	end
+end
+
 function World:update(dt)
+	-- Update all of the structues.
 	for i, structure in ipairs(self.worldStructures) do
 		if #structure.parts == 0 then
 			table.remove(self.worldStructures, i)
@@ -117,6 +131,8 @@ function World:update(dt)
 		ai:update(dt, self.playerShip)
 		end
 	end
+
+	-- Update the shots.
 	for i, shot in ipairs(self.shots) do
 		shotX, shotY, shotTime = shot:update(dt)
 		local structureHit, partHit = self:getStructure(shotX,shotY)
@@ -130,16 +146,18 @@ function World:update(dt)
 		end
 	end
 	
-end
-
-function World:partDamage(structure, part)
-	part:takeDamage()
-	if part.destroy then
-		local empty = structure:removePart(part)
+	-- Update the particles.
+	for i=#self.particles,1,-1  do
+		if self.particles[i].time <= 0 then
+			table.remove(self.particles, i)
+		else
+			self.particles[i]:update(dt)
+		end
 	end
 end
 
 function World:draw()
+	-- Draw all of the structures.
 	self.anchor:draw(globalOffsetX, globalOffsetY)
 	for i, structure in ipairs(self.worldStructures) do
 		structure:draw(globalOffsetX, globalOffsetY)
@@ -148,8 +166,15 @@ function World:draw()
 		aiShip:draw(globalOffsetX, globalOffsetY)
 	end
 	self.playerShip:draw(globalOffsetX, globalOffsetY)
+
+	-- Draw the shots.
 	for i, shot in ipairs(self.shots) do
 		shot:draw(globalOffsetX, globalOffsetY)
+	end
+
+	-- Draw the particles.
+	for i, particle in ipairs(self.particles) do
+		particle:draw(globalOffsetX, globalOffsetY)
 	end
 end
 

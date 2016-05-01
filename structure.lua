@@ -301,28 +301,28 @@ function Structure:command(orders)
 		elseif part.type == "generic" then
 			partParallel = Util.sign(self.partCoords[i].x)
 			partPerpendicular = Util.sign(self.partCoords[i].y)
-			perpendicular = perpendicular - rotate * partPerpendicular
-			parallel = parallel - rotate * partParallel
+			local partPerpendicular = perpendicular - rotate * partPerpendicular
+			local partParallel = parallel - rotate * partParallel
 			
 			--Set to 0 if engine is going backwards.
 			if self.partOrient[i] < 3 then
-				if parallel < 0 then parallel = 0 end
-				if perpendicular < 0 then	perpendicular = 0 end
+				if partParallel < 0 then partParallel = 0 end
+				if partPerpendicular < 0 then	partPerpendicular = 0 end
 			elseif self.partOrient[i] > 2 then 
-				if parallel > 0 then	parallel = 0 end
-				if perpendicular > 0 then	perpendicular = 0 end
+				if partParallel > 0 then	partParallel = 0 end
+				if partPerpendicular > 0 then	partPerpendicular = 0 end
 			end
 			--Limit to -1, 0 , 1.
-			parallel = Util.sign(parallel)
-			perpendicular = Util.sign(perpendicular)
+			partParallel = Util.sign(partParallel)
+			partPerpendicular = Util.sign(partPerpendicular)
 			--Moving forward and backward.
 			if self.partOrient[i] % 2 == 1 then
-				appliedForceX = directionX * parallel
-				appliedForceY = directionY * parallel
+				appliedForceX = directionX * partParallel
+				appliedForceY = directionY * partParallel
 			--Moving side to side.
 			elseif self.partOrient[i] % 2 == 0 then
-				appliedForceX = -directionY * perpendicular
-				appliedForceY = directionX * perpendicular
+				appliedForceX = -directionY * partPerpendicular
+				appliedForceY = directionX * partPerpendicular
 			end
 			--Turn on flame.
 			if appliedForceX ~= 0 or  appliedForceY ~=0 then

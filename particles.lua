@@ -11,7 +11,7 @@ function Particles.newExplosion(x, y)
 	self.y = y
 	self.ox = 20
 	self.oy = 20
-	self.time = 1.0
+	self.time = 0.3
 
 	function self:update(dt)
 		self.time = self.time - dt

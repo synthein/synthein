@@ -70,8 +70,8 @@ function InitWorldTesting.init(physics)
 	playerShip:addPart(Engine.create(world, 100, 100), 4, -2, 4)
 	playerShip:addPart(Engine.create(world, 100, 100), 3, -1, 1)
 
-
-	return worldStructures, anchor, playerShip, physics
+	aiShips = {}
+	return worldStructures, anchor, playerShip, aiShips, physics
 end
 
 return InitWorldTesting

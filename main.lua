@@ -13,8 +13,10 @@ local player1
 --local globalOffsetY
 local mouseWorldX
 local mouseWorldY
+local state
 
 function love.load()
+	MainMenu.load()
 	state = MainMenu
 end
 
@@ -47,7 +49,6 @@ end
 
 function love.mousepressed(x, y, button, istouch)
 	state = state.mousepressed(x, y, button)
-
 	if debugmode == true then
 		Debug.mousepressed(x, y, button, mouseWorldX, mouseWorldY)
 	end

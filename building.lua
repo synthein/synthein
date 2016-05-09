@@ -37,59 +37,6 @@ function Building.create(structureList, ship, anchor)
 		return self
 end
 
-function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
-	local a, b 
-	if self.mode == 2 then
-		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
-		local partSide = Util.vectorAngle(
-			mouseWorldX - partX, 
-			mouseWorldY - partY) - partAngle 
-		a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
-		a = Util.absVal(a)
-		b = Util.absVal(b)
-		if Util.max(a,b) > 10 then
-			self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
-		end
-	elseif self.mode == 4 and self.structure then
-		local partX, partY, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
-		local partSide = Util.vectorAngle(
-			mouseWorldX - partX, 
-			mouseWorldY - partY) - partAngle
-		a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
-		a = Util.absVal(a)
-		b = Util.absVal(b)
-		if Util.max(a,b) > 10 then
-			self.structurePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
-		end
-	end
-	if self.annexeePart and self:isSideConnectable(self.annexeePart, self.annexeePartSide) then
-		local x, y, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
-		local offsetX, offsetY -- move the cursor the side that we are selecting
-		local angle = (self.annexeePartSide - 2) * math.pi/2 + partAngle
-		offsetX, offsetY = Util.vectorComponents(10, angle)
-		love.graphics.draw(
-			self.image,
-			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
-			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
-			angle, 
-			1, 1, self.width/2, self.width/2
-		)
-	end
-	if self.mode == 4 and self:isSideConnectable(self.structurePart, self.structurePartSide) then
-		local x, y, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
-		local offsetX, offsetY -- move the cursor the side that we are selecting
-		local angle = (self.structurePartSide - 2) * math.pi/2 + partAngle
-		offsetX, offsetY = Util.vectorComponents(10, angle)
-		love.graphics.draw(
-			self.image,
-			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
-			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
-			angle, 
-			1, 1, self.width/2, self.width/2
-		)
-	end
-end
-
 function Building:pressed(mouseWorldX, mouseWorldY)
 	if self.mode == 1 then
 
@@ -126,7 +73,7 @@ function Building:released(mouseWorldX, mouseWorldY)
 		b = Util.absVal(b)
 		self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 
-		if not self:isSideConnectable(self.annexeePart, self.annexeePartSide) then
+		if not self.annexeePart.connectableSides[self.annexeePartSide] then
 			return true --end build
 		end
 		if Util.max(a,b) > 10 then
@@ -146,8 +93,9 @@ function Building:released(mouseWorldX, mouseWorldY)
 		if Util.max(a,b) < 10 then
 			return false  --don't end build
 		end
-		if self.structure and self.annexee and self:isSideConnectable(self.structurePart, self.structurePartSide) and
-		   self.structure ~= self.annexee then
+		if self.structure and self.annexee
+			and self.structurePart.connectableSides[self.structurePartSide]
+			and self.structure ~= self.annexee then
 			world:annex(self.annexee, self.annexeePart, self.annexeePartSide, self.annexeeIndex,
 						self.structure, self.structurePart, self.structurePartSide)
 		end
@@ -156,14 +104,57 @@ function Building:released(mouseWorldX, mouseWorldY)
 	end
 end
 
-function Building:isSideConnectable(part, sideToCheck)
-	local connectable = false
-	if part and sideToCheck then
-		if part.connectableSides[sideToCheck] then
-			connectable = true
+function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
+	local a, b 
+	if self.mode == 2 then
+		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
+		local partSide = Util.vectorAngle(
+			mouseWorldX - partX, 
+			mouseWorldY - partY) - partAngle 
+		a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
+		a = Util.absVal(a)
+		b = Util.absVal(b)
+		if Util.max(a,b) > 10 then
+			self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
+		end
+	elseif self.mode == 4 and self.structure then
+		local partX, partY, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
+		local partSide = Util.vectorAngle(
+			mouseWorldX - partX, 
+			mouseWorldY - partY) - partAngle
+		a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
+		a = Util.absVal(a)
+		b = Util.absVal(b)
+		if Util.max(a,b) > 10 then
+			self.structurePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 		end
 	end
-	return connectable
+	if self.annexeePart and self.annexeePart.connectableSides[self.annexeePartSide] then
+		local x, y, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
+		local offsetX, offsetY -- move the cursor the side that we are selecting
+		local angle = (self.annexeePartSide - 2) * math.pi/2 + partAngle
+		offsetX, offsetY = Util.vectorComponents(10, angle)
+		love.graphics.draw(
+			self.image,
+			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
+			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
+			angle, 
+			1, 1, self.width/2, self.width/2
+		)
+	end
+	if self.mode == 4 and self.structurePart.connectableSides[self.structurePartSide] then
+		local x, y, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
+		local offsetX, offsetY -- move the cursor the side that we are selecting
+		local angle = (self.structurePartSide - 2) * math.pi/2 + partAngle
+		offsetX, offsetY = Util.vectorComponents(10, angle)
+		love.graphics.draw(
+			self.image,
+			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
+			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
+			angle, 
+			1, 1, self.width/2, self.width/2
+		)
+	end
 end
 
 return Building

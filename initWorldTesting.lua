@@ -1,6 +1,6 @@
 local Anchor = require("anchor")
 local Block = require("block")
-local ControlBlock = require("controlBlock")
+local PlayerBlock = require("playerBlock")
 local Engine = require("engine")
 local Structure = require("structure")
 
@@ -17,7 +17,7 @@ function InitWorldTesting.init(physics)
 	anchor:addPart(Anchor.create(), 1, 1, 1)
 
 	-- Create the player.
-	local playerShip = Structure.create(ControlBlock.create(), physics, 0, -100)
+	local playerShip = Structure.create(PlayerBlock.create(), physics, 0, -100)
 
 	playerShip:addPart(Block.create(world, 100, 100), 1, 0, 1)
 

@@ -1,12 +1,12 @@
 local Part = require("part")
 
-local ControlBlock = {}
-ControlBlock.__index = ControlBlock
-setmetatable(ControlBlock, Part)
+local PlayerBlock = {}
+PlayerBlock.__index = PlayerBlock
+setmetatable(PlayerBlock, Part)
 
-function ControlBlock.create()
+function PlayerBlock.create()
 	local self = Part.create("player")
-	setmetatable(self, ControlBlock)
+	setmetatable(self, PlayerBlock)
 
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.thrust = 150
@@ -18,12 +18,12 @@ function ControlBlock.create()
 	return self
 end
 
-function ControlBlock:shot()
+function PlayerBlock:shot()
 	self.recharge = true
 	self.rechargeStart = 0
 end
 
-function ControlBlock:update(dt)
+function PlayerBlock:update(dt)
 	if self.recharge then
 		self.rechargeStart = self.rechargeStart + dt
 		if self.rechargeStart > 0.5 then
@@ -32,4 +32,4 @@ function ControlBlock:update(dt)
 	end
 end
 
-return ControlBlock
+return PlayerBlock

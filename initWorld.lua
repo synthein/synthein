@@ -1,6 +1,6 @@
 local Anchor = require("anchor")
 local Block = require("block")
-local ControlBlock = require("controlBlock")
+local PlayerBlock = require("playerBlock")
 local AIBlock = require("aiBlock")
 local Structure = require("structure")
 
@@ -21,7 +21,7 @@ function InitWorld.init(physics)
 	anchor:addPart(Anchor.create(), 1, 1, 1)
 
 	-- Create the player.
-	local playerShip = Structure.create(ControlBlock.create(), physics, 0, -100)
+	local playerShip = Structure.create(PlayerBlock.create(), physics, 0, -100)
 
 	return worldStructures, anchor, playerShip, aiShips, physics
 end

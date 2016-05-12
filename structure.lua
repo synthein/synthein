@@ -121,6 +121,7 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	annexeeSide = (annexeeSide - annexee.partOrient[aIndex]) % 4 + 1
 	structureSide = (structureSide - self.partOrient[bIndex]) % 4 + 1
 	local structureOffsetX, structureOffsetY
+	local newStructures = {}
 
 	if structureSide == 1 then
 		structureOffsetX = self.partCoords[bIndex].x
@@ -179,9 +180,21 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 			partOrientation = partOrientation + 4
 		end
 
-		self:addPart(annexee.parts[1], x, y, partOrientation)
+		local partThere = false
+		for i, part in ipairs(self.parts) do
+			if self.partCoords[i].x == x and self.partCoords[i].y == y then
+				partThere = true
+			end
+		end
+		if partThere then
+			table.insert(newStructures, Structure.create(annexee.parts[1], 
+						 physics, annexee:getAbsPartCoords(1)))
+		else
+			self:addPart(annexee.parts[1], x, y, partOrientation)
+		end
 		annexee:removePart(annexee.parts[1])
 	end
+	return newStructures
 end
 
 function Structure:removeSection(physics, part)

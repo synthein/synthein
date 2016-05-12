@@ -32,10 +32,4 @@ function ControlBlock:update(dt)
 	end
 end
 
-function ControlBlock:draw(x, y, angle)
-	love.graphics.draw(self.image, SCREEN_WIDTH/2,
-	                   SCREEN_HEIGHT/2, angle,
-					   1, 1, self.width/2, self.height/2)
-end
-
 return ControlBlock

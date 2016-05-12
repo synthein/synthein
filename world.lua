@@ -3,6 +3,7 @@ local InitWorld = require("initWorld")
 local Particles = require("particles")
 local Shot = require("shot")
 local Structure = require("structure")
+local Util = require("util")
 
 local World = {}
 World.__index = World
@@ -64,6 +65,19 @@ function World:getStructure(locationX,locationY)
 		return structure, part, partSide, i
 	end
 end
+
+function World:isMouseInsidePart(structure, part)
+	local mouseX, mouseY = love.mouse.getPosition()
+	local partX, partY, partAngle = structure:getAbsPartCoords(structure:findPart(part))
+	local partSide = Util.vectorAngle(
+		mouseWorldX - partX, 
+		mouseWorldY - partY) - partAngle
+	a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
+	a = Util.absVal(a)
+	b = Util.absVal(b)
+	return Util.max(a,b) < 10
+end
+
 
 function World:getWorldStructure(locationX, locationY)
 	for i, structure in ipairs(self.worldStructures) do

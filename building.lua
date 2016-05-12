@@ -8,11 +8,9 @@ function Building.create(structureList, ship, anchor)
 	local self = {}
 	setmetatable(self, Building)
 
-	self.image = love.graphics.newImage("res/images/pointer.png")
-	self.width = self.image:getWidth()
+	self.pointerImage = love.graphics.newImage("res/images/pointer.png")
+	self.pointerWidth = self.pointerImage:getWidth()
 	self.structureList = structureList
---	self.ship = ship
---	self.anchor = anchor
 
 	-- What are we selecting?
 	-- 1 = the structure to annex
@@ -23,7 +21,7 @@ function Building.create(structureList, ship, anchor)
 	-- 6 = the side of the part within the structure
 	self.mode = 1
 
-	-- Instance variables of Selection:
+	-- Instance variables of Building:
 	-- self.annexee, the structure to annex
 	-- self.annexeeIndex, the index of the annexee in structureList
 	-- self.annexeePart, the part in annexee to connect to
@@ -117,6 +115,7 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		if Util.max(a,b) > 10 then
 			self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 		end
+		Building.drawCircle(partX, partY, partAngle, self.annexeePartSide)
 	elseif self.mode == 4 and self.structure then
 		local partX, partY, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
 		local partSide = Util.vectorAngle(
@@ -128,6 +127,7 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		if Util.max(a,b) > 10 then
 			self.structurePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 		end
+		Building.drawCircle(partX, partY, partAngle, self.structurePartSide)
 	end
 	if self.annexeePart and self.annexeePart.connectableSides[self.annexeePartSide] then
 		local x, y, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
@@ -135,11 +135,11 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		local angle = (self.annexeePartSide - 2) * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
-			self.image,
+			self.pointerImage,
 			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
 			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
 			angle, 
-			1, 1, self.width/2, self.width/2
+			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
 	end
 	if self.mode == 4 and self.structurePart.connectableSides[self.structurePartSide] then
@@ -148,13 +148,40 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		local angle = (self.structurePartSide - 2) * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
-			self.image,
+			self.pointerImage,
 			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
 			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
 			angle, 
-			1, 1, self.width/2, self.width/2
+			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
 	end
+end
+
+function Building.drawCircle(centerX, centerY, angle, highlightedSide)
+	love.graphics.setLineWidth(10)
+
+	local radius = 35
+	local gap = 2
+
+	for i = 1, 4 do
+		if i == highlightedSide then
+			love.graphics.setColor(68, 112, 186, 192)
+		else
+			love.graphics.setColor(22, 65, 138, 192)
+		end
+		beginAngle = i * math.pi/2 - math.pi/4 - math.pi
+		middleAngle = i * math.pi/2 - math.pi
+		endAngle = (i+1) * math.pi/2 - math.pi/4 - math.pi
+
+		offsetX, offsetY = Util.vectorComponents(gap, middleAngle + angle)
+		love.graphics.arc(
+			"line", "open",
+			centerX + offsetX - globalOffsetX + SCREEN_WIDTH/2,
+			centerY + offsetY - globalOffsetY + SCREEN_HEIGHT/2,
+			radius, beginAngle + angle, endAngle + angle, 30)
+	end
+
+	love.graphics.setColor(255, 255, 255)
 end
 
 return Building

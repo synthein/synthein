@@ -177,10 +177,10 @@ function Building.drawCircle(centerX, centerY, angle, highlightedSide, connectab
 				love.graphics.setColor(22, 65, 138, 192)
 			end
 
-			--            |                   | offset by 45° | line up with part side 1 |
-			beginAngle =  (     i * math.pi/2 )  - math.pi/4  - math.pi
-			middleAngle = (     i * math.pi/2 )               - math.pi
-			endAngle =    ( (i+1) * math.pi/2 )  - math.pi/4  - math.pi
+			--            |               | offset by 45° | line up with part side 1 |
+			beginAngle =  ( i * math.pi/2 )  - math.pi/4  - math.pi
+			middleAngle = ( i * math.pi/2 )               - math.pi
+			endAngle =    ( i * math.pi/2 )  + math.pi/4  - math.pi
 
 			-- Push the arcs out to make a gap between them.
 			offsetX, offsetY = Util.vectorComponents(gap, middleAngle + angle)

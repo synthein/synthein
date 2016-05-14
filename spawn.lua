@@ -1,0 +1,3 @@
+-- Spawn some ships or other objects based on a table containing all of the
+-- data required to produce them. This module is designed to be called in
+-- SceneParser and Saves.

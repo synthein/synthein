@@ -1,3 +1,6 @@
+-- The Util module is a namespace for the various mathematical functions that we
+-- need.
+
 local Util = {}
 
 function Util.vectorMagnitude(x, y)

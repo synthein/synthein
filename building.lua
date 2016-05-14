@@ -136,8 +136,8 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.pointerImage,
-			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
-			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
+			- globalOffsetX + x + offsetX,
+			- globalOffsetY + y + offsetY,
 			angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
@@ -149,8 +149,8 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.pointerImage,
-			SCREEN_WIDTH/2 - globalOffsetX + x + offsetX,
-			SCREEN_HEIGHT/2 - globalOffsetY + y + offsetY,
+			- globalOffsetX + x + offsetX,
+			- globalOffsetY + y + offsetY,
 			angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
@@ -176,8 +176,8 @@ function Building.drawCircle(centerX, centerY, angle, highlightedSide)
 		offsetX, offsetY = Util.vectorComponents(gap, middleAngle + angle)
 		love.graphics.arc(
 			"line", "open",
-			centerX + offsetX - globalOffsetX + SCREEN_WIDTH/2,
-			centerY + offsetY - globalOffsetY + SCREEN_HEIGHT/2,
+			centerX + offsetX - globalOffsetX,
+			centerY + offsetY - globalOffsetY,
 			radius, beginAngle + angle, endAngle + angle, 30)
 	end
 

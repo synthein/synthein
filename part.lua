@@ -30,8 +30,8 @@ end
 function Part:draw(x, y, angle, globalOffsetX, globalOffsetY)
 	love.graphics.draw(
 		self.image,
-		SCREEN_WIDTH/2 - globalOffsetX + x,
-		SCREEN_HEIGHT/2 - globalOffsetY + y,
+		x - globalOffsetX,
+		y - globalOffsetY,
 		angle, 1, 1, self.width/2, self.height/2)
 end
 

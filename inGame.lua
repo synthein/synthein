@@ -27,9 +27,10 @@ end
 function InGame.draw()
 	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + globalOffsetX
 	mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + globalOffsetY
-
+	love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 	world:draw()
 	player1:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
+	love.graphics.translate(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2)
 	love.graphics.draw(
 		compass,
 		SCREEN_WIDTH-60,

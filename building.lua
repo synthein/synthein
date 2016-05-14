@@ -115,7 +115,10 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		if Util.max(a,b) > 10 then
 			self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 		end
-		Building.drawCircle(partX, partY, partAngle, self.annexeePartSide)
+		Building.drawCircle(
+			partX, partY, partAngle,
+			self.annexeePartSide, self.annexeePart.connectableSides
+		)
 	elseif self.mode == 4 and self.structure then
 		local partX, partY, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
 		local partSide = Util.vectorAngle(
@@ -127,7 +130,10 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		if Util.max(a,b) > 10 then
 			self.structurePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 		end
-		Building.drawCircle(partX, partY, partAngle, self.structurePartSide)
+		Building.drawCircle(
+			partX, partY, partAngle,
+			self.structurePartSide, self.structurePart.connectableSides
+		)
 	end
 	if self.annexeePart and self.annexeePart.connectableSides[self.annexeePartSide] then
 		local x, y, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
@@ -157,28 +163,34 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 	end
 end
 
-function Building.drawCircle(centerX, centerY, angle, highlightedSide)
+function Building.drawCircle(centerX, centerY, angle, highlightedSide, connectableSides)
 	love.graphics.setLineWidth(10)
 
 	local radius = 35
 	local gap = 2
 
 	for i = 1, 4 do
-		if i == highlightedSide then
-			love.graphics.setColor(68, 112, 186, 192)
-		else
-			love.graphics.setColor(22, 65, 138, 192)
-		end
-		beginAngle = i * math.pi/2 - math.pi/4 - math.pi
-		middleAngle = i * math.pi/2 - math.pi
-		endAngle = (i+1) * math.pi/2 - math.pi/4 - math.pi
+		if connectableSides[i] then
+			if i == highlightedSide then
+				love.graphics.setColor(68, 112, 186, 192)
+			else
+				love.graphics.setColor(22, 65, 138, 192)
+			end
 
-		offsetX, offsetY = Util.vectorComponents(gap, middleAngle + angle)
-		love.graphics.arc(
-			"line", "open",
-			centerX + offsetX - globalOffsetX,
-			centerY + offsetY - globalOffsetY,
-			radius, beginAngle + angle, endAngle + angle, 30)
+			--            |               | offset by 45° | line up with part side 1 |
+			beginAngle =  ( i * math.pi/2 )  - math.pi/4  - math.pi
+			middleAngle = ( i * math.pi/2 )               - math.pi
+			endAngle =    ( i * math.pi/2 )  + math.pi/4  - math.pi
+
+			-- Push the arcs out to make a gap between them.
+			offsetX, offsetY = Util.vectorComponents(gap, middleAngle + angle)
+
+			love.graphics.arc(
+				"line", "open",
+				centerX + offsetX - globalOffsetX,
+				centerY + offsetY - globalOffsetY,
+				radius, beginAngle + angle, endAngle + angle, 30)
+		end
 	end
 
 	love.graphics.setColor(255, 255, 255)

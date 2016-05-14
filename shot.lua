@@ -36,8 +36,8 @@ end
 function Shot:draw(globalOffsetX, globalOffsetY)
 	love.graphics.draw(
 		self.image,
-		SCREEN_WIDTH/2 - globalOffsetX + self.x,
-		SCREEN_HEIGHT/2 - globalOffsetY + self.y,
+		self.x - globalOffsetX,
+		self.y - globalOffsetY,
 		self.angle, 1, 1, self.width/2, self.height/2)
 end
 

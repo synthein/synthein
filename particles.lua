@@ -23,8 +23,8 @@ end
 function Particles:draw(globalOffsetX, globalOffsetY)
 	love.graphics.draw(
 		self.image,
-		SCREEN_WIDTH/2 - globalOffsetX + self.x,
-		SCREEN_HEIGHT/2 - globalOffsetY + self.y,
+		- globalOffsetX + self.x,
+		- globalOffsetY + self.y,
 		0, 1, 1, self.ox, self.oy)
 end
 

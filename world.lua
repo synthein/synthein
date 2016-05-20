@@ -13,13 +13,14 @@ World.__index = World
 function World.create(physics)
 	self = {}
 	setmetatable(self, World)
+	teamHostility = { {false, true},
+					  {true, false} }
 	
 	self.worldStructures, self.anchor, self.playerShip, self.aiShips, self.physics = InitWorld.init(physics)
 	
 	self.ais = {}
-	for i, aiShip in ipairs(self.aiShips) do
-		table.insert(self.ais, AI.create(aiShip, 1))
-	end
+	table.insert(self.ais, AI.create(self.aiShips[1], 1))
+	table.insert(self.ais, AI.create(self.aiShips[2], 2))
 
 	self.shots = {}
 	self.particles = {}
@@ -142,10 +143,43 @@ function World:update(dt)
 	self.playerShip:update(dt)
 	self.anchor:update(dt)
 	for i, ai in ipairs(self.ais) do
+		local x = ai.ship.body:getX()
+		local y = ai.ship.body:getY()
+		local targetX, target, distance, target
+		for j, aiTarget in ipairs(self.ais) do
+			if teamHostility[ai.team][aiTarget.team] then
+				targetX = aiTarget.ship.body:getX()
+				targetY = aiTarget.ship.body:getY()
+				if distance then
+					d = Util.vectorMagnitude(targetX - x, targetY - y)
+					if d < distance then
+						target = aiTarget.ship
+						distance = d
+					end
+				else
+					target = aiTarget.ship
+					distance = Util.vectorMagnitude(targetX - x, targetY - y)
+				end
+			end
+		end
+		if teamHostility[ai.team][1] then
+			targetX = self.playerShip.body:getX()
+			targetY = self.playerShip.body:getY()
+			if distance then
+				d = Util.vectorMagnitude(targetX - x, targetY - y)
+				if d < distance then
+					target = self.playerShip
+					distance = d
+				end
+			else
+				target = self.playerShip
+				distance = Util.vectorMagnitude(targetX - x, targetY - y)
+			end
+		end
 		if #ai.ship.parts == 0 then
 			table.remove(self.ais, i)
 		else
-		ai:update(dt, self.playerShip)
+			ai:update(dt, self.playerShip, target)
 		end
 	end
 

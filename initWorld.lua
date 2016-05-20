@@ -14,6 +14,8 @@ function InitWorld.init(physics)
 	end
 	local aiShips = {}
 	aiShips[1] = Structure.create(AIBlock.create(), physics, -35, -35)
+	aiShips[2] = Structure.create(AIBlock.create(), physics, -35, -200)
+	
 	-- Create the anchor.
 	local anchor = Structure.create(Anchor.create(), physics, -10, -10)
 	anchor:addPart(Anchor.create(), 1, 0, 1)

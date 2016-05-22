@@ -14,7 +14,6 @@ function Structure.create(shipTable, physics, x, y, angle, ship)
 		shipTable.partCoords = { {x = 0, y = 0} }
 		shipTable.partOrient = {1}
 	end
-
 	if shipTable.parts[1].type == "player" then
 		self.body = love.physics.newBody(physics, x, y, "dynamic")
 		self.body:setAngularDamping(1)

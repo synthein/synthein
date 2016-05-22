@@ -3,6 +3,7 @@ local Block = require("block")
 local PlayerBlock = require("playerBlock")
 local AIBlock = require("aiBlock")
 local Structure = require("structure")
+local Spawn = require("spawn")
 
 local InitWorld = {}
 
@@ -13,7 +14,9 @@ function InitWorld.init(physics)
 		worldStructures[i] = Structure.create(Block.create(), physics, i*35, i*35)
 	end
 	local aiShips = {}
-	aiShips[1] = Structure.create(AIBlock.create(), physics, -35, -35)
+	local string, length = Spawn.loadShipFromFile(2)
+	local shipTable = Spawn.shipUnpack(string, length)
+	aiShips[1] = Spawn.spawnShip(shipTable, physics, -35, -35)
 	aiShips[2] = Structure.create(AIBlock.create(), physics, -35, -200)
 	
 	-- Create the anchor.

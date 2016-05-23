@@ -15,9 +15,9 @@ function World.create(physics)
 	setmetatable(self, World)
 	teamHostility = { {false, true},
 					  {true, false} }
-	
+
 	self.worldStructures, self.anchor, self.playerShip, self.aiShips, self.physics = InitWorld.init(physics)
-	
+
 	self.ais = {}
 	table.insert(self.ais, AI.create(self.aiShips[1], 1))
 	table.insert(self.ais, AI.create(self.aiShips[2], 2))
@@ -32,26 +32,26 @@ function World:getPlayerShip()
 end
 
 function World:getStructure(locationX,locationY)
-	local part, partSide = self.playerShip:getPartIndex(locationX, locationY, 
+	local part, partSide = self.playerShip:getPartIndex(locationX, locationY,
 												   player)
 	if part and partSide then
 		return self.playerShip, part, partSide, i
 	end
 --		for i, structure in ipairs(player) do
---			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY, 
+--			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY,
 --														   structure)
 --			if part and partSide then
 --			return structure, part, partSide, i
 --			end
 --		end
-	local part, partSide = self.anchor:getPartIndex(locationX, locationY, 
+	local part, partSide = self.anchor:getPartIndex(locationX, locationY,
 												   anchor)
 	if part and partSide then
 		return self.anchor, part, partSide, i
 	end
-	
+
 --		for i, structure in ipairs(anchor) do
---			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY, 
+--			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY,
 --														   structure)
 --			if part and partSide then
 --			return structure, part, partSide, i
@@ -71,7 +71,7 @@ function World:isMouseInsidePart(structure, part)
 	local mouseX, mouseY = love.mouse.getPosition()
 	local partX, partY, partAngle = structure:getAbsPartCoords(structure:findPart(part))
 	local partSide = Util.vectorAngle(
-		mouseWorldX - partX, 
+		mouseWorldX - partX,
 		mouseWorldY - partY) - partAngle
 	a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
 	a = Util.absVal(a)
@@ -187,7 +187,7 @@ function World:update(dt)
 	for i, shot in ipairs(self.shots) do
 		shotX, shotY, shotTime = shot:update(dt)
 		local structureHit, partHit = self:getStructure(shotX,shotY)
-		local hit = structureHit and structureHit ~= shot.sourceStructure and 
+		local hit = structureHit and structureHit ~= shot.sourceStructure and
 					partHit and partHit ~=shot.sourcePart
 		if shot.destroy == true or hit then
 			table.remove(self.shots, i)
@@ -196,7 +196,7 @@ function World:update(dt)
 			end
 		end
 	end
-	
+
 	-- Update the particles.
 	for i=#self.particles,1,-1  do
 		if self.particles[i].time <= 0 then
@@ -207,25 +207,25 @@ function World:update(dt)
 	end
 end
 
-function World:draw()
+function World:draw(cameraX, cameraY)
 	-- Draw all of the structures.
-	self.anchor:draw(globalOffsetX, globalOffsetY)
+	self.anchor:draw(cameraX, cameraY)
 	for i, structure in ipairs(self.worldStructures) do
-		structure:draw(globalOffsetX, globalOffsetY)
+		structure:draw(cameraX, cameraY)
 	end
 	for i, aiShip in ipairs(self.aiShips) do
-		aiShip:draw(globalOffsetX, globalOffsetY)
+		aiShip:draw(cameraX, cameraY)
 	end
-	self.playerShip:draw(globalOffsetX, globalOffsetY)
+	self.playerShip:draw(cameraX, cameraY)
 
 	-- Draw the shots.
 	for i, shot in ipairs(self.shots) do
-		shot:draw(globalOffsetX, globalOffsetY)
+		shot:draw(cameraX, cameraY)
 	end
 
 	-- Draw the particles.
 	for i, particle in ipairs(self.particles) do
-		particle:draw(globalOffsetX, globalOffsetY)
+		particle:draw(cameraX, cameraY)
 	end
 end
 

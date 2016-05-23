@@ -17,30 +17,33 @@ function InGame.update(dt)
 	else
 		physics:update(dt)
 
-		globalOffsetX = player1.ship.body:getX()
-		globalOffsetY = player1.ship.body:getY()
-		mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + globalOffsetX
-		mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + globalOffsetY
+		camera.setX(player1.ship.body:getX())
+		camera.setY(player1.ship.body:getY())
+		mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + camera.getX()
+		mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + camera.getY()
 
 		world:update(dt)
-		player1:handleInput(globalOffsetX, globalOffsetY)
+		player1:handleInput(camera.getPosition())
 	end
 	return InGame
 end
 
 function InGame.draw()
-	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + globalOffsetX
-	mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + globalOffsetY
-	love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-	world:draw()
-	player1:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
-	love.graphics.translate(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2)
-	love.graphics.draw(
-		compass,
-		SCREEN_WIDTH-60,
-		SCREEN_HEIGHT-60,
-		math.atan2(globalOffsetY, globalOffsetX)-math.pi/2,
-		1, 1, 25, 25)
+	-- for camera in InGame.cameras do
+		cameraX, cameraY = camera.getPosition()
+		mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
+		mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + cameraY
+		love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+		world:draw(cameraX, cameraY)
+		player1:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
+		love.graphics.translate(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2)
+		love.graphics.draw(
+			compass,
+			SCREEN_WIDTH-60,
+			SCREEN_HEIGHT-60,
+			math.atan2(cameraY, cameraX)-math.pi/2,
+			1, 1, 25, 25)
+	-- end
 	if paused then
 		love.graphics.print(
 			"Paused",
@@ -64,12 +67,20 @@ function InGame.keypressed(key)
 end
 
 function InGame.mousepressed(x, y, button)
-	player1:mousepressed(x, y, button)
+	cameraX, cameraY = camera.getPosition()
+	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
+	mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + cameraY
+
+	player1:mousepressed(mouseWorldX, mouseWorldY, button)
 	return InGame
 end
 
 function InGame.mousereleased(x, y, button)
-		player1:mousereleased(x, y, button)
+	cameraX, cameraY = camera.getPosition()
+	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
+	mouseWorldY = love.mouse.getY() - SCREEN_HEIGHT/2 + cameraY
+
+	player1:mousereleased(x, y, button)
 	return InGame
 end
 

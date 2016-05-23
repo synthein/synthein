@@ -102,7 +102,7 @@ function Building:released(mouseWorldX, mouseWorldY)
 	end
 end
 
-function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
+function Building:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
 	local a, b 
 	if self.mode == 2 then
 		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
@@ -142,8 +142,8 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.pointerImage,
-			- globalOffsetX + x + offsetX,
-			- globalOffsetY + y + offsetY,
+			- cameraX + x + offsetX,
+			- cameraY + y + offsetY,
 			angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
@@ -155,8 +155,8 @@ function Building:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.pointerImage,
-			- globalOffsetX + x + offsetX,
-			- globalOffsetY + y + offsetY,
+			- cameraX + x + offsetX,
+			- cameraY + y + offsetY,
 			angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
@@ -187,8 +187,8 @@ function Building.drawCircle(centerX, centerY, angle, highlightedSide, connectab
 
 			love.graphics.arc(
 				"line", "open",
-				centerX + offsetX - globalOffsetX,
-				centerY + offsetY - globalOffsetY,
+				centerX + offsetX - cameraX,
+				centerY + offsetY - cameraY,
 				radius, beginAngle + angle, endAngle + angle, 30)
 		end
 	end

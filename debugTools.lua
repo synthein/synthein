@@ -25,7 +25,7 @@ function Debug.draw()
 		"Number of world structures: %d\n"..
 		"Number of ship parts: %d\n"..
 		"Build mode: %s\n",
-		globalOffsetX, globalOffsetY,
+		Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
 		#Debug.world.worldStructures,
 		#Debug.world.playerShip.parts,
 		(Debug.player1.build and "yes" or "no")

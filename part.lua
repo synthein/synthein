@@ -26,16 +26,16 @@ end
 
 function Part:takeDamage()
 	self.health = self.health - 1
-	if self.health <= 0 then 
+	if self.health <= 0 then
 		self.destroy = true
 	end
 end
 
-function Part:draw(x, y, angle, globalOffsetX, globalOffsetY)
+function Part:draw(x, y, angle, cameraX, cameraY)
 	love.graphics.draw(
 		self.image,
-		x - globalOffsetX,
-		y - globalOffsetY,
+		x - cameraX,
+		y - cameraY,
 		angle, 1, 1, self.width/2, self.height/2)
 end
 

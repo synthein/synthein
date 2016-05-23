@@ -47,7 +47,7 @@ end
 -- The table set to nill.
 
 function Structure:destroy()
-	
+
 	end
 
 -- Annex another structure into this one.
@@ -132,7 +132,7 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 			end
 		end
 		if partThere then
-			table.insert(newStructures, Structure.create(annexee.parts[1], 
+			table.insert(newStructures, Structure.create(annexee.parts[1],
 						 physics, annexee:getAbsPartCoords(1)))
 		else
 			self:addPart(annexee.parts[1], x, y, partOrientation)
@@ -217,8 +217,8 @@ function Structure:getAbsPartCoords(index)
 		self.partCoords[index].y*self.PARTSIZE,
 		self.body:getAngle())
 
-	return self.body:getX() + x, self.body:getY() + y, 
-		   self.body:getAngle() + (self.partOrient[index] - 1) * math.pi/2 
+	return self.body:getX() + x, self.body:getY() + y,
+		   self.body:getAngle() + (self.partOrient[index] - 1) * math.pi/2
 				% (2*math.pi)
 end
 
@@ -226,7 +226,7 @@ function Structure:command(orders)
 	-- The x and y components of the force
 	local directionX = math.cos(self.body:getAngle() - math.pi/2)
 	local directionY = math.sin(self.body:getAngle() - math.pi/2)
-		
+
 	local perpendicular = 0
 	local parallel = 0
 	local rotate = 0
@@ -247,7 +247,7 @@ function Structure:command(orders)
 
 		local appliedForceX = 0
 		local appliedForceY = 0
-		
+
 			-- Apply the force for the engines
 				-- Choose parts that have thrust and are pointed the right
 				-- direction, but exclude playerBlock, etc.
@@ -261,12 +261,12 @@ function Structure:command(orders)
 			partPerpendicular = Util.sign(self.partCoords[i].y)
 			local partPerpendicular = perpendicular - rotate * partPerpendicular
 			local partParallel = parallel - rotate * partParallel
-			
+
 			--Set to 0 if engine is going backwards.
 			if self.partOrient[i] < 3 then
 				if partParallel < 0 then partParallel = 0 end
 				if partPerpendicular < 0 then	partPerpendicular = 0 end
-			elseif self.partOrient[i] > 2 then 
+			elseif self.partOrient[i] > 2 then
 				if partParallel > 0 then	partParallel = 0 end
 				if partPerpendicular > 0 then	partPerpendicular = 0 end
 			end
@@ -294,8 +294,8 @@ function Structure:command(orders)
 		local Fy = appliedForceY * part.thrust
 		self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
 		end
-		
-		if part.gun and shoot and not part.recharge then 
+
+		if part.gun and shoot and not part.recharge then
 			part:shot()
 			world:shoot(self, part)
 		end
@@ -308,8 +308,8 @@ function Structure:getPartIndex(locationX,locationY)
 		if Util.vectorMagnitude(locationX - partX, locationY - partY) <
 		   part.width/2 then
 			local partSide = Util.vectorAngle(
-				locationX - partX, 
-				locationY - partY) - partAngle 
+				locationX - partX,
+				locationY - partY) - partAngle
 			partSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 			return part, partSide
 		end
@@ -324,10 +324,10 @@ function Structure:update(dt)
 	end
 end
 
-function Structure:draw(globalOffsetX, globalOffsetY)
+function Structure:draw(cameraX, cameraY)
 	for i, part in ipairs(self.parts) do
 		local x, y, angle = self:getAbsPartCoords(i)
-		part:draw(x, y, angle, globalOffsetX, globalOffsetY)
+		part:draw(x, y, angle, cameraX, cameraY)
 	end
 end
 

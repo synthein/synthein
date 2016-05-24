@@ -6,6 +6,7 @@ local Block = require("block")
 local Engine = require("engine")
 local Gun = require("gun")
 local AIBlock = require("aiBlock")
+local PlayerBlock = require("playerBlock")
 local Tserial = require("tserial")
 local Structure = require("structure")
 
@@ -21,6 +22,8 @@ function Spawn.spawnShip(shipTable, physics, x, y, angle)
 			shipTable.parts[i] = Gun.create()
 		elseif part == 'a' then
 			shipTable.parts[i] = AIBlock.create()
+		elseif part == 'p' then
+			shipTable.parts[i] = PlayerBlock.create()
 		end
 		if shipTable.loadData[i] then
 			shipTable.parts[i]:loadData(shipTable.loadData[i])
@@ -146,12 +149,112 @@ function Spawn.shipUnpack(shipString, stringLength)
 				shipTable.parts[partIndex] = 'a'
 				shipTable.partOrient[partIndex] = 1
 				index = index + 1
+			elseif c == 'p' then
+				shipTable.parts[partIndex] = 'p'
+				shipTable.partOrient[partIndex] = 1
+				index = index + 1
 			elseif c == '{' or c == '}' then
 				break
 			end
 		end
 	end
 	return shipTable
+end
+
+function Spawn.shipPack(structure, saveThePartData)
+	local string = ""
+	local xLow, xHigh, yLow, yHigh = 0, 0, 0, 0
+	local stringTable = {{"  "}}
+	for i,part in ipairs(structure.parts) do
+		local x = structure.partCoords[i].x
+		local y = structure.partCoords[i].y
+		local tempString = "  "
+		local loadData = {}
+
+		--Make sure rectangle includes location of part.
+		if     x < xLow  then
+			for j = 1, (xLow - x) do
+				for k = 1, (yHigh - yLow + 1) do
+					table.insert(stringTable[k], 1, {"  "})
+				end
+			end
+			xLow = x
+		elseif x > xHigh then
+			for j = 1, (x - xHigh) do
+				for k = 1, (yHigh - yLow + 1) do
+					table.insert(stringTable[k], {"  "})
+				end
+			end
+			xHigh = x
+		elseif y < yLow  then
+			for j = 1, (yLow - y) do
+					table.insert(stringTable, 1, {})
+				for k = 1, (xHigh - xLow + 1) do
+					table.insert(stringTable[1], {"  "})
+				end
+			end
+			yLow = y
+		elseif y > yHigh then
+			for j = 1, (y - yHigh) do
+				table.insert(stringTable, {})
+				for k = 1, (xHigh - xLow + 1) do
+					table.insert(stringTable[y - yLow + 1], {"  "})
+				end
+			end
+			yHigh = y
+		end
+
+		--Find the string representation of the part.
+		if     getmetatable(part) == Block then
+			tempString = "b0"
+		elseif getmetatable(part) == Engine then
+			if structure.partOrient[i] == 1 then
+				tempString = "e1"
+			elseif structure.partOrient[i] == 2 then
+				tempString = "e2"
+			elseif structure.partOrient[i] == 3 then
+				tempString = "e3"
+			elseif structure.partOrient[i] == 4 then
+				tempString = "e4"
+			end
+		elseif getmetatable(part) == Gun then
+			if structure.partOrient[i] == 1 then
+				tempString = "g1"
+			elseif structure.partOrient[i] == 2 then
+				tempString = "g2"
+			elseif structure.partOrient[i] == 3 then
+				tempString = "g3"
+			elseif structure.partOrient[i] == 4 then
+				tempString = "g4"
+			end
+		elseif getmetatable(part) == AIBlock then
+			tempString = "a*"
+		elseif getmetatable(part) == PlayerBlock then
+			tempString = "p*"
+		end
+		--Add data to table
+		if saveThePartData then
+			stringTable[y - yLow + 1][x - xLow + 1] = {tempString, part:saveData()}
+		else
+			stringTable[y - yLow + 1][x - xLow + 1] = {tempString}
+		end
+	end
+	--Put strings together
+	local dataString = ""
+	for i = 1,#stringTable do
+		for j = 1,#stringTable[i] do
+--print(Tserial.pack(stringTable, true))
+			string = string .. stringTable[i][j][1]
+			if stringTable[i][j][2]then
+				dataString = dataString ..
+							 Tserial.pack(stringTable[i][j][2], nil, false) ..
+							 "\n"
+			end
+		end
+		string = string .. "\n"
+	end
+	string = string .. "\n" .. dataString
+	return string
 end
 
 return Spawn

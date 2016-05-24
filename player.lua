@@ -39,8 +39,7 @@ function Player.create(type, structure)
 	return self
 end
 
--- TODO: find a better way to get the global offset
-function Player:handleInput(globalOffsetX, globalOffsetY)
+function Player:handleInput()
 	-----------------------
 	----- Cancel/Quit -----
 	-----------------------
@@ -102,21 +101,17 @@ function Player:handleInput(globalOffsetX, globalOffsetY)
 end
 
 function Player:mousepressed(mouseX, mouseY, button)
-	-- Convert the mouseX and Y coordinates to coordinates in the world.
-	local mouseWorldX = mouseX - SCREEN_WIDTH/2 + globalOffsetX
-	local mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
-
 	if button == 1 then
 		if not self.build then
 			self.build = Building.create(world)
 		end
-			if self.build:pressed(mouseWorldX, mouseWorldY) then
+			if self.build:pressed(mouseX, mouseY) then
 				self.build = nil
 			end
-		
+
 	end
 	if button == 2 then
-		local structure, part = world:getStructure(mouseWorldX, mouseWorldY)
+		local structure, part = world:getStructure(mouseX, mouseY)
 		if structure and part then
 			world:removeSection(structure, part)
 		end
@@ -124,24 +119,19 @@ function Player:mousepressed(mouseX, mouseY, button)
 end
 
 function Player:mousereleased(mouseX, mouseY, button)
-	-- Convert the mouseX and Y coordinates to coordinates in the world.
-	local mouseWorldX = mouseX - SCREEN_WIDTH/2 + globalOffsetX
-	local mouseWorldY = mouseY - SCREEN_HEIGHT/2 + globalOffsetY
-
 	if button == 1 then
 		if self.build then
-			if self.build:released(mouseWorldX, mouseWorldY) then
+			if self.build:released(mouseX, mouseY) then
 				self.build = nil
 			end
 		end
 	end
 end
 
-function Player:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
+function Player:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
 	if self.build then
-		self.build:draw(globalOffsetX, globalOffsetY, mouseWorldX, mouseWorldY)
+		self.build:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
 	end
 end
 
 return Player
-

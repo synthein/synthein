@@ -8,9 +8,6 @@ local NewGame = require("newGame")
 
 local physics
 local player1
--- These are global for now.
---local globalOffsetX
---local globalOffsetY
 local mouseWorldX
 local mouseWorldY
 local state
@@ -43,7 +40,7 @@ function love.keypressed(key)
 	state = state.keypressed(key)
 
 	if debugmode == true then
-		Debug.keyboard(key, globalOffsetX, globalOffsetY)
+		Debug.keyboard(key, camera.getX(), camera.getY())
 	end
 end
 

@@ -1,4 +1,5 @@
 local Debug = require("debugTools")
+local Camera = require("camera")
 local InGame = require("inGame")
 local World = require("world")
 local Player = require("player")
@@ -12,13 +13,18 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 	SCREEN_HEIGHT = love.graphics.getHeight()
 	compass = love.graphics.newImage("res/images/compass.png")
 	debugmode = true
-	
+
 	love.physics.setMeter(20) -- there are 20 pixels per meter
+
+	-- Instead of being global variables, these should be accessible to the
+	-- states using upvalues.
 	physics = love.physics.newWorld()
 	world = World.create(physics)
 	player1 = Player.create("player1", world:getPlayerShip())
-	globalOffsetX = player1.ship.body:getX()
-	globalOffsetY = player1.ship.body:getY()
+	camera = Camera.create()
+
+	camera.setX(player1.ship.body:getX())
+	camera.setY(player1.ship.body:getY())
 	InGame.setWorld(world)
 
 

@@ -2,6 +2,7 @@ local Block = require("block")
 local Engine = require("engine")
 local Gun = require("gun")
 local Structure = require("structure")
+local Spawn = require("spawn")
 
 local Debug = {}
 
@@ -57,6 +58,10 @@ function Debug.keyboard(key, globalOffsetX, globalOffsetY)
 		table.insert(Debug.world.worldStructures,
 		Structure.create(Gun.create(), Debug.world.physics,
 		globalOffsetX + 50, globalOffsetY + 100))
+	end
+	if key == "m" then
+		local string = Spawn.shipPack(Debug.player1.ship, true)
+		love.filesystem.write("playerShip.txt", string)
 	end
 end
 

@@ -24,6 +24,10 @@ function Part:loadData(data)
 	if data[1] then self.health = data[1] end
 end
 
+function Part:saveData()
+	return {self.health}
+end
+
 function Part:takeDamage()
 	self.health = self.health - 1
 	if self.health <= 0 then 

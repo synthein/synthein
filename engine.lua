@@ -1,4 +1,5 @@
 local Part = require("part")
+local Screen = require("screen")
 
 local Engine = {}
 Engine.__index = Engine
@@ -22,18 +23,17 @@ function Engine.create(world, x, y)
 	return self
 end
 
-function Engine:draw(x, y, angle, globalOffsetX, globalOffsetY)
+function Engine:draw(x, y, angle)
 	local image
 	if self.isActive then
 		image = self.imageActive
 	else
 		image = self.image
 	end
-
-	love.graphics.draw(
+	Screen.draw(
 		image,
-		x - globalOffsetX,
-		y - globalOffsetY,
+		x,
+		y,
 		angle, 1, 1, self.width/2, self.height/2)
 end
 

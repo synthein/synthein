@@ -97,10 +97,10 @@ function Spawn.shipUnpack(shipString, stringLength)
 			local angle = 1
 			j = j + 1
 			x = (j - baseJ)/2
-			y = k - baseK
+			y = baseK - k
 			local partIndex
-			if			y < 0 then partIndex = index + 1
-			elseif		y > 0 then partIndex = index
+			if			y > 0 then partIndex = index + 1
+			elseif		y < 0 then partIndex = index
 			else
 				if		x < 0 then partIndex = index + 1
 				elseif	x > 0 then partIndex = index
@@ -108,10 +108,12 @@ function Spawn.shipUnpack(shipString, stringLength)
 				end
 			end
 			shipTable.partCoords[partIndex] = {x = x, y = y}
-			if loadDataTable[1][1] == x and loadDataTable[1][2]	== y then
-				shipTable.loadData[partIndex] = loadDataTable[1][3]
-			end		
-			
+			if loadDataTable[1] then
+				if loadDataTable[1][1] == x and loadDataTable[1][2]	== y then
+					shipTable.loadData[partIndex] = loadDataTable[1][3]
+				end		
+			end
+
 			if c == '\n' then 
 				j = 0
 				k = k + 1
@@ -243,7 +245,6 @@ function Spawn.shipPack(structure, saveThePartData)
 	local dataString = ""
 	for i = 1,#stringTable do
 		for j = 1,#stringTable[i] do
---print(Tserial.pack(stringTable, true))
 			string = string .. stringTable[i][j][1]
 			if stringTable[i][j][2]then
 				dataString = dataString ..

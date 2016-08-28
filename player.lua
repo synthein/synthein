@@ -128,9 +128,9 @@ function Player:mousereleased(mouseX, mouseY, button)
 	end
 end
 
-function Player:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
+function Player:draw(mouseWorldX, mouseWorldY)
 	if self.build then
-		self.build:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
+		self.build:draw(mouseWorldX, mouseWorldY)
 	end
 end
 

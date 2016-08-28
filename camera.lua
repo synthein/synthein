@@ -28,4 +28,8 @@ function Camera.setY(newY)
 	self.y = newY
 end
 
+function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
+	love.graphics.draw(image, x, -y, -angle, sx, sy, ox, oy)
+end
+
 return Camera

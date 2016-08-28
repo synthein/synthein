@@ -58,8 +58,8 @@ function AI:update(dt, playerShip, target)
 	self.ship:update(dt)
 end
 
-function AI:draw(globalOffsetX, globalOffsetY)
-	self.Ship:draw(globalOffsetX, globalOffsetY)
+function AI:draw()
+	self.Ship:draw()
 end
 
 return AI

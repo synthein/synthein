@@ -1,4 +1,5 @@
 local Util = require("util")
+local Screen = require("screen")
 
 local Shot = {}
 Shot.__index = Shot
@@ -23,7 +24,7 @@ function Shot.create(x, y, angle, sourceStructure, sourcePart)
 end
 
 function Shot:update(dt)
-	local dx, dy = Util.vectorComponents(500 * dt, self.angle - math.pi/2)
+	local dx, dy = Util.vectorComponents(500 * dt, self.angle + math.pi/2)
 	self.x = self.x + dx
 	self.y = self.y + dy
 	self.time = self.time + dt
@@ -33,11 +34,11 @@ function Shot:update(dt)
 	return self.x, self.y, self.time
 end
 
-function Shot:draw(globalOffsetX, globalOffsetY)
-	love.graphics.draw(
+function Shot:draw()
+	Screen.draw(
 		self.image,
-		self.x - globalOffsetX,
-		self.y - globalOffsetY,
+		self.x,
+		self.y,
 		self.angle, 1, 1, self.width/2, self.height/2)
 end
 

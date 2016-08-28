@@ -23,10 +23,12 @@ end
 function Debug.draw()
 	local debugString = string.format(
 		"%.3f    %.3f\n"..
+		"%.3f    %.3f\n"..
 		"Number of world structures: %d\n"..
 		"Number of ship parts: %d\n"..
 		"Build mode: %s\n",
 		Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
+		mouseWorldX, mouseWorldY,
 		#Debug.world.worldStructures,
 		#Debug.world.playerShip.parts,
 		(Debug.player1.build and "yes" or "no")
@@ -40,24 +42,24 @@ function Debug.update(mouseWorldX, mouseWorldY)
 	end
 end
 
-function Debug.keyboard(key, globalOffsetX, globalOffsetY)
+function Debug.keyboard(key, cameraX, cameraY)
 	-- Spawn a block
 	if key == "u" then
 		table.insert(Debug.world.worldStructures,
 		Structure.create(Block.create(), Debug.world.physics,
-		globalOffsetX + 50, globalOffsetY - 100))
+		cameraX + 50, cameraY - 100))
 	end
 	-- Spawn an engine
 	if key == "i" then
 		table.insert(Debug.world.worldStructures,
 		Structure.create(Engine.create(), Debug.world.physics,
-		globalOffsetX + 112, globalOffsetY))
+		cameraX + 112, cameraY))
 	end
 	-- Spawn a gun
 	if key == "o" then
 		table.insert(Debug.world.worldStructures,
 		Structure.create(Gun.create(), Debug.world.physics,
-		globalOffsetX + 50, globalOffsetY + 100))
+		cameraX + 50, cameraY + 100))
 	end
 	if key == "m" then
 		local string = Spawn.shipPack(Debug.player1.ship, true)
@@ -71,7 +73,6 @@ function Debug.mousepressed(mouseX, mouseY, button, mouseWorldX, mouseWorldY)
 		if structure then
 			Debug.mouseJoint = love.physics.newMouseJoint(structure.body, mouseWorldX, mouseWorldY)
 			Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
-			print(Debug.mouseJoint)
 		end
 	end
 end
@@ -81,7 +82,6 @@ function Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
 		if Debug.mouseJoint then
 			Debug.mouseJoint:destroy()
 			Debug.mouseJoint = nil
-			print(Debug.mouseJoint)
 		end
 	end
 end

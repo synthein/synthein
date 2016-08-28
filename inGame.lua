@@ -33,8 +33,10 @@ function InGame.draw()
 		cameraX, cameraY = camera.getPosition()
 		mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
 		mouseWorldY = -(love.mouse.getY() - SCREEN_HEIGHT/2) + cameraY
+	--todo move to Camera/Screen
 		love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 		love.graphics.translate(-cameraX, cameraY)
+	--
 		world:draw()
 		player1:draw(mouseWorldX, mouseWorldY)
 		love.graphics.origin()
@@ -81,7 +83,7 @@ function InGame.mousereleased(x, y, button)
 	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
 	mouseWorldY = -(love.mouse.getY() - SCREEN_HEIGHT/2) + cameraY
 
-	player1:mousereleased(x, y, button)
+	player1:mousereleased(mouseWorldX, mouseWorldY, button)
 	return InGame
 end
 

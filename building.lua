@@ -1,5 +1,6 @@
 local Util = require("util")
 local World = require("world")
+local Screen = require("screen")
 
 local Building = {}
 Building.__index = Building
@@ -10,6 +11,8 @@ function Building.create(structureList, ship, anchor)
 
 	self.pointerImage = love.graphics.newImage("res/images/pointer.png")
 	self.pointerWidth = self.pointerImage:getWidth()
+	self.curve1Image = love.graphics.newImage("res/images/buildingcurve1.png")
+	self.curve2Image = love.graphics.newImage("res/images/buildingcurve2.png")
 	self.structureList = structureList
 
 	-- What are we selecting?
@@ -41,6 +44,7 @@ function Building:pressed(mouseWorldX, mouseWorldY)
 		self.annexee, self.annexeePart
 			= world:getWorldStructure(mouseWorldX, mouseWorldY)
 		self.mode = 2
+
 		if not self.annexee then
 			return true --end build
 		else
@@ -61,7 +65,6 @@ end
 
 function Building:released(mouseWorldX, mouseWorldY)
 	if self.mode == 2 then
-		
 		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
 		local partSide = Util.vectorAngle(
 			mouseWorldX - partX, 
@@ -102,7 +105,7 @@ function Building:released(mouseWorldX, mouseWorldY)
 	end
 end
 
-function Building:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
+function Building:draw(mouseWorldX, mouseWorldY)
 	local a, b 
 	if self.mode == 2 then
 		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
@@ -115,7 +118,7 @@ function Building:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
 		if Util.max(a,b) > 10 then
 			self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 		end
-		Building.drawCircle(
+		self:drawCircle(
 			partX, partY, partAngle,
 			self.annexeePartSide, self.annexeePart.connectableSides
 		)
@@ -130,7 +133,7 @@ function Building:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
 		if Util.max(a,b) > 10 then
 			self.structurePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
 		end
-		Building.drawCircle(
+		self:drawCircle(
 			partX, partY, partAngle,
 			self.structurePartSide, self.structurePart.connectableSides
 		)
@@ -142,9 +145,9 @@ function Building:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.pointerImage,
-			- cameraX + x + offsetX,
-			- cameraY + y + offsetY,
-			angle, 
+			x + offsetX,
+			-(y + offsetY),
+			-angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
 	end
@@ -155,41 +158,44 @@ function Building:draw(cameraX, cameraY, mouseWorldX, mouseWorldY)
 		offsetX, offsetY = Util.vectorComponents(10, angle)
 		love.graphics.draw(
 			self.pointerImage,
-			- cameraX + x + offsetX,
-			- cameraY + y + offsetY,
-			angle, 
+			x + offsetX,
+			-(y + offsetY),
+			-angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
 	end
 end
 
-function Building.drawCircle(centerX, centerY, angle, highlightedSide, connectableSides)
+function Building:drawCircle(centerX, centerY, angle, highlightedSide, connectableSides)
 	love.graphics.setLineWidth(10)
 
 	local radius = 35
 	local gap = 2
-
+	local curve
 	for i = 1, 4 do
 		if connectableSides[i] then
 			if i == highlightedSide then
-				love.graphics.setColor(68, 112, 186, 192)
+				curve = self.curve2Image
+			--	love.graphics.setColor(68, 112, 186, 192)
 			else
-				love.graphics.setColor(22, 65, 138, 192)
+				curve = self.curve1Image
+			--	love.graphics.setColor(22, 65, 138, 192)
 			end
 
 			--            |               | offset by 45° | line up with part side 1 |
-			beginAngle =  ( i * math.pi/2 )  - math.pi/4  - math.pi
-			middleAngle = ( i * math.pi/2 )               - math.pi
-			endAngle =    ( i * math.pi/2 )  + math.pi/4  - math.pi
+			--beginAngle =  ( i * math.pi/2 )  - math.pi/4
+			--middleAngle = ( i * math.pi/2 )
+			--endAngle =    ( i * math.pi/2 )  + math.pi/4
 
 			-- Push the arcs out to make a gap between them.
-			offsetX, offsetY = Util.vectorComponents(gap, middleAngle + angle)
+			--offsetX, offsetY = Util.vectorComponents(gap, -(middleAngle + angle))
 
-			love.graphics.arc(
-				"line", "open",
-				centerX + offsetX - cameraX,
-				centerY + offsetY - cameraY,
-				radius, beginAngle + angle, endAngle + angle, 30)
+			--love.graphics.arc(
+			--	"line", "open",
+			--	centerX + offsetX,
+			--	-centerY + offsetY,
+			--	radius, -(beginAngle + angle), -(endAngle + angle), 30)
+			Screen.draw(curve, centerX, centerY, angle + ( i * math.pi/2 )  - 3*math.pi/4)
 		end
 	end
 

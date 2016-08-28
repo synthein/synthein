@@ -224,8 +224,8 @@ end
 
 function Structure:command(orders)
 	-- The x and y components of the force
-	local directionX = math.cos(self.body:getAngle() - math.pi/2)
-	local directionY = math.sin(self.body:getAngle() - math.pi/2)
+	local directionX = -math.sin(self.body:getAngle())
+	local directionY = math.cos(self.body:getAngle())
 
 	local perpendicular = 0
 	local parallel = 0
@@ -237,8 +237,8 @@ function Structure:command(orders)
 		if order == "back" then parallel = parallel - 1 end
 		if order == "strafeLeft" then perpendicular = perpendicular - 1 end
 		if order == "strafeRight" then perpendicular = perpendicular + 1 end
-		if order == "right" then rotate = rotate + 1 end
-		if order == "left" then rotate = rotate - 1 end
+		if order == "right" then rotate = rotate - 1 end
+		if order == "left" then rotate = rotate + 1 end
 		if order == "shoot" then shoot = true end
 	end
 
@@ -253,22 +253,22 @@ function Structure:command(orders)
 				-- direction, but exclude playerBlock, etc.
 
 		if part.type == "player" then
-			appliedForceX = directionX * parallel + -directionY * perpendicular
-			appliedForceY = directionY * parallel + directionX * perpendicular
+			appliedForceX = directionX * parallel + directionY * perpendicular
+			appliedForceY = directionY * parallel + -directionX * perpendicular
 			self.body:applyTorque(rotate * part.torque)
 		elseif part.type == "generic" then
 			partParallel = Util.sign(self.partCoords[i].x)
 			partPerpendicular = Util.sign(self.partCoords[i].y)
 			local partPerpendicular = perpendicular - rotate * partPerpendicular
-			local partParallel = parallel - rotate * partParallel
+			local partParallel = parallel + rotate * partParallel
 
 			--Set to 0 if engine is going backwards.
 			if self.partOrient[i] < 3 then
 				if partParallel < 0 then partParallel = 0 end
-				if partPerpendicular < 0 then	partPerpendicular = 0 end
+				if partPerpendicular > 0 then	partPerpendicular = 0 end
 			elseif self.partOrient[i] > 2 then
 				if partParallel > 0 then	partParallel = 0 end
-				if partPerpendicular > 0 then	partPerpendicular = 0 end
+				if partPerpendicular < 0 then	partPerpendicular = 0 end
 			end
 			--Limit to -1, 0 , 1.
 			partParallel = Util.sign(partParallel)
@@ -279,8 +279,8 @@ function Structure:command(orders)
 				appliedForceY = directionY * partParallel
 			--Moving side to side.
 			elseif self.partOrient[i] % 2 == 0 then
-				appliedForceX = -directionY * partPerpendicular
-				appliedForceY = directionX * partPerpendicular
+				appliedForceX = directionY * partPerpendicular
+				appliedForceY = -directionX * partPerpendicular
 			end
 			--Turn on flame.
 			if appliedForceX ~= 0 or  appliedForceY ~=0 then
@@ -324,10 +324,10 @@ function Structure:update(dt)
 	end
 end
 
-function Structure:draw(cameraX, cameraY)
+function Structure:draw()
 	for i, part in ipairs(self.parts) do
 		local x, y, angle = self:getAbsPartCoords(i)
-		part:draw(x, y, angle, cameraX, cameraY)
+		part:draw(x, y, angle)
 	end
 end
 

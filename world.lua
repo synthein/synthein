@@ -207,25 +207,25 @@ function World:update(dt)
 	end
 end
 
-function World:draw(cameraX, cameraY)
+function World:draw()
 	-- Draw all of the structures.
-	self.anchor:draw(cameraX, cameraY)
+	self.anchor:draw()
 	for i, structure in ipairs(self.worldStructures) do
-		structure:draw(cameraX, cameraY)
+		structure:draw()
 	end
 	for i, aiShip in ipairs(self.aiShips) do
-		aiShip:draw(cameraX, cameraY)
+		aiShip:draw()
 	end
-	self.playerShip:draw(cameraX, cameraY)
+	self.playerShip:draw()
 
 	-- Draw the shots.
 	for i, shot in ipairs(self.shots) do
-		shot:draw(cameraX, cameraY)
+		shot:draw()
 	end
 
 	-- Draw the particles.
 	for i, particle in ipairs(self.particles) do
-		particle:draw(cameraX, cameraY)
+		particle:draw()
 	end
 end
 

@@ -1,3 +1,5 @@
+local Screen = require("screen")
+
 local Particles = {}
 Particles.__index = Particles
 
@@ -20,11 +22,11 @@ function Particles.newExplosion(x, y)
 	return self
 end
 
-function Particles:draw(globalOffsetX, globalOffsetY)
-	love.graphics.draw(
+function Particles:draw()
+	Screen.draw(
 		self.image,
-		- globalOffsetX + self.x,
-		- globalOffsetY + self.y,
+		self.x,
+		self.y,
 		0, 1, 1, self.ox, self.oy)
 end
 

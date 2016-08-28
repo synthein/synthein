@@ -1,5 +1,7 @@
-  g1
-  b0
-  a*
-e2b0e4
-  e1
+  e3          e3
+e4b0b0e2  e4b0b0e2
+  b0e1  e3  e1b0
+e4b0b0b0p*b0b0b0e2
+  b0e3  e1  e3b0
+e4b0b0e2  e4b0b0e2
+  e1          e1

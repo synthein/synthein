@@ -1,3 +1,5 @@
+local Screen = require("screen")
+
 local Part = {}
 Part.__index = Part
 
@@ -35,11 +37,11 @@ function Part:takeDamage()
 	end
 end
 
-function Part:draw(x, y, angle, cameraX, cameraY)
-	love.graphics.draw(
+function Part:draw(x, y, angle)
+	Screen.draw(
 		self.image,
-		x - cameraX,
-		y - cameraY,
+		x,
+		y,
 		angle, 1, 1, self.width/2, self.height/2)
 end
 

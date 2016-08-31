@@ -19,8 +19,6 @@ function InGame.update(dt)
 
 		camera.setX(player1.ship.body:getX())
 		camera.setY(player1.ship.body:getY())
-		mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + camera.getX()
-		mouseWorldY = -(love.mouse.getY() - SCREEN_HEIGHT/2) + camera.getY()
 
 		world:update(dt)
 		player1:handleInput(camera.getPosition())
@@ -31,14 +29,14 @@ end
 function InGame.draw()
 	-- for camera in InGame.cameras do
 		cameraX, cameraY = camera.getPosition()
-		mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
-		mouseWorldY = -(love.mouse.getY() - SCREEN_HEIGHT/2) + cameraY
 	--todo move to Camera/Screen
 		love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 		love.graphics.translate(-cameraX, cameraY)
 	--
 		world:draw()
-		player1:draw(mouseWorldX, mouseWorldY)
+		player1.cursorX = love.mouse.getX()
+		player1.cursorY = love.mouse.getY()
+		player1:draw()
 		love.graphics.origin()
 		love.graphics.draw(
 			compass,
@@ -70,19 +68,15 @@ function InGame.keypressed(key)
 end
 
 function InGame.mousepressed(x, y, button)
-	cameraX, cameraY = camera.getPosition()
-	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
-	mouseWorldY = -(love.mouse.getY() - SCREEN_HEIGHT/2) + cameraY
-
-	player1:mousepressed(mouseWorldX, mouseWorldY, button)
+	player1.cursorX = x
+	player1.cursorY = y
+	player1:mousepressed(button)
 	return InGame
 end
 
 function InGame.mousereleased(x, y, button)
-	cameraX, cameraY = camera.getPosition()
-	mouseWorldX = love.mouse.getX() - SCREEN_WIDTH/2 + cameraX
-	mouseWorldY = -(love.mouse.getY() - SCREEN_HEIGHT/2) + cameraY
-
+	player1.cursorX = x
+	player1.cursorY = y
 	player1:mousereleased(mouseWorldX, mouseWorldY, button)
 	return InGame
 end

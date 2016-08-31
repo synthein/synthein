@@ -1,6 +1,7 @@
 local Building = require("building")
 local Util = require("util")
 local World = require("world")
+local Screen = require("screen")
 
 local Player = {}
 Player.__index = Player
@@ -34,6 +35,8 @@ function Player.create(type, structure)
 	self.isRemoving = false
 	self.partX = nil
 	self.partY = nil
+	self.cursorX = 0
+	self.cursorY = 0
 	self.build = nil
 
 	return self
@@ -100,37 +103,40 @@ function Player:handleInput()
 	self.ship:command(orders)
 end
 
-function Player:mousepressed(mouseX, mouseY, button)
+function Player:mousepressed(button)
+	cursorX, cursorY = Screen.getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
 		if not self.build then
 			self.build = Building.create(world)
 		end
-			if self.build:pressed(mouseX, mouseY) then
+			if self.build:pressed(cursorX, cursorY) then
 				self.build = nil
 			end
 
 	end
 	if button == 2 then
-		local structure, part = world:getStructure(mouseX, mouseY)
+		local structure, part = world:getStructure(cursorX, cursorY)
 		if structure and part then
 			world:removeSection(structure, part)
 		end
 	end
 end
 
-function Player:mousereleased(mouseX, mouseY, button)
+function Player:mousereleased(button)
+	cursorX, cursorY = Screen.getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
 		if self.build then
-			if self.build:released(mouseX, mouseY) then
+			if self.build:released(cursorX, cursorY) then
 				self.build = nil
 			end
 		end
 	end
 end
 
-function Player:draw(mouseWorldX, mouseWorldY)
+function Player:draw()
+	cursorX, cursorY = Screen.getCursorCoords(self.cursorX, self.cursorY)
 	if self.build then
-		self.build:draw(mouseWorldX, mouseWorldY)
+		self.build:draw(cursorX, cursorY)
 	end
 end
 

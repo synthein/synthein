@@ -3,6 +3,7 @@ local Engine = require("engine")
 local Gun = require("gun")
 local Structure = require("structure")
 local Spawn = require("spawn")
+local Screen = require("screen")
 
 local Debug = {}
 
@@ -21,6 +22,8 @@ end
 
 -- Print debug info.
 function Debug.draw()
+	mouseWorldX, mouseWorldY = 
+		Screen.getCursorCoords(love.mouse.getX(), love.mouse.getY())
 	local debugString = string.format(
 		"%.3f    %.3f\n"..
 		"%.3f    %.3f\n"..

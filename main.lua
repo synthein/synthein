@@ -5,6 +5,7 @@ local World = require("world")
 local MainMenu = require("mainMenu")
 local InGame = require("inGame")
 local NewGame = require("newGame")
+local Screen = require("screen")
 
 local physics
 local player1
@@ -40,7 +41,7 @@ function love.keypressed(key)
 	state = state.keypressed(key)
 
 	if debugmode == true then
-		Debug.keyboard(key, camera.getX(), camera.getY())
+		Debug.keyboard(key, Screen.camera:getX(), Screen.camera:getY())
 	end
 end
 

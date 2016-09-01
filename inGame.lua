@@ -2,6 +2,7 @@ local Debug = require("debugTools")
 local Player = require("player")
 local Structure = require("structure")
 local World = require("world")
+local Screen = require("screen")
 
 local InGame = {}
 
@@ -17,21 +18,21 @@ function InGame.update(dt)
 	else
 		physics:update(dt)
 
-		camera.setX(player1.ship.body:getX())
-		camera.setY(player1.ship.body:getY())
+		Screen.camera:setX(player1.ship.body:getX())
+		Screen.camera:setY(player1.ship.body:getY())
 
 		world:update(dt)
-		player1:handleInput(camera.getPosition())
+		player1:handleInput(Screen.camera:getPosition())
 	end
 	return InGame
 end
 
 function InGame.draw()
 	-- for camera in InGame.cameras do
-		cameraX, cameraY = camera.getPosition()
+		cameraX, cameraY = Screen.camera:getPosition()
 	--todo move to Camera/Screen
-		love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-		love.graphics.translate(-cameraX, cameraY)
+		--love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+		--love.graphics.translate(-cameraX, cameraY)
 	--
 		world:draw()
 		player1.cursorX = love.mouse.getX()

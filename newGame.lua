@@ -4,6 +4,7 @@ local InGame = require("inGame")
 local World = require("world")
 local Player = require("player")
 local Structure = require("structure")
+local Screen = require("screen")
 
 
 local NewGame = {}
@@ -21,10 +22,11 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 	physics = love.physics.newWorld()
 	world = World.create(physics)
 	player1 = Player.create("player1", world:getPlayerShip())
-	camera = Camera.create()
+	Screen.createCameras()
+	--camera = Camera.create()
 
-	camera.setX(player1.ship.body:getX())
-	camera.setY(player1.ship.body:getY())
+	--camera.setX(player1.ship.body:getX())
+	--camera.setY(player1.ship.body:getY())
 	InGame.setWorld(world)
 
 

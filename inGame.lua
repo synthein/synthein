@@ -78,7 +78,7 @@ end
 function InGame.mousereleased(x, y, button)
 	player1.cursorX = x
 	player1.cursorY = y
-	player1:mousereleased(mouseWorldX, mouseWorldY, button)
+	player1:mousereleased(button)
 	return InGame
 end
 

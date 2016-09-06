@@ -64,59 +64,51 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
 	annexeeSide = (annexeeSide - annexee.partOrient[aIndex]) % 4 + 1
-	structureSide = (structureSide - self.partOrient[bIndex]) % 4 + 1
+	structureSide = (structureSide + self.partOrient[bIndex] - 2) % 4 + 1
 	local structureOffsetX, structureOffsetY
 	local newStructures = {}
 
 	if structureSide == 1 then
 		structureOffsetX = self.partCoords[bIndex].x
-		structureOffsetY = self.partCoords[bIndex].y - 1
+		structureOffsetY = self.partCoords[bIndex].y + 1
 	elseif structureSide == 2 then
-		structureOffsetX = self.partCoords[bIndex].x + 1
+		structureOffsetX = self.partCoords[bIndex].x - 1
 		structureOffsetY = self.partCoords[bIndex].y
 	elseif structureSide == 3 then
 		structureOffsetX = self.partCoords[bIndex].x
-		structureOffsetY = self.partCoords[bIndex].y + 1
+		structureOffsetY = self.partCoords[bIndex].y - 1
 	elseif structureSide == 4 then
-		structureOffsetX = self.partCoords[bIndex].x - 1
+		structureOffsetX = self.partCoords[bIndex].x + 1
 		structureOffsetY = self.partCoords[bIndex].y
 	end
 
-	local annexeeOrientation = structureSide - annexeeSide
-			while annexeeOrientation < 1 do
-				annexeeOrientation = annexeeOrientation + 4
-			end
-
-			while annexeeOrientation >4 do
-				annexeeOrientation = annexeeOrientation -4
-			end
+	local annexeeOrientation = (structureSide - annexeeSide - 2) % 4 +1
 
 			local annexeeX = annexee.partCoords[aIndex].x
 			local annexeeY = annexee.partCoords[aIndex].y
 
 	for i=1,#annexee.parts do
-
 		local x, y
 		local annexeeOffsetX = annexee.partCoords[1].x - annexeeX
 		local annexeeOffsetY = annexee.partCoords[1].y - annexeeY
 
 		if annexeeOrientation == 1 then
-			x = structureOffsetX + annexeeOffsetY
-			y = structureOffsetY - annexeeOffsetX
-		elseif annexeeOrientation == 2 then
 			x = structureOffsetX + annexeeOffsetX
 			y = structureOffsetY + annexeeOffsetY
-		elseif annexeeOrientation == 3 then
+		elseif annexeeOrientation == 2 then
 			x = structureOffsetX - annexeeOffsetY
 			y = structureOffsetY + annexeeOffsetX
-		elseif annexeeOrientation == 4 then
+		elseif annexeeOrientation == 3 then
 			x = structureOffsetX - annexeeOffsetX
 			y = structureOffsetY - annexeeOffsetY
+		elseif annexeeOrientation == 4 then
+			x = structureOffsetX + annexeeOffsetY
+			y = structureOffsetY - annexeeOffsetX
 		end
 
 		-- Find out the orientation of the part based on the orientation of
 		-- both structures.
-		local partOrientation = annexeeOrientation + annexee.partOrient[1] + 2
+		local partOrientation = annexeeOrientation + annexee.partOrient[1] - 1
 		-- Make sure partOrientation is between 1 and 4
 		while partOrientation > 4 do
 			partOrientation = partOrientation - 4
@@ -124,6 +116,7 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 		while partOrientation < 1 do
 			partOrientation = partOrientation + 4
 		end
+print(annexeeOffsetX, annexeeOffsetY, annexeeOrientation, partOrientation)
 
 		local partThere = false
 		for i, part in ipairs(self.parts) do

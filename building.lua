@@ -63,35 +63,23 @@ function Building:pressed(mouseWorldX, mouseWorldY)
 	end
 end
 
-function Building:released(mouseWorldX, mouseWorldY)
+function Building:released(cursorX, cursorY)
+	local withinPart = true
 	if self.mode == 2 then
-		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
-		local partSide = Util.vectorAngle(
-			mouseWorldX - partX, 
-			mouseWorldY - partY) - partAngle 
-		local a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
-		a = Util.absVal(a)
-		b = Util.absVal(b)
-		self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
-
+		withinPart, self.annexeePartSide = 
+			self.annexee:withinPart(self.annexee:findPart(self.annexeePart), cursorX, cursorY)
 		if not self.annexeePart.connectableSides[self.annexeePartSide] then
 			return true --end build
 		end
-		if Util.max(a,b) > 10 then
+		if not withinPart then
 			self.mode = 3
 		end
 		return false  --don't end build
 
 	elseif self.mode == 4 then
-		local partX, partY, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
-		local partSide = Util.vectorAngle(
-			mouseWorldX - partX, 
-			mouseWorldY - partY) - partAngle
-		local a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
-		a = Util.absVal(a)
-		b = Util.absVal(b)
-		self.structurePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
-		if Util.max(a,b) < 10 then
+		withinPart, self.structurePartSide = 
+			self.structure:withinPart(self.structure:findPart(self.structurePart), cursorX, cursorY)
+		if withinPart then
 			return false  --don't end build
 		end
 		if self.structure and self.annexee
@@ -106,17 +94,13 @@ function Building:released(mouseWorldX, mouseWorldY)
 end
 
 function Building:draw(mouseWorldX, mouseWorldY)
-	local a, b 
+	local withinPart
 	if self.mode == 2 then
 		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
-		local partSide = Util.vectorAngle(
-			mouseWorldX - partX, 
-			mouseWorldY - partY) - partAngle 
-		a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
-		a = Util.absVal(a)
-		b = Util.absVal(b)
-		if Util.max(a,b) > 10 then
-			self.annexeePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
+		withinPart, self.annexeePartSide = 
+			self.annexee:withinPart(self.annexee:findPart(self.annexeePart), cursorX, cursorY)
+		if withinPart then
+			self.annexeePartSide = nil
 		end
 		self:drawCircle(
 			partX, partY, partAngle,
@@ -124,14 +108,10 @@ function Building:draw(mouseWorldX, mouseWorldY)
 		)
 	elseif self.mode == 4 and self.structure then
 		local partX, partY, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
-		local partSide = Util.vectorAngle(
-			mouseWorldX - partX, 
-			mouseWorldY - partY) - partAngle
-		a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
-		a = Util.absVal(a)
-		b = Util.absVal(b)
-		if Util.max(a,b) > 10 then
-			self.structurePartSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
+		withinPart, self.structurePartSide = 
+			self.structure:withinPart(self.structure:findPart(self.structurePart), cursorX, cursorY)
+		if withinPart then
+			self.structurePartSide = nil
 		end
 		self:drawCircle(
 			partX, partY, partAngle,
@@ -141,26 +121,26 @@ function Building:draw(mouseWorldX, mouseWorldY)
 	if self.annexeePart and self.annexeePart.connectableSides[self.annexeePartSide] then
 		local x, y, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
 		local offsetX, offsetY -- move the cursor the side that we are selecting
-		local angle = (self.annexeePartSide - 2) * math.pi/2 + partAngle
+		local angle = self.annexeePartSide * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
-		love.graphics.draw(
+		Screen.draw(
 			self.pointerImage,
 			x + offsetX,
-			-(y + offsetY),
-			-angle, 
+			y + offsetY,
+			angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
 	end
 	if self.mode == 4 and self.structurePart.connectableSides[self.structurePartSide] then
 		local x, y, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
 		local offsetX, offsetY -- move the cursor the side that we are selecting
-		local angle = (self.structurePartSide - 2) * math.pi/2 + partAngle
+		local angle = self.structurePartSide * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
-		love.graphics.draw(
+		Screen.draw(
 			self.pointerImage,
 			x + offsetX,
-			-(y + offsetY),
-			-angle, 
+			y + offsetY,
+			angle, 
 			1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
 	end
@@ -168,7 +148,6 @@ end
 
 function Building:drawCircle(centerX, centerY, angle, highlightedSide, connectableSides)
 	love.graphics.setLineWidth(10)
-
 	local radius = 35
 	local gap = 2
 	local curve
@@ -195,7 +174,7 @@ function Building:drawCircle(centerX, centerY, angle, highlightedSide, connectab
 			--	centerX + offsetX,
 			--	-centerY + offsetY,
 			--	radius, -(beginAngle + angle), -(endAngle + angle), 30)
-			Screen.draw(curve, centerX, centerY, angle + ( i * math.pi/2 )  - 3*math.pi/4)
+			Screen.draw(curve, centerX, centerY, angle + ( i * math.pi/2 )  + math.pi/4)
 		end
 	end
 

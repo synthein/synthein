@@ -302,18 +302,30 @@ function Structure:command(orders)
 	end
 end
 
-function Structure:getPartIndex(locationX,locationY)
+function Structure:getPartIndex(locationX, locationY)
 	for j, part in ipairs(self.parts) do
-		local partX, partY, partAngle = self:getAbsPartCoords(j)
-		if Util.vectorMagnitude(locationX - partX, locationY - partY) <
-		   part.width/2 then
-			local partSide = Util.vectorAngle(
-				locationX - partX,
-				locationY - partY) - partAngle
-			partSide = math.floor((partSide*2/math.pi + 3/2) % 4 + 1 )
+		local inside, partSide = self:withinPart(j, locationX, locationY)
+		if inside then
 			return part, partSide
 		end
 	end
+end
+
+function Structure:withinPart(partIndex, locationX, locationY)
+	local partX, partY, partAngle = self:getAbsPartCoords(partIndex)
+	local angleToCursor = Util.vectorAngle(locationX - partX, 
+										   locationY - partY)
+	local angleDifference = angleToCursor - partAngle
+	local distanceFromPart = Util.vectorMagnitude(locationX - partX, 
+												  locationY - partY)
+	a, b = Util.vectorComponents(distanceFromPart, angleDifference)
+	a = Util.absVal(a)
+	b = Util.absVal(b)
+	partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
+	if Util.max(a,b) <= 10 then
+		return true, partSide
+	end
+	return false, partSide
 end
 
 function Structure:update(dt)

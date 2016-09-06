@@ -5,9 +5,10 @@ PlayerBlock.__index = PlayerBlock
 setmetatable(PlayerBlock, Part)
 
 function PlayerBlock.create()
-	local self = Part.create("player")
+	local self = Part.create()
 	setmetatable(self, PlayerBlock)
 
+	self.image = love.graphics.newImage("res/images/player.png")
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.thrust = 150
 	self.torque = 350

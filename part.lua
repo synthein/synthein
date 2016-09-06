@@ -3,11 +3,10 @@ local Screen = require("screen")
 local Part = {}
 Part.__index = Part
 
-function Part.create(imageName)
+function Part.create()
 	local self = {}
 	setmetatable(self, Part)
 
-	self.image = love.graphics.newImage("res/images/"..imageName..".png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 	self.physicsShape = nil

@@ -6,9 +6,10 @@ Engine.__index = Engine
 setmetatable(Engine, Part)
 
 function Engine.create(world, x, y)
-	local self = Part.create("engine")
+	local self = Part.create()
 	setmetatable(self, Engine)
 
+	self.image = love.graphics.newImage("res/images/engine.png")
 	self.isActive = false
 	self.imageActive = love.graphics.newImage("res/images/engineActive.png")
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)

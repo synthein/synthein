@@ -5,11 +5,12 @@ Gun.__index = Gun
 setmetatable(Gun, Part)
 
 function Gun.create(world, x, y)
-	local self = Part.create("gun")
+	local self = Part.create()
 	setmetatable(self, Gun)
-	
+
+	self.image = love.graphics.newImage("res/images/gun.png")
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
-	
+
 	self.gun = true
 	self.recharge = false
 	self.rechargeStart = 0

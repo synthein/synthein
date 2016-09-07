@@ -9,6 +9,9 @@ function Gun.create(world, x, y)
 	setmetatable(self, Gun)
 
 	self.image = love.graphics.newImage("res/images/gun.png")
+	self.width = self.image:getWidth()
+	self.height = self.image:getHeight()
+
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 
 	self.gun = true

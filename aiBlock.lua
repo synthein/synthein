@@ -9,6 +9,9 @@ function AIBlock.create()
 	setmetatable(self, AIBlock)
 
 	self.image = love.graphics.newImage("res/images/ai.png")
+	self.width = self.image:getWidth()
+	self.height = self.image:getHeight()
+
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.thrust = 150
 	self.torque = 350

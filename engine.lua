@@ -10,8 +10,14 @@ function Engine.create(world, x, y)
 	setmetatable(self, Engine)
 
 	self.image = love.graphics.newImage("res/images/engine.png")
+	self.width = self.image:getWidth()
+	self.height = self.image:getHeight()
+
 	self.isActive = false
 	self.imageActive = love.graphics.newImage("res/images/engineActive.png")
+	self.width = self.image:getWidth()
+	self.height = self.image:getHeight()
+
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 
 	-- Engines can only connect to things on their top side.
@@ -28,8 +34,14 @@ function Engine:draw(x, y, angle)
 	local image
 	if self.isActive then
 		image = self.imageActive
+	self.width = self.image:getWidth()
+	self.height = self.image:getHeight()
+
 	else
 		image = self.image
+	self.width = self.image:getWidth()
+	self.height = self.image:getHeight()
+
 	end
 	Screen.draw(
 		image,

@@ -7,8 +7,6 @@ function Part.create()
 	local self = {}
 	setmetatable(self, Part)
 
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
 	self.physicsShape = nil
 	self.connectableSides = {true, true, true, true}
 	self.thrust = 0

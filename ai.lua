@@ -23,12 +23,12 @@ function AI:update(dt, playerShip, target)
 		targetX = target.body:getX()
 		targetY = target.body:getY()
 		angle = Util.vectorAngle(targetX - aiX, targetY - aiY)
-		angleTotarget = (aiAngle - angle + math.pi/2) % (2*math.pi) - math.pi
+		angleTotarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
 	end
 	local playerX = playerShip.body:getX()
 	local playerY = playerShip.body:getY()
 	local angle = Util.vectorAngle(playerX - aiX, playerY - aiY)
-	angleToPlayer = (aiAngle - angle + math.pi/2) % (2*math.pi) - math.pi
+	angleToPlayer = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
 	if self.team == 1 and 
 	   Util.vectorMagnitude(playerX - aiX, playerY - aiY) > 10 * 20 then
 		if angleToPlayer < -math.pi/10 then

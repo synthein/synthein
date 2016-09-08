@@ -63,7 +63,7 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	                     structureSide)
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
-	annexeeSide = (annexeeSide - annexee.partOrient[aIndex]) % 4 + 1
+	annexeeSide = (annexeeSide + annexee.partOrient[aIndex] - 2) % 4 + 1
 	structureSide = (structureSide + self.partOrient[bIndex] - 2) % 4 + 1
 	local structureOffsetX, structureOffsetY
 	local newStructures = {}
@@ -116,7 +116,6 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 		while partOrientation < 1 do
 			partOrientation = partOrientation + 4
 		end
-print(annexeeOffsetX, annexeeOffsetY, annexeeOrientation, partOrientation)
 
 		local partThere = false
 		for i, part in ipairs(self.parts) do

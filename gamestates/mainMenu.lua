@@ -1,5 +1,5 @@
-local NewGame = require("newGame")
-local LoadGameMenu = require("loadGameMenu")
+local NewGame = require("gamestates/newGame")
+local LoadGameMenu = require("gamestates/loadGameMenu")
 
 local MainMenu = {}
 local buttons = {NewGame, LoadGameMenu}
@@ -45,7 +45,7 @@ function MainMenu.mousepressed(x, y, mouseButton)
 			return MainMenu
 		end
 		return buttons[index]
-	else 
+	else
 		return MainMenu
 	end
 end

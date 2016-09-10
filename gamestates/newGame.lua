@@ -1,10 +1,11 @@
 local Debug = require("debugTools")
 local Camera = require("camera")
-local InGame = require("inGame")
 local World = require("world")
 local Player = require("player")
 local Structure = require("structure")
 local Screen = require("screen")
+
+local InGame = require("gamestates/inGame")
 
 
 local NewGame = {}

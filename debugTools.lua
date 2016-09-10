@@ -55,7 +55,7 @@ function Debug.keyboard(key, cameraX, cameraY)
 		-- Spawn a block
 		table.insert(Debug.world.worldStructures,
 			Structure.create(Block.create(), Debug.world.physics,
-			cameraX + 50, cameraY - 100))
+			cameraX + 50, cameraY + 100))
 	elseif key == "i" then
 		-- Spawn an engine
 		table.insert(Debug.world.worldStructures,
@@ -65,7 +65,7 @@ function Debug.keyboard(key, cameraX, cameraY)
 		-- Spawn a gun
 		table.insert(Debug.world.worldStructures,
 			Structure.create(Gun.create(), Debug.world.physics,
-			cameraX + 50, cameraY + 100))
+			cameraX + 50, cameraY - 100))
 
 	--Spawn an AI
 	elseif key == "1" then

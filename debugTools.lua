@@ -4,10 +4,10 @@ local Spawn = require("spawn")
 local Screen = require("screen")
 
 -- Ship parts
-local AIBlock = require("aiBlock")
-local Block = require("block")
-local Engine = require("engine")
-local Gun = require("gun")
+local AIBlock = require("shipparts/aiBlock")
+local Block = require("shipparts/block")
+local Engine = require("shipparts/engine")
+local Gun = require("shipparts/gun")
 
 local Debug = {}
 

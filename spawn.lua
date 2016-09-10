@@ -1,12 +1,12 @@
 -- Spawn some ships or other objects based on a table containing all of the
 -- data required to produce them. This module is designed to be called in
 -- SceneParser and Saves.
-local Part = require("part")
-local Block = require("block")
-local Engine = require("engine")
-local Gun = require("gun")
-local AIBlock = require("aiBlock")
-local PlayerBlock = require("playerBlock")
+local Part = require("shipparts/part")
+local Block = require("shipparts/block")
+local Engine = require("shipparts/engine")
+local Gun = require("shipparts/gun")
+local AIBlock = require("shipparts/aiBlock")
+local PlayerBlock = require("shipparts/playerBlock")
 local Tserial = require("tserial")
 local Structure = require("structure")
 
@@ -60,7 +60,7 @@ function Spawn.shipUnpack(shipString, stringLength)
 		for i = 1, stringLength do
 			local c = shipString:sub(i,i)
 			j = j + 1
-			if c == '\n' then 
+			if c == '\n' then
 				j = 0
 				k = k + 1
 			elseif c == '*' then
@@ -87,7 +87,7 @@ function Spawn.shipUnpack(shipString, stringLength)
 				table.insert(loadDataTable, loadData)
 			end
 		end
-	
+
 		j = 0
 		k = 0
 		local index = 1
@@ -111,10 +111,10 @@ function Spawn.shipUnpack(shipString, stringLength)
 			if loadDataTable[1] then
 				if loadDataTable[1][1] == x and loadDataTable[1][2]	== y then
 					shipTable.loadData[partIndex] = loadDataTable[1][3]
-				end		
+				end
 			end
 
-			if c == '\n' then 
+			if c == '\n' then
 				j = 0
 				k = k + 1
 			elseif c == 'b' then

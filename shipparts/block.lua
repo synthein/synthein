@@ -1,4 +1,4 @@
-local Part = require("part")
+local Part = require("shipparts/part")
 
 local Block = {}
 Block.__index = Block

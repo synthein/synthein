@@ -1,7 +1,7 @@
-local Anchor = require("anchor")
-local Block = require("block")
-local PlayerBlock = require("playerBlock")
-local Engine = require("engine")
+local Anchor = require("shipparts/anchor")
+local Block = require("shipparts/block")
+local PlayerBlock = require("shipparts/playerBlock")
+local Engine = require("shipparts/engine")
 local Structure = require("structure")
 
 local InitWorldTesting = {}
@@ -64,7 +64,7 @@ function InitWorldTesting.init(physics)
 	playerShip:addPart(Engine.create(world, 100, 100), -3, -3, 3)
 	playerShip:addPart(Engine.create(world, 100, 100), -4, -2, 2)
 	playerShip:addPart(Engine.create(world, 100, 100), -3, -1, 1)
-	
+
 	playerShip:addPart(Engine.create(world, 100, 100), 1, -2, 2)
 	playerShip:addPart(Engine.create(world, 100, 100), 3, -3, 3)
 	playerShip:addPart(Engine.create(world, 100, 100), 4, -2, 4)

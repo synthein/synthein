@@ -1,4 +1,4 @@
-local Part = require("part")
+local Part = require("shipparts/part")
 local Util = require("util")
 
 local Structure = {}
@@ -305,10 +305,10 @@ end
 
 function Structure:withinPart(partIndex, locationX, locationY)
 	local partX, partY, partAngle = self:getAbsPartCoords(partIndex)
-	local angleToCursor = Util.vectorAngle(locationX - partX, 
+	local angleToCursor = Util.vectorAngle(locationX - partX,
 										   locationY - partY)
 	local angleDifference = angleToCursor - partAngle
-	local distanceFromPart = Util.vectorMagnitude(locationX - partX, 
+	local distanceFromPart = Util.vectorMagnitude(locationX - partX,
 												  locationY - partY)
 	a, b = Util.vectorComponents(distanceFromPart, angleDifference)
 	a = Util.absVal(a)

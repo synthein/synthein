@@ -1,4 +1,7 @@
+local GameState = require("gamestates/gameState")
+
 local LoadGameMenu = {}
+setmetatable(LoadGameMenu, GameState)
 
 -- Print debug info.
 function LoadGameMenu.draw()

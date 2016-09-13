@@ -6,7 +6,7 @@ local SceneParser = {}
 function SceneParser.loadShip(shipName)
 end
 
-function SceneParser.loadScene(sceneName, x, y, physics)
+function SceneParser.loadScene(sceneName, x, y)
 	local file = string.format("res/scenes/%s.txt", sceneName)
 	local contents, size = love.filesystem.read(file)
 	local shipID = string.match(contents, "%w+")
@@ -21,7 +21,7 @@ function SceneParser.loadScene(sceneName, x, y, physics)
 		end
 	end
 	local ships = {}
-	ships[1] = Spawn.spawnShip(shipID, physics, location[1], location[2], location[3])
+	ships[1] = Spawn.spawnShip(shipID, location[1], location[2], location[3])
 	return ships
 end
 

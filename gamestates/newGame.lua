@@ -21,8 +21,8 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 
 	-- Instead of being global variables, these should be accessible to the
 	-- states using upvalues.
-	physics = love.physics.newWorld()
-	world = World.create(physics)
+	Structure.setPhysics(love.physics.newWorld())
+	world = World.create()
 	player1 = Player.create("player1", world:getPlayerShip())
 	Screen.createCameras()
 	--camera = Camera.create()

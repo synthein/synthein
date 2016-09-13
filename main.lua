@@ -8,7 +8,6 @@ local MainMenu = require("gamestates/mainMenu")
 local InGame = require("gamestates/inGame")
 local NewGame = require("gamestates/newGame")
 
-local physics
 local player1
 local mouseWorldX
 local mouseWorldY

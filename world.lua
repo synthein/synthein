@@ -10,13 +10,13 @@ World.__index = World
 
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
-function World.create(physics)
+function World.create()
 	self = {}
 	setmetatable(self, World)
 	teamHostility = { {false, true},
 					  {true, false} }
 
-	self.worldStructures, self.anchor, self.playerShip, self.aiShips, self.physics = InitWorld.init(physics)
+	self.worldStructures, self.anchor, self.playerShip, self.aiShips = InitWorld.init()
 
 	self.ais = {}
 	table.insert(self.ais, AI.create(self.aiShips[1], 1))
@@ -100,7 +100,7 @@ end
 
 function World:removeSection(structure, part)
 	if part.type == "generic" then
-		local newStructure = structure:removeSection(self.physics, part)
+		local newStructure = structure:removeSection(part)
 		table.insert(self.worldStructures, newStructure)
 	end
 end

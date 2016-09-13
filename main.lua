@@ -2,10 +2,11 @@ local Debug = require("debugTools")
 local Player = require("player")
 local Structure = require("structure")
 local World = require("world")
-local MainMenu = require("mainMenu")
-local InGame = require("inGame")
-local NewGame = require("newGame")
 local Screen = require("screen")
+
+local MainMenu = require("gamestates/mainMenu")
+local InGame = require("gamestates/inGame")
+local NewGame = require("gamestates/newGame")
 
 local physics
 local player1
@@ -28,7 +29,7 @@ function love.draw()
 	SCREEN_WIDTH = love.graphics.getWidth()
 	SCREEN_HEIGHT = love.graphics.getHeight()
 	state = state.draw()
-	
+
 
 	-- Print debug info.
 	if debugmode then Debug.draw() end

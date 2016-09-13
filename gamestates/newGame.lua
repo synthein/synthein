@@ -1,13 +1,15 @@
 local Debug = require("debugTools")
 local Camera = require("camera")
-local InGame = require("inGame")
 local World = require("world")
 local Player = require("player")
 local Structure = require("structure")
 local Screen = require("screen")
 
+local GameState = require("gamestates/gameState")
+local InGame = require("gamestates/inGame")
 
 local NewGame = {}
+setmetatable(NewGame, GameState)
 
 function NewGame.update(mouseWorldX, mouseWorldY)
 	SCREEN_WIDTH = love.graphics.getWidth()

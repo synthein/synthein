@@ -4,7 +4,10 @@ local Structure = require("structure")
 local World = require("world")
 local Screen = require("screen")
 
+local GameState = require("gamestates/gameState")
+
 local InGame = {}
+setmetatable(InGame, GameState)
 
 local world
 local paused = false

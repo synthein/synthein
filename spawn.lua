@@ -12,7 +12,13 @@ local Structure = require("structure")
 
 local Spawn = {}
 
-function Spawn.spawnShip(shipTable, physics, x, y, angle)
+function Spawn.spawnShip(shipID, physics, x, y, angle)
+	local shipString, stringLength = Spawn.loadShipFromFile(shipID)
+	local shipTable = Spawn.shipUnpack(shipString, stringLength)
+	return Spawn.spawning(shipTable, physics, x, y, angle)
+end
+
+function Spawn.spawning(shipTable, physics, x, y, angle)
 	for i,part in ipairs(shipTable.parts) do
 		if part == 'b'then
 			shipTable.parts[i] = Block.create()
@@ -37,11 +43,9 @@ end
 function Spawn.loadShipFromFile(ship)
 	local contents, size
 	if ship then
-		if ship < 10 then
-			local file = string.format("res/ships/BasicShip%d.txt", ship)
-			contents, size = love.filesystem.read(file)
-		end
-	return contents, size
+		local file = string.format("res/ships/" .. ship .. ".txt")
+		contents, size = love.filesystem.read(file)
+		return contents, size
 	end
 	return nil, nil
 end

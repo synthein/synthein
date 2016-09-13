@@ -1,9 +1,13 @@
-local Block = require("block")
-local Engine = require("engine")
-local Gun = require("gun")
+local AI = require("ai")
 local Structure = require("structure")
 local Spawn = require("spawn")
 local Screen = require("screen")
+
+-- Ship parts
+local AIBlock = require("shipparts/aiBlock")
+local Block = require("shipparts/block")
+local Engine = require("shipparts/engine")
+local Gun = require("shipparts/gun")
 
 local Debug = {}
 
@@ -22,7 +26,7 @@ end
 
 -- Print debug info.
 function Debug.draw()
-	mouseWorldX, mouseWorldY = 
+	mouseWorldX, mouseWorldY =
 		Screen.getCursorCoords(love.mouse.getX(), love.mouse.getY())
 	local debugString = string.format(
 		"%.3f    %.3f\n"..
@@ -46,27 +50,47 @@ function Debug.update(mouseWorldX, mouseWorldY)
 end
 
 function Debug.keyboard(key, cameraX, cameraY)
-	-- Spawn a block
+	-- Spawn a ship part.
 	if key == "u" then
+		-- Spawn a block
 		table.insert(Debug.world.worldStructures,
-		Structure.create(Block.create(), Debug.world.physics,
-		cameraX + 50, cameraY - 100))
-	end
-	-- Spawn an engine
-	if key == "i" then
+			Structure.create(Block.create(), Debug.world.physics,
+			cameraX + 50, cameraY + 100))
+	elseif key == "i" then
+		-- Spawn an engine
 		table.insert(Debug.world.worldStructures,
-		Structure.create(Engine.create(), Debug.world.physics,
-		cameraX + 112, cameraY))
-	end
-	-- Spawn a gun
-	if key == "o" then
+			Structure.create(Engine.create(), Debug.world.physics,
+			cameraX + 112, cameraY))
+	elseif key == "o" then
+		-- Spawn a gun
 		table.insert(Debug.world.worldStructures,
-		Structure.create(Gun.create(), Debug.world.physics,
-		cameraX + 50, cameraY + 100))
-	end
-	if key == "m" then
-		local string = Spawn.shipPack(Debug.player1.ship, true)
-		love.filesystem.write("playerShip.txt", string)
+			Structure.create(Gun.create(), Debug.world.physics,
+			cameraX + 50, cameraY - 100))
+
+	--Spawn an AI
+	elseif key == "1" then
+		-- Team 1
+		table.insert(Debug.world.aiShips,
+			Structure.create(AIBlock.create(), Debug.world.physics,
+			cameraX - 200, cameraY + 200))
+		table.insert(Debug.world.ais,
+			AI.create(Debug.world.aiShips[#Debug.world.aiShips], 1))
+	elseif key == "2" then
+		-- Team 2
+		table.insert(Debug.world.aiShips,
+			Structure.create(AIBlock.create(), Debug.world.physics,
+			cameraX + 200, cameraY + 200))
+		table.insert(Debug.world.ais,
+			AI.create(Debug.world.aiShips[#Debug.world.aiShips], 2))
+	elseif key == "3" then
+		-- Team 3, etc.
+
+	elseif love.keyboard.isDown("lctrl", "rctrl") then
+		-- Export the player's ship.
+		if key == "s" then
+			local string = Spawn.shipPack(Debug.player1.ship, true)
+			love.filesystem.write("playerShip.txt", string)
+		end
 	end
 end
 

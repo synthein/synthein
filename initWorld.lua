@@ -1,7 +1,7 @@
-local Anchor = require("anchor")
-local Block = require("block")
-local PlayerBlock = require("playerBlock")
-local AIBlock = require("aiBlock")
+local Anchor = require("shipparts/anchor")
+local Block = require("shipparts/block")
+local PlayerBlock = require("shipparts/playerBlock")
+local AIBlock = require("shipparts/aiBlock")
 local Structure = require("structure")
 local Spawn = require("spawn")
 local SceneParser = require("sceneParser")
@@ -17,7 +17,7 @@ function InitWorld.init(physics)
 	local aiShips = SceneParser.loadScene("scene1", 0, 0, physics)
 	--aiShips[1] = Spawn.spawnShip("BasicShip2", physics, -200, 50)
 	aiShips[2] = Structure.create(AIBlock.create(), physics, -35, 200)
-	
+
 	-- Create the anchor.
 	local anchor = Structure.create(Anchor.create(), physics, -10, -10)
 	anchor:addPart(Anchor.create(), 1, 0, 1)

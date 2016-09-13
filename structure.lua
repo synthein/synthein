@@ -5,8 +5,13 @@ local Structure = {}
 Structure.__index = Structure
 
 Structure.PARTSIZE = 20
+Structure.physics = nil
 
-function Structure.create(shipTable, physics, x, y, angle, ship)
+function Structure.setPhysics(setphysics)
+	Structure.physics = setphysics
+end
+
+function Structure.create(shipTable, x, y, angle, ship)
 	local self = {}
 	setmetatable(self, Structure)
 	if shipTable.parts == nil then
@@ -15,15 +20,15 @@ function Structure.create(shipTable, physics, x, y, angle, ship)
 		shipTable.partOrient = {1}
 	end
 	if shipTable.parts[1].type == "player" then
-		self.body = love.physics.newBody(physics, x, y, "dynamic")
+		self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
 		self.body:setAngularDamping(1)
 		self.body:setLinearDamping(0.5)
 		self.type = "ship"
 	elseif shipTable.parts[1].type == "anchor" then
-		self.body = love.physics.newBody(physics, x, y, "static")
+		self.body = love.physics.newBody(Structure.physics, x, y, "static")
 		self.type = "anchor"
 	else
-		self.body = love.physics.newBody(physics, x, y, "dynamic")
+		self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
 		self.body:setAngularDamping(0.2)
 		self.body:setLinearDamping(0.1)
 		self.type = "generic"
@@ -134,7 +139,7 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	return newStructures
 end
 
-function Structure:removeSection(physics, part)
+function Structure:removeSection(part)
 	--If there is only one block in the structure then esacpe.
 	if #self.parts == 1 then
 		return nil
@@ -142,7 +147,7 @@ function Structure:removeSection(physics, part)
 	local index = self:findPart(part)
 	local x, y , angle = self:getAbsPartCoords(index)
 	self:removePart(part)
-	return Structure.create(part, physics, x, y, angle)
+	return Structure.create(part, x, y, angle)
 end
 
 -- Add one part to the structure.

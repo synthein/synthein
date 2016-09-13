@@ -19,7 +19,7 @@ end
 function InGame.update(dt)
 	if paused then
 	else
-		physics:update(dt)
+		Structure.physics:update(dt)
 
 		Screen.camera:setX(player1.ship.body:getX())
 		Screen.camera:setY(player1.ship.body:getY())

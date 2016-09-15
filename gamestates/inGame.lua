@@ -1,8 +1,9 @@
-local Debug = require("debugTools")
+--local Debug = require("debugTools")
 local Player = require("player")
 local Structure = require("structure")
 local World = require("world")
 local Screen = require("screen")
+local Util = require("util")
 
 local GameState = require("gamestates/gameState")
 
@@ -10,10 +11,20 @@ local InGame = {}
 setmetatable(InGame, GameState)
 
 local world
+local players = {}
+local ais = {}
 local paused = false
+
+function InGame.setplayers(playerTable)
+	players = playerTable
+end
 
 function InGame.setWorld(setworld)
 	world = setworld
+end
+
+function InGame.addAI(ai)
+	table.insert(ais, ai)
 end
 
 function InGame.update(dt)
@@ -21,11 +32,51 @@ function InGame.update(dt)
 	else
 		Structure.physics:update(dt)
 
-		Screen.camera:setX(player1.ship.body:getX())
-		Screen.camera:setY(player1.ship.body:getY())
+		Screen.camera:setX(players[1].ship.body:getX())
+		Screen.camera:setY(players[1].ship.body:getY())
 
+		players[1]:handleInput(Screen.camera:getPosition())
 		world:update(dt)
-		player1:handleInput(Screen.camera:getPosition())
+	end
+	for i, ai in ipairs(ais) do
+		local x = ai.ship.body:getX()
+		local y = ai.ship.body:getY()
+		local targetX, target, distance, target
+		for j, aiTarget in ipairs(ais) do
+			if teamHostility[ai.team][aiTarget.team] then
+				targetX = aiTarget.ship.body:getX()
+				targetY = aiTarget.ship.body:getY()
+				if distance then
+					d = Util.vectorMagnitude(targetX - x, targetY - y)
+					if d < distance then
+						target = aiTarget.ship
+						distance = d
+					end
+				else
+					target = aiTarget.ship
+					distance = Util.vectorMagnitude(targetX - x, targetY - y)
+				end
+			end
+		end
+		if teamHostility[ai.team][1] then
+			targetX = players[1].ship.body:getX()
+			targetY = players[1].ship.body:getY()
+			if distance then
+				d = Util.vectorMagnitude(targetX - x, targetY - y)
+				if d < distance then
+					target = self.playerShip
+					distance = d
+				end
+			else
+				target = self.playerShip
+				distance = Util.vectorMagnitude(targetX - x, targetY - y)
+			end
+		end
+		if #ai.ship.parts == 0 then
+			table.remove(self.ais, i)
+		else
+			ai:update(dt, players[1].ship, target)
+		end
 	end
 	return InGame
 end
@@ -38,9 +89,9 @@ function InGame.draw()
 		--love.graphics.translate(-cameraX, cameraY)
 	--
 		world:draw()
-		player1.cursorX = love.mouse.getX()
-		player1.cursorY = love.mouse.getY()
-		player1:draw()
+		players[1].cursorX = love.mouse.getX()
+		players[1].cursorY = love.mouse.getY()
+		players[1]:draw()
 		love.graphics.origin()
 		love.graphics.draw(
 			compass,
@@ -72,16 +123,16 @@ function InGame.keypressed(key)
 end
 
 function InGame.mousepressed(x, y, button)
-	player1.cursorX = x
-	player1.cursorY = y
-	player1:mousepressed(button)
+	players[1].cursorX = x
+	players[1].cursorY = y
+	players[1]:mousepressed(button)
 	return InGame
 end
 
 function InGame.mousereleased(x, y, button)
-	player1.cursorX = x
-	player1.cursorY = y
-	player1:mousereleased(button)
+	players[1].cursorX = x
+	players[1].cursorY = y
+	players[1]:mousereleased(button)
 	return InGame
 end
 

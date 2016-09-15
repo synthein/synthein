@@ -42,7 +42,7 @@ function Building:pressed(mouseWorldX, mouseWorldY)
 	if self.mode == 1 then
 
 		self.annexee, self.annexeePart
-			= world:getWorldStructure(mouseWorldX, mouseWorldY)
+			= world:getStructure(mouseWorldX, mouseWorldY)
 		self.mode = 2
 
 		if not self.annexee then

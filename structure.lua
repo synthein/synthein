@@ -11,7 +11,7 @@ function Structure.setPhysics(setphysics)
 	Structure.physics = setphysics
 end
 
-function Structure.create(shipTable, x, y, angle, ship)
+function Structure.create(shipTable, location)
 	local self = {}
 	setmetatable(self, Structure)
 	if shipTable.parts == nil then
@@ -19,6 +19,8 @@ function Structure.create(shipTable, x, y, angle, ship)
 		shipTable.partCoords = { {x = 0, y = 0} }
 		shipTable.partOrient = {1}
 	end
+	local x = location[1]
+	local y = location[2]
 	if shipTable.parts[1].type == "player" then
 		self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
 		self.body:setAngularDamping(1)
@@ -33,8 +35,14 @@ function Structure.create(shipTable, x, y, angle, ship)
 		self.body:setLinearDamping(0.1)
 		self.type = "generic"
 	end
-	if angle then
-		self.body:setAngle(angle)
+	if location[3] then
+		self.body:setAngle(location[3])
+	end
+	if location[4] and location[5] then
+		self.body:setLinearVelocity(location[4], location[5])
+	end
+	if location[6] then
+		self.body:setAngularVelocity(location[6])
 	end
 	self.parts = {}
 	self.partCoords = {}

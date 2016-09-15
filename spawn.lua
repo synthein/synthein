@@ -12,13 +12,13 @@ local Structure = require("structure")
 
 local Spawn = {}
 
-function Spawn.spawnShip(shipID, x, y, angle)
+function Spawn.spawnShip(shipID, location)
 	local shipString, stringLength = Spawn.loadShipFromFile(shipID)
 	local shipTable = Spawn.shipUnpack(shipString, stringLength)
-	return Spawn.spawning(shipTable, x, y, angle)
+	return Spawn.spawning(shipTable, location)
 end
 
-function Spawn.spawning(shipTable, x, y, angle)
+function Spawn.spawning(shipTable, location)
 	for i,part in ipairs(shipTable.parts) do
 		if part == 'b'then
 			shipTable.parts[i] = Block.create()
@@ -36,8 +36,7 @@ function Spawn.spawning(shipTable, x, y, angle)
 		end
 	end
 	shipTable.loadData = nil
-	structure = Structure.create(shipTable, x, y, angle)
-	return structure
+	return world:createStructure(shipTable, location)
 end
 
 function Spawn.loadShipFromFile(ship)

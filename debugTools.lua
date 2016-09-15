@@ -2,6 +2,7 @@ local AI = require("ai")
 local Structure = require("structure")
 local Spawn = require("spawn")
 local Screen = require("screen")
+local InGame = require("gamestates/inGame")
 
 -- Ship parts
 local AIBlock = require("shipparts/aiBlock")
@@ -36,8 +37,8 @@ function Debug.draw()
 		"Build mode: %s\n",
 		Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
 		mouseWorldX, mouseWorldY,
-		#Debug.world.worldStructures,
-		#Debug.world.playerShip.parts,
+		#Debug.world.structures,
+		#Debug.player1.ship.parts,
 		(Debug.player1.build and "yes" or "no")
 	)
 	love.graphics.print(debugString, 5, 5)
@@ -54,34 +55,34 @@ function Debug.keyboard(key, cameraX, cameraY)
 	if key == "u" then
 		-- Spawn a block
 		table.insert(Debug.world.worldStructures,
-			Structure.create(Block.create(), Debug.world.physics,
+			Structure.create(Block.create(),
 			cameraX + 50, cameraY + 100))
 	elseif key == "i" then
 		-- Spawn an engine
 		table.insert(Debug.world.worldStructures,
-			Structure.create(Engine.create(), Debug.world.physics,
+			Structure.create(Engine.create(),
 			cameraX + 112, cameraY))
 	elseif key == "o" then
 		-- Spawn a gun
 		table.insert(Debug.world.worldStructures,
-			Structure.create(Gun.create(), Debug.world.physics,
+			Structure.create(Gun.create(),
 			cameraX + 50, cameraY - 100))
 
 	--Spawn an AI
 	elseif key == "1" then
 		-- Team 1
-		table.insert(Debug.world.aiShips,
-			Structure.create(AIBlock.create(), Debug.world.physics,
-			cameraX - 200, cameraY + 200))
-		table.insert(Debug.world.ais,
-			AI.create(Debug.world.aiShips[#Debug.world.aiShips], 1))
+		table.insert(Debug.world.structures,
+			Structure.create(AIBlock.create(),
+			{cameraX - 200, cameraY + 200}))
+		InGame.addAI(
+			AI.create(Debug.world.structures[#Debug.world.structures], 1))
 	elseif key == "2" then
 		-- Team 2
-		table.insert(Debug.world.aiShips,
-			Structure.create(AIBlock.create(), Debug.world.physics,
-			cameraX + 200, cameraY + 200))
-		table.insert(Debug.world.ais,
-			AI.create(Debug.world.aiShips[#Debug.world.aiShips], 2))
+		table.insert(Debug.world.structures,
+			Structure.create(AIBlock.create(),
+			{cameraX + 200, cameraY + 200}))
+		InGame.addAI(
+			AI.create(Debug.world.structures[#Debug.world.structures], 2))
 	elseif key == "3" then
 		-- Team 3, etc.
 

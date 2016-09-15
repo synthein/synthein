@@ -8,9 +8,6 @@ local MainMenu = require("gamestates/mainMenu")
 local InGame = require("gamestates/inGame")
 local NewGame = require("gamestates/newGame")
 
-local player1
-local mouseWorldX
-local mouseWorldY
 local state
 
 function love.load()

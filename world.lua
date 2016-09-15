@@ -1,5 +1,4 @@
 local AI = require("ai")
-local InitWorld = require("initWorld")
 local Particles = require("particles")
 local Shot = require("shot")
 local Structure = require("structure")
@@ -15,12 +14,7 @@ function World.create()
 	setmetatable(self, World)
 	teamHostility = { {false, true},
 					  {true, false} }
-
-	self.worldStructures, self.anchor, self.playerShip, self.aiShips = InitWorld.init()
-
-	self.ais = {}
-	table.insert(self.ais, AI.create(self.aiShips[1], 1))
-	table.insert(self.ais, AI.create(self.aiShips[2], 2))
+	self.structures = {}
 
 	self.shots = {}
 	self.particles = {}
@@ -31,12 +25,18 @@ function World:getPlayerShip()
 	return self.playerShip
 end
 
+function World:createStructure(shipTable, location)
+	local structure = Structure.create(shipTable, location)
+	table.insert(self.structures, structure)
+	return structure
+end
+
 function World:getStructure(locationX,locationY)
-	local part, partSide = self.playerShip:getPartIndex(locationX, locationY,
-												   player)
-	if part and partSide then
-		return self.playerShip, part, partSide, i
-	end
+--	local part, partSide = self.playerShip:getPartIndex(locationX, locationY,
+--												   player)
+--	if part and partSide then
+--		return self.playerShip, part, partSide, i
+--	end
 --		for i, structure in ipairs(player) do
 --			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY,
 --														   structure)
@@ -44,11 +44,11 @@ function World:getStructure(locationX,locationY)
 --			return structure, part, partSide, i
 --			end
 --		end
-	local part, partSide = self.anchor:getPartIndex(locationX, locationY,
-												   anchor)
-	if part and partSide then
-		return self.anchor, part, partSide, i
-	end
+--	local part, partSide = self.anchor:getPartIndex(locationX, locationY,
+--												   anchor)
+--	if part and partSide then
+--		return self.anchor, part, partSide, i
+--	end
 
 --		for i, structure in ipairs(anchor) do
 --			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY,
@@ -57,11 +57,11 @@ function World:getStructure(locationX,locationY)
 --			return structure, part, partSide, i
 --			end
 --		end
-	structure, part, partSide, i = self:getAIShips(locationX, locationY)
-	if structure and part and partSide and i then
-		return structure, part, partSide, i
-	end
-	structure, part, partSide, i = self:getWorldStructure(locationX, locationY)
+--	structure, part, partSide, i = self:getAIShips(locationX, locationY)
+--	if structure and part and partSide and i then
+--		return structure, part, partSide, i
+--	end
+	structure, part, partSide, i = self:getStructure(locationX, locationY)
 	if structure and part and partSide and i then
 		return structure, part, partSide, i
 	end
@@ -80,17 +80,8 @@ function World:isMouseInsidePart(structure, part)
 end
 
 
-function World:getWorldStructure(locationX, locationY)
-	for i, structure in ipairs(self.worldStructures) do
-		local part, partSide = structure:getPartIndex(locationX, locationY)
-		if part and partSide then
-			return structure, part, partSide, i
-		end
-	end
-end
-
-function World:getAIShips(locationX, locationY)
-	for i, structure in ipairs(self.aiShips) do
+function World:getStructure(locationX, locationY)
+	for i, structure in ipairs(self.structures) do
 		local part, partSide = structure:getPartIndex(locationX, locationY)
 		if part and partSide then
 			return structure, part, partSide, i
@@ -133,53 +124,11 @@ end
 
 function World:update(dt)
 	-- Update all of the structues.
-	for i, structure in ipairs(self.worldStructures) do
+	for i, structure in ipairs(self.structures) do
 		if #structure.parts == 0 then
-			table.remove(self.worldStructures, i)
+			table.remove(self.structures, i)
 		else
 		structure:update(dt, self.playerShip)
-		end
-	end
-	self.playerShip:update(dt)
-	self.anchor:update(dt)
-	for i, ai in ipairs(self.ais) do
-		local x = ai.ship.body:getX()
-		local y = ai.ship.body:getY()
-		local targetX, target, distance, target
-		for j, aiTarget in ipairs(self.ais) do
-			if teamHostility[ai.team][aiTarget.team] then
-				targetX = aiTarget.ship.body:getX()
-				targetY = aiTarget.ship.body:getY()
-				if distance then
-					d = Util.vectorMagnitude(targetX - x, targetY - y)
-					if d < distance then
-						target = aiTarget.ship
-						distance = d
-					end
-				else
-					target = aiTarget.ship
-					distance = Util.vectorMagnitude(targetX - x, targetY - y)
-				end
-			end
-		end
-		if teamHostility[ai.team][1] then
-			targetX = self.playerShip.body:getX()
-			targetY = self.playerShip.body:getY()
-			if distance then
-				d = Util.vectorMagnitude(targetX - x, targetY - y)
-				if d < distance then
-					target = self.playerShip
-					distance = d
-				end
-			else
-				target = self.playerShip
-				distance = Util.vectorMagnitude(targetX - x, targetY - y)
-			end
-		end
-		if #ai.ship.parts == 0 then
-			table.remove(self.ais, i)
-		else
-			ai:update(dt, self.playerShip, target)
 		end
 	end
 
@@ -209,14 +158,9 @@ end
 
 function World:draw()
 	-- Draw all of the structures.
-	self.anchor:draw()
-	for i, structure in ipairs(self.worldStructures) do
+	for i, structure in ipairs(self.structures) do
 		structure:draw()
 	end
-	for i, aiShip in ipairs(self.aiShips) do
-		aiShip:draw()
-	end
-	self.playerShip:draw()
 
 	-- Draw the shots.
 	for i, shot in ipairs(self.shots) do

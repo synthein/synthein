@@ -20,9 +20,7 @@ function SceneParser.loadScene(sceneName, x, y)
 			location[i] = 0
 		end
 	end
-	local ships = {}
-	ships[1] = Spawn.spawnShip(shipID, location[1], location[2], location[3])
-	return ships
+	return {Spawn.spawnShip(shipID, location)}
 end
 
 return SceneParser

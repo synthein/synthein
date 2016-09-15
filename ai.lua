@@ -8,7 +8,7 @@ function AI.create(structure, team)
 	setmetatable(self, AI)
 
 	self.ship = structure
-	self. team = team
+	self.team = team
 
 	return self
 end
@@ -55,11 +55,9 @@ function AI:update(dt, playerShip, target)
 		end
 	end
 	self.ship:command(orders)
-	self.ship:update(dt)
 end
 
 function AI:draw()
-	self.Ship:draw()
 end
 
 return AI

@@ -7,20 +7,23 @@ function SceneParser.loadShip(shipName)
 end
 
 function SceneParser.loadScene(sceneName, x, y)
-	local file = string.format("res/scenes/%s.txt", sceneName)
-	local contents, size = love.filesystem.read(file)
-	local shipID = string.match(contents, "%w+")
-	local locationString = string.match(contents, "%([-0-9., ]*%)")
-	local location = {}
-	for coord in string.gmatch(locationString, "[-0-9.]+") do 
-		table.insert(location, tonumber(coord))
-	end
-	for i = 1,6 do
-		if not location[i] then
-			location[i] = 0
+	local ships = {}
+	local fileName = string.format("/res/scenes/%s.txt", sceneName)
+	for line in love.filesystem.lines(fileName) do
+		local shipID = string.match(line, "%w+")
+		local locationString = string.match(line, "%([-0-9., ]*%)")
+		local location = {}
+		for coord in string.gmatch(locationString, "[-0-9.]+") do 
+			table.insert(location, tonumber(coord))
 		end
+		for i = 1,6 do
+			if not location[i] then
+				location[i] = 0
+			end
+		end
+		table.insert(ships, Spawn.spawnShip(shipID, location))
 	end
-	return {Spawn.spawnShip(shipID, location)}
+	return ships
 end
 
 return SceneParser

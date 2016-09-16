@@ -14,7 +14,6 @@ function InitWorld.init(world)
 		world:createStructure(Block.create(), {i*35, -i*35})
 	end
 	local aiShips = SceneParser.loadScene("scene1", {0, 0})
-	aiShips[2] = world:createStructure(AIBlock.create(), {-35, 200})
 
 	-- Create the anchor.
 	local anchor = world:createStructure(Anchor.create(), {0, 0})

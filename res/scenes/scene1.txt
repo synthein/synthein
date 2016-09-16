@@ -1,1 +1,2 @@
 BasicShip2(-100,0,0)
+BasicShip2(-35, 200,0)

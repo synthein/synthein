@@ -12,7 +12,6 @@ setmetatable(InGame, GameState)
 
 local world
 local players = {}
-local ais = {}
 local paused = false
 
 function InGame.setplayers(playerTable)
@@ -21,10 +20,6 @@ end
 
 function InGame.setWorld(setworld)
 	world = setworld
-end
-
-function InGame.addAI(ai)
-	table.insert(ais, ai)
 end
 
 function InGame.update(dt)
@@ -37,46 +32,6 @@ function InGame.update(dt)
 
 		players[1]:handleInput(Screen.camera:getPosition())
 		world:update(dt)
-	end
-	for i, ai in ipairs(ais) do
-		local x = ai.ship.body:getX()
-		local y = ai.ship.body:getY()
-		local targetX, target, distance, target
-		for j, aiTarget in ipairs(ais) do
-			if teamHostility[ai.team][aiTarget.team] then
-				targetX = aiTarget.ship.body:getX()
-				targetY = aiTarget.ship.body:getY()
-				if distance then
-					d = Util.vectorMagnitude(targetX - x, targetY - y)
-					if d < distance then
-						target = aiTarget.ship
-						distance = d
-					end
-				else
-					target = aiTarget.ship
-					distance = Util.vectorMagnitude(targetX - x, targetY - y)
-				end
-			end
-		end
-		if teamHostility[ai.team][1] then
-			targetX = players[1].ship.body:getX()
-			targetY = players[1].ship.body:getY()
-			if distance then
-				d = Util.vectorMagnitude(targetX - x, targetY - y)
-				if d < distance then
-					target = self.playerShip
-					distance = d
-				end
-			else
-				target = self.playerShip
-				distance = Util.vectorMagnitude(targetX - x, targetY - y)
-			end
-		end
-		if #ai.ship.parts == 0 then
-			table.remove(self.ais, i)
-		else
-			ai:update(dt, players[1].ship, target)
-		end
 	end
 	return InGame
 end

@@ -21,7 +21,15 @@ function SceneParser.loadScene(sceneName, x, y)
 				location[i] = 0
 			end
 		end
-		table.insert(ships, Spawn.spawnShip(shipID, location))
+		local dataString = string.match(line, "%[[-0-9., ]*%]")
+		local data = {}
+		for var in string.gmatch(dataString, "[-0-9.]+") do 
+			table.insert(data, tonumber(var))
+		end
+		if not data[1] then
+			data[1] = 1
+		end
+		table.insert(ships, Spawn.spawnShip(shipID, location, data))
 	end
 	return ships
 end

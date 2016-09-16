@@ -31,8 +31,6 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 	for i,player in ipairs(players) do
 		player.ship = playerShips[i]
 	end
-	InGame.addAI(AI.create(aiShips[1], 1))
-	InGame.addAI(AI.create(aiShips[2], 2))
 	InGame.setplayers(players)
 	Screen.createCameras()
 	--camera = Camera.create()
@@ -40,7 +38,7 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 	--camera.setX(player1.ship.body:getX())
 	--camera.setY(player1.ship.body:getY())
 	InGame.setWorld(world)
-
+	world:setPlayerShip(players[1].ship)
 
 	Debug.setWorld(world)
 	Debug.setPlayer(players[1])

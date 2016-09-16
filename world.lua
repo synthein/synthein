@@ -15,10 +15,14 @@ function World.create()
 	teamHostility = { {false, true},
 					  {true, false} }
 	self.structures = {}
-
+	self.ais = {}
 	self.shots = {}
 	self.particles = {}
 	return self
+end
+
+function World:setPlayerShip(ship)
+	self.playerShip = ship
 end
 
 function World:getPlayerShip()
@@ -129,6 +133,47 @@ function World:update(dt)
 			table.remove(self.structures, i)
 		else
 		structure:update(dt, self.playerShip)
+		end
+	end
+	-- Update all of the ais.
+	for i, ai in ipairs(self.ais) do
+		local x = ai.ship.body:getX()
+		local y = ai.ship.body:getY()
+		local targetX, target, distance, target
+		for j, aiTarget in ipairs(self.ais) do
+			if teamHostility[ai.team][aiTarget.team] then
+				targetX = aiTarget.ship.body:getX()
+				targetY = aiTarget.ship.body:getY()
+				if distance then
+					d = Util.vectorMagnitude(targetX - x, targetY - y)
+					if d < distance then
+						target = aiTarget.ship
+						distance = d
+					end
+				else
+					target = aiTarget.ship
+					distance = Util.vectorMagnitude(targetX - x, targetY - y)
+				end
+			end
+		end
+		if teamHostility[ai.team][1] then
+			targetX = self.playerShip.body:getX()
+			targetY = self.playerShip.body:getY()
+			if distance then
+				d = Util.vectorMagnitude(targetX - x, targetY - y)
+				if d < distance then
+					target = self.playerShip
+					distance = d
+				end
+			else
+				target = self.playerShip
+				distance = Util.vectorMagnitude(targetX - x, targetY - y)
+			end
+		end
+		if #ai.ship.parts == 0 then
+			table.remove(self.ais, i)
+		else
+			ai:update(dt, self.playerShip, target)
 		end
 	end
 

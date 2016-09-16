@@ -9,16 +9,21 @@ local AIBlock = require("shipparts/aiBlock")
 local PlayerBlock = require("shipparts/playerBlock")
 local Tserial = require("tserial")
 local Structure = require("structure")
+local World = require("world")
+local AI = require("ai")
 
 local Spawn = {}
 
-function Spawn.spawnShip(shipID, location)
+function Spawn.spawnShip(shipID, location, data)
 	local shipString, stringLength = Spawn.loadShipFromFile(shipID)
 	local shipTable = Spawn.shipUnpack(shipString, stringLength)
-	return Spawn.spawning(shipTable, location)
+	return Spawn.spawning(shipTable, location, data)
 end
 
-function Spawn.spawning(shipTable, location)
+function Spawn.spawning(shipTable, location, data)
+	local ai = false
+	local player = false
+	local anchor = false
 	for i,part in ipairs(shipTable.parts) do
 		if part == 'b'then
 			shipTable.parts[i] = Block.create()
@@ -28,6 +33,7 @@ function Spawn.spawning(shipTable, location)
 			shipTable.parts[i] = Gun.create()
 		elseif part == 'a' then
 			shipTable.parts[i] = AIBlock.create()
+			ai = true
 		elseif part == 'p' then
 			shipTable.parts[i] = PlayerBlock.create()
 		end
@@ -36,7 +42,11 @@ function Spawn.spawning(shipTable, location)
 		end
 	end
 	shipTable.loadData = nil
-	return world:createStructure(shipTable, location)
+	local structure = world:createStructure(shipTable, location)
+	if ai then
+		table.insert(world.ais, AI.create(structure, data[1]))
+	end
+	return structure
 end
 
 function Spawn.loadShipFromFile(ship)

@@ -14,8 +14,13 @@ local AI = require("ai")
 
 local Spawn = {}
 
-function Spawn.spawnShip(shipID, location, data)
-	local shipString, stringLength = Spawn.loadShipFromFile(shipID)
+function Spawn.spawnShip(shipID, location, data, shipString)
+	local stringLength
+	if not shipString then
+		shipString, stringLength = Spawn.loadShipFromFile(shipID)
+	else
+		stringLength = #shipString
+	end
 	local shipTable = Spawn.shipUnpack(shipString, stringLength)
 	return Spawn.spawning(shipTable, location, data)
 end

@@ -1,5 +1,8 @@
 BasicShip2(-100,0,0)[1]
 {
+g1
+b0
 a*
+e1
 }
 BasicShip2(-35, 200,0)[2]

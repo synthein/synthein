@@ -23,7 +23,7 @@ function SceneParser.loadScene(sceneName, x, y)
 				ifShipString = false
 				ships[index][4] = shipString
 			else
-				shipString = shipString .. line
+				shipString = shipString .. line .. '\n'
 			end
 		else
 			if string.match(line, "%w%([-0-9., ]*%)%[[-0-9., ]*%]")then

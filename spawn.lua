@@ -9,6 +9,7 @@ local AIBlock = require("shipparts/aiBlock")
 local PlayerBlock = require("shipparts/playerBlock")
 local Anchor = require("shipparts/anchor")
 local Tserial = require("tserial")
+local Util = require("util")
 local Structure = require("structure")
 local World = require("world")
 local AI = require("ai")
@@ -222,7 +223,7 @@ function Spawn.shipPack(structure, saveThePartData)
 	local stringTable = {{"  "}}
 	for i,part in ipairs(structure.parts) do
 		local x = structure.partCoords[i].x
-		local y = structure.partCoords[i].y
+		local y = -structure.partCoords[i].y
 		local tempString = "  "
 		local loadData = {}
 
@@ -241,7 +242,8 @@ function Spawn.shipPack(structure, saveThePartData)
 				end
 			end
 			xHigh = x
-		elseif y < yLow  then
+		end
+		if y < yLow  then
 			for j = 1, (yLow - y) do
 					table.insert(stringTable, 1, {})
 				for k = 1, (xHigh - xLow + 1) do
@@ -301,7 +303,9 @@ function Spawn.shipPack(structure, saveThePartData)
 			string = string .. stringTable[i][j][1]
 			if stringTable[i][j][2]then
 				dataString = dataString ..
-							 Tserial.pack(stringTable[i][j][2], nil, false) ..
+							 Util.packLocation({j + xLow, -i - yHigh}) ..
+							 Util.packData(stringTable[i][j][2]) ..
+							 --Tserial.pack(stringTable[i][j][2], nil, true) ..
 							 "\n"
 			end
 		end

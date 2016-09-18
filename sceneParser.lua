@@ -14,6 +14,9 @@ function SceneParser.loadScene(sceneName, x, y)
 	local shipID
 	local locationString
 	local fileName = string.format("/res/scenes/%s.txt", sceneName)
+	if not fileName then
+		fileName = string.format("%s%s.txt", love.filesystem.getSaveDirectory(), sceneName)
+	end
 	for line in love.filesystem.lines(fileName) do
 		if ifShipString then
 			if string.match(line, "%}") then

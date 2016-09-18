@@ -4,6 +4,7 @@ local Structure = require("structure")
 local World = require("world")
 local Screen = require("screen")
 local Util = require("util")
+local SceneParser = require("sceneParser")
 
 local GameState = require("gamestates/gameState")
 
@@ -73,6 +74,9 @@ end
 function InGame.keypressed(key)
 	if key == "p" then
 		paused = not paused
+	end
+	if key == "v" then
+		SceneParser.saveScene("synthienSave", world)
 	end
 	return InGame
 end

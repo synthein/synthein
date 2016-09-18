@@ -1,5 +1,6 @@
 -- This module loads scenes and ship files from res/ships and res/scenes.
 local Spawn = require("spawn")
+local Util = require("util")
 
 local SceneParser = {}
 
@@ -61,6 +62,26 @@ function SceneParser.loadScene(sceneName, x, y)
 		spawnedShips[i], ifPlayer[i] = Spawn.spawnShip(ship[1],ship[2],ship[3],ship[4])
 	end
 	return spawnedShips, ifPlayer
+end
+
+function SceneParser.saveScene(sceneName, world)
+	local dir = love.filesystem.getSaveDirectory()
+	local fileName = dir .. '/' .. sceneName .. ".txt"
+	local fileString = ""
+	for i in ipairs(world.structures) do
+		fileString = fileString .. "ship" .. tostring(i) .. 
+					 Util.packLocation(world.structures[i]) .. "[]" .. "\n" ..
+					 "{\n" .. Spawn.shipPack(world.structures[i], true) .. 
+					 "\n}\n"
+	end
+	if not love.filesystem.exists(sceneName .. ".txt") then
+		file = love.filesystem.newFile(sceneName .. ".txt")
+		file:open("w")
+		file:write(fileString)
+		file:close()
+	else
+		love.filesystem.write(fileName, fileString)
+	end
 end
 
 return SceneParser

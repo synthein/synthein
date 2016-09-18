@@ -43,9 +43,9 @@ function SceneParser.loadScene(sceneName, x, y)
 				for var in string.gmatch(dataString, "[-0-9.]+") do 
 					table.insert(data, tonumber(var))
 				end
+				if not data[1] then data[1] = 1 end
 				index = index + 1
 				ships[index] = {shipID, location, data}
-				if not data[1] then data[1] = 1 end
 			elseif string.match(line, "%s*%{") then
 				ifShipString = true
 			end

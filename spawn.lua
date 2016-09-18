@@ -71,6 +71,8 @@ function Spawn.shipUnpack(shipString, stringLength)
 	shipTable.partOrient = {}
 	shipTable.loadData = {}
 	local loadDataTable = {}
+	local location = {}
+	local loadData = {}
 	if shipString and stringLength then
 		local j, k, x, y, baseJ, baseK
 		j = 0
@@ -84,25 +86,48 @@ function Spawn.shipUnpack(shipString, stringLength)
 			elseif c == '*' then
 				baseJ = j - 1
 				baseK = k
-			elseif c == '{' then
-				local braceLevel = 0
-				local endBrace
+			elseif c == '(' then
 				for a = 1,(stringLength-i) do
 					c = shipString:sub(i + a, i + a)
-					if c == '{' then
-						braceLevel = braceLevel + 1
-					elseif c == '}' then
-						if braceLevel == 0 then
-							endBrace = a
-							break
-						else
-							braceLevel = braceLevel - 1
+					if c == ')' then
+						locationString = shipString:sub(i + 1, i + a - 1)
+						location = {}
+						for coord in string.gmatch(locationString, "[-0-9.]+") do 
+							table.insert(location, tonumber(coord))
 						end
-					elseif c == '\n' then break
 					end
 				end
-				local loadData = Tserial.unpack(shipString:sub(i, i + endBrace), true)
-				table.insert(loadDataTable, loadData)
+			elseif c == '[' then
+				for a = 1,(stringLength-i) do
+					c = shipString:sub(i + a, i + a)
+					if c == ']' then
+						local dataString = shipString:sub(i + 1, i + a - 1)
+						loadData = {}
+						for var in string.gmatch(dataString, "[-0-9.]+") do 
+							table.insert(loadData, tonumber(var))
+						end
+					end
+				end
+--			elseif c == '{' then
+--				local braceLevel = 0
+--				local endBrace
+--				for a = 1,(stringLength-i) do
+--					c = shipString:sub(i + a, i + a)
+--					if c == '{' then
+--						braceLevel = braceLevel + 1
+--					elseif c == '}' then
+--						if braceLevel == 0 then
+--							endBrace = a
+--							break
+--						else
+--							braceLevel = braceLevel - 1
+--						end
+--					elseif c == '\n' then break
+--					end
+--				end
+--				local loadData = Tserial.unpack(shipString:sub(i, i + endBrace), true)
+				print("hello", location[1], location[2], loadData)
+				table.insert(loadDataTable, {location, loadData})
 			end
 		end
 
@@ -127,9 +152,10 @@ function Spawn.shipUnpack(shipString, stringLength)
 			end
 			shipTable.partCoords[partIndex] = {x = x, y = y}
 			if loadDataTable[1] then
-				if loadDataTable[1][1] == x and loadDataTable[1][2]	== y then
-					shipTable.loadData[partIndex] = loadDataTable[1][3]
-				end
+				if loadDataTable[1][1][1] == x and loadDataTable[1][1][2]	== y then
+					shipTable.loadData[partIndex] = loadDataTable[1][2]
+					print("hello2", loadDataTable[1][1][1], loadDataTable[1][1][2], loadDataTable[1][2])
+				end	
 			end
 
 			if c == '\n' then

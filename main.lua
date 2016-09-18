@@ -13,6 +13,8 @@ local state
 local newState
 
 function love.load()
+	debugmode = true
+	Screen.createCameras()
 	MainMenu.load()
 	state = MainMenu
 end

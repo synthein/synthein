@@ -18,6 +18,9 @@ function World.create()
 	self.ais = {}
 	self.shots = {}
 	self.particles = {}
+	
+	love.physics.setMeter(20) -- there are 20 pixels per meter
+	Structure.setPhysics(love.physics.newWorld())
 	return self
 end
 

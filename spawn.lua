@@ -7,6 +7,7 @@ local Engine = require("shipparts/engine")
 local Gun = require("shipparts/gun")
 local AIBlock = require("shipparts/aiBlock")
 local PlayerBlock = require("shipparts/playerBlock")
+local Anchor = require("shipparts/anchor")
 local Tserial = require("tserial")
 local Structure = require("structure")
 local World = require("world")
@@ -41,6 +42,10 @@ function Spawn.spawning(shipTable, location, data)
 			ai = true
 		elseif part == 'p' then
 			shipTable.parts[i] = PlayerBlock.create()
+			player = true
+		elseif part == 'n' then
+			shipTable.parts[i] = Anchor.create()
+			anchor = true
 		end
 		if shipTable.loadData[i] then
 			shipTable.parts[i]:loadData(shipTable.loadData[i])
@@ -50,6 +55,8 @@ function Spawn.spawning(shipTable, location, data)
 	local structure = world:createStructure(shipTable, location)
 	if ai then
 		table.insert(world.ais, AI.create(structure, data[1]))
+	elseif player then
+		return structure, true
 	end
 	return structure
 end
@@ -126,7 +133,6 @@ function Spawn.shipUnpack(shipString, stringLength)
 --					end
 --				end
 --				local loadData = Tserial.unpack(shipString:sub(i, i + endBrace), true)
-				print("hello", location[1], location[2], loadData)
 				table.insert(loadDataTable, {location, loadData})
 			end
 		end
@@ -154,7 +160,6 @@ function Spawn.shipUnpack(shipString, stringLength)
 			if loadDataTable[1] then
 				if loadDataTable[1][1][1] == x and loadDataTable[1][1][2]	== y then
 					shipTable.loadData[partIndex] = loadDataTable[1][2]
-					print("hello2", loadDataTable[1][1][1], loadDataTable[1][1][2], loadDataTable[1][2])
 				end	
 			end
 
@@ -197,6 +202,10 @@ function Spawn.shipUnpack(shipString, stringLength)
 				index = index + 1
 			elseif c == 'p' then
 				shipTable.parts[partIndex] = 'p'
+				shipTable.partOrient[partIndex] = 1
+				index = index + 1
+			elseif c == 'n' then
+				shipTable.parts[partIndex] = 'n'
 				shipTable.partOrient[partIndex] = 1
 				index = index + 1
 			elseif c == '{' or c == '}' then

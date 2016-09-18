@@ -1,0 +1,12 @@
+anchor(0,0,0)[1]
+{
+g1b0b0b0g1
+b0b0n*b0b0
+e1b0b0b0e1
+}
+player(0, 100)[1]
+{
+  p*
+}
+BasicShip1(-100,0,0)[1]
+BasicShip2(-35, 200,0)[2]

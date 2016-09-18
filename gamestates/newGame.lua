@@ -7,6 +7,8 @@ local Screen = require("screen")
 local InitWorld = require("initWorld")
 local AI = require("ai")
 
+local SceneParser = require("sceneParser")
+
 local GameState = require("gamestates/gameState")
 local InGame = require("gamestates/inGame")
 
@@ -25,12 +27,15 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 	-- states using upvalues.
 	Structure.setPhysics(love.physics.newWorld())
 	world = World.create()
-	local playerShips, anchors, aiShips = InitWorld.init(world)
+	local ships, ifPlayer = SceneParser.loadScene("startScene", {0, 0})
 	local players = {}
-	players[1] = Player.create("player1", world:getPlayerShip())
-	for i,player in ipairs(players) do
-		player.ship = playerShips[i]
+	for i,ship in ipairs(ships) do
+		if ifPlayer[i] then
+			table.insert(players, Player.create("player1", ship))
+		end
+		print(ship)
 	end
+	print(players[1].ship, players[1].ship.body)
 	InGame.setplayers(players)
 	Screen.createCameras()
 	--camera = Camera.create()

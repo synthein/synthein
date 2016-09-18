@@ -13,4 +13,7 @@ end
 function GameState.mousepressed()
 end
 
+function GameState.mousereleased()
+end
+
 return GameState

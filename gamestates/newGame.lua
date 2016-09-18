@@ -45,20 +45,4 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 	return InGame
 end
 
-function NewGame.draw()
-	return NewGame
-end
-
-function NewGame.keypressed(key)
-	return NewGame
-end
-
-function NewGame.mousepressed(mouseX, mouseY, button, mouseWorldX, mouseWorldY)
-	return NewGame
-end
-
-function NewGame.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
-	return NewGame
-end
-
 return NewGame

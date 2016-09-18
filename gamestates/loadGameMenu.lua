@@ -33,7 +33,6 @@ function LoadGameMenu.keypressed(key)
 		player.ship = playerShips[i]
 	end
 	InGame.setplayers(players)
-	Screen.createCameras()
 	--camera = Camera.create()
 
 	--camera.setX(player1.ship.body:getX())

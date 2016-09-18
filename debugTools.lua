@@ -29,19 +29,21 @@ end
 function Debug.draw()
 	mouseWorldX, mouseWorldY =
 		Screen.getCursorCoords(love.mouse.getX(), love.mouse.getY())
-	local debugString = string.format(
-		"%.3f    %.3f\n"..
-		"%.3f    %.3f\n"..
-		"Number of world structures: %d\n"..
-		"Number of ship parts: %d\n"..
-		"Build mode: %s\n",
-		Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
-		mouseWorldX, mouseWorldY,
-		#Debug.world.structures,
-		#Debug.player1.ship.parts,
-		(Debug.player1.build and "yes" or "no")
-	)
-	love.graphics.print(debugString, 5, 5)
+	if world and player1 then
+		local debugString = string.format(
+			"%.3f    %.3f\n"..
+			"%.3f    %.3f\n"..
+			"Number of world structures: %d\n"..
+			"Number of ship parts: %d\n"..
+			"Build mode: %s\n",
+			Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
+			mouseWorldX, mouseWorldY,
+			#Debug.world.structures,
+			#Debug.player1.ship.parts,
+			(Debug.player1.build and "yes" or "no")
+		)
+		love.graphics.print(debugString, 5, 5)
+	end
 end
 
 function Debug.update(mouseWorldX, mouseWorldY)

@@ -25,6 +25,7 @@ function SceneParser.loadScene(sceneName, x, y)
 				end
 				ifShipString = false
 				ships[index][4] = shipString
+				shipString = ""
 			else
 				shipString = shipString .. line .. '\n'
 			end
@@ -54,10 +55,12 @@ function SceneParser.loadScene(sceneName, x, y)
 			end
 		end
 	end
+	spawnedShips = {}
+	local ifPlayer = {}
 	for i,ship in ipairs(ships) do
-		ship = Spawn.spawnShip(ship[1],ship[2],ship[3],ship[4])
+		spawnedShips[i], ifPlayer[i] = Spawn.spawnShip(ship[1],ship[2],ship[3],ship[4])
 	end
-	return ships
+	return spawnedShips, ifPlayer
 end
 
 return SceneParser

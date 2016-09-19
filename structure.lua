@@ -155,7 +155,7 @@ function Structure:removeSection(part)
 	local index = self:findPart(part)
 	local x, y , angle = self:getAbsPartCoords(index)
 	self:removePart(part)
-	return Structure.create(part, x, y, angle)
+	return Structure.create(part, {x, y, angle})
 end
 
 -- Add one part to the structure.

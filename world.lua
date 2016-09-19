@@ -99,7 +99,7 @@ end
 function World:removeSection(structure, part)
 	if part.type == "generic" then
 		local newStructure = structure:removeSection(part)
-		table.insert(self.worldStructures, newStructure)
+		table.insert(self.structures, newStructure)
 	end
 end
 

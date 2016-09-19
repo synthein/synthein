@@ -56,19 +56,19 @@ function Debug.keyboard(key, cameraX, cameraY)
 	-- Spawn a ship part.
 	if key == "u" then
 		-- Spawn a block
-		table.insert(Debug.world.worldStructures,
+		table.insert(Debug.world.structures,
 			Structure.create(Block.create(),
-			cameraX + 50, cameraY + 100))
+			{cameraX + 50, cameraY + 100}))
 	elseif key == "i" then
 		-- Spawn an engine
-		table.insert(Debug.world.worldStructures,
+		table.insert(Debug.world.structures,
 			Structure.create(Engine.create(),
-			cameraX + 112, cameraY))
+			{cameraX + 112, cameraY}))
 	elseif key == "o" then
 		-- Spawn a gun
-		table.insert(Debug.world.worldStructures,
+		table.insert(Debug.world.structures,
 			Structure.create(Gun.create(),
-			cameraX + 50, cameraY - 100))
+			{cameraX + 50, cameraY - 100}))
 
 	--Spawn an AI
 	elseif key == "1" then
@@ -76,14 +76,14 @@ function Debug.keyboard(key, cameraX, cameraY)
 		table.insert(Debug.world.structures,
 			Structure.create(AIBlock.create(),
 			{cameraX - 200, cameraY + 200}))
-		InGame.addAI(
+		table.insert(world.ais,
 			AI.create(Debug.world.structures[#Debug.world.structures], 1))
 	elseif key == "2" then
 		-- Team 2
 		table.insert(Debug.world.structures,
 			Structure.create(AIBlock.create(),
 			{cameraX + 200, cameraY + 200}))
-		InGame.addAI(
+		table.insert(world.ais,
 			AI.create(Debug.world.structures[#Debug.world.structures], 2))
 	elseif key == "3" then
 		-- Team 3, etc.

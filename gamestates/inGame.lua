@@ -76,7 +76,7 @@ function InGame.keypressed(key)
 		paused = not paused
 	end
 	if key == "v" then
-		SceneParser.saveScene("synthienSave", world)
+		SceneParser.saveScene("syntheinSave", world)
 	end
 	return InGame
 end

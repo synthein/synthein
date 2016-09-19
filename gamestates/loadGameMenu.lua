@@ -9,34 +9,24 @@ local AI = require
 
 local GameState = require("gamestates/gameState")
 local InGame = require("gamestates/inGame")
+local SceneParser = require("sceneParser")
 
 
 local LoadGameMenu = {}
 setmetatable(LoadGameMenu, GameState)
 
-function LoadGameMenu.keypressed(key)
-	SCREEN_WIDTH = love.graphics.getWidth()
-	SCREEN_HEIGHT = love.graphics.getHeight()
+function LoadGameMenu.update()
 	compass = love.graphics.newImage("res/images/compass.png")
-	debugmode = true
 
-	love.physics.setMeter(20) -- there are 20 pixels per meter
-
-	-- Instead of being global variables, these should be accessible to the
-	-- states using upvalues.
-	Structure.setPhysics(love.physics.newWorld())
 	world = World.create()
-	local playerShips, anchors, aiShips = InitWorld.init(world)
+	local ships, ifPlayer = SceneParser.loadScene("syntheinSave", {0, 0}, true)
 	local players = {}
-	players[1] = Player.create("player1", world:getPlayerShip())
-	for i,player in ipairs(players) do
-		player.ship = playerShips[i]
+	for i,ship in ipairs(ships) do
+		if ifPlayer[i] then
+			table.insert(players, Player.create("player1", ship))
+		end
 	end
 	InGame.setplayers(players)
-	--camera = Camera.create()
-
-	--camera.setX(player1.ship.body:getX())
-	--camera.setY(player1.ship.body:getY())
 	InGame.setWorld(world)
 	world:setPlayerShip(players[1].ship)
 

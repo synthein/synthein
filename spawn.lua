@@ -220,77 +220,52 @@ end
 function Spawn.shipPack(structure, saveThePartData)
 	local string = ""
 	local xLow, xHigh, yLow, yHigh = 0, 0, 0, 0
-	local stringTable = {{"  "}}
+	local stringTable = {}
 	for i,part in ipairs(structure.parts) do
 		local x = structure.partCoords[i].x
-		local y = -structure.partCoords[i].y
-		local tempString = "  "
-		local loadData = {}
-
-		--Make sure rectangle includes location of part.
+		local y = structure.partCoords[i].y
 		if     x < xLow  then
-			for j = 1, (xLow - x) do
-				for k = 1, (yHigh - yLow + 1) do
-					table.insert(stringTable[k], 1, {"  "})
-				end
-			end
 			xLow = x
 		elseif x > xHigh then
-			for j = 1, (x - xHigh) do
-				for k = 1, (yHigh - yLow + 1) do
-					table.insert(stringTable[k], {"  "})
-				end
-			end
 			xHigh = x
 		end
 		if y < yLow  then
-			for j = 1, (yLow - y) do
-					table.insert(stringTable, 1, {})
-				for k = 1, (xHigh - xLow + 1) do
-					table.insert(stringTable[1], {"  "})
-				end
-			end
 			yLow = y
 		elseif y > yHigh then
-			for j = 1, (y - yHigh) do
-				table.insert(stringTable, {})
-				for k = 1, (xHigh - xLow + 1) do
-					table.insert(stringTable[y - yLow + 1], {"  "})
-				end
-			end
 			yHigh = y
 		end
-
-		--Find the string representation of the part.
-		if     getmetatable(part) == Block then
-			tempString = "b0"
-		elseif getmetatable(part) == Engine then
-			if structure.partOrient[i] == 1 then
-				tempString = "e1"
-			elseif structure.partOrient[i] == 2 then
-				tempString = "e2"
-			elseif structure.partOrient[i] == 3 then
-				tempString = "e3"
-			elseif structure.partOrient[i] == 4 then
-				tempString = "e4"
-			end
-		elseif getmetatable(part) == Gun then
-			if structure.partOrient[i] == 1 then
-				tempString = "g1"
-			elseif structure.partOrient[i] == 2 then
-				tempString = "g2"
-			elseif structure.partOrient[i] == 3 then
-				tempString = "g3"
-			elseif structure.partOrient[i] == 4 then
-				tempString = "g4"
-			end
-		elseif getmetatable(part) == AIBlock then
-			tempString = "a*"
-		elseif getmetatable(part) == PlayerBlock then
-			tempString = "p*"
+	end
+	for i = 1, (yHigh - yLow + 1) do
+		table.insert(stringTable, {})
+		for j = 1, (xHigh - xLow + 1) do
+			table.insert(stringTable[i], {"  "})
 		end
+	end
+print(xLow, xHigh, yLow, yHigh)
+print(Tserial.pack(stringTable, nil, false))
+	for i,part in ipairs(structure.parts) do
+		local x = structure.partCoords[i].x
+		local y = structure.partCoords[i].y
+		local tempString, a, b
+		local loadData = {}
+		--Find the string representation of the part.
+		if     getmetatable(part) == Block then a = "b"
+		elseif getmetatable(part) == Engine then a = "e"
+		elseif getmetatable(part) == Gun then a = "g"
+		elseif getmetatable(part) == AIBlock then a = "a"
+		elseif getmetatable(part) == PlayerBlock then a = "p"
+		elseif getmetatable(part) == Anchor then a = "n"
+		end
+		if i == 1 then
+			b = "*"
+		else
+			b = tostring(structure.partOrient[i])
+		end
+		tempString = a .. b
 		--Add data to table
 		if saveThePartData then
+			print(y - yLow + 1,x - xLow + 1)
+			print(stringTable,stringTable[y - yLow + 1],stringTable[y - yLow + 1][x - xLow + 1])
 			stringTable[y - yLow + 1][x - xLow + 1] = {tempString, part:saveData()}
 		else
 			stringTable[y - yLow + 1][x - xLow + 1] = {tempString}
@@ -299,12 +274,13 @@ function Spawn.shipPack(structure, saveThePartData)
 	--Put strings together
 	local dataString = ""
 	for i = 1,#stringTable do
-		for j = 1,#stringTable[i] do
-			string = string .. stringTable[i][j][1]
-			if stringTable[i][j][2]then
+		ii = #stringTable - i + 1
+		for j = 1,#stringTable[ii] do
+			string = string .. stringTable[ii][j][1]
+			if stringTable[ii][j][2]then
 				dataString = dataString ..
-							 Util.packLocation({j + xLow, -i - yHigh}) ..
-							 Util.packData(stringTable[i][j][2]) ..
+							 Util.packLocation({j + xLow - 1, ii + yLow - 1}) ..
+							 Util.packData(stringTable[ii][j][2]) ..
 							 --Tserial.pack(stringTable[i][j][2], nil, true) ..
 							 "\n"
 			end

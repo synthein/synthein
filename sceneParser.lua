@@ -65,8 +65,6 @@ function SceneParser.loadScene(sceneName, x, y)
 end
 
 function SceneParser.saveScene(sceneName, world)
-	local dir = love.filesystem.getSaveDirectory()
-	local fileName = dir .. '/' .. sceneName .. ".txt"
 	local fileString = ""
 	for i in ipairs(world.structures) do
 		fileString = fileString .. "ship" .. tostring(i) .. 
@@ -80,7 +78,8 @@ function SceneParser.saveScene(sceneName, world)
 		file:write(fileString)
 		file:close()
 	else
-		love.filesystem.write(fileName, fileString)
+		print("hello")
+		love.filesystem.write(sceneName .. ".txt", fileString)
 	end
 end
 

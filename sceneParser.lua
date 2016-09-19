@@ -66,9 +66,19 @@ end
 
 function SceneParser.saveScene(sceneName, world)
 	local fileString = ""
+	local team
 	for i in ipairs(world.structures) do
+		for j in ipairs(world.ais) do
+			if world.structures[i] == world.ais[j].ship then
+				team = world.ais[j].team
+			end
+		end
+		if not team then
+			team = 0
+		end
 		fileString = fileString .. "ship" .. tostring(i) .. 
-					 Util.packLocation(world.structures[i]) .. "[]" .. "\n" ..
+					 Util.packLocation(world.structures[i]) .. 
+					 Util.packData({team}) .. "\n" ..
 					 "{\n" .. Spawn.shipPack(world.structures[i], true) .. 
 					 "\n}\n"
 	end
@@ -78,7 +88,6 @@ function SceneParser.saveScene(sceneName, world)
 		file:write(fileString)
 		file:close()
 	else
-		print("hello")
 		love.filesystem.write(sceneName .. ".txt", fileString)
 	end
 end

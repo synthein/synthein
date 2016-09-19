@@ -29,7 +29,7 @@ end
 function Debug.draw()
 	mouseWorldX, mouseWorldY =
 		Screen.getCursorCoords(love.mouse.getX(), love.mouse.getY())
-	if world and player1 then
+	if Debug.world and Debug.player1 then
 		local debugString = string.format(
 			"%.3f    %.3f\n"..
 			"%.3f    %.3f\n"..

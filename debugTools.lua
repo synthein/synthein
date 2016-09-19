@@ -99,7 +99,7 @@ end
 
 function Debug.mousepressed(mouseX, mouseY, button, mouseWorldX, mouseWorldY)
 	if button == 3 then
-		structure = Debug.world:getWorldStructure(mouseWorldX, mouseWorldY)
+		structure = Debug.world:getStructure(mouseWorldX, mouseWorldY)
 		if structure then
 			Debug.mouseJoint = love.physics.newMouseJoint(structure.body, mouseWorldX, mouseWorldY)
 			Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)

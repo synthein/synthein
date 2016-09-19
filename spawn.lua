@@ -241,8 +241,6 @@ function Spawn.shipPack(structure, saveThePartData)
 			table.insert(stringTable[i], {"  "})
 		end
 	end
-print(xLow, xHigh, yLow, yHigh)
-print(Tserial.pack(stringTable, nil, false))
 	for i,part in ipairs(structure.parts) do
 		local x = structure.partCoords[i].x
 		local y = structure.partCoords[i].y
@@ -264,8 +262,6 @@ print(Tserial.pack(stringTable, nil, false))
 		tempString = a .. b
 		--Add data to table
 		if saveThePartData then
-			print(y - yLow + 1,x - xLow + 1)
-			print(stringTable,stringTable[y - yLow + 1],stringTable[y - yLow + 1][x - xLow + 1])
 			stringTable[y - yLow + 1][x - xLow + 1] = {tempString, part:saveData()}
 		else
 			stringTable[y - yLow + 1][x - xLow + 1] = {tempString}

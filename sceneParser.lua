@@ -7,16 +7,18 @@ local SceneParser = {}
 function SceneParser.loadShip(shipName)
 end
 
-function SceneParser.loadScene(sceneName, x, y)
+function SceneParser.loadScene(sceneName, location, ifSave)
 	local ships = {}
 	local index = 0
 	local ifShipString = false
 	local shipString = ""
 	local shipID
 	local locationString
-	local fileName = string.format("/res/scenes/%s.txt", sceneName)
-	if not fileName then
-		fileName = string.format("%s%s.txt", love.filesystem.getSaveDirectory(), sceneName)
+	local fileName
+	if ifSave then
+		fileName = string.format("%s.txt", sceneName)
+	else
+		fileName = string.format("/res/scenes/%s.txt", sceneName)
 	end
 	for line in love.filesystem.lines(fileName) do
 		if ifShipString then

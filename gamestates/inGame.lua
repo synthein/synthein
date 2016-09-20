@@ -14,6 +14,8 @@ setmetatable(InGame, GameState)
 local world
 local players = {}
 local paused = false
+local eventTime = 0
+local second = 0
 
 function InGame.setplayers(playerTable)
 	players = playerTable
@@ -33,6 +35,25 @@ function InGame.update(dt)
 
 		players[1]:handleInput(Screen.camera:getPosition())
 		world:update(dt)
+		
+		eventTime = eventTime + dt
+		second = second + dt
+		if second > 1 then
+			timeVar = 1 - 50/(20 + eventTime)
+			if timeVar < 0 then timeVar = 0 end
+			disVar = 1 - 50/(1 + Util.vectorMagnitude(
+						players[1].ship.body:getX(),players[1].ship.body:getY())/20)
+			if disVar < 0 then disVar = 0 end
+			veloVar = 1 - 50/(1 + Util.vectorMagnitude(
+						players[1].ship.body:getLinearVelocity()))
+			if veloVar < 0 then veloVar = 0 end
+			rand = love.math.random()
+			if rand < timeVar * disVar * veloVar then
+				eventTime = 0
+				SceneParser.loadScene("scene1", {players[1].ship.body:getX(),players[1].ship.body:getY()})
+			end
+			second = second - 1
+		end
 	end
 	return InGame
 end

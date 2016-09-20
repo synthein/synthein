@@ -37,12 +37,13 @@ function SceneParser.loadScene(sceneName, location, ifSave)
 				shipID = string.match(line, "%w+")
 
 				locationString = string.match(line, "%([-0-9., ]*%)")
-				local location = {}
+				local l = {}
 				for coord in string.gmatch(locationString, "[-0-9.]+") do 
-					table.insert(location, tonumber(coord))
+					table.insert(l, tonumber(coord))
 				end
 				for i = 1,6 do
-					if not location[i] then location[i] = 0 end
+					if not l[i] then l[i] = 0 end
+					if i == 1 or i == 2 then l[i] = l[i] + location[i] end
 				end
 
 				local dataString = string.match(line, "%[[-0-9., ]*%]")
@@ -52,7 +53,7 @@ function SceneParser.loadScene(sceneName, location, ifSave)
 				end
 				if not data[1] then data[1] = 1 end
 				index = index + 1
-				ships[index] = {shipID, location, data}
+				ships[index] = {shipID, l, data}
 			elseif string.match(line, "%s*%{") then
 				ifShipString = true
 			end

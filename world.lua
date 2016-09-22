@@ -18,7 +18,7 @@ function World.create()
 	self.ais = {}
 	self.shots = {}
 	self.particles = {}
-	
+
 	love.physics.setMeter(20) -- there are 20 pixels per meter
 	Structure.setPhysics(love.physics.newWorld())
 	return self
@@ -130,12 +130,18 @@ function World:partDamage(structure, part)
 end
 
 function World:update(dt)
+	-- Update all of the objects in the world.
+	--
+	-- Iterating through the tables in world needs to be in reverse so that we
+	-- can remove objects from to table as we go along.
+
+
 	-- Update all of the structues.
-	for i, structure in ipairs(self.structures) do
-		if #structure.parts == 0 then
+	for i=#self.structures, 1, -1 do
+		if self.structures[i].isDestroyed == true then
 			table.remove(self.structures, i)
 		else
-		structure:update(dt, self.playerShip)
+		self.structures[i]:update(dt, self.playerShip)
 		end
 	end
 	-- Update all of the ais.
@@ -181,12 +187,16 @@ function World:update(dt)
 	end
 
 	-- Update the shots.
-	for i, shot in ipairs(self.shots) do
-		shotX, shotY, shotTime = shot:update(dt)
+	for i=#self.shots,1,-1 do
+		shotX, shotY, shotTime = self.shots[i]:update(dt)
 		local structureHit, partHit = self:getStructure(shotX,shotY)
-		local hit = structureHit and structureHit ~= shot.sourceStructure and
-					partHit and partHit ~=shot.sourcePart
-		if shot.destroy == true or hit then
+		local hit =
+			structureHit and
+			structureHit ~= self.shots[i].sourceStructure and
+			partHit and
+			partHit ~= self.shots[i].sourcePart
+
+		if self.shots[i].destroy == true or hit then
 			table.remove(self.shots, i)
 			if hit then
 				self:partDamage(structureHit, partHit)

@@ -28,38 +28,39 @@ function Spawn.spawnShip(shipID, location, data, shipString)
 end
 
 function Spawn.spawning(shipTable, location, data)
-	local ai = false
-	local player = false
-	local anchor = false
 	for i,part in ipairs(shipTable.parts) do
-		if part == 'b'then
-			shipTable.parts[i] = Block.create()
-		elseif part == 'e' then
-			shipTable.parts[i] = Engine.create()
-		elseif part == 'g' then
-			shipTable.parts[i] = Gun.create()
-		elseif part == 'a' then
-			shipTable.parts[i] = AIBlock.create()
-			ai = true
-		elseif part == 'p' then
-			shipTable.parts[i] = PlayerBlock.create()
-			player = true
-		elseif part == 'n' then
-			shipTable.parts[i] = Anchor.create()
-			anchor = true
-		end
+		shipTable.parts[i] = Spawn.createPart(part)
 		if shipTable.loadData[i] then
 			shipTable.parts[i]:loadData(shipTable.loadData[i])
 		end
 	end
 	shipTable.loadData = nil
-	local structure = world:createStructure(shipTable, location)
-	if ai then
-		table.insert(world.ais, AI.create(structure, data[1]))
-	elseif player then
+
+	local player = false
+	local anchor = false
+	if shipTable.corePart == 'p' then
+		player = true
+	elseif shipTable.corePart == 'n' then
+		anchor = true
+	end
+	shipTable.corePart = Spawn.createPart(shipTable.corePart, data)
+	local structure = world:createStructure(shipTable, location, data)
+	if player then
 		return structure, true
 	end
 	return structure
+end
+
+function Spawn.createPart(partChar,data)
+	local part
+	if partChar == 'b'then part = Block.create()
+	elseif partChar == 'e' then part = Engine.create()
+	elseif partChar == 'g' then part = Gun.create()
+	elseif partChar == 'a' then part = AIBlock.create(data[1])
+	elseif partChar == 'p' then part = PlayerBlock.create()
+	elseif partChar == 'n' then part = Anchor.create()
+	end
+	return part
 end
 
 function Spawn.loadShipFromFile(ship)
@@ -140,75 +141,43 @@ function Spawn.shipUnpack(shipString, stringLength)
 
 		j = 0
 		k = 0
-		local index = 1
+		local partIndex = 1
 		for i = 1, stringLength do
 			local c = shipString:sub(i,i)
 			local nc = shipString:sub(i + 1, i + 1)
 			local angle = 1
+			local data
 			j = j + 1
 			x = (j - baseJ)/2
 			y = baseK - k
-			local partIndex
-			if			y > 0 then partIndex = index + 1
-			elseif		y < 0 then partIndex = index
-			else
-				if		x < 0 then partIndex = index + 1
-				elseif	x > 0 then partIndex = index
-				else			   partIndex = 1
-				end
-			end
-			shipTable.partCoords[partIndex] = {x = x, y = y}
 			if loadDataTable[1] then
 				if loadDataTable[1][1][1] == x and loadDataTable[1][1][2]	== y then
-					shipTable.loadData[partIndex] = loadDataTable[1][2]
+					data = loadDataTable[1][2]
 				end	
 			end
 
 			if c == '\n' then
 				j = 0
 				k = k + 1
-			elseif c == 'b' then
-				shipTable.parts[partIndex] = 'b'
-				shipTable.partOrient[partIndex] = 1
-				index = index + 1
-			elseif c == 'e' then
-				if nc == '1' then
-					angle = 1
-				elseif nc == '2' then
-					angle = 2
-				elseif nc == '3' then
-					angle = 3
-				elseif nc == '4' then
-					angle = 4
+			elseif c == 'b' or c == 'e' or c == 'g' or c == 'a' or c == 'p' or c == 'n' then
+				if nc == '*' then
+					if c == 'a' or c == 'p' or c == 'n'then
+						shipTable.corePart = c
+						shipTable.corePartData = data
+					else
+					shipTable.parts[partIndex] = c
+					shipTable.partCoords[partIndex] = {x = 0, y = 0}
+					shipTable.partOrient[partIndex] = 1
+					shipTable.loadData[partIndex] = data
+					partIndex = partIndex + 1
+					end
+				elseif nc == '1' or nc == '2' or nc == '3' or nc == '4' then
+					shipTable.parts[partIndex] = c
+					shipTable.partCoords[partIndex] = {x = x, y = y}
+					shipTable.partOrient[partIndex] = tonumber(nc)
+					shipTable.loadData[partIndex] = data
+					partIndex = partIndex + 1
 				end
-				shipTable.parts[partIndex] = 'e'
-				shipTable.partOrient[partIndex] = angle
-				index = index + 1
-			elseif c == 'g' then
-				if nc == '1' then
-					angle = 1
-				elseif nc == '2' then
-					angle = 2
-				elseif nc == '3' then
-					angle = 3
-				elseif nc == '4' then
-					angle = 4
-				end
-				shipTable.parts[partIndex] = 'g'
-				shipTable.partOrient[partIndex] = angle
-				index = index + 1
-			elseif c == 'a' then
-				shipTable.parts[partIndex] = 'a'
-				shipTable.partOrient[partIndex] = 1
-				index = index + 1
-			elseif c == 'p' then
-				shipTable.parts[partIndex] = 'p'
-				shipTable.partOrient[partIndex] = 1
-				index = index + 1
-			elseif c == 'n' then
-				shipTable.parts[partIndex] = 'n'
-				shipTable.partOrient[partIndex] = 1
-				index = index + 1
 			elseif c == '{' or c == '}' then
 				break
 			end
@@ -254,11 +223,8 @@ function Spawn.shipPack(structure, saveThePartData)
 		elseif getmetatable(part) == PlayerBlock then a = "p"
 		elseif getmetatable(part) == Anchor then a = "n"
 		end
-		if i == 1 then
-			b = "*"
-		else
-			b = tostring(structure.partOrient[i])
-		end
+
+		b = tostring(structure.partOrient[i])
 		tempString = a .. b
 		--Add data to table
 		if saveThePartData then

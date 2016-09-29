@@ -1,4 +1,6 @@
 local Part = require("shipparts/part")
+local AI = require("ai")
+local AIBlock = require("shipparts/aiBlock")
 local Util = require("util")
 
 local Structure = {}
@@ -11,24 +13,34 @@ function Structure.setPhysics(setphysics)
 	Structure.physics = setphysics
 end
 
-function Structure.create(shipTable, location)
+function Structure.create(shipTable, location, data)
 	local self = {}
 	setmetatable(self, Structure)
-	if shipTable.parts == nil then
-		shipTable = { parts = {shipTable} }
-		shipTable.partCoords = { {x = 0, y = 0} }
-		shipTable.partOrient = {1}
+	if not shipTable.parts then
+		if shipTable.type == "generic" then
+			shipTable = {parts = {shipTable},
+						 partCoords = {{x = 0, y = 0}},
+						 partOrient = {1}}
+print("\t\tsetting shipTable")
+		else
+print("\t\tsetting corePart lone part")
+			shipTable = {corePart = shipTable}
+		end
 	end
 	local x = location[1]
 	local y = location[2]
-	if shipTable.parts[1].type == "player" then
-		self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
-		self.body:setAngularDamping(1)
-		self.body:setLinearDamping(0.5)
-		self.type = "ship"
-	elseif shipTable.parts[1].type == "anchor" then
-		self.body = love.physics.newBody(Structure.physics, x, y, "static")
-		self.type = "anchor"
+	if shipTable.corePart then
+print("\t\tsetting corePart table part")
+		if shipTable.corePart.type == "control" then
+			self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
+			self.body:setAngularDamping(1)
+			self.body:setLinearDamping(0.5)
+			self.type = "ship"
+		elseif shipTable.corePart.type == "anchor" then
+			self.body = love.physics.newBody(Structure.physics, x, y, "static")
+			self.type = "anchor"
+		end
+		self:addPart(shipTable.corePart, 0, 0, 0)
 	else
 		self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
 		self.body:setAngularDamping(0.2)
@@ -48,11 +60,13 @@ function Structure.create(shipTable, location)
 	self.partCoords = {}
 	self.partOrient = {}
 	self.fixtures = {}
-	for i,part in ipairs(shipTable.parts) do
-		self:addPart(part,
-					 shipTable.partCoords[i].x,
-					 shipTable.partCoords[i].y,
-					 shipTable.partOrient[i])
+	if shipTable.parts then
+		for i,part in ipairs(shipTable.parts) do
+			self:addPart(part,
+						 shipTable.partCoords[i].x,
+						 shipTable.partCoords[i].y,
+						 shipTable.partOrient[i])
+		end
 	end
 	return self
 end
@@ -77,22 +91,25 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	local aIndex = annexee:findPart(annexeePart)
 	local bIndex = self:findPart(structurePart)
 	annexeeSide = (annexeeSide + annexee.partOrient[aIndex] - 2) % 4 + 1
-	structureSide = (structureSide + self.partOrient[bIndex] - 2) % 4 + 1
-	local structureOffsetX, structureOffsetY
 	local newStructures = {}
+	local structureOffsetX, structureOffsetY
+	if bIndex ~= 0 then
+		structureOffsetX = self.partCoords[bIndex].x
+		structureOffsetY = self.partCoords[bIndex].y
+		structureSide = (structureSide + self.partOrient[bIndex] - 2) % 4 + 1
+	else
+		structureOffsetX = 0
+		structureOffsetY = 0
+	end
 
 	if structureSide == 1 then
-		structureOffsetX = self.partCoords[bIndex].x
-		structureOffsetY = self.partCoords[bIndex].y + 1
+		structureOffsetY = structureOffsetY + 1
 	elseif structureSide == 2 then
-		structureOffsetX = self.partCoords[bIndex].x - 1
-		structureOffsetY = self.partCoords[bIndex].y
+		structureOffsetX = structureOffsetX - 1
 	elseif structureSide == 3 then
-		structureOffsetX = self.partCoords[bIndex].x
-		structureOffsetY = self.partCoords[bIndex].y - 1
+		structureOffsetY = structureOffsetY - 1
 	elseif structureSide == 4 then
-		structureOffsetX = self.partCoords[bIndex].x + 1
-		structureOffsetY = self.partCoords[bIndex].y
+		structureOffsetX = structureOffsetX + 1
 	end
 
 	local annexeeOrientation = (structureSide - annexeeSide - 2) % 4 +1
@@ -149,7 +166,7 @@ end
 
 function Structure:removeSection(part)
 	--If there is only one block in the structure then esacpe.
-	if #self.parts == 1 then
+	if #self.parts == 1 and not self.corePart then
 		return nil
 	end
 	local index = self:findPart(part)
@@ -168,17 +185,22 @@ function Structure:addPart(part, x, y, orientation)
 	local shape = love.physics.newRectangleShape(
 		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
-
-	table.insert(self.parts, part)
-	table.insert(self.partCoords, {x = x, y = y})
-	table.insert(self.partOrient, orientation)
-	table.insert(self.fixtures, fixture)
+	if orientation == 0 then 
+		self.corePart = part
+		self.coreFixture = fixture
+	else
+		table.insert(self.parts, part)
+		table.insert(self.partCoords, {x = x, y = y})
+		table.insert(self.partOrient, orientation)
+		table.insert(self.fixtures, fixture)
+	end
 end
 
 -- Check if a part is in this structure.
 -- If it is, return the index of the part.
 -- If it is not, return nil.
 function Structure:findPart(query)
+	if query == self.corePart then return 0 end
 	for i, part in ipairs(self.parts) do
 		if part == query then
 			return i
@@ -201,15 +223,20 @@ function Structure:removePart(part)
 	else
 		error("Argument to Structure:removePart is not a part.")
 	end
-
 	-- Destroy the part.
-	self.fixtures[partIndex]:destroy()
-	table.remove(self.parts, partIndex)
-	table.remove(self.partCoords, partIndex)
-	table.remove(self.fixtures, partIndex)
-	table.remove(self.partOrient, partIndex)
+	if partIndex == 0 then
+		self.corePart = nil
+		self.coreFixture:destroy()
+		self.coreFixture = nil
+	else
+		self.fixtures[partIndex]:destroy()
+		table.remove(self.parts, partIndex)
+		table.remove(self.partCoords, partIndex)
+		table.remove(self.fixtures, partIndex)
+		table.remove(self.partOrient, partIndex)
+	end
 
-	if #self.parts == 0 then
+	if #self.parts == 0 and not self.corePart then
 		self.isDestroyed = true
 	end
 end
@@ -217,13 +244,16 @@ end
 -- Find the absolute coordinates of a part given the x and y offset values of
 -- the part and the absolute coordinates and angle of the structure it is in.
 function Structure:getAbsPartCoords(index)
-	local x, y = Util.computeAbsCoords(
-		self.partCoords[index].x*self.PARTSIZE,
-		self.partCoords[index].y*self.PARTSIZE,
-		self.body:getAngle())
-
+	local x, y, orient = 0, 0, 1
+	if index ~= 0 then
+		x, y = Util.computeAbsCoords(
+			self.partCoords[index].x*self.PARTSIZE,
+			self.partCoords[index].y*self.PARTSIZE,
+			self.body:getAngle())
+		orient = self.partOrient[index]
+	end
 	return self.body:getX() + x, self.body:getY() + y,
-		   self.body:getAngle() + (self.partOrient[index] - 1) * math.pi/2
+		   self.body:getAngle() + (orient - 1) * math.pi/2
 				% (2*math.pi)
 end
 
@@ -247,7 +277,11 @@ function Structure:command(orders)
 		if order == "shoot" then shoot = true end
 	end
 
-	for i,part in ipairs(self.parts) do
+	for i = 0, #self.parts do
+		local part
+		if i == 0 then part = self.corePart
+		else part = self.parts[i]
+		end
 		if part.thrust then
 
 		local appliedForceX = 0
@@ -257,7 +291,7 @@ function Structure:command(orders)
 				-- Choose parts that have thrust and are pointed the right
 				-- direction, but exclude playerBlock, etc.
 
-		if part.type == "player" then
+		if part.type == "control" then
 			appliedForceX = directionX * parallel + directionY * perpendicular
 			appliedForceY = directionY * parallel + -directionX * perpendicular
 			self.body:applyTorque(rotate * part.torque)
@@ -308,10 +342,11 @@ function Structure:command(orders)
 end
 
 function Structure:getPartIndex(locationX, locationY)
-	for j, part in ipairs(self.parts) do
-		local inside, partSide = self:withinPart(j, locationX, locationY)
+	for i = 0,#self.parts do
+		local inside, partSide = self:withinPart(i, locationX, locationY)
 		if inside then
-			return part, partSide
+			if i == 0 then return self.corePart, partSide end
+			return self.parts[i], partSide
 		end
 	end
 end
@@ -328,12 +363,17 @@ function Structure:withinPart(partIndex, locationX, locationY)
 	b = Util.absVal(b)
 	partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
 	if Util.max(a,b) <= 10 then
+		if partIndex == 0 and not self.corePart then return false, partside end
 		return true, partSide
 	end
 	return false, partSide
 end
 
-function Structure:update(dt)
+function Structure:update(dt, playerLocation, aiData)
+	if self.corePart then
+		self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
+		self.corePart:update(dt)
+	end
 	for i, part in ipairs(self.parts) do
 		if part.update then
 			part:update(dt)
@@ -342,9 +382,12 @@ function Structure:update(dt)
 end
 
 function Structure:draw()
-	for i, part in ipairs(self.parts) do
+	for i = 0, #self.parts do
 		local x, y, angle = self:getAbsPartCoords(i)
-		part:draw(x, y, angle)
+		if i == 0 then
+			if self.corePart then self.corePart:draw(x, y, angle) end
+		else self.parts[i]:draw(x, y, angle)
+		end
 	end
 end
 

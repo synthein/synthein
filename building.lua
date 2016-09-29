@@ -5,7 +5,7 @@ local Screen = require("screen")
 local Building = {}
 Building.__index = Building
 
-function Building.create(structureList, ship, anchor)
+function Building.create(world, team)
 	local self = {}
 	setmetatable(self, Building)
 
@@ -13,7 +13,8 @@ function Building.create(structureList, ship, anchor)
 	self.pointerWidth = self.pointerImage:getWidth()
 	self.curve1Image = love.graphics.newImage("res/images/buildingcurve1.png")
 	self.curve2Image = love.graphics.newImage("res/images/buildingcurve2.png")
-	self.structureList = structureList
+	self.world = world
+	self.team = team
 
 	-- What are we selecting?
 	-- 1 = the structure to annex
@@ -41,7 +42,7 @@ end
 function Building:pressed(mouseWorldX, mouseWorldY)
 	if self.mode == 1 then
 		self.annexee, self.annexeePart
-			= world:getStructure(mouseWorldX, mouseWorldY)
+			= self.world:getStructure(mouseWorldX, mouseWorldY)
 		if not self.annexee then
 			return true --end build
 		else
@@ -55,9 +56,9 @@ function Building:pressed(mouseWorldX, mouseWorldY)
 
 	elseif self.mode == 3 then
 		self.structure, self.structurePart = 
-		world:getStructure(mouseWorldX,mouseWorldY)
+		self.world:getStructure(mouseWorldX,mouseWorldY)
 		self.mode = 4
-		if not self.structure then
+		if not self.structure or (self.structure.corePart and self.structure.corePart:getTeam() ~= self.team) then
 			return true --end build
 		else
 			return false --don't end build

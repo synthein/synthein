@@ -3,34 +3,59 @@ local Util = require("util")
 local AI = {}
 AI.__index = AI
 
-function AI.create(structure, team)
+function AI.create(team)
 	local self = {}
 	setmetatable(self, AI)
 
-	self.ship = structure
 	self.team = team
 
 	return self
 end
 
-function AI:update(dt, playerShip, target)
-	local orders = {}
-	local aiX = self.ship.body:getX()
-	local aiY = self.ship.body:getY()
-	local aiAngle = self.ship.body:getAngle()
-	local targetX, targetY, angle
-	if target then
-		targetX = target.body:getX()
-		targetY = target.body:getY()
-		angle = Util.vectorAngle(targetX - aiX, targetY - aiY)
-		angleTotarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
+function AI:getOrders(location, playerLocation, aiData)
+	local aiX = location[1]
+	local aiY = location[2]
+	local aiAngle = location[3]
+	local playerX = playerLocation[1]
+	local playerY = playerLocation[2]
+	local targetX = nil
+	local targetY = nil
+	local targetM = nil
+	local angle = nil
+	local angle = nil
+	local angleToTarget = nil
+	local angleToPlayer = nil
+	if aiData[1] and aiData[2] then
+		for i, team in ipairs(aiData[2]) do
+			if aiData[1][self.team][i] then
+				for j, enemy in ipairs(aiData[2][i]) do
+					if targetX and targetY and targetM then
+						local m = Util.vectorMagnitude(enemy[1] - location[1], enemy[2] - location[2])
+						if targetM > m then
+							targetX = enemy[1]
+							targetY = enemy[2]
+							targetM = m
+						end
+					else
+						targetX = enemy[1]
+						targetY = enemy[2]
+						targetM = Util.vectorMagnitude(enemy[1] - location[1], enemy[2] - location[2])
+					end
+				end
+			end
+		end
 	end
-	local playerX = playerShip.body:getX()
-	local playerY = playerShip.body:getY()
-	local angle = Util.vectorAngle(playerX - aiX, playerY - aiY)
-	angleToPlayer = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
+	if targetX and targetY then
+		angle = Util.vectorAngle(targetX - aiX, targetY - aiY)
+		angleToTarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
+	end
+	if playerX and playerY then
+		angle = Util.vectorAngle(playerX - aiX, playerY - aiY)
+		angleToPlayer = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
+	end
+	local orders = {}
 	if self.team == 1 and 
-	   Util.vectorMagnitude(playerX - aiX, playerY - aiY) > 10 * 20 then
+	   Util.vectorMagnitude(playerX - aiX, playerY - aiY) > 20 * 20 then
 		if angleToPlayer < -math.pi/10 then
 			table.insert(orders, "right")
 		elseif angleToPlayer > math.pi/10 then
@@ -38,10 +63,10 @@ function AI:update(dt, playerShip, target)
 		else
 			table.insert(orders, "forward")
 		end
-	elseif target then
-		if angleTotarget  < -math.pi/20 then
+	elseif angleToTarget then
+		if angleToTarget  < -math.pi/20 then
 			table.insert(orders, "right")
-		elseif angleTotarget > math.pi/20 then
+		elseif angleToTarget > math.pi/20 then
 			table.insert(orders, "left")
 		else 
 			table.insert(orders, "shoot")
@@ -54,7 +79,10 @@ function AI:update(dt, playerShip, target)
 			end
 		end
 	end
-	self.ship:command(orders)
+	return orders
+end
+
+function AI:update(dt)
 end
 
 function AI:draw()

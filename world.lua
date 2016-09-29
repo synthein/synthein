@@ -12,8 +12,8 @@ World.__index = World
 function World.create()
 	self = {}
 	setmetatable(self, World)
-	teamHostility = { {false, true},
-					  {true, false} }
+	self.teamHostility = { {false, true},
+						   {true, false} }
 	self.structures = {}
 	self.ais = {}
 	self.shots = {}
@@ -32,13 +32,13 @@ function World:getPlayerShip()
 	return self.playerShip
 end
 
-function World:createStructure(shipTable, location)
-	local structure = Structure.create(shipTable, location)
+function World:createStructure(shipTable, location, data)
+	local structure = Structure.create(shipTable, location, data)
 	table.insert(self.structures, structure)
 	return structure
 end
 
-function World:getStructure(locationX,locationY)
+--function World:getStructure(locationX,locationY)
 --	local part, partSide = self.playerShip:getPartIndex(locationX, locationY,
 --												   player)
 --	if part and partSide then
@@ -68,11 +68,11 @@ function World:getStructure(locationX,locationY)
 --	if structure and part and partSide and i then
 --		return structure, part, partSide, i
 --	end
-	structure, part, partSide, i = self:getStructure(locationX, locationY)
-	if structure and part and partSide and i then
-		return structure, part, partSide, i
-	end
-end
+--	structure, part, partSide, i = self:getStructure(locationX, locationY)
+--	if structure and part and partSide and i then
+--		return structure, part, partSide, i
+--	end
+--end
 
 function World:isMouseInsidePart(structure, part)
 	local mouseX, mouseY = love.mouse.getPosition()
@@ -91,7 +91,7 @@ function World:getStructure(locationX, locationY)
 	for i, structure in ipairs(self.structures) do
 		local part, partSide = structure:getPartIndex(locationX, locationY)
 		if part and partSide then
-			return structure, part, partSide, i
+			return structure, part, partSide
 		end
 	end
 end
@@ -134,55 +134,24 @@ function World:update(dt)
 	--
 	-- Iterating through the tables in world needs to be in reverse so that we
 	-- can remove objects from to table as we go along.
-
+	local shipLocations = {{},{}}
+	for i, structure in ipairs(self.structures) do
+		if structure.corePart then
+			local team = structure.corePart:getTeam()
+			if team then
+				table.insert(shipLocations[team], 
+							{structure.body:getX(), structure.body:getY()})
+			end
+		end
+	end
+	local aiData = {self.teamHostility, shipLocations}
 
 	-- Update all of the structues.
 	for i=#self.structures, 1, -1 do
 		if self.structures[i].isDestroyed == true then
 			table.remove(self.structures, i)
 		else
-		self.structures[i]:update(dt, self.playerShip)
-		end
-	end
-	-- Update all of the ais.
-	for i, ai in ipairs(self.ais) do
-		local x = ai.ship.body:getX()
-		local y = ai.ship.body:getY()
-		local targetX, target, distance, target
-		for j, aiTarget in ipairs(self.ais) do
-			if teamHostility[ai.team][aiTarget.team] then
-				targetX = aiTarget.ship.body:getX()
-				targetY = aiTarget.ship.body:getY()
-				if distance then
-					d = Util.vectorMagnitude(targetX - x, targetY - y)
-					if d < distance then
-						target = aiTarget.ship
-						distance = d
-					end
-				else
-					target = aiTarget.ship
-					distance = Util.vectorMagnitude(targetX - x, targetY - y)
-				end
-			end
-		end
-		if teamHostility[ai.team][1] then
-			targetX = self.playerShip.body:getX()
-			targetY = self.playerShip.body:getY()
-			if distance then
-				d = Util.vectorMagnitude(targetX - x, targetY - y)
-				if d < distance then
-					target = self.playerShip
-					distance = d
-				end
-			else
-				target = self.playerShip
-				distance = Util.vectorMagnitude(targetX - x, targetY - y)
-			end
-		end
-		if #ai.ship.parts == 0 then
-			table.remove(self.ais, i)
-		else
-			ai:update(dt, self.playerShip, target)
+		self.structures[i]:update(dt, {self.playerShip.body:getX(), self.playerShip.body:getY(), self.playerShip.body:getAngle()}, aiData)
 		end
 	end
 
@@ -195,7 +164,6 @@ function World:update(dt)
 			structureHit ~= self.shots[i].sourceStructure and
 			partHit and
 			partHit ~= self.shots[i].sourcePart
-
 		if self.shots[i].destroy == true or hit then
 			table.remove(self.shots, i)
 			if hit then

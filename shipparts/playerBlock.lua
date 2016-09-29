@@ -15,11 +15,21 @@ function PlayerBlock.create()
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.thrust = 150
 	self.torque = 350
-	self.type = "player"
+	self.type = "control"
 	self.gun = true
 	self.recharge = false
 	self.rechargeStart = 0
+
+	self.team = 1
 	return self
+end
+
+function PlayerBlock:getTeam()
+	return self.team
+end
+
+function PlayerBlock:getOrders()
+	return {}
 end
 
 function PlayerBlock:shot()

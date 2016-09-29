@@ -1,12 +1,16 @@
 anchor(0,0,0)[1]
 {
-g1b0b0b0g1
-b0b0n*b0b0
-e1b0b0b0e1
+g1b1b1b1g1
+b1b1n*b1b1
+e1b1b1b1e1
 }
 player(0, 100)[1]
 {
-  p*
+p*
 }
 BasicShip1(-100,0,0)[1]
 BasicShip2(-35, 200,0)[2]
+block(100,0,0)[0]
+{
+b*
+}

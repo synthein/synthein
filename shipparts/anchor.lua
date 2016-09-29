@@ -15,7 +15,19 @@ function Anchor.create()
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "anchor"
 
+	self.team = 1
 	return self
+end
+
+function Anchor:getTeam()
+	return self.team
+end
+
+function Anchor:getOrders()
+	return {}
+end
+
+function Anchor:update()
 end
 
 return Anchor

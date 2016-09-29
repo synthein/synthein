@@ -40,13 +40,12 @@ end
 
 function Building:pressed(mouseWorldX, mouseWorldY)
 	if self.mode == 1 then
-
 		self.annexee, self.annexeePart
 			= world:getStructure(mouseWorldX, mouseWorldY)
 		if not self.annexee then
 			return true --end build
 		else
-			if self.annexee.parts[1].type == "generic" then
+			if not self.annexee.corePart then
 				self.mode = 2
 			else 
 				return true

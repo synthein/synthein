@@ -21,16 +21,13 @@ function Structure.create(shipTable, location, data)
 			shipTable = {parts = {shipTable},
 						 partCoords = {{x = 0, y = 0}},
 						 partOrient = {1}}
-print("\t\tsetting shipTable")
 		else
-print("\t\tsetting corePart lone part")
 			shipTable = {corePart = shipTable}
 		end
 	end
 	local x = location[1]
 	local y = location[2]
 	if shipTable.corePart then
-print("\t\tsetting corePart table part")
 		if shipTable.corePart.type == "control" then
 			self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
 			self.body:setAngularDamping(1)

@@ -19,6 +19,7 @@ function PlayerBlock.create()
 	self.gun = true
 	self.recharge = false
 	self.rechargeStart = 0
+	self.orders = {}
 
 	self.team = 1
 	return self
@@ -28,8 +29,11 @@ function PlayerBlock:getTeam()
 	return self.team
 end
 
+function PlayerBlock:setOrders(orders)
+	self.orders = orders
+end
 function PlayerBlock:getOrders()
-	return {}
+	return self.orders
 end
 
 function PlayerBlock:shot()

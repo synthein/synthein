@@ -225,7 +225,7 @@ function Spawn.shipPack(structure, saveThePartData)
 		end
 
 		if part == structure.corePart then
-			b = *
+			b = "*"
 		else
 			b = tostring(structure.partOrient[i])
 		end

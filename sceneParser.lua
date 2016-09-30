@@ -70,11 +70,9 @@ end
 function SceneParser.saveScene(sceneName, world)
 	local fileString = ""
 	local team
-	for i in ipairs(world.structures) do
-		for j in ipairs(world.ais) do
-			if world.structures[i] == world.ais[j].ship then
-				team = world.ais[j].team
-			end
+	for i,structure in ipairs(world.structures) do
+		if structure.corePart then
+			team = structure.corePart:getTeam()
 		end
 		if not team then
 			team = 0

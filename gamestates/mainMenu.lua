@@ -5,16 +5,13 @@ local LoadGameMenu = require("gamestates/loadGameMenu")
 local MainMenu = {}
 setmetatable(MainMenu, GameState)
 
+MainMenu.font = love.graphics.newFont(36)
 local buttons = {NewGame, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
 
-function MainMenu.load()
-	mainMenuFont = love.graphics.newFont(36)
-end
-
 function MainMenu.draw()
 	previousFont = love.graphics.getFont()
-	love.graphics.setFont(mainMenuFont)
+	love.graphics.setFont(MainMenu.font)
 	button_width = 500
 	button_height = 50
 	text_height = 40
@@ -25,14 +22,9 @@ function MainMenu.draw()
 		love.graphics.print(buttonNames[i], (SCREEN_WIDTH - button_width)/2 + 10, 175 + 75 * i + button_height/2 - text_height/2, 0, 1, 1, 0, 0, 0, 0)
 	end
 	love.graphics.setFont(previousFont)
-	return MainMenu
 end
 
 function MainMenu.update(mouseWorldX, mouseWorldY)
-	return MainMenu
-end
-
-function MainMenu.keypressed(key)
 	return MainMenu
 end
 
@@ -51,10 +43,6 @@ function MainMenu.mousepressed(x, y, mouseButton)
 	else
 		return MainMenu
 	end
-end
-
-function MainMenu.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
-	return MainMenu
 end
 
 return MainMenu

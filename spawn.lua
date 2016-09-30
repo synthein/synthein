@@ -224,7 +224,11 @@ function Spawn.shipPack(structure, saveThePartData)
 		elseif getmetatable(part) == Anchor then a = "n"
 		end
 
-		b = tostring(structure.partOrient[i])
+		if part == structure.corePart then
+			b = *
+		else
+			b = tostring(structure.partOrient[i])
+		end
 		tempString = a .. b
 		--Add data to table
 		if saveThePartData then

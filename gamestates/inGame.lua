@@ -50,7 +50,9 @@ function InGame.update(dt)
 			rand = love.math.random()
 			if rand < timeVar * disVar * veloVar then
 				eventTime = 0
-				SceneParser.loadScene("scene1", {players[1].ship.body:getX(),players[1].ship.body:getY()})
+				local scene = math.floor(love.math.random() * 10)
+				scene = tostring(scene)
+				SceneParser.loadScene("scene" .. scene, {players[1].ship.body:getX(),players[1].ship.body:getY()})
 			end
 			second = second - 1
 		end

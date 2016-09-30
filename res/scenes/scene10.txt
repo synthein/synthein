@@ -1,0 +1,16 @@
+CageShip(0, 200 ,0)[2]
+{
+e3      e3
+b1b1a*b1b1
+b1      b1
+b1      b1
+b1      b1
+b1b1b1b1b1
+e1      e1
+}
+BasicShip2(-100, 200,0)[2]
+BasicShip2(100, 200,0)[2]
+Ally(-35, 180, 0)[1]
+{
+a*
+}

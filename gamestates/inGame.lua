@@ -35,7 +35,7 @@ function InGame.update(dt)
 
 		players[1]:handleInput(Screen.camera:getPosition())
 		world:update(dt)
-		
+
 		eventTime = eventTime + dt
 		second = second + dt
 		if second > 1 then

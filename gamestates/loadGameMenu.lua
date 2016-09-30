@@ -70,7 +70,7 @@ function LoadGameMenu.mousepressed(x, y, mouseButton)
 		if x < (SCREEN_WIDTH - button_width)/2 or x > (SCREEN_WIDTH + button_width)/2 then
 			return MainMenu
 		end
-		local yRef = y - 175
+		local yRef = y - 75
 		local index = math.floor(yRef/75)
 		local remainder = yRef % 75
 

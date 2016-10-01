@@ -102,6 +102,16 @@ function InGame.draw()
 		button_width = 500
 		button_height = 50
 		text_height = 40
+
+		-- Draw a background box behind the menu.
+		love.graphics.setColor(200, 200, 200)
+		love.graphics.rectangle("fill",
+			(SCREEN_WIDTH - button_width)/2 - 25,
+			150 + 75,
+			button_width + 50,
+			#pauseMenu.buttons * (button_height + 25) + 25)
+
+		-- Draw the buttons.
 		for i,button in ipairs(pauseMenu.buttons) do
 			love.graphics.setColor(100, 100, 100)
 			love.graphics.rectangle("fill", (SCREEN_WIDTH - button_width)/2, 175 + 75 * i, button_width, button_height)

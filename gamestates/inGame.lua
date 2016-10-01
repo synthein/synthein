@@ -17,6 +17,12 @@ local paused = false
 local eventTime = 0
 local second = 0
 
+local pauseMenu = {}
+pauseMenu.font = love.graphics.newFont(18)
+pauseMenu.buttons = {"Save", "Quit"}
+local typingSaveName = false
+local saveName = ""
+
 function InGame.setplayers(playerTable)
 	players = playerTable
 end
@@ -28,6 +34,7 @@ end
 function InGame.update(dt)
 	if paused then
 	else
+		-- Update the game world.
 		Structure.physics:update(dt)
 
 		Screen.camera:setX(players[1].ship.body:getX())
@@ -57,6 +64,13 @@ function InGame.update(dt)
 			second = second - 1
 		end
 	end
+
+	-- Save the game.
+	if not typingSaveName and #saveName > 0 then
+		SceneParser.saveScene("saves/" .. saveName, world)
+		saveName = ""
+	end
+
 	return InGame
 end
 
@@ -80,35 +94,80 @@ function InGame.draw()
 			1, 1, 25, 25)
 	-- end
 	if paused then
-		love.graphics.print(
-			"Paused",
-			SCREEN_WIDTH/2-24,
-			SCREEN_HEIGHT/2-30)
+		love.graphics.print("Paused", SCREEN_WIDTH/2-24, 30)
 	end
-	if quitting then
-		love.graphics.print(
-			"Do you want to quit?",
-			SCREEN_WIDTH/2-64,
-			SCREEN_HEIGHT/2-30)
+	if menuOpen then
+		local previousFont = love.graphics.getFont()
+		love.graphics.setFont(pauseMenu.font)
+		button_width = 500
+		button_height = 50
+		text_height = 40
+		for i,button in ipairs(pauseMenu.buttons) do
+			love.graphics.setColor(100, 100, 100)
+			love.graphics.rectangle("fill", (SCREEN_WIDTH - button_width)/2, 175 + 75 * i, button_width, button_height)
+			love.graphics.setColor(255, 255, 255)
+			love.graphics.print(button, (SCREEN_WIDTH - button_width)/2 + 10, 175 + 75 * i + button_height/2 - text_height/2, 0, 1, 1, 0, 0, 0, 0)
+		end
+		love.graphics.setFont(previousFont)
 	end
+	if typingSaveName then
+		love.graphics.print("Type the name of your save, then press enter:", SCREEN_WIDTH/2-150, 60)
+		love.graphics.print(saveName, SCREEN_WIDTH/2-150, 90)
+	end
+
 	return InGame
 end
 
 function InGame.keypressed(key)
-	if key == "p" then
-		paused = not paused
+	if typingSaveName then
+		if key:match("^%w$") then
+			saveName = saveName .. key
+		elseif key == "backspace" then
+			saveName = saveName:sub(1, -2)
+		elseif key == "return" then
+			typingSaveName = false
+		elseif key == "escape" then
+			saveName = ""
+			typingSaveName = false
+		end
+	else
+		if key == "p" or key == "pause" then
+			paused = not paused
+		end
 	end
-	if key == "v" then
-		SceneParser.saveScene("syntheinSave", world)
-	end
+
 	return InGame
 end
 
-function InGame.mousepressed(x, y, button)
+function InGame.mousepressed(x, y, mouseButton)
 	players[1].cursorX = x
 	players[1].cursorY = y
 	players[1]:mousepressed(button)
-	return InGame
+
+	if menuOpen then
+		if mouseButton == 1 then
+			if x < (SCREEN_WIDTH - button_width)/2 or x > (SCREEN_WIDTH + button_width)/2 then
+				return InGame
+			end
+			local yRef = y - 175
+			local index = math.floor(yRef/75)
+			local remainder = yRef % 75
+			if index < 1 or index > #pauseMenu.buttons or remainder > 50 then
+				return InGame
+			end
+			local selection = pauseMenu.buttons[index]
+
+			if selection == "Save" then
+				typingSaveName = true
+			elseif selection == "Load" then
+				return LoadGameMenu
+			elseif selection == "Quit" then
+				love.event.quit()
+			end
+		else
+			return InGame
+		end
+	end
 end
 
 function InGame.mousereleased(x, y, button)

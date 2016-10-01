@@ -47,13 +47,10 @@ function Player:handleInput()
 	----- Cancel/Quit -----
 	-----------------------
 	if not self.cancelKeyDown then
-		-- Prompt before quitting.
-		if quitting then
-			if love.keyboard.isDown(self.confirm) or love.keyboard.isDown("y") then
-				love.event.quit()
-			end
-			if love.keyboard.isDown(self.cancel) or love.keyboard.isDown("n") then
-				quitting = false
+		-- Open the pause menu.
+		if menuOpen then
+			if love.keyboard.isDown(self.cancel) then
+				menuOpen = false
 				self.cancelKeyDown = true
 			end
 
@@ -61,9 +58,9 @@ function Player:handleInput()
 			-- If selection mode is not enabled, quit the game when the cancel key
 			-- is pressed.
 			if not self.selection then
-				quitting = true
-				-- If selection mode is enabled, just leave selection mode.
+				menuOpen = true
 			else
+				-- If selection mode is enabled, just leave selection mode.
 				self.selection = nil
 			end
 			self.cancelKeyDown = true
@@ -107,7 +104,7 @@ function Player:mousepressed(button)
 	cursorX, cursorY = Screen.getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
 		if not self.build then
-			local team 
+			local team
 			if self.ship and self.ship.corePart then
 				team = self.ship.corePart:getTeam()
 			end
@@ -121,7 +118,7 @@ function Player:mousepressed(button)
 
 	end
 	if button == 2 then
-		local team 
+		local team
 		if self.ship and self.ship.corePart then
 			team = self.ship.corePart:getTeam()
 		end

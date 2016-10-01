@@ -193,7 +193,6 @@ end
 -- If it is, return the index of the part.
 -- If it is not, return nil.
 function Structure:findPart(query)
-	if query == self.corePart then return 0 end
 	for i, part in ipairs(self.parts) do
 		if part == query then
 			return i
@@ -345,7 +344,6 @@ function Structure:withinPart(partIndex, locationX, locationY)
 	b = Util.absVal(b)
 	partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
 	if Util.max(a,b) <= 10 then
-		if partIndex == 0 and not self.corePart then return false, partside end
 		return true, partSide
 	end
 	return false, partSide

@@ -152,7 +152,7 @@ end
 function InGame.mousepressed(x, y, mouseButton)
 	players[1].cursorX = x
 	players[1].cursorY = y
-	players[1]:mousepressed(button)
+	players[1]:mousepressed(mouseButton)
 
 	if menuOpen then
 		if mouseButton == 1 then

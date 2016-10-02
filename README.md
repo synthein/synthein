@@ -2,7 +2,13 @@
 
 Synthein (working title) is a game about blowing up space ships and using their parts to make your space ship bigger and better.
 
-Planned features:
+## Features
+
+ * You can build onto your ship.
+ * Enemies spawn at random.
+ * AI allies can follow you and attack nearby enemies.
+
+### Planned Features
 
  * AI allies that you can give orders to (follow, guard, patrol)
  * a customizable automated base

@@ -121,7 +121,7 @@ function InGame.draw()
 		love.graphics.setFont(previousFont)
 	end
 	if typingSaveName then
-		love.graphics.print("Type the name of your save, then press enter:", SCREEN_WIDTH/2-150, 60)
+		love.graphics.print("Type a name to use for your save, then press enter:", SCREEN_WIDTH/2-150, 60)
 		love.graphics.print(saveName, SCREEN_WIDTH/2-150, 90)
 	end
 

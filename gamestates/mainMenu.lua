@@ -15,6 +15,7 @@ function MainMenu.draw()
 	button_width = 500
 	button_height = 50
 	text_height = 40
+	love.graphics.print("SYNTHEIN", (SCREEN_WIDTH - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
 	for i,button in ipairs(buttons) do
 		love.graphics.setColor(100, 100, 100)
 		love.graphics.rectangle("fill", (SCREEN_WIDTH - button_width)/2, 175 + 75 * i, button_width, button_height)
@@ -22,6 +23,12 @@ function MainMenu.draw()
 		love.graphics.print(buttonNames[i], (SCREEN_WIDTH - button_width)/2 + 10, 175 + 75 * i + button_height/2 - text_height/2, 0, 1, 1, 0, 0, 0, 0)
 	end
 	love.graphics.setFont(previousFont)
+	love.graphics.print("ws: Forward and Backward\n" ..
+						"ad: Turn Left and Right\n" ..
+						"qe: Strafe Left and Right\n" ..
+						"p: pause\nESC: menu\n" ..
+						"Left Click: Construcuting Ships\n" ..
+						"Right Click: Deconstructing Ships", 5, 5)
 end
 
 function MainMenu.update(mouseWorldX, mouseWorldY)

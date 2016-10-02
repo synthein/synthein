@@ -9,7 +9,7 @@ Planned features:
  * storable ship configurations
  * an open world with randomly generated things to encounter and explore
 
-![screenshot](http://i.imgur.com/MC4t7gE.png)
+![screenshot](http://i.imgur.com/b2QnY5A.png)
 
 ## Running
 

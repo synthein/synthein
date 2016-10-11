@@ -20,6 +20,9 @@ function SceneParser.loadScene(sceneName, location, ifSave)
 	else
 		fileName = string.format("/res/scenes/%s.txt", sceneName)
 	end
+	if not love.filesystem.exists(fileName) then 
+		return {}, {}
+	end
 	for line in love.filesystem.lines(fileName) do
 		if ifShipString then
 			if string.match(line, "%}") then

@@ -28,7 +28,7 @@ function Shot:update(dt)
 	self.x = self.x + dx
 	self.y = self.y + dy
 	self.time = self.time + dt
-	if self.time > 10 then
+	if self.time > 5 then
 		self.destroy = true
 	end
 	return self.x, self.y, self.time

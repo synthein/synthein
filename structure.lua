@@ -216,7 +216,7 @@ function Structure:removePart(part)
 		error("Argument to Structure:removePart is not a part.")
 	end
 	-- Destroy the part.
-	if self.parts[partIndex] == corePart then
+	if self.parts[partIndex] == self.corePart then
 		self.corePart = nil
 	end
 	self.fixtures[partIndex]:destroy()

@@ -1,2 +1,2 @@
-BasicShip1(-100, 200,0)[2]
-BasicShip1(100, 200,0)[2]
+BasicShip4(-100, 200,0)[2]
+BasicShip4(100, 200,0)[2]

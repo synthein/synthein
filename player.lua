@@ -118,21 +118,25 @@ function Player:mousepressed(button)
 
 	end
 	if button == 2 then
-		local team
-		if self.ship and self.ship.corePart then
-			team = self.ship.corePart:getTeam()
-		end
-		local structure, part = world:getStructure(cursorX, cursorY)
-		local structureTeam
-		if structure and structure.corePart then
-			structureTeam = structure.corePart:getTeam()
-		end
-		if structureTeam and team and structureTeam ~= team then
-			structure = nil
-			part = nil
-		end
-		if structure and part then
-			world:removeSection(structure, part)
+		if self.build then
+			self.build = nil
+		else
+			local team
+			if self.ship and self.ship.corePart then
+				team = self.ship.corePart:getTeam()
+			end
+			local structure, part = world:getStructure(cursorX, cursorY)
+			local structureTeam
+			if structure and structure.corePart then
+				structureTeam = structure.corePart:getTeam()
+			end
+			if structureTeam and team and structureTeam ~= team then
+				structure = nil
+				part = nil
+			end
+			if structure and part then
+				world:removeSection(structure, part)
+			end
 		end
 	end
 end

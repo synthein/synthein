@@ -30,18 +30,34 @@ function Debug.draw()
 	mouseWorldX, mouseWorldY =
 		Screen.getCursorCoords(love.mouse.getX(), love.mouse.getY())
 	if Debug.world and Debug.player1 then
-		local debugString = string.format(
-			"%.3f    %.3f\n"..
-			"%.3f    %.3f\n"..
-			"Number of world structures: %d\n"..
-			"Number of ship parts: %d\n"..
-			"Build mode: %s\n",
-			Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
-			mouseWorldX, mouseWorldY,
-			#Debug.world.structures,
-			#Debug.player1.ship.parts,
-			(Debug.player1.build and "yes" or "no")
-		)
+		local debugString
+		if Debug.player1.ship then
+			debugString = string.format(
+				"%.3f    %.3f\n"..
+				"%.3f    %.3f\n"..
+				"Number of world structures: %d\n"..
+				"Number of ship parts: %d\n"..
+				"Build mode: %s\n",
+				Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
+				mouseWorldX, mouseWorldY,
+				#Debug.world.structures,
+				#Debug.player1.ship.parts,
+				(Debug.player1.build and "yes" or "no")
+			)
+		else
+			debugString = string.format(
+				"%.3f    %.3f\n"..
+				"%.3f    %.3f\n"..
+				"Number of world structures: %d\n"..
+				"Number of ship parts: %d\n"..
+				"Build mode: %s\n",
+				0, 0,
+				mouseWorldX, mouseWorldY,
+				#Debug.world.structures,
+				0,
+				(Debug.player1.build and "yes" or "no")
+			)
+		end
 		love.graphics.print(debugString, 5, 5)
 	end
 end

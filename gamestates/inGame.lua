@@ -36,9 +36,10 @@ function InGame.update(dt)
 	else
 		-- Update the game world.
 		Structure.physics:update(dt)
-
-		Screen.camera:setX(players[1].ship.body:getX())
-		Screen.camera:setY(players[1].ship.body:getY())
+		if players[1].ship then
+			Screen.camera:setX(players[1].ship.body:getX())
+			Screen.camera:setY(players[1].ship.body:getY())
+		end
 
 		players[1]:handleInput(Screen.camera:getPosition())
 		world:update(dt)
@@ -46,20 +47,22 @@ function InGame.update(dt)
 		eventTime = eventTime + dt
 		second = second + dt
 		if second > 1 then
-			timeVar = 1 - 50/(20 + eventTime)
-			if timeVar < 0 then timeVar = 0 end
-			disVar = 1 - 50/(1 + Util.vectorMagnitude(
-						players[1].ship.body:getX(),players[1].ship.body:getY())/20)
-			if disVar < 0 then disVar = 0 end
-			veloVar = 1 - 50/(1 + Util.vectorMagnitude(
-						players[1].ship.body:getLinearVelocity()))
-			if veloVar < 0 then veloVar = 0 end
-			rand = love.math.random()
-			if rand < timeVar * disVar * veloVar then
-				eventTime = 0
-				local scene = math.ceil(love.math.random() * 10)
-				scene = tostring(scene)
-				SceneParser.loadScene("scene" .. scene, {players[1].ship.body:getX(),players[1].ship.body:getY()})
+			if players[1].ship then
+				timeVar = 1 - 50/(20 + eventTime)
+				if timeVar < 0 then timeVar = 0 end
+				disVar = 1 - 50/(1 + Util.vectorMagnitude(
+							players[1].ship.body:getX(),players[1].ship.body:getY())/20)
+				if disVar < 0 then disVar = 0 end
+				veloVar = 1 - 50/(1 + Util.vectorMagnitude(
+							players[1].ship.body:getLinearVelocity()))
+				if veloVar < 0 then veloVar = 0 end
+				rand = love.math.random()
+				if rand < timeVar * disVar * veloVar then
+					eventTime = 0
+					local scene = math.ceil(love.math.random() * 10)
+					scene = tostring(scene)
+					SceneParser.loadScene("scene" .. scene, {players[1].ship.body:getX(),players[1].ship.body:getY()})
+				end
 			end
 			second = second - 1
 		end

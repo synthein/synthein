@@ -97,7 +97,13 @@ function Player:handleInput()
 		table.insert(orders, "shoot")
 	end
 
-	self.ship.corePart:setOrders(orders)
+	if self.ship then
+		if self.ship.corePart then
+			self.ship.corePart:setOrders(orders)
+		else
+			self.ship = nil
+		end
+	end
 end
 
 function Player:mousepressed(button)

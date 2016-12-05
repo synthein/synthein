@@ -153,7 +153,7 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 		end
 		if partThere then
 			table.insert(newStructures, Structure.create(annexee.parts[1],
-						 physics, annexee:getAbsPartCoords(1)))
+						 {annexee:getAbsPartCoords(1)}))
 		else
 			self:addPart(annexee.parts[1], x, y, partOrientation)
 		end

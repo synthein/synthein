@@ -109,7 +109,7 @@ function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
 	                structurePart, structurePartSideClicked)
 --	table.remove(self.worldStructures, annexeeIndex)
 	for i = 1,#newStructures do
-		table.insert(self.worldStructures, newStructures[1])
+		table.insert(self.structures, newStructures[1])
 	end
 end
 

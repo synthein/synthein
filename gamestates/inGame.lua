@@ -1,4 +1,4 @@
---local Debug = require("debugTools")
+local Debug = require("debugTools")
 local Player = require("player")
 local Structure = require("structure")
 local World = require("world")
@@ -74,6 +74,8 @@ function InGame.update(dt)
 		saveName = ""
 	end
 
+	if debugmode then Debug.update(mouseWorldX, mouseWorldY) end
+
 	return InGame
 end
 
@@ -128,6 +130,9 @@ function InGame.draw()
 		love.graphics.print(saveName, SCREEN_WIDTH/2-150, 90)
 	end
 
+	-- Print debug info.
+	if debugmode then Debug.draw() end
+
 	return InGame
 end
 
@@ -147,6 +152,10 @@ function InGame.keypressed(key)
 		if key == "p" or key == "pause" then
 			paused = not paused
 		end
+	end
+
+	if debugmode == true then
+		Debug.keyboard(key, Screen.camera:getX(), Screen.camera:getY())
 	end
 
 	return InGame
@@ -181,12 +190,21 @@ function InGame.mousepressed(x, y, mouseButton)
 			return InGame
 		end
 	end
+
+	if debugmode == true then
+		Debug.mousepressed(x, y, button, mouseWorldX, mouseWorldY)
+	end
 end
 
 function InGame.mousereleased(x, y, button)
 	players[1].cursorX = x
 	players[1].cursorY = y
 	players[1]:mousereleased(button)
+
+	if debugmode == true then
+		Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
+	end
+
 	return InGame
 end
 

@@ -33,6 +33,7 @@ function LoadGameMenu.update()
 		compass = love.graphics.newImage("res/images/compass.png")
 
 		world = World.create()
+		Screen.createCameras()
 		local ships, ifPlayer = SceneParser.loadScene("saves/" .. loadGameChoice, {0, 0}, true)
 		local players = {}
 		for i,ship in ipairs(ships) do

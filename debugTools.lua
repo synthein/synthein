@@ -2,7 +2,6 @@ local AI = require("ai")
 local Structure = require("structure")
 local Spawn = require("spawn")
 local Screen = require("screen")
-local InGame = require("gamestates/inGame")
 
 -- Ship parts
 local AIBlock = require("shipparts/aiBlock")

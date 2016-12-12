@@ -14,7 +14,6 @@ local newState
 
 function love.load()
 	debugmode = true
-	Screen.createCameras()
 	state = MainMenu
 end
 
@@ -23,19 +22,12 @@ function love.update(dt)
 	if newState then
 		state = newState
 	end
-
-	if debugmode then Debug.update(mouseWorldX, mouseWorldY) end
 end
 
 function love.draw()
 	SCREEN_WIDTH = love.graphics.getWidth()
 	SCREEN_HEIGHT = love.graphics.getHeight()
-	newState = state.draw()
-	if newState then
-		state = newState
-	end
-	-- Print debug info.
-	if debugmode then Debug.draw() end
+	state.draw()
 end
 
 function love.keypressed(key)
@@ -46,10 +38,6 @@ function love.keypressed(key)
 	if newState then
 		state = newState
 	end
-
-	if debugmode == true then
-		Debug.keyboard(key, Screen.camera:getX(), Screen.camera:getY())
-	end
 end
 
 function love.mousepressed(x, y, button, istouch)
@@ -57,18 +45,11 @@ function love.mousepressed(x, y, button, istouch)
 	if newState then
 		state = newState
 	end
-	if debugmode == true then
-		Debug.mousepressed(x, y, button, mouseWorldX, mouseWorldY)
-	end
 end
 
 function love.mousereleased(x, y, button, istouch)
 	newState = state.mousereleased(x, y, button)
 	if newState then
 		state = newState
-	end
-
-	if debugmode == true then
-		Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
 	end
 end

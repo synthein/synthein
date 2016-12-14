@@ -1,4 +1,3 @@
-local AI = require("ai")
 local Particles = require("particles")
 local Shot = require("shot")
 local Structure = require("structure")
@@ -15,7 +14,6 @@ function World.create()
 	self.teamHostility = { {false, true},
 						   {true, false} }
 	self.structures = {}
-	self.ais = {}
 	self.shots = {}
 	self.particles = {}
 
@@ -24,61 +22,15 @@ function World.create()
 	return self
 end
 
+--Add a structure into the world.
 function World:createStructure(shipTable, location, data)
 	local structure = Structure.create(shipTable, location, data)
 	table.insert(self.structures, structure)
 	return structure
 end
 
---function World:getStructure(locationX,locationY)
---	local part, partSide = self.playerShip:getPartIndex(locationX, locationY,
---												   player)
---	if part and partSide then
---		return self.playerShip, part, partSide, i
---	end
---		for i, structure in ipairs(player) do
---			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY,
---														   structure)
---			if part and partSide then
---			return structure, part, partSide, i
---			end
---		end
---	local part, partSide = self.anchor:getPartIndex(locationX, locationY,
---												   anchor)
---	if part and partSide then
---		return self.anchor, part, partSide, i
---	end
-
---		for i, structure in ipairs(anchor) do
---			local part, partSide = self:partIndexPartsLoop(mouseX, mouseY,
---														   structure)
---			if part and partSide then
---			return structure, part, partSide, i
---			end
---		end
---	structure, part, partSide, i = self:getAIShips(locationX, locationY)
---	if structure and part and partSide and i then
---		return structure, part, partSide, i
---	end
---	structure, part, partSide, i = self:getStructure(locationX, locationY)
---	if structure and part and partSide and i then
---		return structure, part, partSide, i
---	end
---end
-
-function World:isMouseInsidePart(structure, part)
-	local mouseX, mouseY = love.mouse.getPosition()
-	local partX, partY, partAngle = structure:getAbsPartCoords(structure:findPart(part))
-	local partSide = Util.vectorAngle(
-		mouseWorldX - partX,
-		mouseWorldY - partY) - partAngle
-	a, b = Util.vectorComponents(Util.vectorMagnitude(mouseWorldX - partX, mouseWorldY - partY), partSide)
-	a = Util.absVal(a)
-	b = Util.absVal(b)
-	return Util.max(a,b) < 10
-end
-
-
+--Get the structure and part under at the location.
+--Also return the side of the part that is closed if there is a part.
 function World:getStructure(locationX, locationY)
 	for i, structure in ipairs(self.structures) do
 		local part, partSide = structure:getPartIndex(locationX, locationY)
@@ -88,6 +40,7 @@ function World:getStructure(locationX, locationY)
 	end
 end
 
+--Removes a section of a structure and saves the new structure.
 function World:removeSection(structure, part)
 	if part.type == "generic" then
 		local newStructure = structure:removeSection(part)
@@ -95,22 +48,26 @@ function World:removeSection(structure, part)
 	end
 end
 
+--Merges two structures.
+--Any overlapping parts from the annexee are placed in new structures.
 function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
 					 structure, structurePart, structurePartSideClicked)
 	local newStructures = structure:annex(annexee, annexeePart, annexeePartSideClicked,
 	                structurePart, structurePartSideClicked)
---	table.remove(self.worldStructures, annexeeIndex)
 	for i = 1,#newStructures do
 		table.insert(self.structures, newStructures[1])
 	end
 end
 
+--Creates a shot from the part location.
 function World:shoot(structure, part)
 	local index = structure:findPart(part)
 	local x, y, angle = structure:getAbsPartCoords(index)
 	table.insert(self.shots, Shot.create(x, y, angle, structure, part))
 end
 
+--Applies damage to a part.
+--If the part is Destroyed then it creates a particle effect.
 function World:partDamage(structure, part)
 	part:takeDamage()
 	if part.destroy then

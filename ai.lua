@@ -12,12 +12,12 @@ function AI.create(team)
 	return self
 end
 
-function AI:getOrders(location, playerLocation, aiData)
+function AI:getOrders(location, aiData)
 	local aiX = location[1]
 	local aiY = location[2]
 	local aiAngle = location[3]
-	local playerX = playerLocation[1]
-	local playerY = playerLocation[2]
+	local playerX = nil
+	local playerY = nil
 	local targetX = nil
 	local targetY = nil
 	local targetM = nil
@@ -42,6 +42,13 @@ function AI:getOrders(location, playerLocation, aiData)
 						targetM = Util.vectorMagnitude(enemy[1] - location[1], enemy[2] - location[2])
 					end
 				end
+			elseif self.team == i then
+				for j, ally in ipairs(aiData[2][i]) do
+					if ally[3] then
+						playerX = ally[1]
+						playerY = ally[2]
+					end
+				end
 			end
 		end
 	end
@@ -54,7 +61,7 @@ function AI:getOrders(location, playerLocation, aiData)
 		angleToPlayer = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
 	end
 	local orders = {}
-	if self.team == 1 and 
+	if self.team == 1 and playerX and playerY and 
 	   Util.vectorMagnitude(playerX - aiX, playerY - aiY) > 20 * 20 then
 		if angleToPlayer < -math.pi/10 then
 			table.insert(orders, "right")

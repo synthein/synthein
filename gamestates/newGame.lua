@@ -27,9 +27,9 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 			table.insert(players, Player.create(Controls.defaults.keyboard, ship))
 		end
 	end
+
 	InGame.setplayers(players)
 	InGame.setWorld(world)
-	world:setPlayerShip(players[1].ship)
 
 	Debug.setWorld(world)
 	Debug.setPlayer(players[1])

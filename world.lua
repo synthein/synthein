@@ -24,14 +24,6 @@ function World.create()
 	return self
 end
 
-function World:setPlayerShip(ship)
-	self.playerShip = ship
-end
-
-function World:getPlayerShip()
-	return self.playerShip
-end
-
 function World:createStructure(shipTable, location, data)
 	local structure = Structure.create(shipTable, location, data)
 	table.insert(self.structures, structure)
@@ -139,9 +131,15 @@ function World:update(dt)
 		if structure.corePart then
 			local team = structure.corePart:getTeam()
 			if team then
-				table.insert(shipLocations[team], 
-							{structure.body:getX(), structure.body:getY()})
+				if structure.corePart.isPlayer then
+					table.insert(shipLocations[team], 
+								{structure.body:getX(), structure.body:getY(),true})
+				else
+					table.insert(shipLocations[team], 
+								{structure.body:getX(), structure.body:getY()})
+				end
 			end
+			
 		end
 	end
 	local aiData = {self.teamHostility, shipLocations}
@@ -151,7 +149,7 @@ function World:update(dt)
 		if self.structures[i].isDestroyed == true then
 			table.remove(self.structures, i)
 		else
-		self.structures[i]:update(dt, {self.playerShip.body:getX(), self.playerShip.body:getY(), self.playerShip.body:getAngle()}, aiData)
+		self.structures[i]:update(dt, aiData)
 		end
 	end
 

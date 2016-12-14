@@ -21,6 +21,8 @@ function PlayerBlock.create()
 	self.rechargeStart = 0
 	self.orders = {}
 
+	self.isPlayer = true
+
 	self.team = 1
 	return self
 end

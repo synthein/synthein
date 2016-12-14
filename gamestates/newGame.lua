@@ -1,13 +1,13 @@
-local Debug = require("debugTools")
-local Camera = require("camera")
-local World = require("world")
-local Player = require("player")
-local Structure = require("structure")
-local Screen = require("screen")
-local InitWorld = require("initWorld")
 local AI = require("ai")
-
+local Camera = require("camera")
+local Controls = require("controls")
+local Debug = require("debugTools")
+local InitWorld = require("initWorld")
+local Player = require("player")
 local SceneParser = require("sceneParser")
+local Screen = require("screen")
+local Structure = require("structure")
+local World = require("world")
 
 local GameState = require("gamestates/gameState")
 local InGame = require("gamestates/inGame")
@@ -24,7 +24,7 @@ function NewGame.update(mouseWorldX, mouseWorldY)
 	local players = {}
 	for i,ship in ipairs(ships) do
 		if ifPlayer[i] then
-			table.insert(players, Player.create("player1", ship))
+			table.insert(players, Player.create(Controls.defaults.keyboard, ship))
 		end
 	end
 	InGame.setplayers(players)

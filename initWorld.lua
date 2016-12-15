@@ -3,14 +3,12 @@ local Debug = require("debugTools")
 local InGame = require("gamestates/inGame")
 local Player = require("player")
 local SceneParser = require("sceneParser")
-local Screen = require("screen")
 local World = require("world")
 
 local InitWorld = {}
 
 function InitWorld.init(scene, ifSave)
 	world = World.create()
-	Screen.createCameras()
 	local ships, ifPlayer = SceneParser.loadScene(scene, {0, 0}, ifSave)
 	local players = {}
 	for i,ship in ipairs(ships) do

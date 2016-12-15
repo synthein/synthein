@@ -3,10 +3,12 @@ local Camera = require("camera")
 local Screen = {}
 Screen.__index = Screen
 
-function Screen.createCameras()
-	Screen.camera = Camera.create()
-	Screen.camera:setX(0)
-	Screen.camera:setY(0)
+function Screen.createCamera()
+	newCamera = Camera.create()
+	newCamera:setX(0)
+	newCamera:setY(0)
+	Screen.camera = newCamera
+	return newCamera
 end
 
 function Screen.setCameras(numberOfCameras)

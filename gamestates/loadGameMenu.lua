@@ -30,8 +30,6 @@ function LoadGameMenu.update()
 	end
 
 	if loadGameChoice then
-		compass = love.graphics.newImage("res/images/compass.png")
-
 		world = World.create()
 		Screen.createCameras()
 		local ships, ifPlayer = SceneParser.loadScene("saves/" .. loadGameChoice, {0, 0}, true)

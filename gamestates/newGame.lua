@@ -16,8 +16,6 @@ local NewGame = {}
 setmetatable(NewGame, GameState)
 
 function NewGame.update(mouseWorldX, mouseWorldY)
-	compass = love.graphics.newImage("res/images/compass.png")
-
 	world = World.create()
 	Screen.createCameras()
 	local ships, ifPlayer = SceneParser.loadScene("startScene", {0, 0})

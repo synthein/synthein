@@ -91,7 +91,7 @@ function InGame.draw()
 		players[1].cursorY = love.mouse.getY()
 		players[1]:draw()
 		love.graphics.origin()
-		Screen.drawCanvas()
+		Screen.drawExtras()
 	-- end
 	if paused then
 		love.graphics.print("Paused", SCREEN_WIDTH/2-24, 30)

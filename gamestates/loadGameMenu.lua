@@ -30,21 +30,7 @@ function LoadGameMenu.update()
 	end
 
 	if loadGameChoice then
-		world = World.create()
-		Screen.createCameras()
-		local ships, ifPlayer = SceneParser.loadScene("saves/" .. loadGameChoice, {0, 0}, true)
-		local players = {}
-		for i,ship in ipairs(ships) do
-			if ifPlayer[i] then
-				table.insert(players, Player.create("player1", ship))
-			end
-		end
-		InGame.setplayers(players)
-		InGame.setWorld(world)
-		world:setPlayerShip(players[1].ship)
-
-		Debug.setWorld(world)
-		Debug.setPlayer(players[1])
+		InitWorld.init("saves/" .. loadGameChoice, true)
 		return InGame
 	end
 end

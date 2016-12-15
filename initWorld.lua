@@ -1,15 +1,29 @@
-local Anchor = require("shipparts/anchor")
-local Block = require("shipparts/block")
-local PlayerBlock = require("shipparts/playerBlock")
-local AIBlock = require("shipparts/aiBlock")
-local Structure = require("structure")
-local Spawn = require("spawn")
-local SceneParser = require("sceneParser")
+local Controls = require("controls")
+local Debug = require("debugTools")
+local InGame = require("gamestates/inGame")
 local Player = require("player")
+local SceneParser = require("sceneParser")
+local Screen = require("screen")
+local World = require("world")
 
 local InitWorld = {}
 
-function InitWorld.init(world)
+function InitWorld.init(scene, ifSave)
+	world = World.create()
+	Screen.createCameras()
+	local ships, ifPlayer = SceneParser.loadScene(scene, {0, 0}, ifSave)
+	local players = {}
+	for i,ship in ipairs(ships) do
+		if ifPlayer[i] then
+			table.insert(players, Player.create(Controls.defaults.keyboard, ship))
+		end
+	end
+
+	InGame.setplayers(players)
+	InGame.setWorld(world)
+
+	Debug.setWorld(world)
+	Debug.setPlayer(players[1])
 end
 
 return InitWorld

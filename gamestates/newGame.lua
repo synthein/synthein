@@ -16,21 +16,7 @@ local NewGame = {}
 setmetatable(NewGame, GameState)
 
 function NewGame.update(mouseWorldX, mouseWorldY)
-	world = World.create()
-	Screen.createCameras()
-	local ships, ifPlayer = SceneParser.loadScene("startScene", {0, 0})
-	local players = {}
-	for i,ship in ipairs(ships) do
-		if ifPlayer[i] then
-			table.insert(players, Player.create(Controls.defaults.keyboard, ship))
-		end
-	end
-
-	InGame.setplayers(players)
-	InGame.setWorld(world)
-
-	Debug.setWorld(world)
-	Debug.setPlayer(players[1])
+	InitWorld.init("startScene", false)
 	return InGame
 end
 

@@ -46,8 +46,8 @@ function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
     love.graphics.setScissor(self.scissorX, self.scissorY,
 							 self.scissorWidth, self.scissorHeight)
 	love.graphics.draw(image,
-					    (x - self.x) + self.scissorWidth/2,
-					   -(y - self.y) + self.scissorHeight/2,
+					    (x - self.x) + self.scissorX + self.scissorWidth/2,
+					   -(y - self.y) + self.scissorY + self.scissorHeight/2,
 					   -angle, sx, sy, ox, oy)
     love.graphics.setScissor()
 end
@@ -57,8 +57,8 @@ function Camera:drawExtras()
 							 self.scissorWidth, self.scissorHeight)
 	love.graphics.draw(
 			self.compass,
-			self.scissorWidth - 60,
-			self.scissorHeight - 60,
+			self.scissorX + self.scissorWidth - 60,
+			self.scissorY + self.scissorHeight - 60,
 			math.atan2(self.x, self.y) + math.pi,
 			1, 1, 25, 25)
     love.graphics.setScissor()

@@ -3,30 +3,32 @@ local Camera = require("camera")
 local Screen = {}
 Screen.__index = Screen
 
+Screen.cameras = {}
+
 function Screen.createCamera()
 	newCamera = Camera.create()
 	newCamera:setX(0)
 	newCamera:setY(0)
 	Screen.camera = newCamera
+	table.insert(Screen.cameras, newCamera)
 	Screen.arrange()
 	return newCamera
 end
 
 function Screen.arrange()
-	--local n = Screen.cameras
-	n = 1
+	local n = #Screen.cameras
 	local screenArea = SCREEN_WIDTH * SCREEN_HEIGHT
 	local cameraArea = screenArea / n
 	local columns = math.ceil(SCREEN_WIDTH/math.sqrt(cameraArea)-0.5)
 	local rows = math.ceil(n/columns)
 	local cameraWidth  = math.floor(SCREEN_WIDTH/columns)
 	local cameraHeight = math.floor(SCREEN_HEIGHT/rows)
-	--Screen.camera:setScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-	Screen.camera:setScissor(0, 0, cameraWidth, cameraHeight)
-end
-
-function Screen.setCameras(numberOfCameras)
-	Screen.cameras = numberOfCameras
+	for i, camera in ipairs(Screen.cameras) do
+		local x = (i-1)%columns 
+		local y = (i-x -1)/columns
+		camera:setScissor(x*cameraWidth, y*cameraHeight, 
+						  cameraWidth, cameraHeight)
+	end
 end
 
 function Screen.setCamera(currentCamera)
@@ -38,11 +40,15 @@ function Screen.getCursorCoords(X, Y)
 end
 
 function Screen.draw(image, x, y, angle, sx, sy, ox, oy)
-	Screen.camera:draw(image, x, y, angle, sx, sy, ox, oy)
+	for i, camera in ipairs(Screen.cameras) do
+		camera:draw(image, x, y, angle, sx, sy, ox, oy)
+	end
 end
 
 function Screen.drawExtras()
-	Screen.camera:drawExtras()
+	for i, camera in ipairs(Screen.cameras) do
+		camera:drawExtras()
+	end
 end
 
 return Screen

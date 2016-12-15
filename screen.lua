@@ -28,4 +28,8 @@ function Screen.draw(image, x, y , angle, sx, sy, ox, oy)
 					   angle, sx, sy, ox, oy)
 end
 
+function Screen.drawCanvas()
+	Screen.camera:drawExtras()
+end
+
 return Screen

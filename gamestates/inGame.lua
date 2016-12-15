@@ -91,12 +91,7 @@ function InGame.draw()
 		players[1].cursorY = love.mouse.getY()
 		players[1]:draw()
 		love.graphics.origin()
-		love.graphics.draw(
-			compass,
-			SCREEN_WIDTH-60,
-			SCREEN_HEIGHT-60,
-			-math.atan2(cameraY, cameraX)-math.pi/2,
-			1, 1, 25, 25)
+		Screen.drawCanvas()
 	-- end
 	if paused then
 		love.graphics.print("Paused", SCREEN_WIDTH/2-24, 30)

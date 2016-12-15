@@ -11,7 +11,7 @@ function Player.create(controls, structure)
 	setmetatable(self, Player)
 
 	self.ship = structure
-
+	self.camera = Screen.createCamera()
 	self.controls = controls
 
 	self.selection = nil

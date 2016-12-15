@@ -14,13 +14,15 @@ end
 
 function Screen.arrange()
 	--local n = Screen.cameras
-	--local screenArea = SCREEN_WIDTH * SCREEN_HEIGHT
-	--local cameraArea = screenArea / n
-	--local columns = math.ceil(SCREEN_WIDTH/math.sqrt(cameraArea))
-	--local rows = math.ceil(n/columns)
-	--local cameraWidth  = math.floor(SCREEN_WIDTH/columns)
-	--local cameraHeight = math.floor(SCREEN_HEIGHT/columns)
-	Screen.camera:setScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+	n = 1
+	local screenArea = SCREEN_WIDTH * SCREEN_HEIGHT
+	local cameraArea = screenArea / n
+	local columns = math.ceil(SCREEN_WIDTH/math.sqrt(cameraArea)-0.5)
+	local rows = math.ceil(n/columns)
+	local cameraWidth  = math.floor(SCREEN_WIDTH/columns)
+	local cameraHeight = math.floor(SCREEN_HEIGHT/rows)
+	--Screen.camera:setScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+	Screen.camera:setScissor(0, 0, cameraWidth, cameraHeight)
 end
 
 function Screen.setCameras(numberOfCameras)

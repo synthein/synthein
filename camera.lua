@@ -57,8 +57,8 @@ function Camera:drawExtras()
 							 self.scissorWidth, self.scissorHeight)
 	love.graphics.draw(
 			self.compass,
-			SCREEN_WIDTH-60,
-			SCREEN_HEIGHT-60,
+			self.scissorWidth - 60,
+			self.scissorHeight - 60,
 			math.atan2(self.x, self.y) + math.pi,
 			1, 1, 25, 25)
     love.graphics.setScissor()

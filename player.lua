@@ -127,7 +127,7 @@ function Player:mousepressed(button)
 				team = self.ship.corePart:getTeam()
 			end
 			if team then
-				self.build = Building.create(world, team)
+				self.build = Building.create(world, team, self.camera)
 			end
 		end
 			if self.build and self.build:pressed(cursorX, cursorY) then

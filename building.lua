@@ -5,7 +5,7 @@ local Screen = require("screen")
 local Building = {}
 Building.__index = Building
 
-function Building.create(world, team)
+function Building.create(world, team, camera)
 	local self = {}
 	setmetatable(self, Building)
 
@@ -15,6 +15,7 @@ function Building.create(world, team)
 	self.curve2Image = love.graphics.newImage("res/images/buildingcurve2.png")
 	self.world = world
 	self.team = team
+	self.camera = camera
 
 	-- What are we selecting?
 	-- 1 = the structure to annex
@@ -126,12 +127,12 @@ function Building:draw(mouseWorldX, mouseWorldY)
 		local offsetX, offsetY -- move the cursor the side that we are selecting
 		local angle = self.annexeePartSide * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
-		Screen.draw(
-			self.pointerImage,
-			x + offsetX,
-			y + offsetY,
-			angle, 
-			1, 1, self.pointerWidth/2, self.pointerWidth/2
+		self.camera:draw(
+						 self.pointerImage,
+						 x + offsetX,
+						 y + offsetY,
+						 angle, 
+						 1, 1, self.pointerWidth/2, self.pointerWidth/2
 		)
 	end
 	if self.mode == 4 and self.structurePart.connectableSides[self.structurePartSide] then
@@ -139,7 +140,7 @@ function Building:draw(mouseWorldX, mouseWorldY)
 		local offsetX, offsetY -- move the cursor the side that we are selecting
 		local angle = self.structurePartSide * math.pi/2 + partAngle
 		offsetX, offsetY = Util.vectorComponents(10, angle)
-		Screen.draw(
+		self.camera:draw(
 			self.pointerImage,
 			x + offsetX,
 			y + offsetY,
@@ -177,7 +178,7 @@ function Building:drawCircle(centerX, centerY, angle, highlightedSide, connectab
 			--	centerX + offsetX,
 			--	-centerY + offsetY,
 			--	radius, -(beginAngle + angle), -(endAngle + angle), 30)
-			Screen.draw(curve, centerX, centerY, angle + ( i * math.pi/2 )  + math.pi/4)
+			self.camera:draw(curve, centerX, centerY, angle + ( i * math.pi/2 )  + math.pi/4)
 		end
 	end
 

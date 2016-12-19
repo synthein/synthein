@@ -59,9 +59,6 @@ function LoadGameMenu.mousepressed(x, y, mouseButton)
 		local index = math.floor(yRef/75)
 		local remainder = yRef % 75
 
-		print(index)
-		print(buttons[index])
-
 		loadGameChoice = buttons[index]
 	else
 		return MainMenu

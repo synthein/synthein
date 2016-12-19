@@ -19,6 +19,7 @@ function PlayerBlock.create()
 	self.gun = true
 	self.recharge = false
 	self.rechargeStart = 0
+	self.healTime = 10
 	self.orders = {}
 
 	self.isPlayer = true
@@ -44,6 +45,13 @@ function PlayerBlock:shot()
 end
 
 function PlayerBlock:update(dt)
+	self.healTime = self.healTime - dt
+	if self.healTime <= 0 then
+		self.healTime = self.healTime + 10
+		if self.health < 10 then
+			self.health = self.health + 1
+		end
+	end
 	if self.recharge then
 		self.rechargeStart = self.rechargeStart + dt
 		if self.rechargeStart > 0.5 then

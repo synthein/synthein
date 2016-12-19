@@ -41,7 +41,7 @@ function InGame.update(dt)
 			players[1].camera:setY(players[1].ship.body:getY())
 		end
 
-		players[1]:handleInput(Screen.camera:getPosition())
+		players[1]:handleInput(players[1].camera:getPosition())
 		world:update(dt)
 
 		eventTime = eventTime + dt

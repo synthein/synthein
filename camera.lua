@@ -88,8 +88,8 @@ function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
 			end
 			love.graphics.arc("line", "open", centerX, centerY, 
 				math.ceil(3.5*size),
-				- Camera.circleMenuAngle + math.pi * (-0.5 + ((i-1)*2-1)/Camera.circleMenuDivivsion),
-				- Camera.circleMenuAngle + math.pi * (-0.5 + ((i)*2-1)/Camera.circleMenuDivivsion), 5*size)
+				- angle + math.pi * (-0.5 + ((i-1)*2-1)/#strength),
+				- angle + math.pi * (-0.5 + ((i)*2-1)/#strength), 5*size)
 		end
 	end	
 	love.graphics.setColor(255, 255, 255, 255)

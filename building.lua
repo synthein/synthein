@@ -151,36 +151,22 @@ function Building:draw(mouseWorldX, mouseWorldY)
 end
 
 function Building:drawCircle(centerX, centerY, angle, highlightedSide, connectableSides)
-	love.graphics.setLineWidth(10)
-	local radius = 35
-	local gap = 2
-	local curve
+	strength = {}
 	for i = 1, 4 do
 		if connectableSides[i] then
 			if i == highlightedSide then
-				curve = self.curve2Image
-			--	love.graphics.setColor(68, 112, 186, 192)
+				table.insert(strength, 2)
 			else
-				curve = self.curve1Image
-			--	love.graphics.setColor(22, 65, 138, 192)
+				table.insert(strength, 1)
 			end
-
-			--            |               | offset by 45° | line up with part side 1 |
-			--beginAngle =  ( i * math.pi/2 )  - math.pi/4
-			--middleAngle = ( i * math.pi/2 )
-			--endAngle =    ( i * math.pi/2 )  + math.pi/4
-
-			-- Push the arcs out to make a gap between them.
-			--offsetX, offsetY = Util.vectorComponents(gap, -(middleAngle + angle))
-
-			--love.graphics.arc(
-			--	"line", "open",
-			--	centerX + offsetX,
-			--	-centerY + offsetY,
-			--	radius, -(beginAngle + angle), -(endAngle + angle), 30)
-			self.camera:draw(curve, centerX, centerY, angle + ( i * math.pi/2 )  + math.pi/4)
+		else
+			table.insert(strength, 0)
 		end
 	end
+	strengthX = strength[2]
+	strength[2] = strength[4]
+	strength[4] = strengthX
+	self.camera:drawCircleMenu(centerX, centerY, angle, 10, strength)
 
 	love.graphics.setColor(255, 255, 255)
 end

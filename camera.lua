@@ -31,9 +31,9 @@ function Camera:setY(newY)
 	self.y = newY
 end
 
-function Camera:getCursorCoords(X, Y)
-	cursorCoordX =   X - self.scissorWidth /2  + self.x
-	cursorCoordY = -(Y - self.scissorHeight/2) + self.y
+function Camera:getCursorCoords(x, y)
+	cursorCoordX = x - self.scissorWidth/2 - self.scissorX + self.x
+	cursorCoordY = -(y - self.scissorHeight/2 - self.scissorY) + self.y
 	return cursorCoordX, cursorCoordY
 end
 

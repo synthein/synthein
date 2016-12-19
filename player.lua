@@ -118,7 +118,7 @@ function Player:handleInput()
 	end
 end
 
-function Player:mousepressed(button)
+function Player:buttonpressed(button)
 	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
 		if not self.build then
@@ -159,7 +159,7 @@ function Player:mousepressed(button)
 	end
 end
 
-function Player:mousereleased(button)
+function Player:buttonreleased(button)
 	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
 		if self.build then

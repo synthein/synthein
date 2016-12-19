@@ -37,8 +37,8 @@ function InGame.update(dt)
 		-- Update the game world.
 		Structure.physics:update(dt)
 		if players[1].ship then
-			Screen.camera:setX(players[1].ship.body:getX())
-			Screen.camera:setY(players[1].ship.body:getY())
+			players[1].camera:setX(players[1].ship.body:getX())
+			players[1].camera:setY(players[1].ship.body:getY())
 		end
 
 		players[1]:handleInput(Screen.camera:getPosition())

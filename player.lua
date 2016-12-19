@@ -119,7 +119,7 @@ function Player:handleInput()
 end
 
 function Player:mousepressed(button)
-	cursorX, cursorY = Screen.getCursorCoords(self.cursorX, self.cursorY)
+	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
 		if not self.build then
 			local team
@@ -160,7 +160,7 @@ function Player:mousepressed(button)
 end
 
 function Player:mousereleased(button)
-	cursorX, cursorY = Screen.getCursorCoords(self.cursorX, self.cursorY)
+	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
 		if self.build then
 			if self.build:released(cursorX, cursorY) then
@@ -171,7 +171,7 @@ function Player:mousereleased(button)
 end
 
 function Player:draw()
-	cursorX, cursorY = Screen.getCursorCoords(self.cursorX, self.cursorY)
+	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
 	if self.build then
 		self.build:draw(cursorX, cursorY)
 	end

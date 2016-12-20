@@ -8,7 +8,7 @@ Synthein (working title) is a game about blowing up space ships and using their 
 *  Enemies spawn at random.
 *  AI allies can follow you and attack nearby enemies.
 
-### Planned Features
+### Planned Features [![Stories in Ready](https://badge.waffle.io/xordspar0/synthein.png?label=ready&title=Ready)](http://waffle.io/xordspar0/synthein)
 
 *  AI allies that you can give orders to (follow, guard, patrol)
 *  a customizable automated base

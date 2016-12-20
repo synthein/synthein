@@ -1,18 +1,21 @@
-local Building = require("building")
 local Util = require("util")
 local World = require("world")
 local Screen = require("screen")
+local Selection = require("selection")
 
 local Player = {}
 Player.__index = Player
 
-function Player.create(controls, structure)
+function Player.create(world, controls, structure)
 	local self = {}
 	setmetatable(self, Player)
 
+	self.world = world
+	self.controls = controls
 	self.ship = structure
 	self.camera = Screen.createCamera()
-	self.controls = controls
+	self.selected = Selection.create(world, self.ship.corePart:getTeam(),
+									self.camera)
 
 	self.selection = nil
 	self.cancelKeyDown = false
@@ -23,7 +26,6 @@ function Player.create(controls, structure)
 	self.partY = nil
 	self.cursorX = 0
 	self.cursorY = 0
-	self.build = nil
 
 	return self
 end
@@ -121,19 +123,7 @@ end
 function Player:mousepressed(button)
 	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
-		if not self.build then
-			local team
-			if self.ship and self.ship.corePart then
-				team = self.ship.corePart:getTeam()
-			end
-			if team then
-				self.build = Building.create(world, team, self.camera)
-			end
-		end
-			if self.build and self.build:pressed(cursorX, cursorY) then
-				self.build = nil
-			end
-
+		self.selected:pressed(cursorX, cursorY)
 	end
 	if button == 2 then
 		if self.build then
@@ -143,17 +133,17 @@ function Player:mousepressed(button)
 			if self.ship and self.ship.corePart then
 				team = self.ship.corePart:getTeam()
 			end
-			local structure, part = world:getStructure(cursorX, cursorY)
+			local structure, partIndex = world:getStructure(cursorX, cursorY)
 			local structureTeam
 			if structure and structure.corePart then
 				structureTeam = structure.corePart:getTeam()
 			end
 			if structureTeam and team and structureTeam ~= team then
 				structure = nil
-				part = nil
+				partIndex = nil
 			end
-			if structure and part then
-				world:removeSection(structure, part)
+			if structure and partIndex then
+				world:removeSection(structure, partIndex)
 			end
 		end
 	end
@@ -162,18 +152,14 @@ end
 function Player:mousereleased(button)
 	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
 	if button == 1 then
-		if self.build then
-			if self.build:released(cursorX, cursorY) then
-				self.build = nil
-			end
-		end
+		self.selected:released(cursorX, cursorY)
 	end
 end
 
 function Player:draw()
 	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
-	if self.build then
-		self.build:draw(cursorX, cursorY)
+	if self.selected then
+		self.selected:draw(cursorX, cursorY)
 	end
 end
 

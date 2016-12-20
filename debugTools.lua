@@ -89,17 +89,13 @@ function Debug.keyboard(key, cameraX, cameraY)
 	elseif key == "1" then
 		-- Team 1
 		table.insert(Debug.world.structures,
-			Structure.create(AIBlock.create(),
+			Structure.create(AIBlock.create(1),
 			{cameraX - 200, cameraY + 200}))
-		table.insert(world.ais,
-			AI.create(Debug.world.structures[#Debug.world.structures], 1))
 	elseif key == "2" then
 		-- Team 2
 		table.insert(Debug.world.structures,
-			Structure.create(AIBlock.create(),
+			Structure.create(AIBlock.create(2),
 			{cameraX + 200, cameraY + 200}))
-		table.insert(world.ais,
-			AI.create(Debug.world.structures[#Debug.world.structures], 2))
 	elseif key == "3" then
 		-- Team 3, etc.
 

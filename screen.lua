@@ -17,16 +17,18 @@ end
 
 function Screen.arrange()
 	local n = #Screen.cameras
-	local screenArea = SCREEN_WIDTH * SCREEN_HEIGHT
+	local screenWidth = love.graphics.getWidth()
+	local screenHeight = love.graphics.getHeight()
+	local screenArea = screenWidth * screenHeight
 	local cameraArea = screenArea / n
-	local columns = math.ceil(SCREEN_WIDTH/math.sqrt(cameraArea)-0.5)
+	local columns = math.ceil(screenWidth/math.sqrt(cameraArea)-0.5)
 	local rows = math.ceil(n/columns)
-	local cameraWidth  = math.floor(SCREEN_WIDTH/columns)
-	local cameraHeight = math.floor(SCREEN_HEIGHT/rows)
+	local cameraWidth  = math.floor(screenWidth/columns)
+	local cameraHeight = math.floor(screenHeight/rows)
 	for i, camera in ipairs(Screen.cameras) do
-		local x = (i-1)%columns 
+		local x = (i-1)%columns
 		local y = (i-x -1)/columns
-		camera:setScissor(x*cameraWidth, y*cameraHeight, 
+		camera:setScissor(x*cameraWidth, y*cameraHeight,
 						  cameraWidth, cameraHeight)
 	end
 end

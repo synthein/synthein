@@ -31,6 +31,14 @@ function AIBlock:getOrders(location, playerLocation, aiData)
 	return self.ai:getOrders(location, playerLocation, aiData)
 end
 
+function AIBlock:getMenu()
+	return self.ai:getMenu()
+end
+
+function AIBlock:runMenu(i)
+	return self.ai:runMenu(i)
+end
+
 function AIBlock:update()
 end
 

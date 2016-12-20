@@ -1,4 +1,5 @@
 local Building = require("building")
+local Util = require("util")
 
 local Selection = {}
 Selection.__index = Selection
@@ -35,6 +36,13 @@ function Selection:pressed(cursorX, cursorY)
 			end
 		else
 			if structure.corePart then
+				local corePart = structure.corePart
+				if corePart == structure.parts[partIndex] then
+					if corePart:getTeam() == self.team and corePart.ai then
+						self.structure = structure
+						self.partIndex = partIndex
+					end
+				end
 			else
 				self.build = Building.create(self.world, self.camera)
 				self.build:setAnnexee(structure, partIndex)
@@ -51,14 +59,22 @@ function Selection:released(cursorX, cursorY)
 				self.structure:withinPart(self.partIndex, cursorX, cursorY)
 		local x, y, angle = self.structure:getAbsPartCoords(self.partIndex)
 		if not withinPart then
-			self.structure = nil
-			self.partSide = nil
 			if self.build then
 				if self.build:setSide(partSide) then
 					self.build = nil
 				end
 			else
-				--run selected task
+				local strength = self.structure.parts[self.partIndex]:getMenu()
+				local i
+				i = math.floor(((newAngle/math.pi%2 + 0.5) * #strength + 1)/2)
+				self.structure.parts[self.partIndex]:runMenu(i)
+			end
+			self.structure = nil
+			self.partSide = nil
+		else
+			if not self.build then
+				self.structure = nil
+				self.partSide = nil
 			end
 		end
 	end
@@ -69,10 +85,19 @@ function Selection:draw(cursorX, cursorY)
 		local withinPart, partSide =
 				self.structure:withinPart(self.partIndex, cursorX, cursorY)
 		local x, y, angle = self.structure:getAbsPartCoords(self.partIndex)
+		local strength = nil
 		if self.build then
-			local strength = Building.getStrengthTable(self.structure, 
+			strength = Building.getStrengthTable(self.structure, 
 													   self.partIndex,
 													   partSide)
+		else
+			angle = 0
+			strength = self.structure.parts[self.partIndex]:getMenu()
+			newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
+			local i = math.floor(((newAngle/math.pi%2 + 0.5) * #strength + 1)/2)
+			if strength[i] == 1 then
+				strength[i] = 2
+			end
 		end
 		if strength then
 			self.camera:drawCircleMenu(x, y, angle, 10, strength)

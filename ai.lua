@@ -91,6 +91,18 @@ function AI:getOrders(location, aiData)
 	return orders
 end
 
+function AI:getMenu()
+	return {1, 1}
+end
+
+function AI:runMenu(i)
+	if i == 1 then
+		self.follow = true
+	elseif i == 2 then
+		self.follow = false
+	end
+end
+
 function AI:update(dt)
 end
 

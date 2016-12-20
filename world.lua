@@ -33,27 +33,27 @@ end
 --Also return the side of the part that is closed if there is a part.
 function World:getStructure(locationX, locationY)
 	for i, structure in ipairs(self.structures) do
-		local part, partSide = structure:getPartIndex(locationX, locationY)
-		if part and partSide then
-			return structure, part, partSide
+		local partIndex, partSide = structure:getPartIndex(locationX, locationY)
+		if partIndex and partSide then
+			return structure, partIndex, partSide
 		end
 	end
 end
 
 --Removes a section of a structure and saves the new structure.
-function World:removeSection(structure, part)
-	if part.type == "generic" then
-		local newStructure = structure:removeSection(part)
+function World:removeSection(structure, partIndex)
+	if structure.parts[partIndex].type == "generic" then
+		local newStructure = structure:removeSection(partIndex)
 		table.insert(self.structures, newStructure)
 	end
 end
 
 --Merges two structures.
 --Any overlapping parts from the annexee are placed in new structures.
-function World:annex(annexee, annexeePart, annexeePartSideClicked, annexeeIndex,
-					 structure, structurePart, structurePartSideClicked)
-	local newStructures = structure:annex(annexee, annexeePart, annexeePartSideClicked,
-	                structurePart, structurePartSideClicked)
+function World:annex(annexee, annexeePartIndex, annexeePartSide,
+					 structure, structurePartIndex, structurePartSide)
+	local newStructures = structure:annex(annexee, annexeePartIndex,
+					annexeePartSide, structurePartIndex, structurePartSide)
 	for i = 1,#newStructures do
 		table.insert(self.structures, newStructures[1])
 	end
@@ -68,10 +68,9 @@ end
 
 --Applies damage to a part.
 --If the part is Destroyed then it creates a particle effect.
-function World:partDamage(structure, part)
-	part:takeDamage()
-	if part.destroy then
-		local partIndex = structure:findPart(part)
+function World:partDamage(structure, partIndex)
+	structure.parts[partIndex]:takeDamage()
+	if structure.parts[partIndex].destroy then
 		x, y = structure:getAbsPartCoords(partIndex)
 		table.insert(self.particles, Particles.newExplosion(x, y))
 		structure:removePart(partIndex)
@@ -113,16 +112,16 @@ function World:update(dt)
 	-- Update the shots.
 	for i=#self.shots,1,-1 do
 		shotX, shotY, shotTime = self.shots[i]:update(dt)
-		local structureHit, partHit = self:getStructure(shotX,shotY)
+		local structureHit, partIndexHit = self:getStructure(shotX,shotY)
 		local hit =
 			structureHit and
 			structureHit ~= self.shots[i].sourceStructure and
-			partHit and
-			partHit ~= self.shots[i].sourcePart
+			partIndexHit and
+			structureHit.parts[partIndexHit] ~= self.shots[i].sourcePart
 		if self.shots[i].destroy == true or hit then
 			table.remove(self.shots, i)
 			if hit then
-				self:partDamage(structureHit, partHit)
+				self:partDamage(structureHit, partIndexHit)
 			end
 		end
 	end

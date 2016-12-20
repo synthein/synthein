@@ -13,7 +13,7 @@ function InitWorld.init(scene, ifSave)
 	local players = {}
 	for i,ship in ipairs(ships) do
 		if ifPlayer[i] then
-			table.insert(players, Player.create(Controls.defaults.keyboard, ship))
+			table.insert(players, Player.create(world, Controls.defaults.keyboard, ship))
 		end
 	end
 

@@ -84,17 +84,17 @@ function Structure:destroy()
 -- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
 -- side is the side of structurePart to add the annexee to
-function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
-	                     structureSide)
-	local aIndex = annexee:findPart(annexeePart)
-	local bIndex = self:findPart(structurePart)
-	annexeeSide = (annexeeSide + annexee.partOrient[aIndex] - 2) % 4 + 1
+function Structure:annex(annexee, annexeePartIndex, annexeePartSide,
+				structurePartIndex, structurePartSide)
+	local aIndex = annexeePartIndex
+	local bIndex = structurePartIndex
+	annexeeSide = (annexeePartSide + annexee.partOrient[aIndex] - 2)%4 + 1
 	local newStructures = {}
 	local structureOffsetX, structureOffsetY
 	if bIndex ~= 0 then
 		structureOffsetX = self.partCoords[bIndex].x
 		structureOffsetY = self.partCoords[bIndex].y
-		structureSide = (structureSide + self.partOrient[bIndex] - 2) % 4 + 1
+		structureSide = (structurePartSide + self.partOrient[bIndex] - 2)%4 + 1
 	else
 		structureOffsetX = 0
 		structureOffsetY = 0
@@ -110,7 +110,7 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 		structureOffsetX = structureOffsetX + 1
 	end
 
-	local annexeeOrientation = (structureSide - annexeeSide - 2) % 4 +1
+	local annexeeOrientation = (structureSide - annexeePartSide - 2) % 4 +1
 
 			local annexeeX = annexee.partCoords[aIndex].x
 			local annexeeY = annexee.partCoords[aIndex].y
@@ -162,14 +162,14 @@ function Structure:annex(annexee, annexeePart, annexeeSide, structurePart,
 	return newStructures
 end
 
-function Structure:removeSection(part)
+function Structure:removeSection(index)
 	--If there is only one block in the structure then esacpe.
-	if part == self.corePart then
+	if self.parts[index] == self.corePart or #self.parts == 1 then
 		return nil
 	end
-	local index = self:findPart(part)
+	local part = self.parts[index]
 	local x, y , angle = self:getAbsPartCoords(index)
-	self:removePart(part)
+	self:removePart(index)
 	return Structure.create(part, {x, y, angle})
 end
 
@@ -327,7 +327,7 @@ function Structure:getPartIndex(locationX, locationY)
 	for i,part in ipairs(self.parts) do
 		local inside, partSide = self:withinPart(i, locationX, locationY)
 		if inside then
-			return part, partSide
+			return i, partSide
 		end
 	end
 end

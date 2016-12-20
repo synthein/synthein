@@ -8,6 +8,7 @@ function AI.create(team)
 	setmetatable(self, AI)
 
 	self.team = team
+	self.follow = true
 
 	return self
 end
@@ -61,7 +62,7 @@ function AI:getOrders(location, aiData)
 		angleToPlayer = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
 	end
 	local orders = {}
-	if self.team == 1 and playerX and playerY and 
+	if self.team == 1 and playerX and playerY and self.follow and
 	   Util.vectorMagnitude(playerX - aiX, playerY - aiY) > 20 * 20 then
 		if angleToPlayer < -math.pi/10 then
 			table.insert(orders, "right")
@@ -79,7 +80,8 @@ function AI:getOrders(location, aiData)
 			table.insert(orders, "shoot")
 		end
 		if self.team ~= 1 then
-			if Util.vectorMagnitude(targetX - aiX, targetY - aiY) > 15 * 20 then
+			if Util.vectorMagnitude(targetX - aiX, targetY - aiY) > 15 * 20 and 
+				self.follow then
 				table.insert(orders, "forward")
 			elseif Util.vectorMagnitude(targetX - aiX, targetY - aiY) < 10 * 20 then
 				table.insert(orders, "backward")

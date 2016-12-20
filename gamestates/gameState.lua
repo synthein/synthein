@@ -16,4 +16,7 @@ end
 function GameState.mousereleased()
 end
 
+function GameState.resize()
+end
+
 return GameState

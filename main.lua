@@ -53,3 +53,7 @@ function love.mousereleased(x, y, button, istouch)
 		state = newState
 	end
 end
+
+function love.resize(w, h)
+	state.resize(w, h)
+end

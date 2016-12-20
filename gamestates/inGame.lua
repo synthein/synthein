@@ -209,4 +209,8 @@ function InGame.mousereleased(x, y, button)
 	return InGame
 end
 
+function InGame.resize(w, h)
+	Screen.arrange()
+end
+
 return InGame

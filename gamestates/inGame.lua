@@ -36,13 +36,17 @@ function InGame.update(dt)
 	else
 		-- Update the game world.
 		Structure.physics:update(dt)
-		if players[1].ship then
-			players[1].camera:setX(players[1].ship.body:getX())
-			players[1].camera:setY(players[1].ship.body:getY())
-		end
-
-		players[1]:handleInput(players[1].camera:getPosition())
 		world:update(dt)
+
+		-- Send input to the players.
+		for i, player in ipairs(players) do
+			if player.ship then
+				player.camera:setX(player.ship.body:getX())
+				player.camera:setY(player.ship.body:getY())
+			end
+
+			player:handleInput(player.camera:getPosition())
+		end
 
 		eventTime = eventTime + dt
 		second = second + dt
@@ -159,7 +163,7 @@ end
 function InGame.mousepressed(x, y, mouseButton)
 	players[1].cursorX = x
 	players[1].cursorY = y
-	players[1]:mousepressed(mouseButton)
+	players[1]:buttonpressed(mouseButton)
 
 	if menuOpen then
 		if mouseButton == 1 then
@@ -192,9 +196,11 @@ function InGame.mousepressed(x, y, mouseButton)
 end
 
 function InGame.mousereleased(x, y, button)
-	players[1].cursorX = x
-	players[1].cursorY = y
-	players[1]:mousereleased(button)
+	for i, player in ipairs(players) do
+		player.cursorX = x
+		player.cursorY = y
+		player:buttonreleased(button)
+	end
 
 	if debugmode == true then
 		Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)

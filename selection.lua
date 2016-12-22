@@ -65,9 +65,9 @@ function Selection:released(cursorX, cursorY)
 				end
 			else
 				local strength = self.structure.parts[self.partIndex]:getMenu()
-				local i
-				i = math.floor(((newAngle/math.pi%2 + 0.5) * #strength + 1)/2)
-				self.structure.parts[self.partIndex]:runMenu(i)
+				local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
+				local index = self:angleToIndex(newAngle, #strength)
+				self.structure.parts[self.partIndex]:runMenu(index)
 			end
 			self.structure = nil
 			self.partSide = nil
@@ -78,6 +78,11 @@ function Selection:released(cursorX, cursorY)
 			end
 		end
 	end
+end
+
+function Selection:angleToIndex(angle, length)
+	local index = math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
+	return index
 end
 
 function Selection:draw(cursorX, cursorY)
@@ -93,10 +98,10 @@ function Selection:draw(cursorX, cursorY)
 		else
 			angle = 0
 			strength = self.structure.parts[self.partIndex]:getMenu()
-			newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
-			local i = math.floor(((newAngle/math.pi%2 + 0.5) * #strength + 1)/2)
-			if strength[i] == 1 then
-				strength[i] = 2
+			local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
+			local index = self:angleToIndex(newAngle, #strength)
+			if strength[index] == 1 then
+				strength[index] = 2
 			end
 		end
 		if strength then

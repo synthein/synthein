@@ -92,13 +92,13 @@ function AI:getOrders(location, aiData)
 end
 
 function AI:getMenu()
-	return {1, 1}
+	return {1, 0, 0, 1, 0, 0}
 end
 
 function AI:runMenu(i)
 	if i == 1 then
 		self.follow = true
-	elseif i == 2 then
+	elseif i == 4 then
 		self.follow = false
 	end
 end

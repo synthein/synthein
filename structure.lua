@@ -173,6 +173,119 @@ function Structure:removeSection(index)
 	return Structure.create(part, {x, y, angle})
 end
 
+function Structure:testConnection()
+	local xMin = 0
+	local xMax = 0
+	local yMin = 0
+	local yMax = 0
+	for i,part in ipairs(self.parts) do
+		local x = self.partCoords[i].x
+		local y = self.partCoords[i].y
+		if x < xMin then
+			xMin = x
+		elseif x > xMax then
+			xMax = x
+		end
+		if y < yMin then
+			yMin = y
+		elseif y > yMax then
+			yMax = y
+		end
+	end
+	partsLayout = {}
+	for i = 1,(yMax-yMin+1) do
+		table.insert(partsLayout,{})
+		for j = 1,(xMax-xMin+1) do
+			table.insert(partsLayout[i], {0, 0, 0})
+		end
+	end
+	for i,part in ipairs(self.parts) do
+		local x = self.partCoords[i].x
+		local y = self.partCoords[i].y
+		partsLayout[y - yMin + 1][x - xMin + 1] = {i, 0, 0}
+	end
+	if self.corePart then
+		for i,part in ipairs(self.parts) do
+			if corePart == Part then
+				index = i
+			end
+		end
+	else
+		index = 1
+	end
+
+	local x = self.partCoords[index].x
+	local y = self.partCoords[index].y
+	partsLayout[y - yMin + 1][x - xMin + 1][2] = 1
+	partsLayout[y - yMin + 1][x - xMin + 1][3] = 1
+
+	local structureIndex = 1
+	local checkParts = {index}
+	while #checkParts ~= 0 do
+		local partIndex = checkParts[#checkParts]
+		table.remove(checkParts, #checkParts)
+		for i = 1,4 do
+			if self.parts[partIndex].connectableSides[i] then
+				x = self.partCoords[partIndex].x
+				y = self.partCoords[partIndex].y
+				if i == 1 then
+					y = y + 1
+				elseif i == 2 then
+					x = x - 1
+				elseif i == 3 then
+					y = y - 1
+				elseif i == 4 then
+					x = x + 1
+				end
+				x1 = x - xMin + 1
+				y1 = y - yMin + 1
+				local part, side, newIndex, state
+				if partsLayout[y1] and partsLayout[y1][x1] then
+					newIndex = partsLayout[y1][x1][1]
+					state = partsLayout[y1][x1][2]
+				end
+				if newIndex and newIndex ~= 0 and state == 0 then
+					part = self.parts[newIndex]
+					side = (i - self.partOrient[newIndex] + 2) % 4 + 1
+				end
+				if part and side and part.connectableSides[side] then
+					table.insert(checkParts, newIndex)
+					partsLayout[y1][x1][2] = 1
+					partsLayout[y1][x1][3] = structureIndex			
+				end
+			end
+		end
+		
+		if #checkParts == 0 then
+			for i in ipairs (self.parts) do
+				partIndex = i
+				x = self.partCoords[partIndex].x
+				y = self.partCoords[partIndex].y
+				x1 = x - xMin + 1
+				y1 = y - yMin + 1
+				if partsLayout[y1][x1][2] == 0 then
+					table.insert(checkParts, partIndex)
+					structureIndex = structureIndex + 1
+					partsLayout[y1][x1][2] = 1
+					partsLayout[y1][x1][3] = structureIndex
+					break
+				end
+			end
+		end
+	end
+
+	local partList = {}
+	for i in ipairs (self.parts) do
+		x = self.partCoords[i].x
+		y = self.partCoords[i].y
+		x1 = x - xMin + 1
+		y1 = y - yMin + 1
+		table.insert(partList, partsLayout[y1][x1][3])
+	end
+
+	return partList
+end
+
 -- Add one part to the structure.
 -- x, y are the coordinates in the structure.
 -- orientation is the orientation of the part according to the structure.
@@ -350,6 +463,7 @@ function Structure:withinPart(partIndex, locationX, locationY)
 end
 
 function Structure:update(dt, playerLocation, aiData)
+	self:testConnection()
 	if self.corePart then
 		self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
 	end

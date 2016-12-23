@@ -74,6 +74,34 @@ function World:partDamage(structure, partIndex)
 		x, y = structure:getAbsPartCoords(partIndex)
 		table.insert(self.particles, Particles.newExplosion(x, y))
 		structure:removePart(partIndex)
+		if structure.isDestroyed then
+			return
+		end
+		local partList = structure:testConnection()
+		local structureList = {}
+		local coordsList = {}
+		for i = #partList,1,-1 do
+			if partList[i] ~= 1 then
+				local partStructure = structureList[partList[i]]
+				if partStructure then
+					local partX = coordsList[partList[i]][1]
+					local partY = coordsList[partList[i]][2]
+					local partOrient = coordsList[partList[i]][3]
+					partStructure:annexPart(structure, i, partOrient,
+											partX, partY, 0, 0)
+				else
+					local partX = structure.partCoords[i].x
+					local partY = structure.partCoords[i].y
+					local partOrient = (-structure.partOrient[i] + 1) % 4 + 1
+					coordsList[partList[i]] = {partX, partY, partOrient}
+					local x, y, angle = structure:getAbsPartCoords(i)
+					structureList[partList[i]] =
+							self:createStructure(structure.parts[i], 
+												 {x, y, angle})
+					structure:removePart(i)
+				end
+			end
+		end
 	end
 end
 

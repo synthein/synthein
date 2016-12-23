@@ -116,50 +116,60 @@ function Structure:annex(annexee, annexeePartIndex, annexeePartSide,
 			local annexeeY = annexee.partCoords[aIndex].y
 
 	for i=1,#annexee.parts do
-		local x, y
-		local annexeeOffsetX = annexee.partCoords[1].x - annexeeX
-		local annexeeOffsetY = annexee.partCoords[1].y - annexeeY
-
-		if annexeeOrientation == 1 then
-			x = structureOffsetX + annexeeOffsetX
-			y = structureOffsetY + annexeeOffsetY
-		elseif annexeeOrientation == 2 then
-			x = structureOffsetX - annexeeOffsetY
-			y = structureOffsetY + annexeeOffsetX
-		elseif annexeeOrientation == 3 then
-			x = structureOffsetX - annexeeOffsetX
-			y = structureOffsetY - annexeeOffsetY
-		elseif annexeeOrientation == 4 then
-			x = structureOffsetX + annexeeOffsetY
-			y = structureOffsetY - annexeeOffsetX
-		end
-
-		-- Find out the orientation of the part based on the orientation of
-		-- both structures.
-		local partOrientation = annexeeOrientation + annexee.partOrient[1] - 1
-		-- Make sure partOrientation is between 1 and 4
-		while partOrientation > 4 do
-			partOrientation = partOrientation - 4
-		end
-		while partOrientation < 1 do
-			partOrientation = partOrientation + 4
-		end
-
-		local partThere = false
-		for i, part in ipairs(self.parts) do
-			if self.partCoords[i].x == x and self.partCoords[i].y == y then
-				partThere = true
-			end
-		end
-		if partThere then
-			table.insert(newStructures, Structure.create(annexee.parts[1],
-						 {annexee:getAbsPartCoords(1)}))
-		else
-			self:addPart(annexee.parts[1], x, y, partOrientation)
-		end
-		annexee:removePart(annexee.parts[1])
+		newStructure = self:annexPart(annexee, 1, annexeeOrientation, 
+						annexeeX, annexeeY, structureOffsetX, structureOffsetY)
+		table.insert(newStructures, newStructure)
 	end
 	return newStructures
+end
+
+function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
+							 annexeeY, structureOffsetX, structureOffsetY)
+	local x, y
+	local annexeeOffsetX = annexee.partCoords[partIndex].x - annexeeX
+	local annexeeOffsetY = annexee.partCoords[partIndex].y - annexeeY
+	if annexeeOrientation == 1 then
+		x = structureOffsetX + annexeeOffsetX
+		y = structureOffsetY + annexeeOffsetY
+	elseif annexeeOrientation == 2 then
+		x = structureOffsetX - annexeeOffsetY
+		y = structureOffsetY + annexeeOffsetX
+	elseif annexeeOrientation == 3 then
+		x = structureOffsetX - annexeeOffsetX
+		y = structureOffsetY - annexeeOffsetY
+	elseif annexeeOrientation == 4 then
+		x = structureOffsetX + annexeeOffsetY
+		y = structureOffsetY - annexeeOffsetX
+	end
+
+	-- Find out the orientation of the part based on the orientation of
+	-- both structures.
+	local partOrientation = annexeeOrientation 
+						  + annexee.partOrient[partIndex] - 1
+	-- Make sure partOrientation is between 1 and 4
+	while partOrientation > 4 do
+		partOrientation = partOrientation - 4
+	end
+	while partOrientation < 1 do
+		partOrientation = partOrientation + 4
+	end
+
+	local partThere = false
+	for i, part in ipairs(self.parts) do
+		if self.partCoords[i].x == x and self.partCoords[i].y == y then
+			partThere = true
+			break
+		end
+	end
+	local newStructure
+	if partThere then
+		newStructure = Structure.create(annexee.parts[partIndex],
+								{annexee:getAbsPartCoords(partIndex)})
+	else
+		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
+	end
+	annexee:removePart(annexee.parts[partIndex])
+	return newStructure
 end
 
 function Structure:removeSection(index)
@@ -168,9 +178,19 @@ function Structure:removeSection(index)
 		return nil
 	end
 	local part = self.parts[index]
+	local partX = self.partCoords[index].x
+	local partY = self.partCoords[index].y
+	local partOrient = (-self.partOrient[index] + 1) % 4 + 1
 	local x, y , angle = self:getAbsPartCoords(index)
 	self:removePart(index)
-	return Structure.create(part, {x, y, angle})
+	local newStructure = Structure.create(part, {x, y, angle})
+	local partList = self:testConnection()
+	for i = #partList,1,-1 do
+		if partList[i] ~= 1 then
+			newStructure:annexPart(self, i, partOrient, partX, partY, 0, 0)
+		end
+	end
+	return newStructure
 end
 
 function Structure:testConnection()
@@ -206,14 +226,13 @@ function Structure:testConnection()
 	end
 	if self.corePart then
 		for i,part in ipairs(self.parts) do
-			if corePart == Part then
+			if self.corePart == part then
 				index = i
 			end
 		end
 	else
 		index = 1
 	end
-
 	local x = self.partCoords[index].x
 	local y = self.partCoords[index].y
 	partsLayout[y - yMin + 1][x - xMin + 1][2] = 1
@@ -463,7 +482,6 @@ function Structure:withinPart(partIndex, locationX, locationY)
 end
 
 function Structure:update(dt, playerLocation, aiData)
-	self:testConnection()
 	if self.corePart then
 		self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
 	end

@@ -34,9 +34,6 @@ end
 function InGame.update(dt)
 	if paused then
 	else
-		-- Update the game world.
-		Structure.physics:update(dt)
-		world:update(dt)
 
 		-- Send input to the players.
 		for i, player in ipairs(players) do
@@ -45,8 +42,12 @@ function InGame.update(dt)
 				player.camera:setY(player.ship.body:getY())
 			end
 
-			player:handleInput(player.camera:getPosition())
+			player:handleInput()
 		end
+
+		-- Update the game world.
+		Structure.physics:update(dt)
+		world:update(dt)
 
 		eventTime = eventTime + dt
 		second = second + dt

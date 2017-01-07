@@ -1,4 +1,5 @@
 local Util = require("util")
+local Controls = require("controls")
 local World = require("world")
 local Screen = require("screen")
 local Selection = require("selection")
@@ -37,12 +38,12 @@ function Player:handleInput()
 	if not self.cancelKeyDown then
 		-- Open the pause menu.
 		if menuOpen then
-			if love.keyboard.isDown(self.controls.cancel) then
+			if Controls.isDown(self.controls.cancel) then
 				menuOpen = false
 				self.cancelKeyDown = true
 			end
 
-		elseif love.keyboard.isDown(self.controls.cancel) then
+		elseif Controls.isDown(self.controls.cancel) then
 			-- If selection mode is not enabled, quit the game when the cancel key
 			-- is pressed.
 			if not self.selection then
@@ -54,7 +55,7 @@ function Player:handleInput()
 			self.cancelKeyDown = true
 		end
 
-	elseif not love.keyboard.isDown(self.controls.cancel) then
+	elseif not Controls.isDown(self.controls.cancel) then
 		self.cancelKeyDown = false
 	end
 
@@ -63,51 +64,9 @@ function Player:handleInput()
 	-----------------------
 	local orders = {}
 
-	if self.controls.joystick then
-		local joystick = self.controls.joystick
-
-		if joystick:isGamepadDown(self.controls.forward) then
-			table.insert(orders, "forward")
-		end
-		if joystick:isGamepadDown(self.controls.back) then
-			table.insert(orders, "back")
-		end
-		if joystick:isGamepadDown(self.controls.left) then
-			table.insert(orders, "left")
-		end
-		if joystick:isGamepadDown(self.controls.right) then
-			table.insert(orders, "right")
-		end
-		if joystick:isGamepadDown(self.controls.strafeLeft) then
-			table.insert(orders, "strafeLeft")
-		end
-		if joystick:isGamepadDown(self.controls.strafeRight) then
-			table.insert(orders, "strafeRight")
-		end
-		if joystick:isGamepadDown(self.controls.shoot) then
-			table.insert(orders, "shoot")
-		end
-	else
-		if love.keyboard.isDown(self.controls.forward) then
-			table.insert(orders, "forward")
-		end
-		if love.keyboard.isDown(self.controls.back) then
-			table.insert(orders, "back")
-		end
-		if love.keyboard.isDown(self.controls.left) then
-			table.insert(orders, "left")
-		end
-		if love.keyboard.isDown(self.controls.right) then
-			table.insert(orders, "right")
-		end
-		if love.keyboard.isDown(self.controls.strafeLeft) then
-			table.insert(orders, "strafeLeft")
-		end
-		if love.keyboard.isDown(self.controls.strafeRight) then
-			table.insert(orders, "strafeRight")
-		end
-		if love.keyboard.isDown(self.controls.shoot) then
-			table.insert(orders, "shoot")
+	for i, control in ipairs(self.controls.ship) do
+		if Controls.isDown(control) then
+			table.insert(orders, Controls.order(control))
 		end
 	end
 

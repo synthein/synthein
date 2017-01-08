@@ -1,5 +1,7 @@
 local Util = require("util")
 
+local zoom = .5
+
 local Camera = {}
 Camera.__index = Camera
 
@@ -32,8 +34,8 @@ function Camera:setY(newY)
 end
 
 function Camera:getCursorCoords(x, y)
-	cursorCoordX = x - self.scissorWidth/2 - self.scissorX + self.x
-	cursorCoordY = -(y - self.scissorHeight/2 - self.scissorY) + self.y
+	cursorCoordX = (x - self.scissorWidth/2 - self.scissorX)/zoom + self.x
+	cursorCoordY = -(y - self.scissorHeight/2 - self.scissorY)/zoom + self.y
 	return cursorCoordX, cursorCoordY
 end
 
@@ -48,9 +50,9 @@ function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
     love.graphics.setScissor(self.scissorX, self.scissorY,
 							 self.scissorWidth, self.scissorHeight)
 	love.graphics.draw(image,
-					    (x - self.x) + self.scissorX + self.scissorWidth/2,
-					   -(y - self.y) + self.scissorY + self.scissorHeight/2,
-					   -angle, sx, sy, ox, oy)
+					    zoom*(x - self.x) + self.scissorX + self.scissorWidth/2,
+					   -zoom*(y - self.y) + self.scissorY + self.scissorHeight/2,
+					   -angle, zoom*sx, zoom*sy, ox, oy)
     love.graphics.setScissor()
 end
 
@@ -69,10 +71,11 @@ end
 function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
     love.graphics.setScissor(self.scissorX, self.scissorY,
 							 self.scissorWidth, self.scissorHeight)
-	centerX = (centerX - self.x) + self.scissorX + self.scissorWidth/2
-	centerY = -(centerY - self.y) + self.scissorY + self.scissorHeight/2
+	centerX = zoom*(centerX - self.x) + self.scissorX + self.scissorWidth/2
+	centerY = -zoom*(centerY - self.y) + self.scissorY + self.scissorHeight/2
 	Camera.circleMenuX = centerX
 	Camera.circleMenuY = centerY
+	size = zoom * size
 	Camera.circleMenuAngle = angle
 	Camera.circleMenuSize = size
 	Camera.circleMenuDivivsion = #strength

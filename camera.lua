@@ -1,6 +1,6 @@
 local Util = require("util")
 
-local zoom = .5
+local zoom = 1
 
 local Camera = {}
 Camera.__index = Camera
@@ -89,12 +89,12 @@ function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
 			elseif color == 2 then
 				love.graphics.setColor(80, 128, 192, 192)
 			end
-			love.graphics.arc("line", "open", centerX, centerY, 
+			love.graphics.arc("line", "open", centerX, centerY,
 				math.ceil(3.5*size),
 				- angle + math.pi * (-0.5 + ((i-1)*2-1)/#strength),
 				- angle + math.pi * (-0.5 + ((i)*2-1)/#strength), 5*size)
 		end
-	end	
+	end
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setStencilTest()
     love.graphics.setScissor()
@@ -103,7 +103,7 @@ end
 function Camera:circleMenuStencilFunction()
 	love.graphics.setLineWidth(math.ceil(Camera.circleMenuSize/5))
 	for i = 1,Camera.circleMenuDivivsion do
-		local x, y = Util.vectorComponents(5 * Camera.circleMenuSize, 
+		local x, y = Util.vectorComponents(5 * Camera.circleMenuSize,
 						- Camera.circleMenuAngle
 						+ math.pi * (-0.5 + (i*2-1)/Camera.circleMenuDivivsion))
 		x = x + Camera.circleMenuX

@@ -34,8 +34,8 @@ function Structure.create(shipTable, location, data)
 	if shipTable.corePart then
 		if shipTable.corePart.type == "control" then
 			self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
-			self.body:setAngularDamping(1)
-			self.body:setLinearDamping(0.5)
+			self.body:setAngularDamping(0.25)
+			self.body:setLinearDamping(0.125)
 			self.type = "ship"
 		elseif shipTable.corePart.type == "anchor" then
 			self.body = love.physics.newBody(Structure.physics, x, y, "static")
@@ -116,7 +116,7 @@ function Structure:annex(annexee, annexeePartIndex, annexeePartSide,
 			local annexeeY = annexee.partCoords[aIndex].y
 
 	for i=1,#annexee.parts do
-		newStructure = self:annexPart(annexee, 1, annexeeOrientation, 
+		newStructure = self:annexPart(annexee, 1, annexeeOrientation,
 						annexeeX, annexeeY, structureOffsetX, structureOffsetY)
 		table.insert(newStructures, newStructure)
 	end
@@ -144,7 +144,7 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 
 	-- Find out the orientation of the part based on the orientation of
 	-- both structures.
-	local partOrientation = annexeeOrientation 
+	local partOrientation = annexeeOrientation
 						  + annexee.partOrient[partIndex] - 1
 	-- Make sure partOrientation is between 1 and 4
 	while partOrientation > 4 do
@@ -270,11 +270,11 @@ function Structure:testConnection()
 				if part and side and part.connectableSides[side] then
 					table.insert(checkParts, newIndex)
 					partsLayout[y1][x1][2] = 1
-					partsLayout[y1][x1][3] = structureIndex			
+					partsLayout[y1][x1][3] = structureIndex
 				end
 			end
 		end
-		
+
 		if #checkParts == 0 then
 			for i in ipairs (self.parts) do
 				partIndex = i

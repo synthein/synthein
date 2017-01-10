@@ -19,7 +19,7 @@ function Structure.create(shipTable, location, data)
 	self.parts = {}
 	self.partCoords = {}
 	self.partOrient = {}
-	self.fixtures = {}
+	self.joints = {}
 	if not shipTable.parts then
 		if shipTable.type == "generic" then
 			shipTable = {parts = {shipTable},
@@ -116,7 +116,7 @@ function Structure:annex(annexee, annexeePartIndex, annexeePartSide,
 			local annexeeY = annexee.partCoords[aIndex].y
 
 	for i=1,#annexee.parts do
-		newStructure = self:annexPart(annexee, 1, annexeeOrientation, 
+		newStructure = self:annexPart(annexee, 1, annexeeOrientation,
 						annexeeX, annexeeY, structureOffsetX, structureOffsetY)
 		table.insert(newStructures, newStructure)
 	end
@@ -144,7 +144,7 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 
 	-- Find out the orientation of the part based on the orientation of
 	-- both structures.
-	local partOrientation = annexeeOrientation 
+	local partOrientation = annexeeOrientation
 						  + annexee.partOrient[partIndex] - 1
 	-- Make sure partOrientation is between 1 and 4
 	while partOrientation > 4 do
@@ -270,11 +270,11 @@ function Structure:testConnection()
 				if part and side and part.connectableSides[side] then
 					table.insert(checkParts, newIndex)
 					partsLayout[y1][x1][2] = 1
-					partsLayout[y1][x1][3] = structureIndex			
+					partsLayout[y1][x1][3] = structureIndex
 				end
 			end
 		end
-		
+
 		if #checkParts == 0 then
 			for i in ipairs (self.parts) do
 				partIndex = i
@@ -314,11 +314,17 @@ function Structure:addPart(part, x, y, orientation)
 	local height = math.abs(y1 - y3)
 	local shape = love.physics.newRectangleShape(
 		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
-	local fixture = love.physics.newFixture(self.body, shape)
+	if #self.parts > 0 then
+		local body = love.physics.newBody(Structure.physics, x, y, "dynamic")
+		love.physics.newFixture(body, shape)
+		local joint = love.physics.newWeldJoint(self.body, body, x, y)
+		table.insert(self.joints, joint)
+	else
+		love.physics.newFixture(self.body, shape)
+	end
 	table.insert(self.parts, part)
 	table.insert(self.partCoords, {x = x, y = y})
 	table.insert(self.partOrient, orientation)
-	table.insert(self.fixtures, fixture)
 end
 
 -- Check if a part is in this structure.
@@ -351,10 +357,16 @@ function Structure:removePart(part)
 	if self.parts[partIndex] == self.corePart then
 		self.corePart = nil
 	end
-	self.fixtures[partIndex]:destroy()
+	print(partIndex-1)
+	print(#self.joints)
+	if partIndex > 1 then
+		self.joints[partIndex-1]:destroy()
+		table.remove(self.joints, partIndex-1)
+	end
+
 	table.remove(self.parts, partIndex)
 	table.remove(self.partCoords, partIndex)
-	table.remove(self.fixtures, partIndex)
+	table.remove(self.joints, partIndex)
 	table.remove(self.partOrient, partIndex)
 
 	if #self.parts == 0 then

@@ -18,7 +18,7 @@ function World.create()
 	self.particles = {}
 
 	love.physics.setMeter(20) -- there are 20 pixels per meter
-	Structure.setPhysics(love.physics.newWorld())
+	Structure.setPhysics(love.physics.newWorld(0,0,false))
 	return self
 end
 
@@ -96,7 +96,7 @@ function World:partDamage(structure, partIndex)
 					coordsList[partList[i]] = {partX, partY, partOrient}
 					local x, y, angle = structure:getAbsPartCoords(i)
 					structureList[partList[i]] =
-							self:createStructure(structure.parts[i], 
+							self:createStructure(structure.parts[i],
 												 {x, y, angle})
 					structure:removePart(i)
 				end
@@ -116,14 +116,14 @@ function World:update(dt)
 			local team = structure.corePart:getTeam()
 			if team then
 				if structure.corePart.isPlayer then
-					table.insert(shipLocations[team], 
+					table.insert(shipLocations[team],
 								{structure.body:getX(), structure.body:getY(),true})
 				else
-					table.insert(shipLocations[team], 
+					table.insert(shipLocations[team],
 								{structure.body:getX(), structure.body:getY()})
 				end
 			end
-			
+
 		end
 	end
 	local aiData = {self.teamHostility, shipLocations}

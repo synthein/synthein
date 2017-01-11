@@ -161,13 +161,15 @@ function InGame.keypressed(key)
 	return InGame
 end
 
-function InGame.mousepressed(x, y, mouseButton)
+function InGame.mousepressed(x, y, button)
 	players[1].cursorX = x
 	players[1].cursorY = y
-	players[1]:buttonpressed(mouseButton)
+	for i, player in ipairs(players) do
+		player:buttonpressed(love.mouse, button)
+	end
 
 	if menuOpen then
-		if mouseButton == 1 then
+		if button == 1 then
 			if x < (SCREEN_WIDTH - button_width)/2 or x > (SCREEN_WIDTH + button_width)/2 then
 				return InGame
 			end
@@ -197,10 +199,10 @@ function InGame.mousepressed(x, y, mouseButton)
 end
 
 function InGame.mousereleased(x, y, button)
+	players[1].cursorX = x
+	players[1].cursorY = y
 	for i, player in ipairs(players) do
-		player.cursorX = x
-		player.cursorY = y
-		player:buttonreleased(button)
+		player:buttonreleased(love.mouse, button)
 	end
 
 	if debugmode == true then

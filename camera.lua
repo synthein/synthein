@@ -1,7 +1,5 @@
 local Util = require("util")
 
-local zoom = .5
-
 local Camera = {}
 Camera.__index = Camera
 
@@ -9,6 +7,7 @@ function Camera.create()
 	local self = {}
 	setmetatable(self, Camera)
 
+	self.zoom = 1
 	self.compass = love.graphics.newImage("res/images/compass.png")
 	return self
 end
@@ -34,9 +33,9 @@ function Camera:setY(newY)
 end
 
 function Camera:getCursorCoords(x, y)
-	cursorCoordX = (x - self.scissorWidth/2 - self.scissorX)/zoom + self.x
-	cursorCoordY = -(y - self.scissorHeight/2 - self.scissorY)/zoom + self.y
-	return cursorCoordX, cursorCoordY
+	cursorX = (x - self.scissorWidth/2 - self.scissorX)/self.zoom + self.x
+	cursorY = -(y - self.scissorHeight/2 - self.scissorY)/self.zoom + self.y
+	return cursorX, cursorY
 end
 
 function Camera:setScissor(x, y, width, height)
@@ -49,10 +48,9 @@ end
 function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
     love.graphics.setScissor(self.scissorX, self.scissorY,
 							 self.scissorWidth, self.scissorHeight)
-	love.graphics.draw(image,
-					    zoom*(x - self.x) + self.scissorX + self.scissorWidth/2,
-					   -zoom*(y - self.y) + self.scissorY + self.scissorHeight/2,
-					   -angle, zoom*sx, zoom*sy, ox, oy)
+	x = self.zoom*(x - self.x) + self.scissorX + self.scissorWidth/2
+	y = -self.zoom*(y - self.y) + self.scissorY + self.scissorHeight/2
+	love.graphics.draw(image, x, y, -angle, self.zoom*sx, self.zoom*sy, ox, oy)
     love.graphics.setScissor()
 end
 
@@ -71,11 +69,12 @@ end
 function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
     love.graphics.setScissor(self.scissorX, self.scissorY,
 							 self.scissorWidth, self.scissorHeight)
-	centerX = zoom*(centerX - self.x) + self.scissorX + self.scissorWidth/2
-	centerY = -zoom*(centerY - self.y) + self.scissorY + self.scissorHeight/2
-	Camera.circleMenuX = centerX
-	Camera.circleMenuY = centerY
-	size = zoom * size
+	local x, y
+	x =  self.zoom * (centerX - self.x) + self.scissorX + self.scissorWidth/2
+	y = -self.zoom * (centerY - self.y) + self.scissorY + self.scissorHeight/2
+	Camera.circleMenuX = x
+	Camera.circleMenuY = y
+	size = self.zoom * size
 	Camera.circleMenuAngle = angle
 	Camera.circleMenuSize = size
 	Camera.circleMenuDivivsion = #strength
@@ -89,7 +88,7 @@ function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
 			elseif color == 2 then
 				love.graphics.setColor(80, 128, 192, 192)
 			end
-			love.graphics.arc("line", "open", centerX, centerY, 
+			love.graphics.arc("line", "open", x, y, 
 				math.ceil(3.5*size),
 				- angle + math.pi * (-0.5 + ((i-1)*2-1)/#strength),
 				- angle + math.pi * (-0.5 + ((i)*2-1)/#strength), 5*size)

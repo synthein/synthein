@@ -64,7 +64,7 @@ function Player:handleInput()
 	-----------------------
 	local orders = {}
 
-	for i, control in ipairs(self.controls.ship) do
+	for name, control in pairs(self.controls.ship) do
 		if Controls.isDown(control) then
 			table.insert(orders, Controls.order(control))
 		end
@@ -79,12 +79,19 @@ function Player:handleInput()
 	end
 end
 
-function Player:buttonpressed(button)
+function Player:buttonpressed(source, button)
+	local order
+	for name, control in pairs(self.controls.pressed) do
+		if Controls.test(control, source, button) then
+			order = Controls.order(control)
+		end
+	end
+
 	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
-	if button == 1 then
+	if order == "build" then
 		self.selected:pressed(cursorX, cursorY)
 	end
-	if button == 2 then
+	if order == "destroy" then
 		if self.build then
 			self.build = nil
 		else
@@ -108,9 +115,16 @@ function Player:buttonpressed(button)
 	end
 end
 
-function Player:buttonreleased(button)
+function Player:buttonreleased(source, button)
+	local order
+	for name, control in pairs(self.controls.released) do
+		if Controls.test(control, source, button) then
+			order = Controls.order(control)
+		end
+	end
+
 	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
-	if button == 1 then
+	if order == "build" then
 		self.selected:released(cursorX, cursorY)
 	end
 end

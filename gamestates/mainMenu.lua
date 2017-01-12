@@ -31,7 +31,7 @@ function MainMenu.draw()
 						"Right Click: Deconstructing Ships", 5, 5)
 end
 
-function MainMenu.update(mouseWorldX, mouseWorldY)
+function MainMenu.update(dt)
 	return MainMenu
 end
 

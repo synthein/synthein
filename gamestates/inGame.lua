@@ -32,18 +32,20 @@ function InGame.setWorld(setworld)
 end
 
 function InGame.update(dt)
-	if paused then
+
+	-- Send input to the players.
+	for i, player in ipairs(players) do
+		if player.ship then
+			player.camera:setX(player.ship.body:getX())
+			player.camera:setY(player.ship.body:getY())
+		end
+
+		player:handleInput()
+	end
+
+	if paused or menuOpen then
 	else
 
-		-- Send input to the players.
-		for i, player in ipairs(players) do
-			if player.ship then
-				player.camera:setX(player.ship.body:getX())
-				player.camera:setY(player.ship.body:getY())
-			end
-
-			player:handleInput()
-		end
 
 		-- Update the game world.
 		Structure.physics:update(dt)

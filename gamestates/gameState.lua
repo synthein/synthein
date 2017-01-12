@@ -16,6 +16,9 @@ end
 function GameState.mousereleased()
 end
 
+function GameState.wheelmoved()
+end
+
 function GameState.resize()
 end
 

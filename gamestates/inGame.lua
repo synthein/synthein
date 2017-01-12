@@ -214,6 +214,11 @@ function InGame.mousereleased(x, y, button)
 	return InGame
 end
 
+function InGame.wheelmoved(x, y)
+print(y)
+	players[1].camera:adjustZoom(y)
+end
+
 function InGame.resize(w, h)
 	Screen.arrange()
 end

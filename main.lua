@@ -54,6 +54,10 @@ function love.mousereleased(x, y, button, istouch)
 	end
 end
 
+function love.wheelmoved(x, y)
+	state.wheelmoved(x, y)
+end
+
 function love.resize(w, h)
 	state.resize(w, h)
 end

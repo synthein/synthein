@@ -8,6 +8,7 @@ function Camera.create()
 	setmetatable(self, Camera)
 
 	self.zoom = 1
+	self.zoomInt = 0
 	self.compass = love.graphics.newImage("res/images/compass.png")
 	return self
 end
@@ -36,6 +37,25 @@ function Camera:getCursorCoords(x, y)
 	cursorX = (x - self.scissorWidth/2 - self.scissorX)/self.zoom + self.x
 	cursorY = -(y - self.scissorHeight/2 - self.scissorY)/self.zoom + self.y
 	return cursorX, cursorY
+end
+
+function Camera:adjustZoom(step)
+	self.zoomInt = self.zoomInt + step
+	local rmd = self.zoomInt%6
+	local exp = (self.zoomInt - rmd)/6
+	self.zoom = 10^exp
+	if rmd == 0 then
+	elseif rmd == 1 then
+		self.zoom = self.zoom * 1.5
+	elseif rmd == 2 then
+		self.zoom = self.zoom * 2
+	elseif rmd == 3 then
+		self.zoom = self.zoom * 3
+	elseif rmd == 4 then
+		self.zoom = self.zoom * 5
+	elseif rmd == 5 then
+		self.zoom = self.zoom * 7.5
+	end
 end
 
 function Camera:setScissor(x, y, width, height)

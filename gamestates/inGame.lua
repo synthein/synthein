@@ -31,6 +31,90 @@ function InGame.setWorld(setworld)
 	world = setworld
 end
 
+function InGame.resize(w, h)
+	Screen.arrange()
+end
+
+function InGame.keypressed(key)
+	if typingSaveName then
+		if key:match("^%w$") then
+			saveName = saveName .. key
+		elseif key == "backspace" then
+			saveName = saveName:sub(1, -2)
+		elseif key == "return" then
+			typingSaveName = false
+		elseif key == "escape" then
+			saveName = ""
+			typingSaveName = false
+		end
+	else
+		if key == "p" or key == "pause" then
+			paused = not paused
+		end
+	end
+
+	if debugmode == true then
+		Debug.keyboard(key, Screen.camera:getX(), Screen.camera:getY())
+	end
+
+	return InGame
+end
+
+function InGame.mousepressed(x, y, button)
+	players[1].cursorX = x
+	players[1].cursorY = y
+	for i, player in ipairs(players) do
+		player:buttonpressed(love.mouse, button)
+	end
+
+	if menuOpen then
+		if button == 1 then
+			if x < (SCREEN_WIDTH - button_width)/2 or x > (SCREEN_WIDTH + button_width)/2 then
+				return InGame
+			end
+			local yRef = y - 175
+			local index = math.floor(yRef/75)
+			local remainder = yRef % 75
+			if index < 1 or index > #pauseMenu.buttons or remainder > 50 then
+				return InGame
+			end
+			local selection = pauseMenu.buttons[index]
+
+			if selection == "Save" then
+				typingSaveName = true
+			elseif selection == "Load" then
+				return LoadGameMenu
+			elseif selection == "Quit" then
+				love.event.quit()
+			end
+		else
+			return InGame
+		end
+	end
+
+	if debugmode == true then
+		Debug.mousepressed(x, y, button, mouseWorldX, mouseWorldY)
+	end
+end
+
+function InGame.mousereleased(x, y, button)
+	players[1].cursorX = x
+	players[1].cursorY = y
+	for i, player in ipairs(players) do
+		player:buttonreleased(love.mouse, button)
+	end
+
+	if debugmode == true then
+		Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
+	end
+
+	return InGame
+end
+
+function InGame.wheelmoved(x, y)
+	players[1].camera:adjustZoom(y)
+end
+
 function InGame.update(dt)
 
 	-- Send input to the players.
@@ -134,92 +218,6 @@ function InGame.draw()
 
 	-- Print debug info.
 	if debugmode then Debug.draw() end
-
-	return InGame
-end
-
-function InGame.keypressed(key)
-	if typingSaveName then
-		if key:match("^%w$") then
-			saveName = saveName .. key
-		elseif key == "backspace" then
-			saveName = saveName:sub(1, -2)
-		elseif key == "return" then
-			typingSaveName = false
-		elseif key == "escape" then
-			saveName = ""
-			typingSaveName = false
-		end
-	else
-		if key == "p" or key == "pause" then
-			paused = not paused
-		end
-	end
-
-	if debugmode == true then
-		Debug.keyboard(key, Screen.camera:getX(), Screen.camera:getY())
-	end
-
-	return InGame
-end
-
-function InGame.mousepressed(x, y, button)
-	players[1].cursorX = x
-	players[1].cursorY = y
-	for i, player in ipairs(players) do
-		player:buttonpressed(love.mouse, button)
-	end
-
-	if menuOpen then
-		if button == 1 then
-			if x < (SCREEN_WIDTH - button_width)/2 or x > (SCREEN_WIDTH + button_width)/2 then
-				return InGame
-			end
-			local yRef = y - 175
-			local index = math.floor(yRef/75)
-			local remainder = yRef % 75
-			if index < 1 or index > #pauseMenu.buttons or remainder > 50 then
-				return InGame
-			end
-			local selection = pauseMenu.buttons[index]
-
-			if selection == "Save" then
-				typingSaveName = true
-			elseif selection == "Load" then
-				return LoadGameMenu
-			elseif selection == "Quit" then
-				love.event.quit()
-			end
-		else
-			return InGame
-		end
-	end
-
-	if debugmode == true then
-		Debug.mousepressed(x, y, button, mouseWorldX, mouseWorldY)
-	end
-end
-
-function InGame.mousereleased(x, y, button)
-	players[1].cursorX = x
-	players[1].cursorY = y
-	for i, player in ipairs(players) do
-		player:buttonreleased(love.mouse, button)
-	end
-
-	if debugmode == true then
-		Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
-	end
-
-	return InGame
-end
-
-function InGame.wheelmoved(x, y)
-	players[1].camera:adjustZoom(y)
-end
-
-function InGame.resize(w, h)
-	Screen.arrange()
 end
 
 return InGame

@@ -1,13 +1,9 @@
-local Debug = require("debugTools")
-local Player = require("player")
-local Structure = require("structure")
-local World = require("world")
-local Screen = require("screen")
-
 local MainMenu = require("gamestates/mainMenu")
 local InGame = require("gamestates/inGame")
 local NewGame = require("gamestates/newGame")
 local LoadGameMenu = require("gamestates/loadGameMenu")
+
+local Debug = require("debugTools")
 
 local state
 local newState
@@ -17,17 +13,8 @@ function love.load()
 	state = MainMenu
 end
 
-function love.update(dt)
-	newState = state.update(dt)
-	if newState then
-		state = newState
-	end
-end
-
-function love.draw()
-	SCREEN_WIDTH = love.graphics.getWidth()
-	SCREEN_HEIGHT = love.graphics.getHeight()
-	state.draw()
+function love.resize(w, h)
+	state.resize(w, h)
 end
 
 function love.keypressed(key)
@@ -58,6 +45,16 @@ function love.wheelmoved(x, y)
 	state.wheelmoved(x, y)
 end
 
-function love.resize(w, h)
-	state.resize(w, h)
+function love.update(dt)
+	newState = state.update(dt)
+	if newState then
+		state = newState
+	end
 end
+
+function love.draw()
+	SCREEN_WIDTH = love.graphics.getWidth()
+	SCREEN_HEIGHT = love.graphics.getHeight()
+	state.draw()
+end
+

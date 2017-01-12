@@ -61,7 +61,7 @@ function Debug.draw()
 	end
 end
 
-function Debug.update(mouseWorldX, mouseWorldY)
+function Debug.update(dt)
 	if Debug.mouseJoint then
 		Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
 	end
@@ -118,7 +118,7 @@ function Debug.mousepressed(mouseX, mouseY, button, mouseWorldX, mouseWorldY)
 	end
 end
 
-function Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
+function Debug.mousereleased(x, y, button)
 	if button == 3 then
 		if Debug.mouseJoint then
 			Debug.mouseJoint:destroy()

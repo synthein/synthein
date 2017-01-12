@@ -215,7 +215,6 @@ function InGame.mousereleased(x, y, button)
 end
 
 function InGame.wheelmoved(x, y)
-print(y)
 	players[1].camera:adjustZoom(y)
 end
 

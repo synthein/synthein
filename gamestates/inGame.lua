@@ -54,7 +54,7 @@ function InGame.keypressed(key)
 	end
 
 	if debugmode == true then
-		Debug.keyboard(key, Screen.camera:getX(), Screen.camera:getY())
+		Debug.keyboard(key, Screen.camera:getPosition())
 	end
 
 	return InGame
@@ -93,7 +93,7 @@ function InGame.mousepressed(x, y, button)
 	end
 
 	if debugmode == true then
-		Debug.mousepressed(x, y, button, mouseWorldX, mouseWorldY)
+		Debug.mousepressed(x, y, button)
 	end
 end
 
@@ -105,7 +105,7 @@ function InGame.mousereleased(x, y, button)
 	end
 
 	if debugmode == true then
-		Debug.mousereleased(x, y, button, mouseWorldX, mouseWorldY)
+		Debug.mousereleased(x, y, button)
 	end
 
 	return InGame
@@ -165,25 +165,20 @@ function InGame.update(dt)
 		saveName = ""
 	end
 
-	if debugmode then Debug.update(mouseWorldX, mouseWorldY) end
+	if debugmode then Debug.update(dt) end
 
 	return InGame
 end
 
 function InGame.draw()
-	-- for camera in InGame.cameras do
-		cameraX, cameraY = Screen.camera:getPosition()
-	--todo move to Camera/Screen
-		--love.graphics.translate(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-		--love.graphics.translate(-cameraX, cameraY)
-	--
+
 		world:draw()
 		players[1].cursorX = love.mouse.getX()
 		players[1].cursorY = love.mouse.getY()
 		players[1]:draw()
 		love.graphics.origin()
 		Screen.drawExtras()
-	-- end
+
 	if paused then
 		love.graphics.print("Paused", SCREEN_WIDTH/2-24, 30)
 	end

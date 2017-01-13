@@ -87,7 +87,7 @@ function Player:buttonpressed(source, button)
 		end
 	end
 
-	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
+	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then
 		self.selected:pressed(cursorX, cursorY)
 	end
@@ -123,14 +123,14 @@ function Player:buttonreleased(source, button)
 		end
 	end
 
-	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
+	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then
 		self.selected:released(cursorX, cursorY)
 	end
 end
 
 function Player:draw()
-	cursorX, cursorY = self.camera:getCursorCoords(self.cursorX, self.cursorY)
+	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)
 	end

@@ -38,7 +38,7 @@ function Screen.setCamera(currentCamera)
 end
 
 function Screen.getCursorCoords(X, Y)
-	return Screen.camera:getCursorCoords(X, Y)
+	return Screen.camera:getWorldCoords(X, Y)
 end
 
 function Screen.draw(image, x, y, angle, sx, sy, ox, oy)

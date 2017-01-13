@@ -61,8 +61,6 @@ function InGame.keypressed(key)
 end
 
 function InGame.mousepressed(x, y, button)
-	players[1].cursorX = x
-	players[1].cursorY = y
 	for i, player in ipairs(players) do
 		player:buttonpressed(love.mouse, button)
 	end
@@ -98,8 +96,6 @@ function InGame.mousepressed(x, y, button)
 end
 
 function InGame.mousereleased(x, y, button)
-	players[1].cursorX = x
-	players[1].cursorY = y
 	for i, player in ipairs(players) do
 		player:buttonreleased(love.mouse, button)
 	end
@@ -119,11 +115,6 @@ function InGame.update(dt)
 
 	-- Send input to the players.
 	for i, player in ipairs(players) do
-		if player.ship then
-			player.camera:setX(player.ship.body:getX())
-			player.camera:setY(player.ship.body:getY())
-		end
-
 		player:handleInput()
 	end
 
@@ -173,8 +164,6 @@ end
 function InGame.draw()
 
 		world:draw()
-		players[1].cursorX = love.mouse.getX()
-		players[1].cursorY = love.mouse.getY()
 		players[1]:draw()
 		love.graphics.origin()
 		Screen.drawExtras()

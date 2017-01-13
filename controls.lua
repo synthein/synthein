@@ -16,6 +16,23 @@ function Controls.order(control)
 	return control[3]
 end
 
+function Controls.setCursor(control, Cursor)
+	local cursorChange
+	if control[2] == "xAxis" then
+		cursorChange = control[1].getX()
+	elseif control[2] == "yAxis" then
+		cursorChange = control[1].getY()
+	else
+		cursorChange = control[1].getAxis(control[2])
+	end
+	
+	if control[3] == "set" then
+		return cursorChange
+	elseif control[3] == "change" then
+		return cursorChange + Cursor
+	end
+end
+
 Controls.defaults = {
 	keyboard = {
 		ship = {
@@ -33,6 +50,10 @@ Controls.defaults = {
 		},
 		released = {
 			build = {mouse, 1, "build"}
+		},
+		axes = {
+			cursorX = {mouse, "xAxis", "set"},
+			cursorY = {mouse, "yAxis", "set"}
 		},
 		confirm		= {keyboard, "return"},
 		cancel		= {keyboard, "escape"}

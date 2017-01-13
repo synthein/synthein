@@ -13,14 +13,6 @@ function Camera.create()
 	return self
 end
 
-function Camera:getX()
-	return self.x
-end
-
-function Camera:getY()
-	return self.y
-end
-
 function Camera:getPosition()
 	return self.x, self.y
 end
@@ -33,28 +25,40 @@ function Camera:setY(newY)
 	self.y = newY
 end
 
-function Camera:getCursorCoords(x, y)
-	cursorX = (x - self.scissorWidth/2 - self.scissorX)/self.zoom + self.x
-	cursorY = -(y - self.scissorHeight/2 - self.scissorY)/self.zoom + self.y
-	return cursorX, cursorY
+function Camera:getWorldCoords(cursorX, cursorY)
+	x =  (cursorX - self.scissorWidth/2  - self.scissorX) / self.zoom + self.x
+	y = -(cursorY - self.scissorHeight/2 - self.scissorY) / self.zoom + self.y
+	return x, y
+end
+
+function Camera:getScreenCoords(worldX, worldY, a, b)
+	x =  self.zoom * (worldX - self.x) + self.scissorX + self.scissorWidth/2
+	y = -self.zoom * (worldY - self.y) + self.scissorY + self.scissorHeight/2
+	a = self.zoom * a
+	b = self.zoom * b
+	return x, y, a, b
 end
 
 function Camera:adjustZoom(step)
+
 	self.zoomInt = self.zoomInt + step
-	local rmd = self.zoomInt%6
-	local exp = (self.zoomInt - rmd)/6
-	self.zoom = 10^exp
-	if rmd == 0 then
-	elseif rmd == 1 then
-		self.zoom = self.zoom * 1.5
-	elseif rmd == 2 then
-		self.zoom = self.zoom * 2
-	elseif rmd == 3 then
-		self.zoom = self.zoom * 3
-	elseif rmd == 4 then
-		self.zoom = self.zoom * 5
-	elseif rmd == 5 then
-		self.zoom = self.zoom * 7.5
+
+	local remainder = self.zoomInt%6
+	local exponential = (self.zoomInt - remainder)/6
+
+	self.zoom = 10 ^ exponential
+
+	if remainder == 0 then
+	elseif remainder == 1 then
+		self.zoom = self.zoom * 1.5 --10 ^ (1 / 6) = 1.47
+	elseif remainder == 2 then
+		self.zoom = self.zoom * 2   --10 ^ (2 / 6) = 2.15
+	elseif remainder == 3 then
+		self.zoom = self.zoom * 3   --10 ^ (3 / 6) = 3.16
+	elseif remainder == 4 then
+		self.zoom = self.zoom * 5   --10 ^ (4 / 6) = 4.64
+	elseif remainder == 5 then
+		self.zoom = self.zoom * 7   --10 ^ (5 / 6) = 6.81
 	end
 end
 
@@ -65,18 +69,22 @@ function Camera:setScissor(x, y, width, height)
 	self.scissorHeight = height
 end
 
+function Camera:getScissor()
+	return self.scissorX, self.scissorY, self.scissorWidth, self.scissorHeight
+end
+
 function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
-    love.graphics.setScissor(self.scissorX, self.scissorY,
-							 self.scissorWidth, self.scissorHeight)
-	x = self.zoom*(x - self.x) + self.scissorX + self.scissorWidth/2
-	y = -self.zoom*(y - self.y) + self.scissorY + self.scissorHeight/2
-	love.graphics.draw(image, x, y, -angle, self.zoom*sx, self.zoom*sy, ox, oy)
+    love.graphics.setScissor(self:getScissor())
+
+	x, y, sx, sy = self:getScreenCoords(x, y, sx, sy)
+	love.graphics.draw(image, x, y, -angle, sx, sy, ox, oy)
+
     love.graphics.setScissor()
 end
 
 function Camera:drawExtras()
-    love.graphics.setScissor(self.scissorX, self.scissorY,
-							 self.scissorWidth, self.scissorHeight)
+    love.graphics.setScissor(self:getScissor())
+	--draw the compass in the lower right hand coner 60 pixels from the edges
 	love.graphics.draw(
 			self.compass,
 			self.scissorX + self.scissorWidth - 60,
@@ -87,17 +95,15 @@ function Camera:drawExtras()
 end
 
 function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
-    love.graphics.setScissor(self.scissorX, self.scissorY,
-							 self.scissorWidth, self.scissorHeight)
+    love.graphics.setScissor(self:getScissor())
+
 	local x, y
-	x =  self.zoom * (centerX - self.x) + self.scissorX + self.scissorWidth/2
-	y = -self.zoom * (centerY - self.y) + self.scissorY + self.scissorHeight/2
+	x, y, size = self:getScreenCoords(centerX, centerY, size, 0)
 	Camera.circleMenuX = x
 	Camera.circleMenuY = y
-	size = self.zoom * size
 	Camera.circleMenuAngle = angle
 	Camera.circleMenuSize = size
-	Camera.circleMenuDivivsion = #strength
+	Camera.circleMenuDivision = #strength
 	love.graphics.stencil(Camera.circleMenuStencilFunction, "replace", 1)
 	love.graphics.setStencilTest("equal", 0)
 	love.graphics.setLineWidth(size)
@@ -114,6 +120,7 @@ function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
 				- angle + math.pi * (-0.5 + ((i)*2-1)/#strength), 5*size)
 		end
 	end
+
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setStencilTest()
     love.graphics.setScissor()
@@ -121,14 +128,26 @@ end
 
 function Camera:circleMenuStencilFunction()
 	love.graphics.setLineWidth(math.ceil(Camera.circleMenuSize/5))
-	for i = 1,Camera.circleMenuDivivsion do
-		local x, y = Util.vectorComponents(5 * Camera.circleMenuSize,
-						- Camera.circleMenuAngle
-						+ math.pi * (-0.5 + (i*2-1)/Camera.circleMenuDivivsion))
+
+	for i = 1,Camera.circleMenuDivision do
+		local angle = Camera.indexToAngle(i, Camera.circleMenuDivision,
+										  Camera.circleMenuAngle)
+		local x, y = Util.vectorComponents(5 * Camera.circleMenuSize, angle)
 		x = x + Camera.circleMenuX
 		y = y + Camera.circleMenuY
 		love.graphics.line(x, y, Camera.circleMenuX, Camera.circleMenuY)
 	end
+end
+
+function Camera.indexToAngle(index, division, startAngle)
+	--This system is layed out like a clock face
+	-- -startAngle	converts it from clockwise to counterclockwise
+	-- * math.pi	changes 0 to 2 into 0 to 2pi
+	-- -0.5			sets index 1 to the noon position
+	-- / division	changes 0 to 2division into 0 to 2
+	-- -1			causes the center of index 1 to be straight up
+	-- * 2 			changes 0 to division into 0 to 2division 
+	return - startAngle + math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
 return Camera

@@ -32,6 +32,12 @@ function Player.create(world, controls, structure)
 end
 
 function Player:handleInput()
+
+	if self.ship then
+		self.camera:setX(self.ship.body:getX())
+		self.camera:setY(self.ship.body:getY())
+	end
+
 	-----------------------
 	----- Cancel/Quit -----
 	-----------------------
@@ -59,6 +65,13 @@ function Player:handleInput()
 		self.cancelKeyDown = false
 	end
 
+	
+	-----------------------
+	----- Set Cursor  -----
+	-----------------------
+	self.cursorX = Controls.setCursor(self.controls.axes.cursorX, self.cursorX)
+	self.cursorY = Controls.setCursor(self.controls.axes.cursorY, self.cursorY)
+	
 	-----------------------
 	---- Ship commands ----
 	-----------------------

@@ -33,14 +33,6 @@ function Screen.arrange()
 	end
 end
 
-function Screen.setCamera(currentCamera)
-	Screen.camera = currentCamera
-end
-
-function Screen.getCursorCoords(X, Y)
-	return Screen.camera:getWorldCoords(X, Y)
-end
-
 function Screen.draw(image, x, y, angle, sx, sy, ox, oy)
 	for i, camera in ipairs(Screen.cameras) do
 		camera:draw(image, x, y, angle, sx, sy, ox, oy)

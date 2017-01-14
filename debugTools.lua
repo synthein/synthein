@@ -27,7 +27,7 @@ end
 -- Print debug info.
 function Debug.draw()
 	mouseWorldX, mouseWorldY =
-		Screen.getCursorCoords(love.mouse.getX(), love.mouse.getY())
+		Debug.player1.camera.getCursorCoords(love.mouse.getX(), love.mouse.getY())
 	if Debug.world and Debug.player1 then
 		local debugString
 		if Debug.player1.ship then

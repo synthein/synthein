@@ -69,19 +69,13 @@ function Player:handleInput()
 	-----------------------
 	----- Set Cursor  -----
 	-----------------------
-	self.cursorX = Controls.setCursor(self.controls.axes.cursorX, self.cursorX)
-	self.cursorY = Controls.setCursor(self.controls.axes.cursorY, self.cursorY)
+	self.cursorX = Controls.setCursor(self.controls.cursorX, self.cursorX)
+	self.cursorY = Controls.setCursor(self.controls.cursorY, self.cursorY)
 	
 	-----------------------
 	---- Ship commands ----
 	-----------------------
-	local orders = {}
-
-	for name, control in pairs(self.controls.ship) do
-		if Controls.isDown(control) then
-			table.insert(orders, Controls.order(control))
-		end
-	end
+	local orders = Controls.getOrders(self.controls)
 
 	if self.ship then
 		if self.ship.corePart then
@@ -93,12 +87,7 @@ function Player:handleInput()
 end
 
 function Player:buttonpressed(source, button)
-	local order
-	for name, control in pairs(self.controls.pressed) do
-		if Controls.test(control, source, button) then
-			order = Controls.order(control)
-		end
-	end
+	local order = Controls.testPressed(self.controls, source, button)
 
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then
@@ -129,12 +118,7 @@ function Player:buttonpressed(source, button)
 end
 
 function Player:buttonreleased(source, button)
-	local order
-	for name, control in pairs(self.controls.released) do
-		if Controls.test(control, source, button) then
-			order = Controls.order(control)
-		end
-	end
+	local order = Controls.testReleased(self.controls, source, button)
 
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then

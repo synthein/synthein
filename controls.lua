@@ -4,16 +4,32 @@ local mouse = love.mouse
 local keyboard = love.keyboard
 local getJoysticks = love.joystick.getJoysticks
 
-function Controls.test(control, source, button)
-	return control[1] == source and control[2] == button
+function Controls.getOrders(controls)
+	local orders = {}
+	for key, order in pairs(Controls.shipCommands) do
+		if Controls.isDown(controls[key]) then
+			table.insert(orders, order)
+		end
+	end
+	return orders
 end
 
-function Controls.isDown(control)
-	return control[1].isDown(control[2])
+function Controls.testPressed(controls, source, button)
+	for key, value in pairs(Controls.pressed) do
+		local control = controls[key]
+		if control[1] == source and control[2] == button then
+			return value
+		end
+	end
 end
 
-function Controls.order(control)
-	return control[3]
+function Controls.testReleased(controls, source, button)
+	for key, value in pairs(Controls.pressed) do
+		local control = controls[key]
+		if control[1] == source and control[2] == button then
+			return value
+		end
+	end
 end
 
 function Controls.setCursor(control, Cursor)
@@ -33,45 +49,57 @@ function Controls.setCursor(control, Cursor)
 	end
 end
 
+function Controls.isDown(control)
+	return control[1].isDown(control[2])
+end
+
+Controls.shipCommands = {
+	forward 	= "forward",
+	back    	= "back",
+	left    	= "left",
+	right   	= "right",
+	strafeLeft	= "strafeLeft",
+	strafeRight	= "strafeRight",
+	shoot   	= "shoot"
+}
+
+Controls.pressed = {
+	build   	= "build",
+	destroy 	= "destroy"
+}
+
+Controls.released = {
+	build   	= "build"
+}
+
 Controls.defaults = {
 	keyboard = {
-		ship = {
-			forward = {keyboard, "w", "forward"},
-			back = {keyboard, "s", "back"},
-			left = {keyboard, "a", "left"},
-			right = {keyboard, "d", "right"},
-			strafeLeft = {keyboard, "q", "strafeLeft"},
-			strafeRight = {keyboard, "e", "strafeRight"},
-			shoot = {keyboard, "space", "shoot"}
-		},
-		pressed = {
-			build = {mouse, 1, "build"},
-			destroy = {mouse, 2, "destroy"}
-		},
-		released = {
-			build = {mouse, 1, "build"}
-		},
-		axes = {
-			cursorX = {mouse, "xAxis", "set"},
-			cursorY = {mouse, "yAxis", "set"}
-		},
+		forward 	= {keyboard, "w"},
+		back    	= {keyboard, "s"},
+		left    	= {keyboard, "a"},
+		right   	= {keyboard, "d"},
+		strafeLeft	= {keyboard, "q"},
+		strafeRight	= {keyboard, "e"},
+		shoot   	= {keyboard, "space"},
+		build   	= {mouse, 1},
+		destroy 	= {mouse, 2},
+		cursorX 	= {mouse, "xAxis", "set"},
+		cursorY 	= {mouse, "yAxis", "set"},
 		confirm		= {keyboard, "return"},
 		cancel		= {keyboard, "escape"}
 	},
 	gamepad = {
-		ship = {
-			forward = {getJoysticks()[1], "dpup", "forward"},
-			back = {getJoysticks()[1], "dpdown", "back"},
-			left = {getJoysticks()[1], "dpleft", "left"},
-			right = {getJoysticks()[1], "dpright", "right"},
-			strafeLeft = {getJoysticks()[1], "leftshoulder", "strafeLeft"},
-			strafeRight = {getJoysticks()[1], "rightshoulder", "strafeRight"},
-			shoot = {getJoysticks()[1], "a", "shoot"}
-		},
-		pressed = {
-		},
-		released = {
-		},
+		forward 	= {getJoysticks()[1], "dpup"},
+		back    	= {getJoysticks()[1], "dpdown"},
+		left    	= {getJoysticks()[1], "dpleft"},
+		right   	= {getJoysticks()[1], "dpright"},
+		strafeLeft	= {getJoysticks()[1], "leftshoulder"},
+		strafeRight	= {getJoysticks()[1], "rightshoulder"},
+		shoot   	= {getJoysticks()[1], "a"},
+		build   	= {getJoysticks()[1], "y"},
+		destroy 	= {getJoysticks()[1], "x"},
+		cursorX 	= {getJoysticks()[1], 1, "change"},
+		cursorY 	= {getJoysticks()[1], 2, "change"},
 		confirm		= {getJoysticks()[1], "a"},
 		cancel		= {getJoysticks()[1], "b"}
 	}

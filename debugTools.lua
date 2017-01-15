@@ -20,44 +20,49 @@ end
 
 -- Similarly, give the debug tools access to the player so it can print debug
 -- into about it.
-function Debug.setPlayer(player)
-	Debug.player1 = player
+function Debug.setPlayers(players)
+	Debug.players = players
 end
 
 -- Print debug info.
 function Debug.draw()
-	mouseWorldX, mouseWorldY =
-		Debug.player1.camera.getCursorCoords(love.mouse.getX(), love.mouse.getY())
-	if Debug.world and Debug.player1 then
-		local debugString
-		if Debug.player1.ship then
-			debugString = string.format(
-				"%.3f    %.3f\n"..
-				"%.3f    %.3f\n"..
-				"Number of world structures: %d\n"..
-				"Number of ship parts: %d\n"..
-				"Build mode: %s\n",
-				Debug.player1.ship.body:getX(), Debug.player1.ship.body:getY(),
-				mouseWorldX, mouseWorldY,
-				#Debug.world.structures,
-				#Debug.player1.ship.parts,
-				(Debug.player1.build and "yes" or "no")
-			)
-		else
-			debugString = string.format(
-				"%.3f    %.3f\n"..
-				"%.3f    %.3f\n"..
-				"Number of world structures: %d\n"..
-				"Number of ship parts: %d\n"..
-				"Build mode: %s\n",
-				0, 0,
-				mouseWorldX, mouseWorldY,
-				#Debug.world.structures,
-				0,
-				(Debug.player1.build and "yes" or "no")
-			)
+	if not Debug.world then
+		return
+	end
+	for i, player in ipairs(Debug.players) do
+		mouseWorldX, mouseWorldY =
+			player.camera:getWorldCoords(love.mouse.getX(), love.mouse.getY())
+		if player and player.camera then
+			local debugString
+			if player.ship then
+				debugString = string.format(
+					"%.3f    %.3f\n"..
+					"%.3f    %.3f\n"..
+					"Number of world structures: %d\n"..
+					"Number of ship parts: %d\n"..
+					"Build mode: %s\n",
+					player.ship.body:getX(), player.ship.body:getY(),
+					mouseWorldX, mouseWorldY,
+					#Debug.world.structures,
+					#player.ship.parts,
+					(player.build and "yes" or "no")
+				)
+			else
+				debugString = string.format(
+					"%.3f    %.3f\n"..
+					"%.3f    %.3f\n"..
+					"Number of world structures: %d\n"..
+					"Number of ship parts: %d\n"..
+					"Build mode: %s\n",
+					0, 0,
+					mouseWorldX, mouseWorldY,
+					#Debug.world.structures,
+					0,
+					(player.build and "yes" or "no")
+				)
+			end
+			player.camera:print(debugString)
 		end
-		love.graphics.print(debugString, 5, 5)
 	end
 end
 
@@ -67,35 +72,27 @@ function Debug.update(dt)
 	end
 end
 
-function Debug.keyboard(key, cameraX, cameraY)
+function Debug.keyboard(key)
+	local cameraX, cameraY = Debug.players[1].camera:getPosition()
+	local world = Debug.world
 	-- Spawn a ship part.
 	if key == "u" then
 		-- Spawn a block
-		table.insert(Debug.world.structures,
-			Structure.create(Block.create(),
-			{cameraX + 50, cameraY + 100}))
+		world:createStructure(Block.create(), {cameraX + 50, cameraY + 100})
 	elseif key == "i" then
 		-- Spawn an engine
-		table.insert(Debug.world.structures,
-			Structure.create(Engine.create(),
-			{cameraX + 112, cameraY}))
+		world:createStructure(Engine.create(),{cameraX + 112, cameraY})
 	elseif key == "o" then
 		-- Spawn a gun
-		table.insert(Debug.world.structures,
-			Structure.create(Gun.create(),
-			{cameraX + 50, cameraY - 100}))
+		world:createStructure(Gun.create(), {cameraX + 50, cameraY - 100})
 
 	--Spawn an AI
 	elseif key == "1" then
 		-- Team 1
-		table.insert(Debug.world.structures,
-			Structure.create(AIBlock.create(1),
-			{cameraX - 200, cameraY + 200}))
+		world:createStructure(AIBlock.create(1), {cameraX - 200, cameraY + 200})
 	elseif key == "2" then
 		-- Team 2
-		table.insert(Debug.world.structures,
-			Structure.create(AIBlock.create(2),
-			{cameraX + 200, cameraY + 200}))
+		world:createStructure(AIBlock.create(2), {cameraX + 200, cameraY + 200})
 	elseif key == "3" then
 		-- Team 3, etc.
 
@@ -108,11 +105,16 @@ function Debug.keyboard(key, cameraX, cameraY)
 	end
 end
 
-function Debug.mousepressed(mouseX, mouseY, button, mouseWorldX, mouseWorldY)
+function Debug.mousepressed(mouseX, mouseY, button)
+		mouseWorldX, mouseWorldY =
+			Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
+												   love.mouse.getY())
 	if button == 3 then
 		structure = Debug.world:getStructure(mouseWorldX, mouseWorldY)
 		if structure then
-			Debug.mouseJoint = love.physics.newMouseJoint(structure.body, mouseWorldX, mouseWorldY)
+			Debug.mouseJoint = love.physics.newMouseJoint(structure.body,
+														  mouseWorldX,
+														  mouseWorldY)
 			Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
 		end
 	end

@@ -21,7 +21,7 @@ function InitWorld.init(scene, ifSave)
 	InGame.setWorld(world)
 
 	Debug.setWorld(world)
-	Debug.setPlayer(players[1])
+	Debug.setPlayers(players)
 end
 
 return InitWorld

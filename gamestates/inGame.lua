@@ -54,7 +54,7 @@ function InGame.keypressed(key)
 	end
 
 	if debugmode == true then
-		Debug.keyboard(key, Screen.camera:getPosition())
+		Debug.keyboard(key)
 	end
 
 	return InGame

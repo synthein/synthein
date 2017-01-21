@@ -20,6 +20,8 @@ function Structure.create(shipTable, location, data)
 	self.partCoords = {}
 	self.partOrient = {}
 	self.fixtures = {}
+	self.isDestroyed = false
+
 	if not shipTable.parts then
 		if shipTable.type == "generic" then
 			shipTable = {parts = {shipTable},
@@ -74,6 +76,10 @@ end
 function Structure:destroy()
 
 	end
+
+function Structure:getLocation()
+	return self.body:getX(), self.body:getY(), self.body:getAngle()
+end
 
 -- Annex another structure into this one.
 -- ** After calling this method, the annexed structure will be destroyed and
@@ -163,8 +169,8 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 	end
 	local newStructure
 	if partThere then
-		newStructure = Structure.create(annexee.parts[partIndex],
-								{annexee:getAbsPartCoords(partIndex)})
+		local location = {annexee:getAbsPartCoords(partIndex)}
+		newStructure = {"structure", location, annexee.parts[partIndex]}
 	else
 		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
 	end
@@ -362,6 +368,44 @@ function Structure:removePart(part)
 	end
 end
 
+function Structure:damagePart(index)
+	structure.parts[partIndex]:takeDamage()
+	if structure.parts[partIndex].destroy then
+		x, y = structure:getAbsPartCoords(partIndex)
+		table.insert(self.particles, Particles.newExplosion(x, y))
+		structure:removePart(partIndex)
+		if structure.isDestroyed then
+			return
+		end
+		local partList = structure:testConnection()
+		local structureList = {}
+		local coordsList = {}
+		for i = #partList,1,-1 do
+			if partList[i] ~= 1 then
+				local partStructure = structureList[partList[i]]
+				if partStructure then
+					local partX = coordsList[partList[i]][1]
+					local partY = coordsList[partList[i]][2]
+					local partOrient = coordsList[partList[i]][3]
+					partStructure:annexPart(structure, i, partOrient,
+											partX, partY, 0, 0)
+				else
+					local partX = structure.partCoords[i].x
+					local partY = structure.partCoords[i].y
+					local partOrient = (-structure.partOrient[i] + 1) % 4 + 1
+					coordsList[partList[i]] = {partX, partY, partOrient}
+					local x, y, angle = structure:getAbsPartCoords(i)
+					structureList[partList[i]] =
+							self:createStructure(structure.parts[i], 
+												 {x, y, angle})
+					structure:removePart(i)
+				end
+			end
+		end
+	end
+	return newStructures
+end
+
 -- Find the absolute coordinates of a part given the x and y offset values of
 -- the part and the absolute coordinates and angle of the structure it is in.
 function Structure:getAbsPartCoords(index)
@@ -376,6 +420,8 @@ function Structure:getAbsPartCoords(index)
 end
 
 function Structure:command(orders)
+	local newObjects = {}
+
 	-- The x and y components of the force
 	local directionX = -math.sin(self.body:getAngle())
 	local directionY = math.cos(self.body:getAngle())
@@ -450,9 +496,12 @@ function Structure:command(orders)
 
 		if part.gun and shoot and not part.recharge then
 			part:shot()
-			world:shoot(self, part)
+			local location = {self:getAbsPartCoords(i)}
+			table.insert(newObjects, {"shots", location, self, part})
 		end
 	end
+
+	return newObjects
 end
 
 function Structure:getPartIndex(locationX, locationY)
@@ -482,14 +531,16 @@ function Structure:withinPart(partIndex, locationX, locationY)
 end
 
 function Structure:update(dt, playerLocation, aiData)
+	local newObjects = {}
 	if self.corePart then
-		self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
+		newObjects = self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
 	end
 	for i, part in ipairs(self.parts) do
 		if part.update then
 			part:update(dt)
 		end
 	end
+	return newObjects
 end
 
 function Structure:draw()

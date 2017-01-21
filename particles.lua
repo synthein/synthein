@@ -14,12 +14,17 @@ function Particles.newExplosion(x, y)
 	self.ox = 20
 	self.oy = 20
 	self.time = 0.3
-
-	function self:update(dt)
-		self.time = self.time - dt
-	end
+	self.isDestroyed = false
 
 	return self
+end
+
+function Particles:update(dt)
+	self.time = self.time - dt
+	if self.time <= 0 then
+		self.isDestroyed = true
+	end
+	return {}, {}
 end
 
 function Particles:draw()

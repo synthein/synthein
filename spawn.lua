@@ -44,7 +44,7 @@ function Spawn.spawning(shipTable, location, data)
 		anchor = true
 	end
 	shipTable.corePart = Spawn.createPart(shipTable.corePart, data)
-	local structure = world:createStructure(shipTable, location, data)
+	local structure = Structure.create(shipTable, location, data)
 	if player then
 		return structure, true
 	end

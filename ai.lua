@@ -3,6 +3,9 @@ local Util = require("util")
 local AI = {}
 AI.__index = AI
 
+AI.teamHostility = {{false, true},
+					{true, false}}
+
 function AI.create(team)
 	local self = {}
 	setmetatable(self, AI)
@@ -26,10 +29,10 @@ function AI:getOrders(location, aiData)
 	local angle = nil
 	local angleToTarget = nil
 	local angleToPlayer = nil
-	if aiData[1] and aiData[2] then
-		for i, team in ipairs(aiData[2]) do
-			if aiData[1][self.team][i] then
-				for j, enemy in ipairs(aiData[2][i]) do
+	if aiData[1] then
+		for i, team in ipairs(aiData[1]) do
+			if AI.teamHostility[self.team][i] then
+				for j, enemy in ipairs(aiData[1][i]) do
 					if targetX and targetY and targetM then
 						local m = Util.vectorMagnitude(enemy[1] - location[1], enemy[2] - location[2])
 						if targetM > m then
@@ -44,7 +47,7 @@ function AI:getOrders(location, aiData)
 					end
 				end
 			elseif self.team == i then
-				for j, ally in ipairs(aiData[2][i]) do
+				for j, ally in ipairs(aiData[1][i]) do
 					if ally[3] then
 						playerX = ally[1]
 						playerY = ally[2]

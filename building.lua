@@ -58,8 +58,8 @@ function Building:setSide(partSide)
 			if self.annexee and self.annexeePartIndex and self.annexeePartSide
 				and self.structure and self.structurePartIndex
 				and self.structurePartSide then
-				world:annex(self.annexee, self.annexeePartIndex,
-							self.annexeePartSide, self.structure,
+				self.structure:annex(self.annexee, self.annexeePartIndex,
+							self.annexeePartSide,
 							self.structurePartIndex, self.structurePartSide)
 			end
 		end

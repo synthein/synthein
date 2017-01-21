@@ -38,12 +38,10 @@ function Debug.draw()
 				debugString = string.format(
 					"%.3f    %.3f\n"..
 					"%.3f    %.3f\n"..
-					"Number of world structures: %d\n"..
 					"Number of ship parts: %d\n"..
 					"Build mode: %s\n",
 					player.ship.body:getX(), player.ship.body:getY(),
 					mouseWorldX, mouseWorldY,
-					#Debug.world.structures,
 					#player.ship.parts,
 					(player.build and "yes" or "no")
 				)
@@ -51,12 +49,11 @@ function Debug.draw()
 				debugString = string.format(
 					"%.3f    %.3f\n"..
 					"%.3f    %.3f\n"..
-					"Number of world structures: %d\n"..
+					"Number of chunks: %d\n"..
 					"Number of ship parts: %d\n"..
 					"Build mode: %s\n",
 					0, 0,
 					mouseWorldX, mouseWorldY,
-					#Debug.world.structures,
 					0,
 					(player.build and "yes" or "no")
 				)

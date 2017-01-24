@@ -9,6 +9,7 @@ local Structure = require("structure")
 local InitWorld = {}
 
 function InitWorld.init(scene, ifSave)
+print(Structure)
 	world = World.create()
 	love.physics.setMeter(20) -- there are 20 pixels per meter
 	Structure.setPhysics(love.physics.newWorld())

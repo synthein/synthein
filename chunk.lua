@@ -3,13 +3,10 @@ local Shot = require("shot")
 local Structure = require("structure")
 local Util = require("util")
 
-
-
-
 local Chunk = {}
 Chunk.__index = Chunk
 
-Chunk.objects = {
+Chunk.objectTypes = {
 	structures	= Structure,
 	shots   	= Shot,
 	particles	= Particles
@@ -23,15 +20,21 @@ function Chunk.create(chunkLocation)
 
 	self.chunkLocation = chunkLocation
 
-	for key, value in pairs(Chunk.objects) do
-		self[key] = {}
+	self.objects = {}
+	for key, value in pairs(Chunk.objectTypes) do
+		self.objects[key] = {}
 	end
+
 	return self
+end
+
+function Chunk.getChunkIndex(x, y)
+	return math.floor(x / Chunk.size + 0.5), math.floor(y / Chunk.size + 0.5)
 end
 
 function Chunk:addObject(object, objectKey)
 	if objectKey == nil then
-		for key, value in pairs(Chunk.objects) do
+		for key, value in pairs(Chunk.objectTypes) do
 			if value == object.__index then
 				objectKey = key
 				break
@@ -41,19 +44,23 @@ function Chunk:addObject(object, objectKey)
 	if objectKey == nil then
 		return
 	end
-	table.insert(self[objectKey], object)
-end
-
-function Chunk.getChunkIndex(x, y)
-	return math.floor(x / Chunk.size + 0.5), math.floor(y / Chunk.size + 0.5)
+	table.insert(self.objects[objectKey], object)
 end
 
 function Chunk:getStructure(locationX, locationY)
-	for i, structure in ipairs(self.structures) do
+	for i, structure in ipairs(self.objects.structures) do
 		local partIndex, partSide = structure:getPartIndex(locationX, locationY)
 		if partIndex and partSide then
 			return structure, partIndex, partSide
 		end
+	end
+end
+
+function Chunk:getObjects(key)
+	if key then
+		return self.objects[key]
+	else
+		return self.objects
 	end
 end
 
@@ -63,7 +70,7 @@ function Chunk:update(dt)
 	local create = {}
 
 	local shipLocations = {{},{}}
-	for i, structure in ipairs(self.structures) do
+	for i, structure in ipairs(self.objects.structures) do
 		if structure.corePart then
 			local team = structure.corePart:getTeam()
 			if team then
@@ -81,8 +88,8 @@ function Chunk:update(dt)
 
 	local worldInfo = {shipLocations}
 
-	for key, value in pairs(Chunk.objects) do
-		for i, object in ipairs(self[key]) do
+	for key, objectTable in pairs(self.objects) do
+		for i, object in ipairs(objectTable) do
 			c = object:update(dt, worldInfo)
 			for i, o in ipairs(c) do
 				table.insert(create, o)
@@ -104,12 +111,12 @@ function Chunk:update(dt)
 	end
 
 	for i, object in ipairs(remove) do
-		self[object[1]][object[2]] = {"kill"}
+		self.objects[object[1]][object[2]] = {"kill"}
 	end
 	
-	for key, value in pairs(Chunk.objects) do
-		for i = #self[key],1,-1 do
-			if self[key][i][1] == "kill" then
+	for key, value in pairs(Chunk.objectTypes) do
+		for i = #self.objects[key],1,-1 do
+			if self.objects[key][i][1] == "kill" then
 				table.remove(self[key], i)
 			end
 		end
@@ -117,17 +124,17 @@ function Chunk:update(dt)
 	
 	for i, object in ipairs(create) do
 		key = object[1]
-		value = Chunk.objects[key]
+		value = Chunk.objectTypes[key]
 		newObject = value.create(object[2], object[3], object[4])
-		table.insert(self[key], newObject)
+		table.insert(self.objects[key], newObject)
 	end
 	
 	return move
 end
 
 function Chunk:draw()
-	for key, value in pairs(Chunk.objects) do
-		for i, object in ipairs(self[key]) do
+	for key, objectTable in pairs(self.objects) do
+		for i, object in ipairs(objectTable) do
 			object:draw()
 		end
 	end

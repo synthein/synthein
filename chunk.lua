@@ -117,7 +117,7 @@ function Chunk:update(dt)
 	for key, value in pairs(Chunk.objectTypes) do
 		for i = #self.objects[key],1,-1 do
 			if self.objects[key][i][1] == "kill" then
-				table.remove(self[key], i)
+				table.remove(self.objects[key], i)
 			end
 		end
 	end

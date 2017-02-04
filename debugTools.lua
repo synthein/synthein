@@ -54,7 +54,7 @@ function Debug.draw()
 					"Build mode: %s\n",
 					0, 0,
 					mouseWorldX, mouseWorldY,
-					0,
+					0, 0,
 					(player.build and "yes" or "no")
 				)
 			end

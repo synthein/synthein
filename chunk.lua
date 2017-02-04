@@ -47,11 +47,22 @@ function Chunk:addObject(object, objectKey)
 	table.insert(self.objects[objectKey], object)
 end
 
-function Chunk:getStructure(locationX, locationY)
-	for i, structure in ipairs(self.objects.structures) do
-		local partIndex, partSide = structure:getPartIndex(locationX, locationY)
-		if partIndex and partSide then
-			return structure, partIndex, partSide
+function Chunk:getObject(locationX, locationY, key)
+	if key then
+		for i, object in ipairs(self.objects[key]) do
+			there, returnValues = object:testLocation(locationX, locationY)
+			if there then
+				return object, returnValues
+			end
+		end
+	else
+		for key, value in pair do
+			for i, object in ipairs(self.objects[key]) do
+				there, returnValues = object:testLocation(locationX, locationY)
+				if there then
+					return object, returnValues
+				end
+			end
 		end
 	end
 end
@@ -86,7 +97,7 @@ function Chunk:update(dt)
 		end
 	end
 
-	local worldInfo = {shipLocations}
+	local worldInfo = {shipLocations, self:getObjects()}
 
 	for key, objectTable in pairs(self.objects) do
 		for i, object in ipairs(objectTable) do

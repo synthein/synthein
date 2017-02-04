@@ -4,7 +4,7 @@ local Screen = require("screen")
 local Shot = {}
 Shot.__index = Shot
 
-function Shot.create(location, sourceStructure, sourcePart)
+function Shot.create(location, sourcePart)
 	local self = {}
 	setmetatable(self, Shot)
 	local imageName = "shot"
@@ -18,7 +18,6 @@ function Shot.create(location, sourceStructure, sourcePart)
 	self.angle = location[3]
 	self.time = 0
 	self.isDestroyed = false
-	self.sourceStructure = sourceStructure
 	self.sourcePart = sourcePart
 	return self
 end
@@ -35,21 +34,26 @@ function Shot:update(dt, worldInfo)
 	if self.time > 5 then
 		self.isDestroyed = true
 	end
---[[
-	local structureHit, partIndexHit = self:getStructure(shotX,shotY)
-	local hit =
-		structureHit and
-		structureHit ~= self.shots[i].sourceStructure and
-		partIndexHit and
-		structureHit.parts[partIndexHit] ~= self.shots[i].sourcePart
-	if self.shots[i].destroy == true or hit then
-		table.remove(self.shots, i)
-		if hit then
-			self:partDamage(structureHit, partIndexHit)
+
+	local newObjects = {}
+	for i, structure in ipairs(worldInfo[2].structures) do
+		local structureHit, partIndexHit = structure:getPartIndex(self.x, self.y)
+		if structureHit then
+			structureHit = structure
+			local hit =
+				structureHit and
+				partIndexHit and
+				structureHit.parts[partIndexHit] ~= self.sourcePart
+			if hit then
+				self.isDestroyed = true
+				new = structureHit:damagePart(partIndexHit)
+				if new then
+					newObjects = new
+				end
+			end
 		end
 	end
---]]
-	return {}
+	return newObjects
 end
 
 function Shot:draw()

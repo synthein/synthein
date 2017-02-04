@@ -420,11 +420,7 @@ function Structure:getAbsPartCoords(index)
 end
 
 function Structure:command(orders)
-	local newObjects = {}
-
-	-- The x and y components of the force
-	local directionX = -math.sin(self.body:getAngle())
-	local directionY = math.cos(self.body:getAngle())
+--	local newObjects = {}
 
 	local perpendicular = 0
 	local parallel = 0
@@ -441,6 +437,24 @@ function Structure:command(orders)
 		if order == "shoot" then shoot = true end
 	end
 
+	local engines = {0, 0, 0, 0, parallel, perpendicular, rotate, self.body}
+
+	if parallel > 0 then
+		engines[1] = 1
+	elseif parallel < 0 then
+		engines[3] = 1
+	end
+
+	if perpendicular > 0 then
+		engines[4] = 1
+	elseif perpendicular < 0 then
+		engines[2] = 1
+	end
+
+	local commands = {engines = engines, guns = {shoot}}
+
+--------------------------------------------------------------------------------
+--[[
 	for i,part in ipairs(self.parts) do
 		if part.thrust then
 
@@ -493,15 +507,13 @@ function Structure:command(orders)
 			local Fy = appliedForceY * part.thrust
 			self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
 		end
-
-		if part.gun and shoot and not part.recharge then
-			part:shot()
-			local location = {self:getAbsPartCoords(i)}
-			table.insert(newObjects, {"shots", location, self, part})
-		end
 	end
 
-	return newObjects
+	return newObjects, commands
+--]]
+--------------------------------------------------------------------------------
+	
+	return commands
 end
 
 function Structure:getPartIndex(locationX, locationY)
@@ -532,13 +544,21 @@ end
 
 function Structure:update(dt, playerLocation, aiData)
 	local newObjects = {}
+	local partsInfo = {}
 	if self.corePart then
-		newObjects = self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
+		partsInfo = self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
 	end
+	local location = {self:getLocation()}
+	local directionX = math.cos(location[3])
+	local directionY = math.sin(location[3])
+	local locationInfo = {location, {directionX, directionY}}
+	partsInfo["locationInfo"] = locationInfo
+
 	for i, part in ipairs(self.parts) do
-		if part.update then
-			part:update(dt)
-		end
+		local l = {self.partCoords[i].x, self.partCoords[i].y}
+		local s = {Util.sign(l[1]), Util.sign(l[2])}
+		local newObject = part:update(dt, partsInfo, l, s, self.partOrient[i])
+		table.insert(newObjects, newObject)
 	end
 	return newObjects
 end

@@ -44,7 +44,7 @@ function PlayerBlock:shot()
 	self.rechargeStart = 0
 end
 
-function PlayerBlock:update(dt)
+function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
 	self.healTime = self.healTime - dt
 	if self.healTime <= 0 then
 		self.healTime = self.healTime + 10
@@ -58,6 +58,21 @@ function PlayerBlock:update(dt)
 			self.recharge = false
 		end
 	end
+
+	
+	local engines = partsInfo.engines
+	local body = engines[8]
+	local l = partsInfo.locationInfo[1]
+	local directionX = partsInfo.locationInfo[2][1]
+	local directionY = partsInfo.locationInfo[2][2]
+	local x = (location[1] * directionX - location[2] * directionY) * 20 + l[1]
+	local y = (location[1] * directionY + location[2] * directionX) * 20 + l[2]
+	local appliedForceX = -directionY * engines[5] + directionX * engines[6]
+	local appliedForceY = directionX * engines[5] + directionY * engines[6]
+	local Fx = appliedForceX * self.thrust
+	local Fy = appliedForceY * self.thrust
+	body:applyForce(Fx, Fy, x, y)
+	body:applyTorque(engines[7] * self.torque)
 end
 
 return PlayerBlock

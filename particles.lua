@@ -4,7 +4,7 @@ local Particles = {}
 Particles.__index = Particles
 
 local explosionImage = love.graphics.newImage("res/images/explosion.png")
-function Particles.newExplosion(x, y)
+function Particles.create(x, y)
 	self = {}
 	setmetatable(self, Particles)
 
@@ -17,6 +17,10 @@ function Particles.newExplosion(x, y)
 	self.isDestroyed = false
 
 	return self
+end
+
+function Particles:getLocation()
+	return self.x, self.y
 end
 
 function Particles:update(dt)

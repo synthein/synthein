@@ -2,6 +2,7 @@ local Part = require("shipparts/part")
 local AI = require("ai")
 local AIBlock = require("shipparts/aiBlock")
 local Util = require("util")
+local Particles = require("particles")
 
 local Structure = {}
 Structure.__index = Structure
@@ -369,15 +370,15 @@ function Structure:removePart(part)
 end
 
 function Structure:damagePart(index)
-	structure.parts[partIndex]:takeDamage()
-	if structure.parts[partIndex].destroy then
-		x, y = structure:getAbsPartCoords(partIndex)
-		table.insert(self.particles, Particles.newExplosion(x, y))
-		structure:removePart(partIndex)
-		if structure.isDestroyed then
-			return
+	self.parts[index]:takeDamage()
+	if self.parts[index].destroy then
+		x, y = self:getAbsPartCoords(index)
+		newParticle = {"particles", x, y}
+		self:removePart(index)
+		if self.isDestroyed then
+			return {newParticle}
 		end
-		local partList = structure:testConnection()
+		local partList = self:testConnection()
 		local structureList = {}
 		local coordsList = {}
 		for i = #partList,1,-1 do
@@ -387,21 +388,28 @@ function Structure:damagePart(index)
 					local partX = coordsList[partList[i]][1]
 					local partY = coordsList[partList[i]][2]
 					local partOrient = coordsList[partList[i]][3]
-					partStructure:annexPart(structure, i, partOrient,
+					partStructure:annexPart(self, i, partOrient,
 											partX, partY, 0, 0)
 				else
-					local partX = structure.partCoords[i].x
-					local partY = structure.partCoords[i].y
-					local partOrient = (-structure.partOrient[i] + 1) % 4 + 1
+					local partX = self.partCoords[i].x
+					local partY = self.partCoords[i].y
+					local partOrient = (-self.partOrient[i] + 1) % 4 + 1
 					coordsList[partList[i]] = {partX, partY, partOrient}
-					local x, y, angle = structure:getAbsPartCoords(i)
+					local x, y, angle = self:getAbsPartCoords(i)
 					structureList[partList[i]] =
-							self:createStructure(structure.parts[i], 
+							self:createStructure(self.parts[i], 
 												 {x, y, angle})
-					structure:removePart(i)
+					self:removePart(i)
 				end
 			end
 		end
+	end
+	local newObjects
+	if newStructures then
+		newObjects = newStructures
+		table.insert(newObjects, newParticle)
+	else
+		newObjects = {newParticle}
 	end
 	return newStructures
 end

@@ -451,7 +451,7 @@ function Structure:command(orders)
 		engines[2] = 1
 	end
 
-	local commands = {engines = engines, guns = {shoot}}
+	local commands = {engines = engines, guns = {shoot = shoot}}
 
 --------------------------------------------------------------------------------
 --[[

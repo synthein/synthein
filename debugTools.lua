@@ -75,21 +75,26 @@ function Debug.keyboard(key)
 	-- Spawn a ship part.
 	if key == "u" then
 		-- Spawn a block
-		world:createStructure(Block.create(), {cameraX + 50, cameraY + 100})
+		local object = Structure.create(Block.create(), {cameraX + 50, cameraY + 100})
+		world:addObject(object, chunkLocation, "structures")
 	elseif key == "i" then
 		-- Spawn an engine
-		world:createStructure(Engine.create(),{cameraX + 112, cameraY})
+		local object = Structure.create(Engine.create(), {cameraX + 112, cameraY})
+		world:addObject(object, chunkLocation, "structures")
 	elseif key == "o" then
 		-- Spawn a gun
-		world:createStructure(Gun.create(), {cameraX + 50, cameraY - 100})
+		local object = Structure.create(Gun.create(), {cameraX + 50, cameraY - 100})
+		world:addObject(object, chunkLocation, "structures")
 
 	--Spawn an AI
 	elseif key == "1" then
 		-- Team 1
-		world:createStructure(AIBlock.create(1), {cameraX - 200, cameraY + 200})
+		local object = Structure.create(AIBlock.create(1), {cameraX - 200, cameraY + 200})
+		world:addObject(object, chunkLocation, "structures")
 	elseif key == "2" then
 		-- Team 2
-		world:createStructure(AIBlock.create(2), {cameraX + 200, cameraY + 200})
+		local object = Structure.create(AIBlock.create(2), {cameraX + 200, cameraY + 200})
+		world:addObject(object, chunkLocation, "structures")
 	elseif key == "3" then
 		-- Team 3, etc.
 

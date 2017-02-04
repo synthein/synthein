@@ -25,17 +25,18 @@ function Gun.create(world, x, y)
 	return self
 end
 
-function Gun:shot()
-	self.recharge = true
-	self.rechargeStart = 0
-end
-
-function Gun:update(dt)
+function Gun:update(dt, partsInfo)
 	if self.recharge then
 		self.rechargeStart = self.rechargeStart + dt
 		if self.rechargeStart > 0.5 then
 			self.recharge = false
 		end
+	end
+	if  partsInfo.guns and partsInfo.guns.shoot and not part.recharge then
+		self.recharge = true
+		self.rechargeStart = 0
+		local location = {self:getAbsPartCoords(i)}
+		return {"shots", location, self}
 	end
 end
 

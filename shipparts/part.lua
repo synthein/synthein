@@ -34,6 +34,9 @@ function Part:takeDamage()
 	end
 end
 
+function Part:update(dt, commands)
+end
+
 function Part:draw(x, y, angle)
 	Screen.draw(
 		self.image,

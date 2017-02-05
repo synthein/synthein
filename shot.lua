@@ -37,8 +37,8 @@ function Shot:update(dt, worldInfo)
 
 	local newObjects = {}
 	for i, structure in ipairs(worldInfo[2].structures) do
-		local structureHit, partIndexHit = structure:getPartIndex(self.x, self.y)
-		if structureHit then
+		local partIndexHit = structure:getPartIndex(self.x, self.y)
+		if partIndexHit then
 			structureHit = structure
 			local hit =
 				structureHit and

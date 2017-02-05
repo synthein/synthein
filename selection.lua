@@ -19,7 +19,11 @@ function Selection.create(world, team, camera)
 end
 
 function Selection:pressed(cursorX, cursorY)
-	local structure, partIndex = world:getStructure(cursorX, cursorY)
+	local structure, partInfo = world:getObject(cursorX, cursorY, "structures")
+	local partIndex 
+	if partInfo then
+		partIndex = partInfo[1]
+	end
 	if structure and partIndex then
 		if self.build then
 			if self.build.mode == 3 then

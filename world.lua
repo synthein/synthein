@@ -37,14 +37,12 @@ end
 
 --Get the structure and part under at the location.
 --Also return the side of the part that is closed if there is a part.
-function World:getStructure(locationX, locationY)
+function World:getObject(locationX, locationY, key)
 	local chunkX, chunkY = Chunk.getChunkIndex(locationX, locationY)
 	local chunk = self:getChunk({chunkX, chunkY})
-	local structure, partIndex, partSide
-		= chunk:getStructure(locationX, locationY)
-	if structure and partIndex and partSide then
-		return structure, partIndex, partSide
-	end
+	local object, returnValues
+		= chunk:getObject(locationX, locationY, key)
+	return object, returnValues
 end
 
 --Removes a section of a structure and saves the new structure.

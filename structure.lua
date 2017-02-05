@@ -524,6 +524,15 @@ function Structure:command(orders)
 	return commands
 end
 
+function Structure:testLocation(locationX, LocationY)
+	index, partSide = self:getPartIndex(locationX, LocationY)
+	if index then
+		return true, {index, partSide}
+	else
+		return false
+	end
+end
+
 function Structure:getPartIndex(locationX, locationY)
 	for i,part in ipairs(self.parts) do
 		local inside, partSide = self:withinPart(i, locationX, locationY)

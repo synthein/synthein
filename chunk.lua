@@ -134,9 +134,9 @@ function Chunk:update(dt)
 	end
 	
 	for i, object in ipairs(create) do
-		key = object[1]
-		value = Chunk.objectTypes[key]
-		newObject = value.create(object[2], object[3], object[4])
+		local key = object[1]
+		local value = Chunk.objectTypes[key]
+		local newObject = value.create(object[2], object[3], object[4])
 		table.insert(self.objects[key], newObject)
 	end
 	

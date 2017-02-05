@@ -1,4 +1,5 @@
 local Part = require("shipparts/part")
+local Gun = require("shipparts/gun")
 
 local PlayerBlock = {}
 PlayerBlock.__index = PlayerBlock
@@ -16,9 +17,7 @@ function PlayerBlock.create()
 	self.thrust = 150
 	self.torque = 350
 	self.type = "control"
-	self.gun = true
-	self.recharge = false
-	self.rechargeStart = 0
+	self.gun = Gun.create()
 	self.healTime = 10
 	self.orders = {}
 
@@ -52,39 +51,28 @@ function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
 			self.health = self.health + 1
 		end
 	end
-	if self.recharge then
-		self.rechargeStart = self.rechargeStart + dt
-		if self.rechargeStart > 0.5 then
-			self.recharge = false
-		end
-	end
-	if  partsInfo.guns and partsInfo.guns.shoot and not self.recharge then
-		local l = partsInfo.locationInfo[1]
-		local directionX = partsInfo.locationInfo[2][1]
-		local directionY = partsInfo.locationInfo[2][2]
-		a = {directionX, directionY}
-		local x = (location[1] * directionX - location[2] * directionY) * 20 + l[1]
-		local y = (location[1] * directionY + location[2] * directionX) * 20 + l[2]
-		self.recharge = true
-		self.rechargeStart = 0
-		local location = {x, y, l[3]}
-		return {"shots", location, self}
-	end
 
-	
-	local engines = partsInfo.engines
-	local body = engines[8]
 	local l = partsInfo.locationInfo[1]
 	local directionX = partsInfo.locationInfo[2][1]
 	local directionY = partsInfo.locationInfo[2][2]
 	local x = (location[1] * directionX - location[2] * directionY) * 20 + l[1]
 	local y = (location[1] * directionY + location[2] * directionX) * 20 + l[2]
+	location = {x, y, l[3]}
+
+	local shoot = false
+	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
+	local newobject = self.gun:update(dt, shoot, location, self)
+	
+	local engines = partsInfo.engines
+	local body = engines[8]
 	local appliedForceX = -directionY * engines[5] + directionX * engines[6]
 	local appliedForceY = directionX * engines[5] + directionY * engines[6]
 	local Fx = appliedForceX * self.thrust
 	local Fy = appliedForceY * self.thrust
-	body:applyForce(Fx, Fy, x, y)
+	body:applyForce(Fx, Fy, location[1], location[2])
 	body:applyTorque(engines[7] * self.torque)
+	
+	return newobject
 end
 
 return PlayerBlock

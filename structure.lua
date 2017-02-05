@@ -566,7 +566,9 @@ function Structure:update(dt, playerLocation, aiData)
 		local l = {self.partCoords[i].x, self.partCoords[i].y}
 		local s = {Util.sign(l[1]), Util.sign(l[2])}
 		local newObject = part:update(dt, partsInfo, l, s, self.partOrient[i])
-		table.insert(newObjects, newObject)
+		if newObject then
+			table.insert(newObjects, newObject)
+		end
 	end
 	return newObjects
 end

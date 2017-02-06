@@ -21,14 +21,13 @@ function Engine.create(world, x, y)
 	local self = Part.create()
 	setmetatable(self, Engine)
 
-	self.image = love.graphics.newImage("res/images/engine.png")
+	self.imageInactive = love.graphics.newImage("res/images/engine.png")
+	self.imageActive = love.graphics.newImage("res/images/engineActive.png")
+	self.image = self.imageInactive
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
 	self.isActive = false
-	self.imageActive = love.graphics.newImage("res/images/engineActive.png")
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
 
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 
@@ -43,6 +42,7 @@ function Engine.create(world, x, y)
 end
 
 function Engine:update(dt, partsInfo, location, locationSign, orientation)
+	self:setLocation(location, partsInfo.locationInfo, orientation)
 	if partsInfo.engines then
 		local body = partsInfo.body
 		local engines = partsInfo.engines
@@ -55,38 +55,7 @@ function Engine:update(dt, partsInfo, location, locationSign, orientation)
 		else
 			self.isActive = false
 		end
---[[
-
-function Util.vectorAngle(x, y)
-	local t = math.atan2(y, x)
-	return t
-end
-
-function Util.vectorComponents(r, angle)
-	local x = r * math.cos(angle)
-	local y = r * math.sin(angle)
-	return x, y
-end
-
-function Util.computeAbsCoords(x, y, angle)
-	local r = Util.vectorMagnitude(x, y)
-	local t = Util.vectorAngle(x, y)
-	return Util.vectorComponents(r, t + angle)
-end
-
-
-	x, y = Util.computeAbsCoords(
-		self.partCoords[index].x*self.PARTSIZE,
-		self.partCoords[index].y*self.PARTSIZE,
-		self.body:getAngle())
-	orient = self.partOrient[index]
-	return self.body:getX() + x, self.body:getY() + y,
-		   self.body:getAngle() + (orient - 1) * math.pi/2
-				% (2*math.pi)
-end
---]]
-
-
+		
 		if self.isActive then
 			d = Engine.directionTable[orientation]
 			local l = partsInfo.locationInfo[1]
@@ -102,27 +71,15 @@ end
 			local body = engines[8]
 			body:applyForce(Fx, Fy, x, y)
 		end
-	end
-end
-
-function Engine:draw(x, y, angle)
-	local image
-	if self.isActive then
-		image = self.imageActive
-		self.width = self.image:getWidth()
-		self.height = self.image:getHeight()
-
 	else
-		image = self.image
-		self.width = self.image:getWidth()
-		self.height = self.image:getHeight()
-
+		self.isActive = false
 	end
-	Screen.draw(
-		image,
-		x,
-		y,
-		angle, 1, 1, self.width/2, self.height/2)
+	
+	if self.isActive then
+		self.image = self.imageActive
+	else
+		self.image = self.imageInactive
+	end
 end
 
 return Engine

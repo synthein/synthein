@@ -52,16 +52,13 @@ function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
 		end
 	end
 
-	local l = partsInfo.locationInfo[1]
+	self:setLocation(location, partsInfo.locationInfo, orientation)
 	local directionX = partsInfo.locationInfo[2][1]
 	local directionY = partsInfo.locationInfo[2][2]
-	local x = (location[1] * directionX - location[2] * directionY) * 20 + l[1]
-	local y = (location[1] * directionY + location[2] * directionX) * 20 + l[2]
-	location = {x, y, l[3]}
 
 	local shoot = false
 	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
-	local newobject = self.gun:update(dt, shoot, location, self)
+	local newobject = self.gun:update(dt, shoot, self.location, self)
 	
 	local engines = partsInfo.engines
 	local body = engines[8]
@@ -69,7 +66,7 @@ function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
 	local appliedForceY = directionX * engines[5] + directionY * engines[6]
 	local Fx = appliedForceX * self.thrust
 	local Fy = appliedForceY * self.thrust
-	body:applyForce(Fx, Fy, location[1], location[2])
+	body:applyForce(Fx, Fy, self.location[1], self.location[2])
 	body:applyTorque(engines[7] * self.torque)
 	
 	return newobject

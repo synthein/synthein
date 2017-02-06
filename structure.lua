@@ -397,7 +397,7 @@ function Structure:damagePart(index)
 					coordsList[partList[i]] = {partX, partY, partOrient}
 					local x, y, angle = self:getAbsPartCoords(i)
 					structureList[partList[i]] =
-							self:createStructure(self.parts[i], 
+							Structure.create(self.parts[i], 
 												 {x, y, angle})
 					self:removePart(i)
 				end
@@ -584,8 +584,7 @@ end
 
 function Structure:draw()
 	for i,part in ipairs(self.parts) do
-		local x, y, angle = self:getAbsPartCoords(i)
-		self.parts[i]:draw(x, y, angle)
+		self.parts[i]:draw()
 	end
 end
 

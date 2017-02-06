@@ -42,11 +42,11 @@ end
 function AIBlock:update(dt, partsInfo, location, locationSign, orientation)
 	local engines = partsInfo.engines
 	local body = engines[8]
-	local l = partsInfo.locationInfo[1]
+
+	self:setLocation(location, partsInfo.locationInfo, orientation)
 	local directionX = partsInfo.locationInfo[2][1]
 	local directionY = partsInfo.locationInfo[2][2]
-	local x = (location[1] * directionX - location[2] * directionY) * 20 + l[1]
-	local y = (location[1] * directionY + location[2] * directionX) * 20 + l[2]
+
 	local appliedForceX = -directionY * engines[5] + directionX * engines[6]
 	local appliedForceY = directionX * engines[5] + directionY * engines[6]
 	local Fx = appliedForceX * self.thrust

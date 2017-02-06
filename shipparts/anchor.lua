@@ -27,7 +27,4 @@ function Anchor:getOrders()
 	return {}
 end
 
-function Anchor:update()
-end
-
 return Anchor

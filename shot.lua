@@ -39,14 +39,14 @@ function Shot:update(dt, worldInfo)
 	for i, structure in ipairs(worldInfo[2].structures) do
 		local partIndexHit = structure:getPartIndex(self.x, self.y)
 		if partIndexHit then
-			structureHit = structure
+			local structureHit = structure
 			local hit =
 				structureHit and
 				partIndexHit and
 				structureHit.parts[partIndexHit] ~= self.sourcePart
 			if hit then
 				self.isDestroyed = true
-				new = structureHit:damagePart(partIndexHit)
+				local new = structureHit:damagePart(partIndexHit)
 				if new then
 					newObjects = new
 				end

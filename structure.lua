@@ -373,7 +373,7 @@ function Structure:damagePart(index)
 	self.parts[index]:takeDamage()
 	if self.parts[index].destroy then
 		x, y = self:getAbsPartCoords(index)
-		newParticle = {"particles", x, y}
+		local newParticle = {"particles", x, y}
 		self:removePart(index)
 		if self.isDestroyed then
 			return {newParticle}
@@ -403,15 +403,16 @@ function Structure:damagePart(index)
 				end
 			end
 		end
+		local newObjects
+		if newStructures then
+			newObjects = newStructures
+			table.insert(newObjects, newParticle)
+		else
+			newObjects = {newParticle}
+		end
+		return newObjects
 	end
-	local newObjects
-	if newStructures then
-		newObjects = newStructures
-		table.insert(newObjects, newParticle)
-	else
-		newObjects = {newParticle}
-	end
-	return newStructures
+	return {}
 end
 
 -- Find the absolute coordinates of a part given the x and y offset values of
@@ -460,66 +461,6 @@ function Structure:command(orders)
 	end
 
 	local commands = {engines = engines, guns = {shoot = shoot}}
-
---------------------------------------------------------------------------------
---[[
-	for i,part in ipairs(self.parts) do
-		if part.thrust then
-
-			local appliedForceX = 0
-			local appliedForceY = 0
-
-				-- Apply the force for the engines
-					-- Choose parts that have thrust and are pointed the right
-					-- direction, but exclude playerBlock, etc.
-
-			if part.type == "control" then
-				appliedForceX = directionX * parallel + directionY * perpendicular
-				appliedForceY = directionY * parallel + -directionX * perpendicular
-				self.body:applyTorque(rotate * part.torque)
-			elseif part.type == "generic" then
-				partParallel = Util.sign(self.partCoords[i].x)
-				partPerpendicular = Util.sign(self.partCoords[i].y)
-				local partPerpendicular = perpendicular - rotate * partPerpendicular
-				local partParallel = parallel + rotate * partParallel
-
-				--Set to 0 if engine is going backwards.
-				if self.partOrient[i] < 3 then
-					if partParallel < 0 then partParallel = 0 end
-					if partPerpendicular > 0 then	partPerpendicular = 0 end
-				elseif self.partOrient[i] > 2 then
-					if partParallel > 0 then	partParallel = 0 end
-					if partPerpendicular < 0 then	partPerpendicular = 0 end
-				end
-				--Limit to -1, 0 , 1.
-				partParallel = Util.sign(partParallel)
-				partPerpendicular = Util.sign(partPerpendicular)
-				--Moving forward and backward.
-				if self.partOrient[i] % 2 == 1 then
-					appliedForceX = directionX * partParallel
-					appliedForceY = directionY * partParallel
-				--Moving side to side.
-				elseif self.partOrient[i] % 2 == 0 then
-					appliedForceX = directionY * partPerpendicular
-					appliedForceY = -directionX * partPerpendicular
-				end
-				--Turn on flame.
-				if appliedForceX ~= 0 or  appliedForceY ~=0 then
-					part.isActive = true
-				else
-					part.isActive = false
-				end
-			end
-			--Thrust multiplier
-			local Fx = appliedForceX * part.thrust
-			local Fy = appliedForceY * part.thrust
-			self.body:applyForce(Fx, Fy, self:getAbsPartCoords(i))
-		end
-	end
-
-	return newObjects, commands
---]]
---------------------------------------------------------------------------------
 	
 	return commands
 end

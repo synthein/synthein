@@ -30,7 +30,7 @@ function GunBlock:update(dt, partsInfo, location, locationSign, orientation)
 
 	local shoot = false
 	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
-	local newobject = self.gun:update(dt, shoot, self.location, self)
+	local newObject = self.gun:update(dt, shoot, self.location, self)
 
 	return newObject
 end

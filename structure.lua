@@ -506,7 +506,7 @@ function Structure:update(dt, playerLocation, aiData)
 	end
 
 	for i = #self.parts,1,-1 do
-		if part.isDestroyed then
+		if self.parts[i].isDestroyed then
 			local x, y
 			x, y = self:getAbsPartCoords(i)
 			self:removePart(i)

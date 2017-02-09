@@ -40,16 +40,14 @@ function Shot:update(dt, worldInfo)
 		local partIndexHit = structure:getPartIndex(self.x, self.y)
 		if partIndexHit then
 			local structureHit = structure
+			local partHit = structureHit.parts[partIndexHit]
 			local hit =
 				structureHit and
 				partIndexHit and
-				structureHit.parts[partIndexHit] ~= self.sourcePart
+				partHit ~= self.sourcePart
 			if hit then
 				self.isDestroyed = true
-				local new = structureHit:damagePart(partIndexHit)
-				if new then
-					newObjects = new
-				end
+				partHit:takeDamage()
 			end
 		end
 	end

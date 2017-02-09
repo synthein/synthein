@@ -369,50 +369,34 @@ function Structure:removePart(part)
 	end
 end
 
-function Structure:damagePart(index)
-	self.parts[index]:takeDamage()
-	if self.parts[index].destroy then
-		x, y = self:getAbsPartCoords(index)
-		local newParticle = {"particles", x, y}
-		self:removePart(index)
-		if self.isDestroyed then
-			return {newParticle}
-		end
-		local partList = self:testConnection()
-		local structureList = {}
-		local coordsList = {}
-		for i = #partList,1,-1 do
-			if partList[i] ~= 1 then
-				local partStructure = structureList[partList[i]]
-				if partStructure then
-					local partX = coordsList[partList[i]][1]
-					local partY = coordsList[partList[i]][2]
-					local partOrient = coordsList[partList[i]][3]
-					partStructure:annexPart(self, i, partOrient,
-											partX, partY, 0, 0)
-				else
-					local partX = self.partCoords[i].x
-					local partY = self.partCoords[i].y
-					local partOrient = (-self.partOrient[i] + 1) % 4 + 1
-					coordsList[partList[i]] = {partX, partY, partOrient}
-					local x, y, angle = self:getAbsPartCoords(i)
-					structureList[partList[i]] =
-							Structure.create(self.parts[i], 
-												 {x, y, angle})
-					self:removePart(i)
-				end
+function Structure:removeSections()
+	local partList = self:testConnection()	
+	local newStructures = {}
+	local structureList = {}
+	local coordsList = {}
+	for i = #partList,1,-1 do
+		if partList[i] ~= 1 then
+			local partStructure = structureList[partList[i]]
+			if partStructure then
+				local partX = coordsList[partList[i]][1]
+				local partY = coordsList[partList[i]][2]
+				local partOrient = coordsList[partList[i]][3]
+				partStructure:annexPart(self, i, partOrient,
+										partX, partY, 0, 0)
+			else
+				local partX = self.partCoords[i].x
+				local partY = self.partCoords[i].y
+				local partOrient = (-self.partOrient[i] + 1) % 4 + 1
+				coordsList[partList[i]] = {partX, partY, partOrient}
+				local x, y, angle = self:getAbsPartCoords(i)
+				structureList[partList[i]] =
+						Structure.create(self.parts[i], 
+											 {x, y, angle})
+				self:removePart(i)
 			end
 		end
-		local newObjects
-		if newStructures then
-			newObjects = newStructures
-			table.insert(newObjects, newParticle)
-		else
-			newObjects = {newParticle}
-		end
-		return newObjects
 	end
-	return {}
+	return newStructures
 end
 
 -- Find the absolute coordinates of a part given the x and y offset values of
@@ -520,6 +504,16 @@ function Structure:update(dt, playerLocation, aiData)
 			table.insert(newObjects, newObject)
 		end
 	end
+
+	for i = #self.parts,1,-1 do
+		if part.isDestroyed then
+			local x, y
+			x, y = self:getAbsPartCoords(i)
+			self:removePart(i)
+			table.insert(newObjects, {"particles", x, y})
+		end
+	end
+
 	return newObjects
 end
 

@@ -12,7 +12,7 @@ function Part.create()
 	self.thrust = 0
 	self.torque = 0
 	self.gun = false
-	self.destroy = false
+	self.isDestroyed = false
 	self.type = "generic"
 	self.health = 10
 
@@ -44,7 +44,7 @@ end
 function Part:takeDamage()
 	self.health = self.health - 1
 	if self.health <= 0 then
-		self.destroy = true
+		self.isDestroyed = true
 	end
 end
 

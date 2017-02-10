@@ -123,7 +123,7 @@ function Structure:annex(annexee, annexeePartIndex, annexeePartSide,
 			local annexeeY = annexee.partCoords[aIndex].y
 
 	for i=1,#annexee.parts do
-		newStructure = self:annexPart(annexee, 1, annexeeOrientation, 
+		local newStructure = self:annexPart(annexee, 1, annexeeOrientation, 
 						annexeeX, annexeeY, structureOffsetX, structureOffsetY)
 		table.insert(newStructures, newStructure)
 	end
@@ -171,7 +171,7 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 	local newStructure
 	if partThere then
 		local location = {annexee:getAbsPartCoords(partIndex)}
-		newStructure = {"structure", location, annexee.parts[partIndex]}
+		newStructure = {"structure", annexee.parts[partIndex], location}
 	else
 		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
 	end
@@ -369,34 +369,31 @@ function Structure:removePart(part)
 	end
 end
 
-function Structure:removeSections()
-	local partList = self:testConnection()	
-	local newStructures = {}
+function Structure:removeSections(newObjects)
+	local partList = self:testConnection()
 	local structureList = {}
-	local coordsList = {}
+	local locationList = {}
 	for i = #partList,1,-1 do
 		if partList[i] ~= 1 then
-			local partStructure = structureList[partList[i]]
-			if partStructure then
-				local partX = coordsList[partList[i]][1]
-				local partY = coordsList[partList[i]][2]
-				local partOrient = coordsList[partList[i]][3]
-				partStructure:annexPart(self, i, partOrient,
-										partX, partY, 0, 0)
-			else
-				local partX = self.partCoords[i].x
-				local partY = self.partCoords[i].y
-				local partOrient = (-self.partOrient[i] + 1) % 4 + 1
-				coordsList[partList[i]] = {partX, partY, partOrient}
-				local x, y, angle = self:getAbsPartCoords(i)
-				structureList[partList[i]] =
-						Structure.create(self.parts[i], 
-											 {x, y, angle})
-				self:removePart(i)
+			for i = #structureList, partList[i]-1 do
+				table.insert(structureList, {parts = {}, partCoords = {}, partOrient = {}})
 			end
+
+			local partX = self.partCoords[i].x
+			local partY = self.partCoords[i].y
+			local partOrient = self.partOrient[i]
+			table.insert(structureList[partList[i]].parts, self.parts[i])
+			table.insert(structureList[partList[i]].partCoords, {x = partX, y = partY})
+			table.insert(structureList[partList[i]].partOrient, partOrient)
+			self:removePart(i)
 		end
 	end
-	return newStructures
+
+	for i, structure in ipairs(structureList) do
+		table.insert(newObjects, {"structures", structureList[i], {self:getLocation()}})
+	end
+
+	return newObjects
 end
 
 -- Find the absolute coordinates of a part given the x and y offset values of
@@ -511,8 +508,10 @@ function Structure:update(dt, playerLocation, aiData)
 			x, y = self:getAbsPartCoords(i)
 			self:removePart(i)
 			table.insert(newObjects, {"particles", x, y})
+			newObjects = self:removeSections(newObjects)
 		end
 	end
+	
 
 	return newObjects
 end

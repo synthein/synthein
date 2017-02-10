@@ -3,6 +3,7 @@ local AI = require("ai")
 local AIBlock = require("shipparts/aiBlock")
 local Util = require("util")
 local Particles = require("particles")
+local GridTable = require("gridTable")
 
 local Structure = {}
 Structure.__index = Structure
@@ -17,6 +18,8 @@ end
 function Structure.create(shipTable, location, data)
 	local self = {}
 	setmetatable(self, Structure)
+
+	self.gridTable = GridTable.create()
 	self.parts = {}
 	self.partCoords = {}
 	self.partOrient = {}
@@ -201,36 +204,14 @@ function Structure:removeSection(index)
 end
 
 function Structure:testConnection()
-	local xMin = 0
-	local xMax = 0
-	local yMin = 0
-	local yMax = 0
-	for i,part in ipairs(self.parts) do
+	local partsLayout = GridTable.create()
+	for i, part in ipairs(self.parts) do
 		local x = self.partCoords[i].x
 		local y = self.partCoords[i].y
-		if x < xMin then
-			xMin = x
-		elseif x > xMax then
-			xMax = x
-		end
-		if y < yMin then
-			yMin = y
-		elseif y > yMax then
-			yMax = y
-		end
+		partsLayout:index(x, y, {i, 0, 0})
 	end
-	partsLayout = {}
-	for i = 1,(yMax-yMin+1) do
-		table.insert(partsLayout,{})
-		for j = 1,(xMax-xMin+1) do
-			table.insert(partsLayout[i], {0, 0, 0})
-		end
-	end
-	for i,part in ipairs(self.parts) do
-		local x = self.partCoords[i].x
-		local y = self.partCoords[i].y
-		partsLayout[y - yMin + 1][x - xMin + 1] = {i, 0, 0}
-	end
+
+	local index
 	if self.corePart then
 		for i,part in ipairs(self.parts) do
 			if self.corePart == part then
@@ -242,42 +223,49 @@ function Structure:testConnection()
 	end
 	local x = self.partCoords[index].x
 	local y = self.partCoords[index].y
-	partsLayout[y - yMin + 1][x - xMin + 1][2] = 1
-	partsLayout[y - yMin + 1][x - xMin + 1][3] = 1
+	local p = partsLayout:index(x, y)
+	p[2] = 1
+	p[3] = 1
 
 	local structureIndex = 1
-	local checkParts = {index}
+	local checkParts = {{x, y}}
 	while #checkParts ~= 0 do
-		local partIndex = checkParts[#checkParts]
+		local x = checkParts[#checkParts][1]
+		local y = checkParts[#checkParts][2]
 		table.remove(checkParts, #checkParts)
+
+		local p = partsLayout:index(x, y)
+		local partIndex = p[1]
 		for i = 1,4 do
 			if self.parts[partIndex].connectableSides[i] then
-				x = self.partCoords[partIndex].x
-				y = self.partCoords[partIndex].y
+				local x1 = x
+				local y1 = y
 				if i == 1 then
-					y = y + 1
+					y1 = y + 1
 				elseif i == 2 then
-					x = x - 1
+					x1 = x - 1
 				elseif i == 3 then
-					y = y - 1
+					y1 = y - 1
 				elseif i == 4 then
-					x = x + 1
+					x1 = x + 1
 				end
-				x1 = x - xMin + 1
-				y1 = y - yMin + 1
+
 				local part, side, newIndex, state
-				if partsLayout[y1] and partsLayout[y1][x1] then
-					newIndex = partsLayout[y1][x1][1]
-					state = partsLayout[y1][x1][2]
+
+				local p = partsLayout:index(x1, y1)
+
+				if p then
+					newIndex = p[1]
+					state = p[2]
 				end
 				if newIndex and newIndex ~= 0 and state == 0 then
 					part = self.parts[newIndex]
 					side = (i - self.partOrient[newIndex] + 2) % 4 + 1
 				end
 				if part and side and part.connectableSides[side] then
-					table.insert(checkParts, newIndex)
-					partsLayout[y1][x1][2] = 1
-					partsLayout[y1][x1][3] = structureIndex			
+					table.insert(checkParts, {x1, y1})
+					p[2] = 1
+					p[3] = structureIndex
 				end
 			end
 		end
@@ -287,13 +275,14 @@ function Structure:testConnection()
 				partIndex = i
 				x = self.partCoords[partIndex].x
 				y = self.partCoords[partIndex].y
-				x1 = x - xMin + 1
-				y1 = y - yMin + 1
-				if partsLayout[y1][x1][2] == 0 then
-					table.insert(checkParts, partIndex)
+				local p = partsLayout:index(x, y)
+
+				if p[2] == 0 then
 					structureIndex = structureIndex + 1
-					partsLayout[y1][x1][2] = 1
-					partsLayout[y1][x1][3] = structureIndex
+					p[2] = 1
+					p[3] = structureIndex
+
+					table.insert(checkParts, {x, y})
 					break
 				end
 			end
@@ -304,11 +293,9 @@ function Structure:testConnection()
 	for i in ipairs (self.parts) do
 		x = self.partCoords[i].x
 		y = self.partCoords[i].y
-		x1 = x - xMin + 1
-		y1 = y - yMin + 1
-		table.insert(partList, partsLayout[y1][x1][3])
+		local p = partsLayout:index(x, y)
+		table.insert(partList, p[3])
 	end
-
 	return partList
 end
 
@@ -322,6 +309,8 @@ function Structure:addPart(part, x, y, orientation)
 	local shape = love.physics.newRectangleShape(
 		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
+
+	self.gridTable:index(x, y, part)
 	table.insert(self.parts, part)
 	table.insert(self.partCoords, {x = x, y = y})
 	table.insert(self.partOrient, orientation)
@@ -359,6 +348,7 @@ function Structure:removePart(part)
 		self.corePart = nil
 	end
 	self.fixtures[partIndex]:destroy()
+	self.gridTable:index(x, y, nil, true)
 	table.remove(self.parts, partIndex)
 	table.remove(self.partCoords, partIndex)
 	table.remove(self.fixtures, partIndex)

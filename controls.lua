@@ -65,7 +65,9 @@ Controls.shipCommands = {
 
 Controls.pressed = {
 	build   	= "build",
-	destroy 	= "destroy"
+	destroy 	= "destroy",
+	zoomOut		= "zoomOut",
+	zoomIn		= "zoomIn"
 }
 
 Controls.released = {
@@ -83,6 +85,8 @@ Controls.defaults = {
 		shoot   	= {keyboard, "space"},
 		build   	= {mouse, 1},
 		destroy 	= {mouse, 2},
+		zoomOut		= {mouse, "-yWheel"},
+		zoomIn		= {mouse, "yWheel"},
 		cursorX 	= {mouse, "xAxis", "set"},
 		cursorY 	= {mouse, "yAxis", "set"},
 		confirm		= {keyboard, "return"},

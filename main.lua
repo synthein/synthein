@@ -27,13 +27,16 @@ function love.keypressed(key)
 	end
 end
 
+function love.keyreleased(key, scancode)
+	state.keyreleased(key)
+end
+
 function love.mousepressed(x, y, button, istouch)
 	newState = state.mousepressed(x, y, button)
 	if newState then
 		state = newState
 	end
 end
-
 function love.mousereleased(x, y, button, istouch)
 	newState = state.mousereleased(x, y, button)
 	if newState then

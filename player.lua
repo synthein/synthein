@@ -120,6 +120,12 @@ function Player:buttonpressed(source, button)
 			end
 		end
 	end
+	if order == "zoomIn" then
+		self.camera:adjustZoom(1)
+	end
+	if order == "zoomOut" then
+		self.camera:adjustZoom(-1)
+	end
 end
 
 function Player:buttonreleased(source, button)

@@ -36,6 +36,10 @@ function InGame.resize(w, h)
 end
 
 function InGame.keypressed(key)
+	for i, player in ipairs(players) do
+		player:buttonpressed(love.keyboard, key)
+	end
+
 	if typingSaveName then
 		if key:match("^%w$") then
 			saveName = saveName .. key
@@ -58,6 +62,12 @@ function InGame.keypressed(key)
 	end
 
 	return InGame
+end
+
+function InGame.keyreleased(key)
+	for i, player in ipairs(players) do
+		player:buttonreleased(love.keyboard, key)
+	end
 end
 
 function InGame.mousepressed(x, y, button)
@@ -108,7 +118,13 @@ function InGame.mousereleased(x, y, button)
 end
 
 function InGame.wheelmoved(x, y)
-	players[1].camera:adjustZoom(y)
+	for i, player in ipairs(players) do
+		if y > 0 then
+			player:buttonpressed(love.mouse, "yWheel")
+		elseif y < 0 then
+			player:buttonpressed(love.mouse, "-yWheel")
+		end
+	end
 end
 
 function InGame.update(dt)

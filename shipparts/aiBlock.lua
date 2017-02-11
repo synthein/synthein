@@ -40,18 +40,17 @@ function AIBlock:runMenu(i)
 end
 
 function AIBlock:update(dt, partsInfo, location, locationSign, orientation)
-	local engines = partsInfo.engines
-	local body = engines[8]
-
 	self:setLocation(location, partsInfo.locationInfo, orientation)
 	local directionX = partsInfo.locationInfo[2][1]
 	local directionY = partsInfo.locationInfo[2][2]
-
+	
+	local engines = partsInfo.engines
+	local body = engines[8]
 	local appliedForceX = -directionY * engines[5] + directionX * engines[6]
 	local appliedForceY = directionX * engines[5] + directionY * engines[6]
 	local Fx = appliedForceX * self.thrust
 	local Fy = appliedForceY * self.thrust
-	body:applyForce(Fx, Fy, x, y)
+	body:applyForce(Fx, Fy, self.location[1], self.location[2])
 	body:applyTorque(engines[7] * self.torque)
 end
 

@@ -9,7 +9,7 @@ function World.create()
 	self = {}
 	setmetatable(self, World)
 
-	self.chunks = {}
+	self.chunks = GridTable.create()
 	return self
 end
 
@@ -26,13 +26,12 @@ end
 function World:getChunk(location)
 	local x = location[1]
 	local y = location[2]
-	if not self.chunks[y] then
-		self.chunks[y] = {}
+	local chunk = self.chunks:index(x, y)
+	if not chunk then
+		chunk = Chunk.create({x, y})
+		self.chunks:index(x, y, chunk)
 	end
-	if not self.chunks[y][x] then
-		self.chunks[y][x] = Chunk.create({x, y})
-	end
-	return self.chunks[y][x]
+	return chunk
 end
 
 --Get the structure and part under at the location.
@@ -49,7 +48,9 @@ end
 function World:removeSection(structure, partIndex)
 	if structure.parts[partIndex].type == "generic" then
 		local newStructure = structure:removeSection(partIndex)
-		self:addObject(newStructure, nil, "structures")
+		if newStructure then
+			self:addObject(newStructure, nil, "structures")
+		end
 	end
 end
 
@@ -67,29 +68,19 @@ end
 --]]
 
 function World:update(dt)
-	local move = {}
-	for keyY, chunkTable in pairs(self.chunks) do
-		for keyX, chunk in pairs(chunkTable) do
-			m = chunk:update(dt)
-			for i, object in ipairs(m) do
-				table.insert(move, object)
-			end
-		end
-	end
+	local move = self.chunks:loop(Chunk.update, dt)
 	
-	for i, object in ipairs(move) do
-		self:addObject(object[3], object[1], object[2])
+	for i, t in ipairs(move) do
+		for j, object in ipairs(t) do
+			self:addObject(object[3], object[1], object[2])
+		end
 	end
 
 end
 
 function World:draw()
 	-- Draw all of the chunks.
-	for keyY, chunkTable in pairs(self.chunks) do
-		for keyX, chunk in pairs(chunkTable) do
-			chunk:draw()
-		end
-	end
+	self.chunks:loop(Chunk.draw)
 end
 
 return World

@@ -498,7 +498,9 @@ function Structure:update(dt, playerLocation, aiData)
 			x, y = self:getAbsPartCoords(i)
 			self:removePart(i)
 			table.insert(newObjects, {"particles", x, y})
-			newObjects = self:removeSections(newObjects)
+			if #self.parts > 1 then
+				newObjects = self:removeSections(newObjects)
+			end
 		end
 	end
 	

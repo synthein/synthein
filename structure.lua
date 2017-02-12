@@ -389,14 +389,9 @@ end
 -- Find the absolute coordinates of a part given the x and y offset values of
 -- the part and the absolute coordinates and angle of the structure it is in.
 function Structure:getAbsPartCoords(index)
-	x, y = Util.computeAbsCoords(
-		self.partCoords[index].x*self.PARTSIZE,
-		self.partCoords[index].y*self.PARTSIZE,
-		self.body:getAngle())
-	orient = self.partOrient[index]
-	return self.body:getX() + x, self.body:getY() + y,
-		   self.body:getAngle() + (orient - 1) * math.pi/2
-				% (2*math.pi)
+	local part = self.parts[index]
+	local location = part.location
+	return location[1], location[2], location[3]
 end
 
 function Structure:command(orders)
@@ -504,7 +499,6 @@ function Structure:update(dt, playerLocation, aiData)
 		end
 	end
 	
-
 	return newObjects
 end
 

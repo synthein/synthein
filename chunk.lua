@@ -2,6 +2,7 @@ local Particles = require("particles")
 local Shot = require("shot")
 local Structure = require("structure")
 local Util = require("util")
+local Settings = require("settings")
 
 local Chunk = {}
 Chunk.__index = Chunk
@@ -12,7 +13,7 @@ Chunk.objectTypes = {
 	particles	= Particles
 }
 
-Chunk.size = 2000
+Chunk.size = Settings.chunkSize
 
 function Chunk.create(chunkLocation)
 	self = {}

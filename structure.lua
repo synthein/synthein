@@ -4,6 +4,7 @@ local AIBlock = require("shipparts/aiBlock")
 local Util = require("util")
 local Particles = require("particles")
 local GridTable = require("gridTable")
+local Settings = require("settings")
 
 local Structure = {}
 Structure.__index = Structure
@@ -24,6 +25,8 @@ function Structure.create(shipTable, location, data)
 	self.partCoords = {}
 	self.partOrient = {}
 	self.fixtures = {}
+	self.maxDiameter = 1
+	self.size = 1
 	self.isDestroyed = false
 
 	if not shipTable.parts then
@@ -200,6 +203,9 @@ function Structure:removeSection(index)
 			newStructure:annexPart(self, i, partOrient, partX, partY, 0, 0)
 		end
 	end
+
+	self:recalculateSize()
+
 	return newStructure
 end
 
@@ -310,11 +316,32 @@ function Structure:addPart(part, x, y, orientation)
 		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
 
+	self:calculateSize(x, y)
+
 	self.gridTable:index(x, y, part)
 	table.insert(self.parts, part)
 	table.insert(self.partCoords, {x = x, y = y})
 	table.insert(self.partOrient, orientation)
 	table.insert(self.fixtures, fixture)
+end
+
+function Structure:recalculateSize()
+	self.maxDiameter = 1
+	self.gridTable:loop(Structure.partCalculateSize, self)
+end
+
+function Structure.partCalculateSize(part, structure, x, y)
+	structure:calculateSize(x, y)
+end
+
+function Structure:calculateSize(x, y)
+	local x = math.abs(x)
+	local y = math.abs(y)
+	local d = math.max(x, y) + x + y + 1
+	if self.maxDiameter < d then
+		self.maxDiameter = d
+		self.size = math.ceil(self.maxDiameter * 0.5625 / Settings.chunkSize)
+	end
 end
 
 -- Check if a part is in this structure.
@@ -378,6 +405,8 @@ function Structure:removeSections(newObjects)
 			self:removePart(i)
 		end
 	end
+
+	self:recalculateSize()
 
 	for i, structure in ipairs(structureList) do
 		table.insert(newObjects, {"structures", structureList[i], {self:getLocation()}})

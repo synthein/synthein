@@ -1,5 +1,7 @@
 pipeline:
     test-syntax:
+        when:
+            event: push
         image: ubuntu:latest
         commands:
             - apt-get update && apt-get -y install lua5.3

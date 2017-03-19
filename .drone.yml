@@ -2,12 +2,21 @@ pipeline:
     test-syntax:
         image: ubuntu:latest
         commands:
-            - apt-get update && apt-get -y install lua5.3
+            - apt-get update && apt-get -y install lua5.3 curl zip
             - find src -name '*.lua' -exec luac5.3 -p {} +
 
     package-love:
+        image: ubuntu:latest
         when:
-            event: push
-            branch: master
+            event: [push, tag]
+            branch: [master, refs/tags/*]
         commands:
             - scripts/package-love.sh
+
+    package-windows:
+        image: ubuntu:latest
+        when:
+            event: tag
+            branch: refs/tags/*
+        commands:
+            - scripts/package-windows.sh

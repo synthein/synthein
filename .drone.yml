@@ -1,0 +1,6 @@
+pipeline:
+    test-syntax:
+        image: ubuntu:latest
+        commands:
+            - apt-get update && apt-get -y install lua5.3
+            - find . -name '*.lua' -exec luac5.3 -p {} +

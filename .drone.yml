@@ -3,4 +3,11 @@ pipeline:
         image: ubuntu:latest
         commands:
             - apt-get update && apt-get -y install lua5.3
-            - find . -name '*.lua' -exec luac5.3 -p {} +
+            - find src -name '*.lua' -exec luac5.3 -p {} +
+
+    package-love:
+        when:
+            event: push
+            branch: master
+        commands:
+            - scripts/package-love.sh

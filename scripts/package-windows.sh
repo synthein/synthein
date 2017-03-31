@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 if [ ! -f build/synthein.love ]; then
 	echo "Need to build the .love file first."

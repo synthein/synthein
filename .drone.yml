@@ -1,12 +1,12 @@
 pipeline:
     test-syntax:
-        image: ubuntu:latest
+        image: alpine:latest
         commands:
-            - apt-get update && apt-get -y install lua5.3 curl zip
-            - find src -name '*.lua' -exec luac5.3 -p {} +
+            - apk update && apk add lua curl zip
+            - find src -name '*.lua' -exec luac -p {} +
 
     package-love:
-        image: ubuntu:latest
+        image: alpine:latest
         when:
             event: [push, tag]
             branch: [master, refs/tags/*]
@@ -14,9 +14,10 @@ pipeline:
             - scripts/package-love.sh
 
     package-windows:
-        image: ubuntu:latest
+        image: alpine:latest
         when:
             event: tag
             branch: refs/tags/*
         commands:
+            - export LOVE_VERSION=0.10.2
             - scripts/package-windows.sh

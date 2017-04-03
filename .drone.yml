@@ -5,12 +5,24 @@ pipeline:
             - apk update && apk add lua curl zip
             - find src -name '*.lua' -exec luac -p {} +
 
-    package-love:
+    package-love-dev:
         image: alpine:latest
         when:
-            event: [push, tag]
-            branch: [master, refs/tags/*]
+            event: push
+            branch: master
         commands:
+            - export SYNTHEIN_VERSION=c${DRONE_COMMIT:8}
+            - apk update && apk add zip
+            - scripts/package-love.sh
+
+    package-love-release:
+        image: alpine:latest
+        when:
+            event: tag
+            branch: refs/tags/*
+        commands:
+            - export SYNTHEIN_VERSION=${DRONE_TAG}
+            - apk update && apk add zip
             - scripts/package-love.sh
 
     package-windows:
@@ -19,5 +31,7 @@ pipeline:
             event: tag
             branch: refs/tags/*
         commands:
+            - export SYNTHEIN_VERSION=${DRONE_TAG}
             - export LOVE_VERSION=0.10.2
+            - apk update && apk add curl zip
             - scripts/package-windows.sh

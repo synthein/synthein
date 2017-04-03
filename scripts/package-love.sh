@@ -6,7 +6,7 @@ if [ ! -d build ]; then
 fi
 
 cd src
-zip -9 -r ../build/synthein.love .
+zip -9 -r "../build/synthein-${SYNTHEIN_VERSION}.love" .
 
 cd ..
-echo "Built $(find . -name synthein.love)."
+echo "Built $(find . -name synthein*.love)."

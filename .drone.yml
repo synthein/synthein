@@ -25,6 +25,17 @@ pipeline:
             - apk update && apk add zip
             - scripts/package-love.sh
 
+    package-linux-appimage:
+        image: ubuntu:14.04
+        when:
+            event: never
+            branch: refs/tags/*
+        commands:
+            - export SYNTHEIN_VERSION=${DRONE_TAG}
+            - export LOVE_VERSION=0.10.2
+            - apt-get update && apt-get install curl zip
+            - scripts/package-linux-appimage.sh
+
     package-windows:
         image: alpine:latest
         when:

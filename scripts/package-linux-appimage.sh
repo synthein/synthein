@@ -15,7 +15,7 @@ curl -L -O "https://bitbucket.org/rude/love/downloads/liblove0_${LOVE_VERSION}pp
 dpkg --install love_*ppa1_amd64.deb liblove0_*ppa1_amd64.deb || apt-get -yf install
 
 echo "Building AppImage package."
-echo $SYNTHEIN_VERSION > VERSION
+echo $SYNTHEIN_VERSION > SYNTHEIN_VERSION
 cat /usr/bin/love synthein-${SYNTHEIN_VERSION}.love > synthein-linux.bin
 chmod +x synthein-linux.bin
 

@@ -11,12 +11,12 @@ fi
 echo "Getting Windows LÖVE binary."
 cd "${ROOT_DIR}/build"
 curl -L -O "http://bitbucket.org/rude/love/downloads/love-${LOVE_VERSION}-win64.zip"
-unzip love-${LOVE_VERSION}-win64.zip
+unzip "love-${LOVE_VERSION}-win64.zip"
 
 echo "Building Windows package."
 mkdir "${ROOT_DIR}/build/synthein-windows"
 cd "${ROOT_DIR}/build/synthein-windows"
-echo $SYNTHEIN_VERSION > VERSION
+echo $SYNTHEIN_VERSION > SYNTHEIN_VERSION
 cat ../love-${LOVE_VERSION}-win64/love.exe ../synthein-${SYNTHEIN_VERSION}.love > synthein.exe
 cp ../love-${LOVE_VERSION}-win64/*.dll ../love-${LOVE_VERSION}-win64/license.txt ./
 

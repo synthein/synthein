@@ -1,6 +1,59 @@
 pipeline:
     test-syntax:
-        image: ubuntu:latest
+        image: alpine:latest
         commands:
-            - apt-get update && apt-get -y install lua5.3
-            - find . -name '*.lua' -exec luac5.3 -p {} +
+            - apk update && apk add lua curl zip
+            - find src -name '*.lua' -exec luac -p {} +
+
+    package-love-dev:
+        image: alpine:latest
+        when:
+            event: push
+            branch: master
+        commands:
+            - export SYNTHEIN_VERSION=c${DRONE_COMMIT:8}
+            - apk update && apk add zip
+            - scripts/package-love.sh
+
+    package-love-release:
+        image: alpine:latest
+        when:
+            event: tag
+            branch: refs/tags/*
+        commands:
+            - export SYNTHEIN_VERSION=${DRONE_TAG}
+            - apk update && apk add zip
+            - scripts/package-love.sh
+
+    package-linux-appimage:
+        image: ubuntu:14.04
+        when:
+            event: never
+            branch: refs/tags/*
+        commands:
+            - export SYNTHEIN_VERSION=${DRONE_TAG}
+            - export LOVE_VERSION=0.10.2
+            - apt-get update && apt-get install curl zip
+            - scripts/package-linux-appimage.sh
+
+    package-mac:
+        image: alpine:latest
+        when:
+            event: tag
+            branch: refs/tags/*
+        commands:
+            - export SYNTHEIN_VERSION=${DRONE_TAG}
+            - export LOVE_VERSION=0.10.2
+            - apk update && apk add curl zip
+            - scripts/package-mac.sh
+
+    package-windows:
+        image: alpine:latest
+        when:
+            event: tag
+            branch: refs/tags/*
+        commands:
+            - export SYNTHEIN_VERSION=${DRONE_TAG}
+            - export LOVE_VERSION=0.10.2
+            - apk update && apk add curl zip
+            - scripts/package-windows.sh

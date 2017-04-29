@@ -1,19 +1,18 @@
-SYNTHEIN_VERSION=devel
-LOVE_VERSION=0.10.2
+env = SYNTHEIN_VERSION=devel LOVE_VERSION=0.10.2
 
-all: love linux mac windows
+all: love mac windows
 
 love:
-	scripts/package-love.sh
+	${env} scripts/package-love.sh
 
-linux:
-	scripts/package-linux-appimage.sh
+appimage: love
+	${env} scripts/package-linux-appimage.sh
 
 mac: love
-	scripts/package-mac.sh
+	${env} scripts/package-mac.sh
 
 windows: love
-	scripts/package-windows.sh
+	${env} scripts/package-windows.sh
 
 clean:
 	rm -rf build/

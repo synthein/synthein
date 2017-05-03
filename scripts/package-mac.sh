@@ -10,7 +10,7 @@ fi
 
 echo "Getting MacOS LÖVE binary."
 cd "${ROOT_DIR}/build"
-#curl -L -O "https://bitbucket.org/rude/love/downloads/love-${LOVE_VERSION}-macosx-x64.zip"
+curl -L -O "https://bitbucket.org/rude/love/downloads/love-${LOVE_VERSION}-macosx-x64.zip"
 unzip "love-${LOVE_VERSION}-macosx-x64.zip"
 
 echo "Building MacOS package."

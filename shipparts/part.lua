@@ -61,9 +61,9 @@ function Part:update(dt, partsInfo, location, locationSign, orientation)
 	self:setLocation(location, partsInfo.locationInfo, orientation)
 end
 
-function Part:draw()
+function Part:draw(camera)
 	if self.location then
-		Screen.draw(
+		camera:draw(
 			self.image,
 			self.location[1],
 			self.location[2],

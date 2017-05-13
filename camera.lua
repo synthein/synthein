@@ -7,8 +7,14 @@ function Camera.create()
 	local self = {}
 	setmetatable(self, Camera)
 
+	self.x = 0
+	self.y = 0
 	self.zoom = 1
 	self.zoomInt = 0
+	self.scissorX = 0
+	self.scissorY = 0
+	self.scissorWidth = 0
+	self.scissorHeight = 0
 	self.compass = love.graphics.newImage("res/images/compass.png")
 	return self
 end
@@ -37,6 +43,13 @@ function Camera:getScreenCoords(worldX, worldY, a, b)
 	a = self.zoom * a
 	b = self.zoom * b
 	return x, y, a, b
+end
+
+function Camera:getWorldBoarder()
+	return self.x - self.scissorWidth /(2 * self.zoom),
+		   self.y - self.scissorHeight/(2 * self.zoom),
+		   self.x + self.scissorWidth /(2 * self.zoom),
+		   self.y + self.scissorHeight/(2 * self.zoom)
 end
 
 function Camera:adjustZoom(step)

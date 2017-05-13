@@ -27,6 +27,11 @@ function Part:saveData()
 	return {self.health}
 end
 
+function Part:setFixture(fixture)
+	self.fixture = fixture
+	self.fixture:setUserData(self)
+end
+
 function Part:setLocation(location, locationInfo, orientation)
 	if locationInfo then
 		local l = locationInfo[1]
@@ -41,11 +46,15 @@ function Part:setLocation(location, locationInfo, orientation)
 	end
 end
 
-function Part:takeDamage()
-	self.health = self.health - 1
+function Part:damage(damage)
+	self.health = self.health - damage
 	if self.health <= 0 then
 		self.isDestroyed = true
 	end
+end
+
+function Part:collision(fixture)
+	print("part collision")
 end
 
 function Part:update(dt, partsInfo, location, locationSign, orientation)

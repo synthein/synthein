@@ -13,6 +13,28 @@ function World.create()
 	return self
 end
 
+function World.beginContact(a, b, coll)
+	--print("beginContact")
+	local objectA, objectB
+	objectA = a:getUserData()
+	objectB = b:getUserData()
+	objectA:collision(b)
+	objectB:collision(a)
+end
+ 
+ 
+function World.endContact(a, b, coll)
+	--print("endContact")
+end
+ 
+function World.preSolve(a, b, coll)
+	--print("preSolve")
+end
+ 
+function World.postSolve(a, b, coll, normalimpulse, tangentimpulse)
+	--print("postSolve")
+end
+
 function World:addObject(object, chunkLocation, key)
 	if not chunkLocation then
 		local x, y = object:getLocation()

@@ -27,8 +27,10 @@ function Shot.create(location, sourcePart)
 	self.physicsShape = love.physics.newRectangleShape(2, 2)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setSensor(true)
+	self.fixture:setUserData(self)
 	self.time = 0
 	self.isDestroyed = false
+	self.firstContact = true
 
 	self.sourcePart = sourcePart
 	return self
@@ -38,29 +40,26 @@ function Shot:getLocation()
 	return self.body:getX(), self.body:getY(), self.angle
 end
 
+function Shot:collision(fixture)
+	print("shot collision")
+	object = fixture:getUserData()
+	if object ~= self.sourcePart and self.firstContact then
+		object:damage(1)
+		self.isDestroyed = true
+		self.firstContact = false --this is needed because of bullet body physics
+	end
+end
+
+function Shot:damage()
+end
+
 function Shot:update(dt, worldInfo)
 	self.time = self.time + dt
 	if self.time > 5 then
 		self.isDestroyed = true
 	end
 
-	local newObjects = {}
-	for i, structure in ipairs(worldInfo[2].structures) do
-		local partIndexHit = structure:getPartIndex(self.body:getPosition())
-		if partIndexHit then
-			local structureHit = structure
-			local partHit = structureHit.parts[partIndexHit]
-			local hit =
-				structureHit and
-				partIndexHit and
-				partHit ~= self.sourcePart
-			if hit then
-				self.isDestroyed = true
-				partHit:takeDamage()
-			end
-		end
-	end
-	return newObjects
+	return {}
 end
 
 function Shot:draw()

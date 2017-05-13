@@ -15,6 +15,9 @@ function InitWorld.init(scene, ifSave)
 	local physics = love.physics.newWorld()
 	Structure.setPhysics(physics)
 	Shot.setPhysics(physics)
+	--physics:setCallbacks(World.startOfCollision, nil, nil, nil)
+	physics:setCallbacks(World.beginContact, World.endContact, World.preSolve, 
+						 World.postSolve)
 
 	local ships, ifPlayer = SceneParser.loadScene(scene, {0, 0}, ifSave)
 	local players = {}

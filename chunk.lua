@@ -110,7 +110,7 @@ function Chunk:update(dt)
 			if object.isDestroyed == true then
 				table.insert(remove, {key, i})
 			end
-			local x1, y1 = Chunk.getChunkIndex(object:getLocation())
+	--[[		local x1, y1 = Chunk.getChunkIndex(object:getLocation())
 			local x2 = self.chunkLocation[1]
 			local y2 = self.chunkLocation[2]
 			if not (x1 == x2 and y1 == y2) then
@@ -118,7 +118,7 @@ function Chunk:update(dt)
 				table.insert(remove, {key, i})
 				table.insert(move, {chunkLocation, key, object})
 			end
-
+--]]
 		end
 	end
 
@@ -142,14 +142,6 @@ function Chunk:update(dt)
 	end
 	
 	return move
-end
-
-function Chunk:draw()
-	for key, objectTable in pairs(self.objects) do
-		for i, object in ipairs(objectTable) do
-			object:draw()
-		end
-	end
 end
 
 return Chunk

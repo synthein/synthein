@@ -45,7 +45,7 @@ function Shot:collision(fixture)
 	object = fixture:getUserData()
 	if object ~= self.sourcePart and self.firstContact then
 		object:damage(1)
-		self.isDestroyed = true
+		self:destory()
 		self.firstContact = false --this is needed because of bullet body physics
 	end
 end
@@ -53,17 +53,23 @@ end
 function Shot:damage()
 end
 
+function Shot:destory()
+	self.body:destroy()
+	self.isDestroyed = true
+end
+
+
 function Shot:update(dt, worldInfo)
 	self.time = self.time + dt
 	if self.time > 5 then
-		self.isDestroyed = true
+		self:destory()
 	end
 
 	return {}
 end
 
-function Shot:draw()
-	Screen.draw(
+function Shot:draw(camera)
+	camera:draw(
 		self.image,
 		self.body:getX(), self.body:getY(), self.body:getAngle(),
 		1, 1, self.width/2, self.height/2)

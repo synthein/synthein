@@ -15,7 +15,7 @@ function InitWorld.init(scene, ifSave)
 	local physics = love.physics.newWorld()
 	Structure.setPhysics(physics)
 	Shot.setPhysics(physics)
-	--physics:setCallbacks(World.startOfCollision, nil, nil, nil)
+	Player.setPhysics(physics)
 	physics:setCallbacks(World.beginContact, World.endContact, World.preSolve, 
 						 World.postSolve)
 

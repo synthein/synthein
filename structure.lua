@@ -315,6 +315,7 @@ function Structure:addPart(part, x, y, orientation)
 	local shape = love.physics.newRectangleShape(
 		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
+	part:setFixture(fixture)
 
 	self:calculateSize(x, y)
 

@@ -19,11 +19,11 @@ function Selection.create(world, team, camera)
 end
 
 function Selection:pressed(cursorX, cursorY)
-	local structure, partInfo = world:getObject(cursorX, cursorY, "structures")
-	local partIndex 
-	if partInfo then
-		partIndex = partInfo[1]
-	end
+	local structure, partIndex, partSide = world:getObject(cursorX, cursorY, "structures")
+	--local partIndex 
+	--if partInfo then
+	--	partIndex = partInfo[1]
+	--end
 	if structure and partIndex then
 		if self.build then
 			if self.build.mode == 3 then
@@ -59,8 +59,10 @@ end
 
 function Selection:released(cursorX, cursorY)
 	if self.structure and self.partIndex then
-		local withinPart, partSide = 
-				self.structure:withinPart(self.partIndex, cursorX, cursorY)
+		--local withinPart, partSide = 
+		--		self.structure:withinPart(self.partIndex, cursorX, cursorY)
+		local partSide = self.structure:getPartSide(self.partIndex, cursorX, cursorY)
+		local withinPart = self.structure.parts[self.partIndex]:withinPart(cursorX, cursorY)
 		local x, y, angle = self.structure:getAbsPartCoords(self.partIndex)
 		if not withinPart then
 			if self.build then
@@ -91,8 +93,9 @@ end
 
 function Selection:draw(cursorX, cursorY)
 	if self.structure and self.partIndex then
-		local withinPart, partSide =
-				self.structure:withinPart(self.partIndex, cursorX, cursorY)
+		--local withinPart, partSide =
+		--		self.structure:withinPart(self.partIndex, cursorX, cursorY)
+		local partSide = self.structure:getPartSide(self.partIndex, cursorX, cursorY)
 		local x, y, angle = self.structure:getAbsPartCoords(self.partIndex)
 		local strength = nil
 		if self.build then

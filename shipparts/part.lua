@@ -46,6 +46,10 @@ function Part:setLocation(location, locationInfo, orientation)
 	end
 end
 
+function Part:withinPart(x, y)
+	return self.fixture:testPoint(x, y)
+end
+
 function Part:damage(damage)
 	self.health = self.health - damage
 	if self.health <= 0 then

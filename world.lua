@@ -75,9 +75,31 @@ function World:getChunk(location)
 	return chunk
 end
 
+World.callbackData = {objects = {}}
+
+function World.fixtureCallback(fixture)
+	local body = fixture:getBody()
+	local object = {body:getUserData(), fixture:getUserData()}
+	table.insert(World.callbackData.objects, object)
+	return true
+end
+
 --Get the structure and part under at the location.
 --Also return the side of the part that is closed if there is a part.
 function World:getObject(locationX, locationY, key)
+	World.callbackData.objects = {}
+	local a = locationX
+	local b = locationY
+	Structure.physics:queryBoundingBox(a, b, a, b, 
+								   World.fixtureCallback)
+
+	for i, object in ipairs(World.callbackData.objects) do
+		if object[1] then
+			local index = object[1]:findPart(object[2])
+			return object[1], index, object[1]:getPartSide(index, locationX, locationY)
+		end
+	end
+--[[
 	if key then
 		for i, object in ipairs(self.objects[key]) do
 			there, returnValues = object:testLocation(locationX, locationY)
@@ -95,6 +117,8 @@ function World:getObject(locationX, locationY, key)
 			end
 		end
 	end
+--]]
+	return nil
 end
 
 function World:getObjects(key)

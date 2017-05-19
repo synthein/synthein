@@ -1,7 +1,17 @@
-local Chunk = require("chunk")
+local Particles = require("particles")
+local Shot = require("shot")
+local Structure = require("structure")
+local Util = require("util")
+local Settings = require("settings")
 
 local World = {}
 World.__index = World
+
+World.objectTypes = {
+	structures	= Structure,
+	shots   	= Shot,
+	particles	= Particles
+}
 
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
@@ -9,18 +19,49 @@ function World.create()
 	self = {}
 	setmetatable(self, World)
 
-	self.chunks = GridTable.create()
+	self.objects = {}
+	for key, value in pairs(World.objectTypes) do
+		self.objects[key] = {}
+	end
+
 	return self
 end
 
+function World.beginContact(a, b, coll)
+	--print("beginContact")
+	local objectA, objectB
+	objectA = a:getUserData()
+	objectB = b:getUserData()
+	objectA:collision(b)
+	objectB:collision(a)
+end
+ 
+ 
+function World.endContact(a, b, coll)
+	--print("endContact")
+end
+ 
+function World.preSolve(a, b, coll)
+	--print("preSolve")
+end
+ 
+function World.postSolve(a, b, coll, normalimpulse, tangentimpulse)
+	--print("postSolve")
+end
+
 function World:addObject(object, chunkLocation, key)
-	if not chunkLocation then
-		local x, y = object:getLocation()
-		chunkX, chunkY = Chunk.getChunkIndex(x, y)
-		chunkLocation = {chunkX, chunkY}
+	if objectKey == nil then
+		for key, value in pairs(World.objectTypes) do
+			if value == object.__index then
+				objectKey = key
+				break
+			end
+		end
 	end
-	local chunk = self:getChunk(chunkLocation)
-	chunk:addObject(object, key)
+	if objectKey == nil then
+		return
+	end
+	table.insert(self.objects[objectKey], object)
 end
 
 function World:getChunk(location)
@@ -34,14 +75,58 @@ function World:getChunk(location)
 	return chunk
 end
 
+World.callbackData = {objects = {}}
+
+function World.fixtureCallback(fixture)
+	local body = fixture:getBody()
+	local object = {body:getUserData(), fixture:getUserData()}
+	table.insert(World.callbackData.objects, object)
+	return true
+end
+
 --Get the structure and part under at the location.
 --Also return the side of the part that is closed if there is a part.
 function World:getObject(locationX, locationY, key)
-	local chunkX, chunkY = Chunk.getChunkIndex(locationX, locationY)
-	local chunk = self:getChunk({chunkX, chunkY})
-	local object, returnValues
-		= chunk:getObject(locationX, locationY, key)
-	return object, returnValues
+	World.callbackData.objects = {}
+	local a = locationX
+	local b = locationY
+	Structure.physics:queryBoundingBox(a, b, a, b, 
+								   World.fixtureCallback)
+
+	for i, object in ipairs(World.callbackData.objects) do
+		if object[1] then
+			local index = object[1]:findPart(object[2])
+			return object[1], index, object[1]:getPartSide(index, locationX, locationY)
+		end
+	end
+--[[
+	if key then
+		for i, object in ipairs(self.objects[key]) do
+			there, returnValues = object:testLocation(locationX, locationY)
+			if there then
+				return object, returnValues
+			end
+		end
+	else
+		for key, value in pair do
+			for i, object in ipairs(self.objects[key]) do
+				there, returnValues = object:testLocation(locationX, locationY)
+				if there then
+					return object, returnValues
+				end
+			end
+		end
+	end
+--]]
+	return nil
+end
+
+function World:getObjects(key)
+	if key then
+		return self.objects[key]
+	else
+		return self.objects
+	end
 end
 
 --Removes a section of a structure and saves the new structure.
@@ -68,19 +153,69 @@ end
 --]]
 
 function World:update(dt)
-	local move = self.chunks:loop(Chunk.update, dt)
-	
-	for i, t in ipairs(move) do
-		for j, object in ipairs(t) do
-			self:addObject(object[3], object[1], object[2])
+	local remove = {}
+	local create = {}
+
+	local shipLocations = {{},{}}
+	for i, structure in ipairs(self.objects.structures) do
+		if structure.corePart then
+			local team = structure.corePart:getTeam()
+			if team then
+				if structure.corePart.isPlayer then
+					table.insert(shipLocations[team], 
+								{structure.body:getX(), structure.body:getY(),true})
+				else
+					table.insert(shipLocations[team], 
+								{structure.body:getX(), structure.body:getY()})
+				end
+			end
+			
 		end
 	end
 
-end
+	local worldInfo = {shipLocations, self:getObjects()}
 
-function World:draw()
-	-- Draw all of the chunks.
-	self.chunks:loop(Chunk.draw)
+	for key, objectTable in pairs(self.objects) do
+		for i, object in ipairs(objectTable) do
+			c = object:update(dt, worldInfo)
+			for i, o in ipairs(c) do
+				table.insert(create, o)
+			end
+
+			if object.isDestroyed == true then
+				table.insert(remove, {key, i})
+			end
+	--[[		local x1, y1 = Chunk.getChunkIndex(object:getLocation())
+			local x2 = self.chunkLocation[1]
+			local y2 = self.chunkLocation[2]
+			if not (x1 == x2 and y1 == y2) then
+				local chunkLocation = {x1, y1}
+				table.insert(remove, {key, i})
+				table.insert(move, {chunkLocation, key, object})
+			end
+--]]
+		end
+	end
+
+	for i, object in ipairs(remove) do
+		self.objects[object[1]][object[2]] = {"kill"}
+	end
+	
+	for key, value in pairs(World.objectTypes) do
+		for i = #self.objects[key],1,-1 do
+			if self.objects[key][i][1] == "kill" then
+				table.remove(self.objects[key], i)
+			end
+		end
+	end
+	
+	for i, object in ipairs(create) do
+		local key = object[1]
+		local value = World.objectTypes[key]
+		local newObject = value.create(object[2], object[3], object[4])
+		table.insert(self.objects[key], newObject)
+	end
+	
 end
 
 return World

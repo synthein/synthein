@@ -7,9 +7,6 @@ Screen.cameras = {}
 
 function Screen.createCamera()
 	newCamera = Camera.create()
-	newCamera:setX(0)
-	newCamera:setY(0)
-	Screen.camera = newCamera
 	table.insert(Screen.cameras, newCamera)
 	Screen.arrange()
 	return newCamera
@@ -30,18 +27,6 @@ function Screen.arrange()
 		local y = (i-x -1)/columns
 		camera:setScissor(x*cameraWidth, y*cameraHeight,
 						  cameraWidth, cameraHeight)
-	end
-end
-
-function Screen.draw(image, x, y, angle, sx, sy, ox, oy)
-	for i, camera in ipairs(Screen.cameras) do
-		camera:draw(image, x, y, angle, sx, sy, ox, oy)
-	end
-end
-
-function Screen.drawExtras()
-	for i, camera in ipairs(Screen.cameras) do
-		camera:drawExtras()
 	end
 end
 

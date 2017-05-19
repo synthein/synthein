@@ -5,13 +5,19 @@ local Player = require("player")
 local SceneParser = require("sceneParser")
 local World = require("world")
 local Structure = require("structure")
+local Shot = require("shot")
 
 local InitWorld = {}
 
 function InitWorld.init(scene, ifSave)
 	world = World.create()
 	love.physics.setMeter(20) -- there are 20 pixels per meter
-	Structure.setPhysics(love.physics.newWorld())
+	local physics = love.physics.newWorld()
+	Structure.setPhysics(physics)
+	Shot.setPhysics(physics)
+	Player.setPhysics(physics)
+	physics:setCallbacks(World.beginContact, World.endContact, World.preSolve, 
+						 World.postSolve)
 
 	local ships, ifPlayer = SceneParser.loadScene(scene, {0, 0}, ifSave)
 	local players = {}

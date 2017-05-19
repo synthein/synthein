@@ -179,10 +179,10 @@ end
 
 function InGame.draw()
 
-		world:draw()
-		players[1]:draw()
-		love.graphics.origin()
-		Screen.drawExtras()
+	for i, player in ipairs(players) do
+		player:draw()
+	end
+	love.graphics.origin()
 
 	if paused then
 		love.graphics.print("Paused", SCREEN_WIDTH/2-24, 30)

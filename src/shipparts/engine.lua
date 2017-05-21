@@ -1,9 +1,16 @@
 local Part = require("shipparts/part")
 local Screen = require("screen")
+local Settings = require("settings")
 
 local Engine = {}
 Engine.__index = Engine
 setmetatable(Engine, Part)
+
+Engine.orientationVectors = {
+	{ 0,  1},
+	{-1,  0},
+	{ 0, -1},
+	{ 1,  0}}
 
 Engine.rotationTable = {
 	{ 1, 1}, --  x
@@ -42,13 +49,16 @@ function Engine.create(world, x, y)
 end
 
 function Engine:update(dt, partsInfo, location, locationSign, orientation)
-	self:setLocation(location, partsInfo.locationInfo, orientation)
-	if partsInfo.engines then
-		local body = partsInfo.body
+	self.location = location
+	self.orientation = orientation
+	local body = self.fixture:getBody()
+	if self.location and body and partsInfo.engines then
+		local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
+
 		local engines = partsInfo.engines
-		local r = Engine.rotationTable[orientation]
-		local rotation = r[1]*locationSign[r[2]]
-		on = engines[orientation] + engines[7]*rotation
+		local r = Engine.rotationTable[self.orientation]
+		local rotation = r[1]*locationSign[r[2] ]
+		on = engines[self.orientation] + engines[7]*rotation
 
 		if on > 0 then
 			self.isActive = true
@@ -57,24 +67,15 @@ function Engine:update(dt, partsInfo, location, locationSign, orientation)
 		end
 		
 		if self.isActive then
-			d = Engine.directionTable[orientation]
-			local l = partsInfo.locationInfo[1]
-			local directionX = partsInfo.locationInfo[2][1]
-			local directionY = partsInfo.locationInfo[2][2]
-			a = {directionX, directionY}
-			local x = (location[1] * directionX - location[2] * directionY) * 20 + l[1]
-			local y = (location[1] * directionY + location[2] * directionX) * 20 + l[2]
-			local appliedForceX = d[1] * a[d[2]]
-			local appliedForceY = d[3] * a[d[4]]
-			local Fx = appliedForceX * self.thrust
-			local Fy = appliedForceY * self.thrust
-			local body = engines[8]
-			body:applyForce(Fx, Fy, x, y)
+			local x, y = unpack(self.location)
+			x, y = body:getWorldPoints(x * Settings.PARTSIZE,
+									   y * Settings.PARTSIZE)
+			local fx, fy = body:getWorldVector(unpack(Engine.orientationVectors[self.orientation]))
+			body:applyForce(fx * self.thrust, fy * self.thrust, x, y)
 		end
 	else
 		self.isActive = false
 	end
-	
 	if self.isActive then
 		self.image = self.imageActive
 	else

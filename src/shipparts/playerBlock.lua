@@ -1,5 +1,6 @@
 local Part = require("shipparts/part")
 local Gun = require("shipparts/gun")
+local Settings = require("settings")
 
 local PlayerBlock = {}
 PlayerBlock.__index = PlayerBlock
@@ -44,6 +45,27 @@ function PlayerBlock:shot()
 end
 
 function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
+	self.location = location
+	self.orientation = orientation
+
+
+	local shoot = false
+	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
+	local newobject = self.gun:update(dt, shoot, self.location, self)
+
+	local body = self.fixture:getBody()
+	if self.location and body and partsInfo.engines then
+		local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
+		local x, y = unpack(self.location)
+		x, y = body:getWorldPoints(x * Settings.PARTSIZE, y * Settings.PARTSIZE)
+
+		local engines = partsInfo.engines
+		fx, fy = body:getWorldVector(engines[6], engines[5])
+		
+		body:applyForce(fx * self.thrust, fy * self.thrust, x, y)
+		body:applyTorque(engines[7] * self.torque)
+	end
+
 	self.healTime = self.healTime - dt
 	if self.healTime <= 0 then
 		self.healTime = self.healTime + 10
@@ -52,23 +74,6 @@ function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
 		end
 	end
 
-	self:setLocation(location, partsInfo.locationInfo, orientation)
-	local directionX = partsInfo.locationInfo[2][1]
-	local directionY = partsInfo.locationInfo[2][2]
-
-	local shoot = false
-	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
-	local newobject = self.gun:update(dt, shoot, self.location, self)
-	
-	local engines = partsInfo.engines
-	local body = engines[8]
-	local appliedForceX = -directionY * engines[5] + directionX * engines[6]
-	local appliedForceY = directionX * engines[5] + directionY * engines[6]
-	local Fx = appliedForceX * self.thrust
-	local Fy = appliedForceY * self.thrust
-	body:applyForce(Fx, Fy, self.location[1], self.location[2])
-	body:applyTorque(engines[7] * self.torque)
-	
 	return newobject
 end
 

@@ -1,5 +1,6 @@
 local Part = require("shipparts/part")
 local AI = require("ai")
+local Settings = require("settings")
 
 local AIBlock = {}
 AIBlock.__index = AIBlock
@@ -40,18 +41,21 @@ function AIBlock:runMenu(i)
 end
 
 function AIBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self:setLocation(location, partsInfo.locationInfo, orientation)
-	local directionX = partsInfo.locationInfo[2][1]
-	local directionY = partsInfo.locationInfo[2][2]
-	
-	local engines = partsInfo.engines
-	local body = engines[8]
-	local appliedForceX = -directionY * engines[5] + directionX * engines[6]
-	local appliedForceY = directionX * engines[5] + directionY * engines[6]
-	local Fx = appliedForceX * self.thrust
-	local Fy = appliedForceY * self.thrust
-	body:applyForce(Fx, Fy, self.location[1], self.location[2])
-	body:applyTorque(engines[7] * self.torque)
+	self.location = location
+	self.orientation = orientation
+
+	local body = self.fixture:getBody()
+	if self.location and body and partsInfo.engines then
+		local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
+		local x, y = unpack(self.location)
+		x, y = body:getWorldPoints(x * Settings.PARTSIZE, y * Settings.PARTSIZE)
+
+		local engines = partsInfo.engines
+		fx, fy = body:getWorldVector(engines[6], engines[5])
+		
+		body:applyForce(fx * self.thrust, fy * self.thrust, x, y)
+		body:applyTorque(engines[7] * self.torque)
+	end
 end
 
 return AIBlock

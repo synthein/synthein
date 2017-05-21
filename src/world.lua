@@ -95,8 +95,7 @@ function World:getObject(locationX, locationY, key)
 
 	for i, object in ipairs(World.callbackData.objects) do
 		if object[1] then
-			local index = object[1]:findPart(object[2])
-			return object[1], index, object[1]:getPartSide(index, locationX, locationY)
+			return object[1], object[2], object[2]:getPartSide(locationX, locationY)
 		end
 	end
 --[[
@@ -130,9 +129,9 @@ function World:getObjects(key)
 end
 
 --Removes a section of a structure and saves the new structure.
-function World:removeSection(structure, partIndex)
-	if structure.parts[partIndex].type == "generic" then
-		local newStructure = structure:removeSection(partIndex)
+function World:removeSection(structure, part)
+	if part.type == "generic" then
+		local newStructure = structure:removeSection(structure:findPart(part))
 		if newStructure then
 			self:addObject(newStructure, nil, "structures")
 		end

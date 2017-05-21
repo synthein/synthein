@@ -99,10 +99,10 @@ end
 -- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
 -- side is the side of structurePart to add the annexee to
-function Structure:annex(annexee, annexeePartIndex, annexeePartSide,
-				structurePartIndex, structurePartSide)
-	local aIndex = annexeePartIndex
-	local bIndex = structurePartIndex
+function Structure:annex(annexee, annexeePart, annexeePartSide,
+				structurePart, structurePartSide)
+	local aIndex = annexee:findPart(annexeePart)
+	local bIndex = self:findPart(structurePart)
 	annexeeSide = (annexeePartSide + annexee.partOrient[aIndex] - 2)%4 + 1
 	local newStructures = {}
 	local structureOffsetX, structureOffsetY
@@ -178,7 +178,7 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 	end
 	local newStructure
 	if partThere then
-		local location = {annexee:getAbsPartCoords(partIndex)}
+		local location = {annexee.parts[partIndex]:getWorldLocation()}
 		newStructure = {"structure", annexee.parts[partIndex], location}
 	else
 		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
@@ -196,7 +196,7 @@ function Structure:removeSection(index)
 	local partX = self.partCoords[index].x
 	local partY = self.partCoords[index].y
 	local partOrient = (-self.partOrient[index] + 1) % 4 + 1
-	local x, y , angle = self:getAbsPartCoords(index)
+	local x, y , angle = self.parts[index]:getWorldLocation()
 	self:removePart(index)
 	local newStructure = Structure.create(part, {x, y, angle})
 	local partList = self:testConnection()
@@ -418,14 +418,6 @@ function Structure:removeSections(newObjects)
 	return newObjects
 end
 
--- Find the absolute coordinates of a part given the x and y offset values of
--- the part and the absolute coordinates and angle of the structure it is in.
-function Structure:getAbsPartCoords(index)
-	local part = self.parts[index]
-	local location = part.location
-	return location[1], location[2], location[3]
-end
-
 function Structure:command(orders)
 --	local newObjects = {}
 
@@ -463,26 +455,12 @@ function Structure:command(orders)
 	return commands
 end
 
-function Structure:getPartSide(partIndex, locationX, locationY)
-	local partX, partY, partAngle = self:getAbsPartCoords(partIndex)
-	local angleToCursor = Util.vectorAngle(locationX - partX,
-										   locationY - partY)
-	local angleDifference = angleToCursor - partAngle
-	partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
-	return partSide
-end
-
 function Structure:update(dt, playerLocation, aiData)
 	local newObjects = {}
 	local partsInfo = {}
 	if self.corePart then
 		partsInfo = self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
 	end
-	local location = {self:getLocation()}
-	local directionX = math.cos(location[3])
-	local directionY = math.sin(location[3])
-	local locationInfo = {location, {directionX, directionY}}
-	partsInfo["locationInfo"] = locationInfo
 
 	for i, part in ipairs(self.parts) do
 		local l = {self.partCoords[i].x, self.partCoords[i].y}

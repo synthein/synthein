@@ -1,4 +1,5 @@
 local Part = require("shipparts/part")
+local Engine = require("shipparts/engine")
 local Gun = require("shipparts/gun")
 local Settings = require("settings")
 
@@ -13,11 +14,10 @@ function PlayerBlock.create()
 	self.image = love.graphics.newImage("res/images/player.png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
-
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
-	self.thrust = 150
-	self.torque = 350
 	self.type = "control"
+
+	self.engine = Engine.create(1, 150, 350)
 	self.gun = Gun.create()
 	self.healTime = 10
 	self.orders = {}
@@ -53,18 +53,7 @@ function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
 	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
 	local newobject = self.gun:update(dt, shoot, self.location, self)
 
-	local body = self.fixture:getBody()
-	if self.location and body and partsInfo.engines then
-		local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
-		local x, y = unpack(self.location)
-		x, y = body:getWorldPoints(x * Settings.PARTSIZE, y * Settings.PARTSIZE)
-
-		local engines = partsInfo.engines
-		fx, fy = body:getWorldVector(engines[6], engines[5])
-		
-		body:applyForce(fx * self.thrust, fy * self.thrust, x, y)
-		body:applyTorque(engines[7] * self.torque)
-	end
+	self.engine:update(self, partsInfo.engines, locationSign)
 
 	self.healTime = self.healTime - dt
 	if self.healTime <= 0 then

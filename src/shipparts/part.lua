@@ -1,4 +1,3 @@
-local Screen = require("screen")
 local Settings = require("settings")
 local Util = require("util")
 

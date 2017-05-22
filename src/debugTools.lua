@@ -6,7 +6,7 @@ local Screen = require("screen")
 -- Ship parts
 local AIBlock = require("shipparts/aiBlock")
 local Block = require("shipparts/block")
-local Engine = require("shipparts/engine")
+local EngineBlock = require("shipparts/engineBlock")
 local GunBlock = require("shipparts/gunBlock")
 
 local Debug = {}
@@ -79,7 +79,7 @@ function Debug.keyboard(key)
 		world:addObject(object, chunkLocation, "structures")
 	elseif key == "i" then
 		-- Spawn an engine
-		local object = Structure.create(Engine.create(), {cameraX + 112, cameraY})
+		local object = Structure.create(EngineBlock.create(), {cameraX + 112, cameraY})
 		world:addObject(object, chunkLocation, "structures")
 	elseif key == "o" then
 		-- Spawn a gun

@@ -3,7 +3,7 @@
 -- SceneParser and Saves.
 local Part = require("shipparts/part")
 local Block = require("shipparts/block")
-local Engine = require("shipparts/engine")
+local EngineBlock = require("shipparts/engineBlock")
 local GunBlock = require("shipparts/gunBlock")
 local AIBlock = require("shipparts/aiBlock")
 local PlayerBlock = require("shipparts/playerBlock")
@@ -54,7 +54,7 @@ end
 function Spawn.createPart(partChar,data)
 	local part
 	if partChar == 'b'then part = Block.create()
-	elseif partChar == 'e' then part = Engine.create()
+	elseif partChar == 'e' then part = EngineBlock.create()
 	elseif partChar == 'g' then part = GunBlock.create()
 	elseif partChar == 'a' then part = AIBlock.create(data[1])
 	elseif partChar == 'p' then part = PlayerBlock.create()

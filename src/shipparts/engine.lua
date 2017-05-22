@@ -1,5 +1,3 @@
-local Part = require("shipparts/part")
-local Screen = require("screen")
 local Settings = require("settings")
 
 local Engine = {}
@@ -24,41 +22,40 @@ Engine.directionTable = {
 	{ 1, 2,-1, 1}, --  y, -x	270
 	{ 1, 1, 1, 2}} --  x,  y	0
 
-function Engine.create(world, x, y)
-	local self = Part.create()
+function Engine.create(engineType, thrust, torque)
+	local self = {}
 	setmetatable(self, Engine)
 
-	self.imageInactive = love.graphics.newImage("res/images/engine.png")
-	self.imageActive = love.graphics.newImage("res/images/engineActive.png")
-	self.image = self.imageInactive
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
-
 	self.isActive = false
-
-	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
-
-	-- Engines can only connect to things on their top side.
-	self.connectableSides[2] = false
-	self.connectableSides[3] = false
-	self.connectableSides[4] = false
-
-	self.thrust = 250
+	self.thrust = thrust
+	if engineType == 1 then self.torque = torque end
+	self.engineType = engineType
 
 	return self
 end
 
-function Engine:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
-	local body = self.fixture:getBody()
-	if self.location and body and partsInfo.engines then
-		local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
+function Engine:update(part, enginesInfo, locationSign)
+	local body = part.fixture:getBody()
 
-		local engines = partsInfo.engines
-		local r = Engine.rotationTable[self.orientation]
-		local rotation = r[1]*locationSign[r[2] ]
-		on = engines[self.orientation] + engines[7]*rotation
+	if part.location and body and enginesInfo then
+		local angle = (part.orientation - 1) * math.pi/2 + body:getAngle()
+		
+		local fx, fy
+		if self.engineType == 1 then
+			fx = enginesInfo[6]
+			fy = enginesInfo[5]
+			if enginesInfo[5] == 0 and enginesInfo[6] == 0
+					and enginesInfo[7] == 0 then
+				on = 0
+			else
+				on = 1
+			end
+		elseif self.engineType == 2 then
+			local r = Engine.rotationTable[part.orientation]
+			local rotation = r[1] * locationSign[r[2]]
+			on = enginesInfo[part.orientation] + enginesInfo[7] * rotation
+			fx, fy = unpack(Engine.orientationVectors[part.orientation])
+		end
 
 		if on > 0 then
 			self.isActive = true
@@ -67,20 +64,21 @@ function Engine:update(dt, partsInfo, location, locationSign, orientation)
 		end
 		
 		if self.isActive then
-			local x, y = unpack(self.location)
+			fx, fy = body:getWorldVector(fx, fy)
+			local x, y = unpack(part.location)
 			x, y = body:getWorldPoints(x * Settings.PARTSIZE,
 									   y * Settings.PARTSIZE)
-			local fx, fy = body:getWorldVector(unpack(Engine.orientationVectors[self.orientation]))
 			body:applyForce(fx * self.thrust, fy * self.thrust, x, y)
+
+			if self.torque then
+				body:applyTorque(enginesInfo[7] * self.torque)
+			end
 		end
 	else
 		self.isActive = false
 	end
-	if self.isActive then
-		self.image = self.imageActive
-	else
-		self.image = self.imageInactive
-	end
+
+	return self.isActive
 end
 
 return Engine

@@ -40,8 +40,7 @@ function Shot:getLocation()
 	return self.body:getX(), self.body:getY(), self.angle
 end
 
-function Shot:collision(fixture)
-	print("shot collision")
+function Shot:collision(fixture, sqVelocity)
 	object = fixture:getUserData()
 	if object ~= self.sourcePart and self.firstContact then
 		object:damage(1)

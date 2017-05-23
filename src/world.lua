@@ -29,11 +29,20 @@ end
 
 function World.beginContact(a, b, coll)
 	--print("beginContact")
+	local x, y = coll:getPositions()
+	local bodyA = a:getBody()
+	local bodyB = b:getBody()
+	local aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
+	local bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
+	local dVX = aVX - bVX
+	local dVY = aVY - bVY
+	local sqV = (dVX * dVX) + (dVY * dVY)
+	
 	local objectA, objectB
 	objectA = a:getUserData()
 	objectB = b:getUserData()
-	objectA:collision(b)
-	objectB:collision(a)
+	objectA:collision(b, sqV, {aVX, aVY})
+	objectB:collision(a, sqV, {aVX, aVY})
 end
  
  
@@ -43,6 +52,11 @@ end
  
 function World.preSolve(a, b, coll)
 	--print("preSolve")
+	objectA = a:getUserData()
+	objectB = b:getUserData()
+	if objectA.isDestroyed or objectB.isDestroyed then
+		coll:setEnabled(false)
+	end
 end
  
 function World.postSolve(a, b, coll, normalimpulse, tangentimpulse)

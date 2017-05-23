@@ -474,7 +474,7 @@ function Structure:update(dt, playerLocation, aiData)
 	for i = #self.parts,1,-1 do
 		if self.parts[i].isDestroyed then
 			local x, y
-			x, y = self:getAbsPartCoords(i)
+			x, y = self.parts[i]:getWorldLocation(i)
 			self:removePart(i)
 			table.insert(newObjects, {"particles", x, y})
 			if #self.parts > 1 then

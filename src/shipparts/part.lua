@@ -72,8 +72,11 @@ function Part:collision(fixture, sqVelocity, pointVelocity)
 	object:damage(damage)
 	local body = self.fixture:getBody()
 	local mult = -damage * partSize
+
 	local xI, yI = unpack(pointVelocity)
-	body:applyLinearImpulse(xI * mult, yI * mult)
+	if xI and yI then
+		body:applyLinearImpulse(xI * mult, yI * mult)
+	end
 end
 
 function Part:update(dt, partsInfo, location, locationSign, orientation)

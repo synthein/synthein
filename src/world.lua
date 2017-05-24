@@ -32,12 +32,18 @@ function World.beginContact(a, b, coll)
 	local x, y = coll:getPositions()
 	local bodyA = a:getBody()
 	local bodyB = b:getBody()
-	local aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
-	local bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
-	local dVX = aVX - bVX
-	local dVY = aVY - bVY
-	local sqV = (dVX * dVX) + (dVY * dVY)
-	
+	local sq
+
+	if x and y then
+		local aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
+		local bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
+		local dVX = aVX - bVX
+		local dVY = aVY - bVY
+		sqV = (dVX * dVX) + (dVY * dVY)
+	else
+		sqV = 0
+	end
+
 	local objectA, objectB
 	objectA = a:getUserData()
 	objectB = b:getUserData()

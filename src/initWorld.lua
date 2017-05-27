@@ -6,6 +6,7 @@ local SceneParser = require("sceneParser")
 local World = require("world")
 local Structure = require("structure")
 local Shot = require("shot")
+local Particles = require("particles")
 
 local InitWorld = {}
 
@@ -15,6 +16,7 @@ function InitWorld.init(scene, ifSave)
 	local physics = love.physics.newWorld()
 	Structure.setPhysics(physics)
 	Shot.setPhysics(physics)
+	Particles.setPhysics(physics)
 	Player.setPhysics(physics)
 	physics:setCallbacks(World.beginContact, World.endContact, World.preSolve, 
 						 World.postSolve)

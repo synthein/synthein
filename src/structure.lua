@@ -473,10 +473,9 @@ function Structure:update(dt, playerLocation, aiData)
 
 	for i = #self.parts,1,-1 do
 		if self.parts[i].isDestroyed then
-			local x, y
-			x, y = self.parts[i]:getWorldLocation(i)
+			local location = {self.parts[i]:getWorldLocation(i)}
 			self:removePart(i)
-			table.insert(newObjects, {"particles", x, y})
+			table.insert(newObjects, {"particles", nil, location})
 			if #self.parts > 1 then
 				newObjects = self:removeSections(newObjects)
 			end

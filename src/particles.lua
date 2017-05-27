@@ -3,11 +3,23 @@ local Screen = require("screen")
 local Particles = {}
 Particles.__index = Particles
 
+Particles.physics = nil
+
+function Particles.setPhysics(setphysics)
+	Particles.physics = setphysics
+end
+
 local explosionImage = love.graphics.newImage("res/images/explosion.png")
-function Particles.create(x, y)
+
+function Particles.create(nillvalue, location)
 	self = {}
 	setmetatable(self, Particles)
 
+	local x, y = unpack(location)
+	self.body = love.physics.newBody(Particles.physics, x, y, "static")
+	self.physicsShape = love.physics.newRectangleShape(40, 40)
+	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
+	self.fixture:setUserData(self)
 	self.image = explosionImage
 	self.x = x
 	self.y = y
@@ -26,13 +38,14 @@ end
 function Particles:update(dt)
 	self.time = self.time - dt
 	if self.time <= 0 then
+		self.body:destroy()
 		self.isDestroyed = true
 	end
-	return {}, {}
+	return {}
 end
 
-function Particles:draw()
-	Screen.draw(
+function Particles:draw(camera)
+	camera:draw(
 		self.image,
 		self.x,
 		self.y,

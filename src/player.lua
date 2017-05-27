@@ -144,6 +144,11 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:draw()
+	if self.ship then
+		self.camera:setX(self.ship.body:getX())
+		self.camera:setY(self.ship.body:getY())
+	end
+
 	Player.callbackData.objects = {}
 	local a, b, c, d = self.camera:getWorldBoarder()
 	Player.physics:queryBoundingBox(a, b, c, d, Player.fixtureCallback)
@@ -156,6 +161,8 @@ function Player:draw()
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)
 	end
+
+	self.camera:drawExtras()
 end
 
 Player.callbackData = {objects = {}}

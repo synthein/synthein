@@ -29,26 +29,35 @@ end
 
 function World.beginContact(a, b, coll)
 	--print("beginContact")
-	local x, y = coll:getPositions()
-	local bodyA = a:getBody()
-	local bodyB = b:getBody()
-	local sq
-
-	if x and y then
-		local aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
-		local bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
-		local dVX = aVX - bVX
-		local dVY = aVY - bVY
-		sqV = (dVX * dVX) + (dVY * dVY)
-	else
-		sqV = 0
-	end
-
+	local aSensor = a:isSensor()
+	local bSensor = b:isSensor()
 	local objectA, objectB
 	objectA = a:getUserData()
 	objectB = b:getUserData()
-	objectA:collision(b, sqV, {aVX, aVY})
-	objectB:collision(a, sqV, {aVX, aVY})
+
+	if not aSensor and not bSensor then
+		local x, y = coll:getPositions()
+		local bodyA = a:getBody()
+		local bodyB = b:getBody()
+		local sq
+
+		if x and y then
+			local aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
+			local bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
+			local dVX = aVX - bVX
+			local dVY = aVY - bVY
+			sqV = (dVX * dVX) + (dVY * dVY)
+		else
+			sqV = 0
+		end
+
+		objectA:collision(b, sqV, {aVX, aVY})
+		objectB:collision(a, sqV, {aVX, aVY})
+	elseif aSensor then
+		objectA:collision(b)
+	elseif bSensor then
+		objectB:collision(a)
+	end
 end
  
  
@@ -204,15 +213,6 @@ function World:update(dt)
 			if object.isDestroyed == true then
 				table.insert(remove, {key, i})
 			end
-	--[[		local x1, y1 = Chunk.getChunkIndex(object:getLocation())
-			local x2 = self.chunkLocation[1]
-			local y2 = self.chunkLocation[2]
-			if not (x1 == x2 and y1 == y2) then
-				local chunkLocation = {x1, y1}
-				table.insert(remove, {key, i})
-				table.insert(move, {chunkLocation, key, object})
-			end
---]]
 		end
 	end
 
@@ -234,7 +234,6 @@ function World:update(dt)
 		local newObject = value.create(object[2], object[3], object[4])
 		table.insert(self.objects[key], newObject)
 	end
-	
 end
 
 return World

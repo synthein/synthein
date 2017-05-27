@@ -40,16 +40,13 @@ function Shot:getLocation()
 	return self.body:getX(), self.body:getY(), self.angle
 end
 
-function Shot:collision(fixture, sqVelocity)
+function Shot:collision(fixture)
 	object = fixture:getUserData()
 	if object ~= self.sourcePart and self.firstContact then
 		object:damage(1)
 		self:destory()
 		self.firstContact = false --this is needed because of bullet body physics
 	end
-end
-
-function Shot:damage()
 end
 
 function Shot:destory()

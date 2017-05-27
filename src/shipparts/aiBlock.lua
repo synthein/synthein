@@ -27,8 +27,8 @@ function AIBlock:getTeam()
 	return self.ai.team
 end
 
-function AIBlock:getOrders(location, playerLocation, aiData)
-	return self.ai:getOrders(location, playerLocation, aiData)
+function AIBlock:getOrders(location)
+	return self.ai:getOrders(location)
 end
 
 function AIBlock:getMenu()

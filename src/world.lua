@@ -184,28 +184,9 @@ function World:update(dt)
 	local remove = {}
 	local create = {}
 
-	local shipLocations = {{},{}}
-	for i, structure in ipairs(self.objects.structures) do
-		if structure.corePart then
-			local team = structure.corePart:getTeam()
-			if team then
-				if structure.corePart.isPlayer then
-					table.insert(shipLocations[team], 
-								{structure.body:getX(), structure.body:getY(),true})
-				else
-					table.insert(shipLocations[team], 
-								{structure.body:getX(), structure.body:getY()})
-				end
-			end
-			
-		end
-	end
-
-	local worldInfo = {shipLocations, self:getObjects()}
-
 	for key, objectTable in pairs(self.objects) do
 		for i, object in ipairs(objectTable) do
-			c = object:update(dt, worldInfo)
+			c = object:update(dt)
 			for i, o in ipairs(c) do
 				table.insert(create, o)
 			end

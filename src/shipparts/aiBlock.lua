@@ -27,8 +27,12 @@ function AIBlock:getTeam()
 	return self.ai.team
 end
 
-function AIBlock:getOrders(location)
-	local physics = self.fixture:getBody():getWorld()
+function AIBlock:getOrders()
+	local body = self.fixture:getBody()
+	local physics = body:getWorld()
+	local vX, vY = body:getLinearVelocity()
+	local location = {body:getX(), body:getY(), body:getAngle(),
+					  vX, vY, body:getAngularVelocity()}
 	return self.ai:getOrders(location, physics)
 end
 

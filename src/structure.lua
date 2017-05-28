@@ -451,11 +451,12 @@ function Structure:command(orders)
 	return commands
 end
 
-function Structure:update(dt, playerLocation, aiData)
+function Structure:update(dt)
 	local newObjects = {}
 	local partsInfo = {}
 	if self.corePart then
-		partsInfo = self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
+		
+		partsInfo = self:command(self.corePart:getOrders())
 	end
 
 	for i, part in ipairs(self.parts) do

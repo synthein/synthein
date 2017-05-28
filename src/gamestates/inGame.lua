@@ -139,7 +139,7 @@ function InGame.update(dt)
 
 
 		-- Update the game world.
-		Structure.physics:update(dt)
+		world.physics:update(dt)
 		world:update(dt)
 
 		eventTime = eventTime + dt

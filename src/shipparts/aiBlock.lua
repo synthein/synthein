@@ -28,7 +28,8 @@ function AIBlock:getTeam()
 end
 
 function AIBlock:getOrders(location)
-	return self.ai:getOrders(location)
+	local physics = self.fixture:getBody():getWorld()
+	return self.ai:getOrders(location, physics)
 end
 
 function AIBlock:getMenu()

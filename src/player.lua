@@ -151,7 +151,7 @@ function Player:draw()
 
 	Player.callbackData.objects = {}
 	local a, b, c, d = self.camera:getWorldBoarder()
-	Player.physics:queryBoundingBox(a, b, c, d, Player.fixtureCallback)
+	self.world.physics:queryBoundingBox(a, b, c, d, Player.fixtureCallback)
 
 	for drawlayer, object in ipairs(Player.callbackData.objects) do
 		object:draw(self.camera)

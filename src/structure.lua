@@ -10,16 +10,12 @@ local Structure = {}
 Structure.__index = Structure
 
 Structure.PARTSIZE = 20
-Structure.physics = nil
 
-function Structure.setPhysics(setphysics)
-	Structure.physics = setphysics
-end
-
-function Structure.create(shipTable, location, data)
+function Structure.create(physics, location, shipTable, data)
 	local self = {}
 	setmetatable(self, Structure)
 
+	self.physics = physics
 	self.gridTable = GridTable.create()
 	self.parts = {}
 	self.partCoords = {}
@@ -42,18 +38,18 @@ function Structure.create(shipTable, location, data)
 	local y = location[2]
 	if shipTable.corePart then
 		if shipTable.corePart.type == "control" then
-			self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
+			self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 			self.body:setAngularDamping(1)
 			self.body:setLinearDamping(0.5)
 			self.type = "ship"
 		elseif shipTable.corePart.type == "anchor" then
-			self.body = love.physics.newBody(Structure.physics, x, y, "static")
+			self.body = love.physics.newBody(self.physics, x, y, "static")
 			self.type = "anchor"
 		end
 		self:addPart(shipTable.corePart, 0, 0, 1)
 		self.corePart = shipTable.corePart
 	else
-		self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
+		self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 		self.body:setAngularDamping(0.2)
 		self.body:setLinearDamping(0.1)
 		self.type = "generic"
@@ -179,7 +175,7 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 	local newStructure
 	if partThere then
 		local location = {annexee.parts[partIndex]:getWorldLocation()}
-		newStructure = {"structure", annexee.parts[partIndex], location}
+		newStructure = {"structure", location, annexee.parts[partIndex]}
 	else
 		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
 	end
@@ -412,7 +408,7 @@ function Structure:removeSections(newObjects)
 	self:recalculateSize()
 
 	for i, structure in ipairs(structureList) do
-		table.insert(newObjects, {"structures", structureList[i], {self:getLocation()}})
+		table.insert(newObjects, {"structures", {self:getLocation()}}, structureList[i])
 	end
 
 	return newObjects
@@ -475,7 +471,7 @@ function Structure:update(dt, playerLocation, aiData)
 		if self.parts[i].isDestroyed then
 			local location = {self.parts[i]:getWorldLocation(i)}
 			self:removePart(i)
-			table.insert(newObjects, {"particles", nil, location})
+			table.insert(newObjects, {"particles", location})
 			if #self.parts > 1 then
 				newObjects = self:removeSections(newObjects)
 			end

@@ -3,12 +3,6 @@ local Util = require("util")
 local AI = {}
 AI.__index = AI
 
-AI.physics = nil
-
-function AI.setPhysics(setphysics)
-	AI.physics = setphysics
-end
-
 AI.teamHostility = {{false, true},
 					{true, false}}
 
@@ -25,15 +19,15 @@ function AI.create(team)
 	return self
 end
 
-function AI:getOrders(location)
+function AI:getOrders(location, physics)
 	local aiX = location[1]
 	local aiY = location[2]
 	local aiAngle = location[3]
 
 	AI.callbackData.objects = {}
-	AI.physics:queryBoundingBox(aiX - 1000, aiY - 1000, 
-								aiX + 1000, aiY + 1000, 
-								AI.fixtureCallback)
+	physics:queryBoundingBox(aiX - 1000, aiY - 1000, 
+							 aiX + 1000, aiY + 1000, 
+							 AI.fixtureCallback)
 
 	local targetX = nil
 	local targetY = nil

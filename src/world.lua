@@ -19,6 +19,10 @@ function World.create()
 	self = {}
 	setmetatable(self, World)
 
+	self.physics = love.physics.newWorld()
+	self.physics:setCallbacks(World.beginContact, World.endContact,
+							  World.preSolve, World.postSolve)
+
 	self.objects = {}
 	for key, value in pairs(World.objectTypes) do
 		self.objects[key] = {}
@@ -119,8 +123,8 @@ function World:getObject(locationX, locationY, key)
 	World.callbackData.objects = {}
 	local a = locationX
 	local b = locationY
-	Structure.physics:queryBoundingBox(a, b, a, b, 
-								   World.fixtureCallback)
+	self.physics:queryBoundingBox(a, b, a, b, 
+								  World.fixtureCallback)
 
 	for i, object in ipairs(World.callbackData.objects) do
 		if object[1] then
@@ -212,7 +216,7 @@ function World:update(dt)
 	for i, object in ipairs(create) do
 		local key = object[1]
 		local value = World.objectTypes[key]
-		local newObject = value.create(object[2], object[3], object[4])
+		local newObject = value.create(self.physics, object[2], object[3], object[4])
 		table.insert(self.objects[key], newObject)
 	end
 end

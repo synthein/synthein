@@ -16,7 +16,7 @@ local AI = require("ai")
 
 local Spawn = {}
 
-function Spawn.spawnShip(shipID, location, data, shipString)
+function Spawn.spawnShip(shipID, world, location, data, shipString)
 	local stringLength
 	if not shipString then
 		shipString, stringLength = Spawn.loadShipFromFile(shipID)
@@ -24,10 +24,10 @@ function Spawn.spawnShip(shipID, location, data, shipString)
 		stringLength = #shipString
 	end
 	local shipTable = Spawn.shipUnpack(shipString, stringLength)
-	return Spawn.spawning(shipTable, location, data)
+	return Spawn.spawning(world, location, shipTable, data)
 end
 
-function Spawn.spawning(shipTable, location, data)
+function Spawn.spawning(world, location, shipTable, data)
 	for i,part in ipairs(shipTable.parts) do
 		shipTable.parts[i] = Spawn.createPart(part)
 		if shipTable.loadData[i] then
@@ -44,7 +44,7 @@ function Spawn.spawning(shipTable, location, data)
 		anchor = true
 	end
 	shipTable.corePart = Spawn.createPart(shipTable.corePart, data)
-	local structure = Structure.create(shipTable, location, data)
+	local structure = Structure.create(world.physics, location, shipTable, data)
 	if player then
 		return structure, true
 	end

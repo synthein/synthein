@@ -14,16 +14,8 @@ local InitWorld = {}
 function InitWorld.init(scene, ifSave)
 	world = World.create()
 	love.physics.setMeter(20) -- there are 20 pixels per meter
-	local physics = love.physics.newWorld()
-	Structure.setPhysics(physics)
-	Shot.setPhysics(physics)
-	Particles.setPhysics(physics)
-	Player.setPhysics(physics)
-	AI.setPhysics(physics)
-	physics:setCallbacks(World.beginContact, World.endContact, World.preSolve, 
-						 World.postSolve)
 
-	local ships, ifPlayer = SceneParser.loadScene(scene, {0, 0}, ifSave)
+	local ships, ifPlayer = SceneParser.loadScene(scene, world, {0, 0}, ifSave)
 	local players = {}
 	for i,ship in ipairs(ships) do
 		if ifPlayer[i] then

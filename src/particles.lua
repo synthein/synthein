@@ -3,20 +3,15 @@ local Screen = require("screen")
 local Particles = {}
 Particles.__index = Particles
 
-Particles.physics = nil
-
-function Particles.setPhysics(setphysics)
-	Particles.physics = setphysics
-end
-
 local explosionImage = love.graphics.newImage("res/images/explosion.png")
 
-function Particles.create(nillvalue, location)
+function Particles.create(physics, location)
 	self = {}
 	setmetatable(self, Particles)
 
+	self.physics = physics
 	local x, y = unpack(location)
-	self.body = love.physics.newBody(Particles.physics, x, y, "static")
+	self.body = love.physics.newBody(self.physics, x, y, "static")
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)

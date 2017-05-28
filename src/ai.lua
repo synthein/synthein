@@ -23,6 +23,7 @@ function AI:getOrders(location, physics)
 	local aiX = location[1]
 	local aiY = location[2]
 	local aiAngle = location[3]
+	local aiAngleVol = location[6]
 
 	AI.callbackData.objects = {}
 	physics:queryBoundingBox(aiX - 1000, aiY - 1000, 
@@ -86,13 +87,21 @@ function AI:getOrders(location, physics)
 		end
 
 		if angleToTarget then
-			if angleToTarget  < -math.pi/20 then
-				table.insert(orders, "right")
-			elseif angleToTarget > math.pi/20 then
-				table.insert(orders, "left")
-			else 
-				table.insert(orders, "shoot")
+			local sign = Util.sign(angleToTarget)
+			if sign * angleToTarget > sign * aiAngleVol /10 then
+				if sign == 1 then
+					table.insert(orders, "left")
+				elseif sign == -1 then
+					table.insert(orders, "right")
+				end
+			else
+				AI.callbackData.ray = {self, AI.teamHostility[self.team], true}
+				physics:rayCast(aiX, aiY, targetX, targetY, AI.RayCastCallback)
+				if AI.callbackData.ray[3] then
+					table.insert(orders, "shoot")
+				end
 			end
+
 			if self.team ~= 1 then
 				if Util.vectorMagnitude(targetX - aiX, targetY - aiY) > 15 * 20 and 
 					self.follow then
@@ -106,13 +115,28 @@ function AI:getOrders(location, physics)
 	return orders
 end
 
-AI.callbackData = {objects = {}}
+AI.callbackData = {objects = {}, ray = {}}
 
 function AI.fixtureCallback(fixture)
 	if not fixture:isSensor() then
 		table.insert(AI.callbackData.objects, fixture:getUserData())
 	end
 	return true
+end
+
+function AI.RayCastCallback(fixture, x, y, xn, yn, fraction)
+	local structure = fixture:getBody():getUserData()
+	if structure and structure.corePart then
+		local team = structure.corePart:getTeam()
+		if not AI.callbackData.ray[2][team] then
+			if not structure.corePart.ai or
+					structure.corePart.ai ~= AI.callbackData.ray[1] then
+				AI.callbackData.ray[3] = false
+				return 0
+			end
+		end
+	end
+	return -1
 end
 
 function AI:getMenu()

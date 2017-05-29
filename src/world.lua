@@ -28,6 +28,8 @@ function World.create()
 		self.objects[key] = {}
 	end
 
+	self.boarders = nil
+
 	return self
 end
 
@@ -187,12 +189,35 @@ end
 function World:update(dt)
 	local remove = {}
 	local create = {}
+	local nextBoarders = {0, 0, 0, 0}
 
 	for key, objectTable in pairs(self.objects) do
 		for i, object in ipairs(objectTable) do
+			local objectX, objectY = object:getLocation()
+			if key == "structures" and object.corePart and 
+					object.corePart:getTeam() == 1 then
+				if objectX < nextBoarders[1] then
+					nextBoarders[1] = objectX
+				elseif objectX > nextBoarders[3]then
+					nextBoarders[3] = objectX
+				end
+				if objectY < nextBoarders[2] then
+					nextBoarders[2] = objectY
+				elseif objectY > nextBoarders[4] then
+					nextBoarders[4] = objectY
+				end
+			end
+
 			c = object:update(dt)
 			for i, o in ipairs(c) do
 				table.insert(create, o)
+			end
+
+			if (self.boarders and (objectX < self.boarders[1] or
+								   objectY < self.boarders[2] or
+								   objectX > self.boarders[3] or
+								   objectY > self.boarders[4])) then
+				object:destroy()
 			end
 
 			if object.isDestroyed == true then
@@ -200,6 +225,12 @@ function World:update(dt)
 			end
 		end
 	end
+
+	self.boarders = nextBoarders
+	self.boarders[1] = self.boarders[1] - 10000
+	self.boarders[2] = self.boarders[2] - 10000
+	self.boarders[3] = self.boarders[3] + 10000
+	self.boarders[4] = self.boarders[4] + 10000
 
 	for i, object in ipairs(remove) do
 		self.objects[object[1]][object[2]] = {"kill"}

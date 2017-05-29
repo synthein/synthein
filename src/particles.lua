@@ -26,6 +26,11 @@ function Particles.create(physics, location)
 	return self
 end
 
+function Particles:destroy()
+	self.body:destroy()
+	self.isDestroyed = true
+end
+
 function Particles:getLocation()
 	return self.x, self.y
 end

@@ -79,8 +79,9 @@ end
 -- The table set to nill.
 
 function Structure:destroy()
-
-	end
+	self.body:destroy()
+	self.isDestroyed = true
+end
 
 function Structure:getLocation()
 	return self.body:getX(), self.body:getY(), self.body:getAngle()

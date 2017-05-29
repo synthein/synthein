@@ -40,12 +40,12 @@ function Shot:collision(fixture)
 	object = fixture:getUserData()
 	if object ~= self.sourcePart and self.firstContact then
 		object:damage(1)
-		self:destory()
+		self:destroy()
 		self.firstContact = false --this is needed because of bullet body physics
 	end
 end
 
-function Shot:destory()
+function Shot:destroy()
 	self.body:destroy()
 	self.isDestroyed = true
 end

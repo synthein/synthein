@@ -159,7 +159,10 @@ function InGame.update(dt)
 					eventTime = 0
 					local scene = math.ceil(love.math.random() * 10)
 					scene = tostring(scene)
-					SceneParser.loadScene("scene" .. scene, {players[1].ship.body:getX(),players[1].ship.body:getY()})
+					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, {players[1].ship.body:getX(),players[1].ship.body:getY()})
+					for i,ship in ipairs(ships) do
+						world:addObject(ship)
+					end
 				end
 			end
 			second = second - 1

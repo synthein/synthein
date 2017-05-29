@@ -408,7 +408,7 @@ function Structure:removeSections(newObjects)
 	self:recalculateSize()
 
 	for i, structure in ipairs(structureList) do
-		table.insert(newObjects, {"structures", {self:getLocation()}}, structureList[i])
+		table.insert(newObjects, {"structures", {self:getLocation()}, structure})
 	end
 
 	return newObjects

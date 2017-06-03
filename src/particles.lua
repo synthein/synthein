@@ -15,6 +15,7 @@ function Particles.create(physics, location)
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
+	self.fixture:setSensor(true)
 	self.image = explosionImage
 	self.x = x
 	self.y = y
@@ -29,6 +30,9 @@ end
 function Particles:destroy()
 	self.body:destroy()
 	self.isDestroyed = true
+end
+
+function Particles:collision(fixture)
 end
 
 function Particles:getLocation()

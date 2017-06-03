@@ -6,7 +6,7 @@ local Screen = require("screen")
 -- Ship parts
 local AIBlock = require("shipparts/aiBlock")
 local Block = require("shipparts/block")
-local Engine = require("shipparts/engine")
+local EngineBlock = require("shipparts/engineBlock")
 local GunBlock = require("shipparts/gunBlock")
 
 local Debug = {}
@@ -72,28 +72,29 @@ end
 function Debug.keyboard(key)
 	local cameraX, cameraY = Debug.players[1].camera:getPosition()
 	local world = Debug.world
+	local physics = world.physics
 	-- Spawn a ship part.
 	if key == "u" then
 		-- Spawn a block
-		local object = Structure.create(Block.create(), {cameraX + 50, cameraY + 100})
+		local object = Structure.create(physics, {cameraX + 50, cameraY + 100}, Block.create())
 		world:addObject(object, chunkLocation, "structures")
 	elseif key == "i" then
 		-- Spawn an engine
-		local object = Structure.create(Engine.create(), {cameraX + 112, cameraY})
+		local object = Structure.create(physics, {cameraX + 112, cameraY}, EngineBlock.create())
 		world:addObject(object, chunkLocation, "structures")
 	elseif key == "o" then
 		-- Spawn a gun
-		local object = Structure.create(GunBlock.create(), {cameraX + 50, cameraY - 100})
+		local object = Structure.create(physics, {cameraX + 50, cameraY - 100}, GunBlock.create())
 		world:addObject(object, chunkLocation, "structures")
 
 	--Spawn an AI
 	elseif key == "1" then
 		-- Team 1
-		local object = Structure.create(AIBlock.create(1), {cameraX - 200, cameraY + 200})
+		local object = Structure.create(physics, {cameraX - 200, cameraY + 200}, AIBlock.create(1))
 		world:addObject(object, chunkLocation, "structures")
 	elseif key == "2" then
 		-- Team 2
-		local object = Structure.create(AIBlock.create(2), {cameraX + 200, cameraY + 200})
+		local object = Structure.create(physics, {cameraX + 200, cameraY + 200}, AIBlock.create(2))
 		world:addObject(object, chunkLocation, "structures")
 	elseif key == "3" then
 		-- Team 3, etc.

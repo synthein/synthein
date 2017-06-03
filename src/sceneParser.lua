@@ -7,7 +7,7 @@ local SceneParser = {}
 function SceneParser.loadShip(shipName)
 end
 
-function SceneParser.loadScene(sceneName, location, ifSave)
+function SceneParser.loadScene(sceneName, world, location, ifSave)
 	local ships = {}
 	local index = 0
 	local ifShipString = false
@@ -65,7 +65,7 @@ function SceneParser.loadScene(sceneName, location, ifSave)
 	spawnedShips = {}
 	local ifPlayer = {}
 	for i,ship in ipairs(ships) do
-		spawnedShips[i], ifPlayer[i] = Spawn.spawnShip(ship[1],ship[2],ship[3],ship[4])
+		spawnedShips[i], ifPlayer[i] = Spawn.spawnShip(ship[1], world, ship[2], ship[3], ship[4])
 	end
 	return spawnedShips, ifPlayer
 end

@@ -1,5 +1,7 @@
 local Part = require("shipparts/part")
+local Engine = require("shipparts/engine")
 local AI = require("ai")
+local Settings = require("settings")
 
 local AIBlock = {}
 AIBlock.__index = AIBlock
@@ -12,12 +14,10 @@ function AIBlock.create(team)
 	self.image = love.graphics.newImage("res/images/ai.png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
-
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
-	self.thrust = 150
-	self.torque = 350
 	self.type = "control"
 
+	self.engine = Engine.create(1, 150, 350)
 	self.ai = AI.create(team)
 
 	return self
@@ -27,8 +27,13 @@ function AIBlock:getTeam()
 	return self.ai.team
 end
 
-function AIBlock:getOrders(location, playerLocation, aiData)
-	return self.ai:getOrders(location, playerLocation, aiData)
+function AIBlock:getOrders()
+	local body = self.fixture:getBody()
+	local physics = body:getWorld()
+	local vX, vY = body:getLinearVelocity()
+	local location = {body:getX(), body:getY(), body:getAngle(),
+					  vX, vY, body:getAngularVelocity()}
+	return self.ai:getOrders(location, physics)
 end
 
 function AIBlock:getMenu()
@@ -40,18 +45,10 @@ function AIBlock:runMenu(i)
 end
 
 function AIBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self:setLocation(location, partsInfo.locationInfo, orientation)
-	local directionX = partsInfo.locationInfo[2][1]
-	local directionY = partsInfo.locationInfo[2][2]
-	
-	local engines = partsInfo.engines
-	local body = engines[8]
-	local appliedForceX = -directionY * engines[5] + directionX * engines[6]
-	local appliedForceY = directionX * engines[5] + directionY * engines[6]
-	local Fx = appliedForceX * self.thrust
-	local Fy = appliedForceY * self.thrust
-	body:applyForce(Fx, Fy, self.location[1], self.location[2])
-	body:applyTorque(engines[7] * self.torque)
+	self.location = location
+	self.orientation = orientation
+
+	self.engine:update(self, partsInfo.engines, locationSign)
 end
 
 return AIBlock

@@ -107,7 +107,7 @@ function Player:buttonpressed(source, button)
 			if self.ship and self.ship.corePart then
 				team = self.ship.corePart:getTeam()
 			end
-			local structure, partIndex, partSide= world:getObject(cursorX, cursorY, "structures")
+			local structure, part, partSide= world:getObject(cursorX, cursorY, "structures")
 			--local partIndex
 			--if partInfo then
 			--	partIndex = partInfo[1]
@@ -119,10 +119,10 @@ function Player:buttonpressed(source, button)
 			end
 			if structureTeam and team and structureTeam ~= team then
 				structure = nil
-				partIndex = nil
+				part = nil
 			end
-			if structure and partIndex then
-				world:removeSection(structure, partIndex)
+			if structure and part then
+				world:removeSection(structure, part)
 			end
 		end
 	end
@@ -144,9 +144,14 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:draw()
+	if self.ship then
+		self.camera:setX(self.ship.body:getX())
+		self.camera:setY(self.ship.body:getY())
+	end
+
 	Player.callbackData.objects = {}
 	local a, b, c, d = self.camera:getWorldBoarder()
-	Player.physics:queryBoundingBox(a, b, c, d, Player.fixtureCallback)
+	self.world.physics:queryBoundingBox(a, b, c, d, Player.fixtureCallback)
 
 	for drawlayer, object in ipairs(Player.callbackData.objects) do
 		object:draw(self.camera)
@@ -156,6 +161,8 @@ function Player:draw()
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)
 	end
+
+	self.camera:drawExtras()
 end
 
 Player.callbackData = {objects = {}}

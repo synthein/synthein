@@ -10,16 +10,12 @@ local Structure = {}
 Structure.__index = Structure
 
 Structure.PARTSIZE = 20
-Structure.physics = nil
 
-function Structure.setPhysics(setphysics)
-	Structure.physics = setphysics
-end
-
-function Structure.create(shipTable, location, data)
+function Structure.create(physics, location, shipTable, data)
 	local self = {}
 	setmetatable(self, Structure)
 
+	self.physics = physics
 	self.gridTable = GridTable.create()
 	self.parts = {}
 	self.partCoords = {}
@@ -42,18 +38,18 @@ function Structure.create(shipTable, location, data)
 	local y = location[2]
 	if shipTable.corePart then
 		if shipTable.corePart.type == "control" then
-			self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
+			self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 			self.body:setAngularDamping(0.25)
 			self.body:setLinearDamping(0.125)
 			self.type = "ship"
 		elseif shipTable.corePart.type == "anchor" then
-			self.body = love.physics.newBody(Structure.physics, x, y, "static")
+			self.body = love.physics.newBody(self.physics, x, y, "static")
 			self.type = "anchor"
 		end
 		self:addPart(shipTable.corePart, 0, 0, 1)
 		self.corePart = shipTable.corePart
 	else
-		self.body = love.physics.newBody(Structure.physics, x, y, "dynamic")
+		self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 		self.body:setAngularDamping(0.2)
 		self.body:setLinearDamping(0.1)
 		self.type = "generic"
@@ -83,8 +79,9 @@ end
 -- The table set to nill.
 
 function Structure:destroy()
-
-	end
+	self.body:destroy()
+	self.isDestroyed = true
+end
 
 function Structure:getLocation()
 	return self.body:getX(), self.body:getY(), self.body:getAngle()
@@ -99,10 +96,10 @@ end
 -- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
 -- side is the side of structurePart to add the annexee to
-function Structure:annex(annexee, annexeePartIndex, annexeePartSide,
-				structurePartIndex, structurePartSide)
-	local aIndex = annexeePartIndex
-	local bIndex = structurePartIndex
+function Structure:annex(annexee, annexeePart, annexeePartSide,
+				structurePart, structurePartSide)
+	local aIndex = annexee:findPart(annexeePart)
+	local bIndex = self:findPart(structurePart)
 	annexeeSide = (annexeePartSide + annexee.partOrient[aIndex] - 2)%4 + 1
 	local newStructures = {}
 	local structureOffsetX, structureOffsetY
@@ -178,8 +175,8 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 	end
 	local newStructure
 	if partThere then
-		local location = {annexee:getAbsPartCoords(partIndex)}
-		newStructure = {"structure", annexee.parts[partIndex], location}
+		local location = {annexee.parts[partIndex]:getWorldLocation()}
+		newStructure = {"structure", location, annexee.parts[partIndex]}
 	else
 		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
 	end
@@ -196,9 +193,9 @@ function Structure:removeSection(index)
 	local partX = self.partCoords[index].x
 	local partY = self.partCoords[index].y
 	local partOrient = (-self.partOrient[index] + 1) % 4 + 1
-	local x, y , angle = self:getAbsPartCoords(index)
+	local x, y , angle = self.parts[index]:getWorldLocation()
 	self:removePart(index)
-	local newStructure = Structure.create(part, {x, y, angle})
+	local newStructure = Structure.create(self.physics, {x, y, angle}, part)
 	local partList = self:testConnection()
 	for i = #partList,1,-1 do
 		if partList[i] ~= 1 then
@@ -412,18 +409,10 @@ function Structure:removeSections(newObjects)
 	self:recalculateSize()
 
 	for i, structure in ipairs(structureList) do
-		table.insert(newObjects, {"structures", structureList[i], {self:getLocation()}})
+		table.insert(newObjects, {"structures", {self:getLocation()}, structure})
 	end
 
 	return newObjects
-end
-
--- Find the absolute coordinates of a part given the x and y offset values of
--- the part and the absolute coordinates and angle of the structure it is in.
-function Structure:getAbsPartCoords(index)
-	local part = self.parts[index]
-	local location = part.location
-	return location[1], location[2], location[3]
 end
 
 function Structure:command(orders)
@@ -463,26 +452,13 @@ function Structure:command(orders)
 	return commands
 end
 
-function Structure:getPartSide(partIndex, locationX, locationY)
-	local partX, partY, partAngle = self:getAbsPartCoords(partIndex)
-	local angleToCursor = Util.vectorAngle(locationX - partX,
-										   locationY - partY)
-	local angleDifference = angleToCursor - partAngle
-	partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
-	return partSide
-end
-
-function Structure:update(dt, playerLocation, aiData)
+function Structure:update(dt)
 	local newObjects = {}
 	local partsInfo = {}
 	if self.corePart then
-		partsInfo = self:command(self.corePart:getOrders({self.body:getX(),self.body:getY(), self.body:getAngle()}, playerLocation, aiData))
+		
+		partsInfo = self:command(self.corePart:getOrders())
 	end
-	local location = {self:getLocation()}
-	local directionX = math.cos(location[3])
-	local directionY = math.sin(location[3])
-	local locationInfo = {location, {directionX, directionY}}
-	partsInfo["locationInfo"] = locationInfo
 
 	for i, part in ipairs(self.parts) do
 		local l = {self.partCoords[i].x, self.partCoords[i].y}
@@ -495,10 +471,9 @@ function Structure:update(dt, playerLocation, aiData)
 
 	for i = #self.parts,1,-1 do
 		if self.parts[i].isDestroyed then
-			local x, y
-			x, y = self:getAbsPartCoords(i)
+			local location = {self.parts[i]:getWorldLocation(i)}
 			self:removePart(i)
-			table.insert(newObjects, {"particles", x, y})
+			table.insert(newObjects, {"particles", location})
 			if #self.parts > 1 then
 				newObjects = self:removeSections(newObjects)
 			end

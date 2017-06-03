@@ -25,26 +25,25 @@ function Building.create(world, camera)
 	return self
 end
 
-function Building:setAnnexee(structure, partIndex)
+function Building:setAnnexee(structure, part)
 	self.annexee = structure
-	self.annexeePartIndex = partIndex
+	self.annexeePart = part
 	self.mode = 2
 end
 
-function Building:setStructure(structure, partIndex)
+function Building:setStructure(structure, part)
 	if self.annexee == structure then
 		return true
 	end
 	self.structure = structure
-	self.structurePartIndex = partIndex
+	self.structurePart = part
 	self.mode = 4
 	return false
 end
 
 function Building:setSide(partSide)
 	if self.mode == 2 then
-		if self.annexee.parts[self.annexeePartIndex]
-				.connectableSides[partSide] then
+		if self.annexeePart.connectableSides[partSide] then
 			self.annexeePartSide = partSide
 			self.mode = 3
 			return false
@@ -52,23 +51,22 @@ function Building:setSide(partSide)
 			return true
 		end
 	elseif self.mode == 4 then 
-		if self.structure.parts[self.structurePartIndex]
-				.connectableSides[partSide] then
+		if self.structurePart.connectableSides[partSide] then
 			self.structurePartSide = partSide 
-			if self.annexee and self.annexeePartIndex and self.annexeePartSide
-				and self.structure and self.structurePartIndex
+			if self.annexee and self.annexeePart and self.annexeePartSide
+				and self.structure and self.structurePart
 				and self.structurePartSide then
-				self.structure:annex(self.annexee, self.annexeePartIndex,
+				self.structure:annex(self.annexee, self.annexeePart,
 							self.annexeePartSide,
-							self.structurePartIndex, self.structurePartSide)
+							self.structurePart, self.structurePartSide)
 			end
 		end
 		return true
 	end
 end
 
-function Building.getStrengthTable(structure, partIndex, partSide)
-	connectableSides = structure.parts[partIndex].connectableSides
+function Building.getStrengthTable(part, partSide)
+	connectableSides = part.connectableSides
 	strength = {}
 	for i = 1, 4 do
 		if connectableSides[i] then
@@ -88,9 +86,8 @@ function Building.getStrengthTable(structure, partIndex, partSide)
 end
 
 function Building:draw()
-	if self.annexee and self.annexeePartIndex and self.annexeePartSide then
-		local x, y, partAngle = 
-				self.annexee:getAbsPartCoords(self.annexeePartIndex)
+	if self.annexeePart and self.annexeePartSide then
+		local x, y, partAngle = self.annexeePart:getWorldLocation()
 		local angle = self.annexeePartSide * math.pi/2 + partAngle
 		local offsetX, offsetY = Util.vectorComponents(10, angle)
 		self.camera:draw(self.pointerImage,

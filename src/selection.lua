@@ -19,21 +19,17 @@ function Selection.create(world, team, camera)
 end
 
 function Selection:pressed(cursorX, cursorY)
-	local structure, partIndex, partSide = world:getObject(cursorX, cursorY, "structures")
-	--local partIndex 
-	--if partInfo then
-	--	partIndex = partInfo[1]
-	--end
-	if structure and partIndex then
+	local structure, part, partSide = world:getObject(cursorX, cursorY, "structures")
+	if structure and part then
 		if self.build then
 			if self.build.mode == 3 then
 				if not structure.corePart or 
 						structure.corePart:getTeam() == self.team then
 					self.structure = structure
-					self.partIndex = partIndex
-					if self.build:setStructure(structure, partIndex) then
+					self.part = part
+					if self.build:setStructure(structure, part) then
 						self.structure = nil
-						self.partIndex = nil
+						self.part = nil
 						self.build = nil
 					end
 				end
@@ -41,39 +37,37 @@ function Selection:pressed(cursorX, cursorY)
 		else
 			if structure.corePart then
 				local corePart = structure.corePart
-				if corePart == structure.parts[partIndex] then
+				if corePart == part then
 					if corePart:getTeam() == self.team and corePart.ai then
 						self.structure = structure
-						self.partIndex = partIndex
+						self.part = part
 					end
 				end
 			else
 				self.build = Building.create(self.world, self.camera)
-				self.build:setAnnexee(structure, partIndex)
+				self.build:setAnnexee(structure, part)
 				self.structure = structure
-				self.partIndex = partIndex
+				self.part = part
 			end
 		end
 	end
 end
 
 function Selection:released(cursorX, cursorY)
-	if self.structure and self.partIndex then
-		--local withinPart, partSide = 
-		--		self.structure:withinPart(self.partIndex, cursorX, cursorY)
-		local partSide = self.structure:getPartSide(self.partIndex, cursorX, cursorY)
-		local withinPart = self.structure.parts[self.partIndex]:withinPart(cursorX, cursorY)
-		local x, y, angle = self.structure:getAbsPartCoords(self.partIndex)
+	if self.structure and self.part then
+		local partSide = self.part:getPartSide(cursorX, cursorY)
+		local withinPart = self.part:withinPart(cursorX, cursorY)
+		local x, y, angle = self.part:getWorldLocation(self.partIndex)
 		if not withinPart then
 			if self.build then
 				if self.build:setSide(partSide) then
 					self.build = nil
 				end
 			else
-				local strength = self.structure.parts[self.partIndex]:getMenu()
+				local strength = self.part:getMenu()
 				local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
 				local index = self:angleToIndex(newAngle, #strength)
-				self.structure.parts[self.partIndex]:runMenu(index)
+				self.part:runMenu(index)
 			end
 			self.structure = nil
 			self.partSide = nil
@@ -92,19 +86,15 @@ function Selection:angleToIndex(angle, length)
 end
 
 function Selection:draw(cursorX, cursorY)
-	if self.structure and self.partIndex then
-		--local withinPart, partSide =
-		--		self.structure:withinPart(self.partIndex, cursorX, cursorY)
-		local partSide = self.structure:getPartSide(self.partIndex, cursorX, cursorY)
-		local x, y, angle = self.structure:getAbsPartCoords(self.partIndex)
+	if self.structure and self.part then
+		local partSide = self.part:getPartSide(cursorX, cursorY)
+		local x, y, angle = self.part:getWorldLocation()
 		local strength = nil
 		if self.build then
-			strength = Building.getStrengthTable(self.structure, 
-													   self.partIndex,
-													   partSide)
+			strength = Building.getStrengthTable(self.part, partSide)
 		else
 			angle = 0
-			strength = self.structure.parts[self.partIndex]:getMenu()
+			strength = self.part:getMenu()
 			local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
 			local index = self:angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then

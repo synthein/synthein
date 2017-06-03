@@ -4,10 +4,18 @@ local Particles = {}
 Particles.__index = Particles
 
 local explosionImage = love.graphics.newImage("res/images/explosion.png")
-function Particles.create(x, y)
+
+function Particles.create(physics, location)
 	self = {}
 	setmetatable(self, Particles)
 
+	self.physics = physics
+	local x, y = unpack(location)
+	self.body = love.physics.newBody(self.physics, x, y, "static")
+	self.physicsShape = love.physics.newRectangleShape(40, 40)
+	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
+	self.fixture:setUserData(self)
+	self.fixture:setSensor(true)
 	self.image = explosionImage
 	self.x = x
 	self.y = y
@@ -19,6 +27,14 @@ function Particles.create(x, y)
 	return self
 end
 
+function Particles:destroy()
+	self.body:destroy()
+	self.isDestroyed = true
+end
+
+function Particles:collision(fixture)
+end
+
 function Particles:getLocation()
 	return self.x, self.y
 end
@@ -26,13 +42,14 @@ end
 function Particles:update(dt)
 	self.time = self.time - dt
 	if self.time <= 0 then
+		self.body:destroy()
 		self.isDestroyed = true
 	end
-	return {}, {}
+	return {}
 end
 
-function Particles:draw()
-	Screen.draw(
+function Particles:draw(camera)
+	camera:draw(
 		self.image,
 		self.x,
 		self.y,

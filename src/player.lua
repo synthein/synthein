@@ -107,7 +107,7 @@ function Player:buttonpressed(source, button)
 			if self.ship and self.ship.corePart then
 				team = self.ship.corePart:getTeam()
 			end
-			local structure, partIndex, partSide= world:getObject(cursorX, cursorY, "structures")
+			local structure, part, partSide= world:getObject(cursorX, cursorY, "structures")
 			--local partIndex
 			--if partInfo then
 			--	partIndex = partInfo[1]
@@ -119,10 +119,10 @@ function Player:buttonpressed(source, button)
 			end
 			if structureTeam and team and structureTeam ~= team then
 				structure = nil
-				partIndex = nil
+				part = nil
 			end
-			if structure and partIndex then
-				world:removeSection(structure, partIndex)
+			if structure and part then
+				world:removeSection(structure, part)
 			end
 		end
 	end

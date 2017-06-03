@@ -195,7 +195,7 @@ function Structure:removeSection(index)
 	local partOrient = (-self.partOrient[index] + 1) % 4 + 1
 	local x, y , angle = self.parts[index]:getWorldLocation()
 	self:removePart(index)
-	local newStructure = Structure.create(part, {x, y, angle})
+	local newStructure = Structure.create(self.physics, {x, y, angle}, part)
 	local partList = self:testConnection()
 	for i = #partList,1,-1 do
 		if partList[i] ~= 1 then

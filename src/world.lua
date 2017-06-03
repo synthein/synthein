@@ -193,31 +193,33 @@ function World:update(dt)
 
 	for key, objectTable in pairs(self.objects) do
 		for i, object in ipairs(objectTable) do
-			local objectX, objectY = object:getLocation()
-			if key == "structures" and object.corePart and 
-					object.corePart:getTeam() == 1 then
-				if objectX < nextBoarders[1] then
-					nextBoarders[1] = objectX
-				elseif objectX > nextBoarders[3]then
-					nextBoarders[3] = objectX
+			if object.isDestroyed == false then
+				local objectX, objectY = object:getLocation()
+				if key == "structures" and object.corePart and 
+						object.corePart:getTeam() == 1 then
+					if objectX < nextBoarders[1] then
+						nextBoarders[1] = objectX
+					elseif objectX > nextBoarders[3]then
+						nextBoarders[3] = objectX
+					end
+					if objectY < nextBoarders[2] then
+						nextBoarders[2] = objectY
+					elseif objectY > nextBoarders[4] then
+						nextBoarders[4] = objectY
+					end
 				end
-				if objectY < nextBoarders[2] then
-					nextBoarders[2] = objectY
-				elseif objectY > nextBoarders[4] then
-					nextBoarders[4] = objectY
+
+				c = object:update(dt)
+				for i, o in ipairs(c) do
+					table.insert(create, o)
 				end
-			end
 
-			c = object:update(dt)
-			for i, o in ipairs(c) do
-				table.insert(create, o)
-			end
-
-			if (self.boarders and (objectX < self.boarders[1] or
-								   objectY < self.boarders[2] or
-								   objectX > self.boarders[3] or
-								   objectY > self.boarders[4])) then
-				object:destroy()
+				if (self.boarders and (objectX < self.boarders[1] or
+									   objectY < self.boarders[2] or
+									   objectX > self.boarders[3] or
+									   objectY > self.boarders[4])) then
+					object:destroy()
+				end
 			end
 
 			if object.isDestroyed == true then

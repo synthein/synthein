@@ -54,7 +54,7 @@ end
 function Shot:update(dt, worldInfo)
 	self.time = self.time + dt
 	if self.time > 5 then
-		self:destory()
+		self:destroy()
 	end
 
 	return {}

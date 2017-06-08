@@ -5,6 +5,7 @@ local World = require("world")
 local Screen = require("screen")
 local Util = require("util")
 local SceneParser = require("sceneParser")
+local Settings = require("settings")
 
 local GameState = require("gamestates/gameState")
 
@@ -155,11 +156,31 @@ function InGame.update(dt)
 							players[1].ship.body:getLinearVelocity()))
 				if veloVar < 0 then veloVar = 0 end
 				rand = love.math.random()
-				if rand < timeVar * disVar * veloVar then
+				if rand < timeVar * disVar * veloVar or
+						(debugmode and Debug.getSpawn()) then
 					eventTime = 0
 					local scene = math.ceil(love.math.random() * 10)
 					scene = tostring(scene)
-					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, {players[1].ship.body:getX(),players[1].ship.body:getY()})
+					local location = {players[1].ship.body:getX(),
+									  players[1].ship.body:getY()}
+					local vV = {players[1].ship.body:getLinearVelocity()}
+					local mag = Util.vectorMagnitude(unpack(vV))
+					local uV
+					if mag ~= 0 then
+						uV = {vV[1]/mag , vV[2]/ mag}
+					else
+						uV = {0, 1}
+					end
+					local pV = {-uV[2], uV[1]}
+					local r = 2 * (math.random() - 0.5)
+					local m = 50 * Settings.PARTSIZE / players[1].camera.zoom
+					local netV = {m * (uV[1] + r * pV[1]),
+								  m * (uV[2] + r * pV[2])}
+					location[1] = location[1] + netV[1]
+					location[2] = location[2] + netV[2]
+					location[3] = 2 * math.pi * math.random()
+
+					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, location)
 					for i,ship in ipairs(ships) do
 						world:addObject(ship)
 					end

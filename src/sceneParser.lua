@@ -63,11 +63,11 @@ function SceneParser.loadScene(sceneName, world, location, ifSave)
 		end
 	end
 	spawnedShips = {}
-	local ifPlayer = {}
+	local shipType = {}
 	for i,ship in ipairs(ships) do
-		spawnedShips[i], ifPlayer[i] = Spawn.spawnShip(ship[1], world, ship[2], ship[3], ship[4])
+		spawnedShips[i], shipType[i] = Spawn.spawnShip(ship[1], world, ship[2], ship[3], ship[4])
 	end
-	return spawnedShips, ifPlayer
+	return spawnedShips, shipType
 end
 
 function SceneParser.saveScene(sceneName, world)

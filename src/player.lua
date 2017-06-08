@@ -9,6 +9,8 @@ Player.__index = Player
 
 Player.physics = nil
 
+Player.anchors = {}
+
 function Player.setPhysics(setphysics)
 	Player.physics = setphysics
 end
@@ -162,7 +164,7 @@ function Player:draw()
 		self.selected:draw(cursorX, cursorY)
 	end
 
-	self.camera:drawExtras()
+	self.camera:drawExtras({Player.anchors[self.ship.corePart:getTeam()]:getLocation()})
 end
 
 Player.callbackData = {objects = {}}

@@ -95,14 +95,14 @@ function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
     love.graphics.setScissor()
 end
 
-function Camera:drawExtras()
+function Camera:drawExtras(anchorLocation)
     love.graphics.setScissor(self:getScissor())
 	--draw the compass in the lower right hand coner 60 pixels from the edges
 	love.graphics.draw(
 			self.compass,
 			self.scissorX + self.scissorWidth - 60,
 			self.scissorY + self.scissorHeight - 60,
-			math.atan2(self.x, self.y) + math.pi,
+			math.atan2(self.x - anchorLocation[1], self.y - anchorLocation[2]) + math.pi,
 			1, 1, 25, 25)
     love.graphics.setScissor()
 end

@@ -15,13 +15,16 @@ function InitWorld.init(scene, ifSave)
 	world = World.create()
 	love.physics.setMeter(20) -- there are 20 pixels per meter
 
-	local ships, ifPlayer = SceneParser.loadScene(scene, world, {0, 0}, ifSave)
+	local ships, shipType = SceneParser.loadScene(scene, world, {0, 0}, ifSave)
 	local players = {}
 	for i,ship in ipairs(ships) do
-		if ifPlayer[i] then
+		if shipType[i] == 2 then
 			table.insert(AI.defaultLeaders, ship)
 			table.insert(players, Player.create(world, Controls.defaults.keyboard, ship))
+		elseif  shipType[i] == 3 then
+			table.insert(Player.anchors, ship)
 		end
+
 		world:addObject(ship)
 	end
 	

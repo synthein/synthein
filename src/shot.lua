@@ -4,21 +4,17 @@ local Screen = require("screen")
 local Shot = {}
 Shot.__index = Shot
 
-Shot.physics = nil
-
-function Shot.setPhysics(setphysics)
-	Shot.physics = setphysics
-end
-
-function Shot.create(location, sourcePart)
+function Shot.create(physics, location, sourcePart)
 	local self = {}
 	setmetatable(self, Shot)
+
 	local imageName = "shot"
 	self.image = love.graphics.newImage("res/images/"..imageName..".png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.body = love.physics.newBody(Shot.physics, 
+	self.physics = physics
+	self.body = love.physics.newBody(self.physics, 
 					location[1], location[2], "dynamic")
 	self.body:setAngle(location[3])
 	self.body:setLinearVelocity(
@@ -41,19 +37,15 @@ function Shot:getLocation()
 end
 
 function Shot:collision(fixture)
-	print("shot collision")
 	object = fixture:getUserData()
 	if object ~= self.sourcePart and self.firstContact then
 		object:damage(1)
-		self:destory()
+		self:destroy()
 		self.firstContact = false --this is needed because of bullet body physics
 	end
 end
 
-function Shot:damage()
-end
-
-function Shot:destory()
+function Shot:destroy()
 	self.body:destroy()
 	self.isDestroyed = true
 end
@@ -62,7 +54,7 @@ end
 function Shot:update(dt, worldInfo)
 	self.time = self.time + dt
 	if self.time > 5 then
-		self:destory()
+		self:destroy()
 	end
 
 	return {}

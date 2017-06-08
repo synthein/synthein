@@ -12,7 +12,7 @@ function Gun.create()
 	return self
 end
 
-function Gun:update(dt, shoot, location, part)
+function Gun:update(dt, shoot, part)
 	if self.recharge then
 		self.rechargeTime = self.rechargeTime + dt
 		if self.rechargeTime > 0.5 then
@@ -22,7 +22,7 @@ function Gun:update(dt, shoot, location, part)
 		if shoot then
 			self.recharge = true
 			self.rechargeTime = 0
-			return {"shots", location, part}
+			return {"shots", {part:getWorldLocation()}, part}
 		end
 	end
 end

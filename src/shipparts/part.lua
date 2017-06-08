@@ -1,4 +1,5 @@
-local Screen = require("screen")
+local Settings = require("settings")
+local Util = require("util")
 
 local Part = {}
 Part.__index = Part
@@ -32,22 +33,27 @@ function Part:setFixture(fixture)
 	self.fixture:setUserData(self)
 end
 
-function Part:setLocation(location, locationInfo, orientation)
-	if locationInfo then
-		local l = locationInfo[1]
-		local dX = locationInfo[2][1]
-		local dY = locationInfo[2][2]
-		local x = (location[1] * dX - location[2] * dY) * 20 + l[1]
-		local y = (location[1] * dY + location[2] * dX) * 20 + l[2]
-		local angle = (orientation - 1) * math.pi/2 + l[3]
-		self.location = {x, y, angle}
-	else
-		self.location = location
+function Part:withinPart(x, y)
+	return self.fixture:testPoint(x, y)
+end
+
+function Part:getWorldLocation()
+	local body = self.fixture:getBody()
+	if self.location and body then
+		local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
+		local x, y = unpack(self.location)
+		x, y = body:getWorldPoints(x * Settings.PARTSIZE, y * Settings.PARTSIZE)
+		return x, y, angle
 	end
 end
 
-function Part:withinPart(x, y)
-	return self.fixture:testPoint(x, y)
+function Part:getPartSide(locationX, locationY)
+	local partX, partY, partAngle = self:getWorldLocation()
+	local angleToCursor = Util.vectorAngle(locationX - partX,
+										   locationY - partY)
+	local angleDifference = angleToCursor - partAngle
+	partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
+	return partSide
 end
 
 function Part:damage(damage)
@@ -57,21 +63,31 @@ function Part:damage(damage)
 	end
 end
 
-function Part:collision(fixture)
-	print("part collision")
+function Part:collision(fixture, sqVelocity, pointVelocity)
+	object = fixture:getUserData()
+	x, y, mass, inertia = fixture:getMassData()
+	local partSize = Settings.PARTSIZE
+	local div = partSize * partSize
+	local damage = math.floor(sqVelocity * mass * 10 / div / div)
+	object:damage(damage)
+	local body = self.fixture:getBody()
+	local mult = -damage * partSize
+
+	local xI, yI = unpack(pointVelocity)
+	if xI and yI then
+		body:applyLinearImpulse(xI * mult, yI * mult)
+	end
 end
 
 function Part:update(dt, partsInfo, location, locationSign, orientation)
-	self:setLocation(location, partsInfo.locationInfo, orientation)
+	self.location = location
+	self.orientation = orientation
 end
 
 function Part:draw(camera)
-	if self.location then
-		camera:draw(
-			self.image,
-			self.location[1],
-			self.location[2],
-			self.location[3], 1, 1, self.width/2, self.height/2)
+	x, y, angle = self:getWorldLocation()
+	if x and y and angle then
+		camera:draw(self.image, x, y, angle, 1, 1, self.width/2, self.height/2)
 	end
 end
 

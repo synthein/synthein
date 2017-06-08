@@ -19,21 +19,51 @@ function World.create()
 	self = {}
 	setmetatable(self, World)
 
+	self.physics = love.physics.newWorld()
+	self.physics:setCallbacks(World.beginContact, World.endContact,
+							  World.preSolve, World.postSolve)
+
 	self.objects = {}
 	for key, value in pairs(World.objectTypes) do
 		self.objects[key] = {}
 	end
+
+	self.boarders = nil
 
 	return self
 end
 
 function World.beginContact(a, b, coll)
 	--print("beginContact")
+	local aSensor = a:isSensor()
+	local bSensor = b:isSensor()
 	local objectA, objectB
 	objectA = a:getUserData()
 	objectB = b:getUserData()
-	objectA:collision(b)
-	objectB:collision(a)
+
+	if not aSensor and not bSensor then
+		local x, y = coll:getPositions()
+		local bodyA = a:getBody()
+		local bodyB = b:getBody()
+		local sq
+
+		if x and y then
+			local aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
+			local bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
+			local dVX = aVX - bVX
+			local dVY = aVY - bVY
+			sqV = (dVX * dVX) + (dVY * dVY)
+		else
+			sqV = 0
+		end
+
+		objectA:collision(b, sqV, {aVX, aVY})
+		objectB:collision(a, sqV, {aVX, aVY})
+	elseif aSensor then
+		objectA:collision(b)
+	elseif bSensor then
+		objectB:collision(a)
+	end
 end
  
  
@@ -43,6 +73,11 @@ end
  
 function World.preSolve(a, b, coll)
 	--print("preSolve")
+	objectA = a:getUserData()
+	objectB = b:getUserData()
+	if objectA.isDestroyed or objectB.isDestroyed then
+		coll:setEnabled(false)
+	end
 end
  
 function World.postSolve(a, b, coll, normalimpulse, tangentimpulse)
@@ -90,13 +125,12 @@ function World:getObject(locationX, locationY, key)
 	World.callbackData.objects = {}
 	local a = locationX
 	local b = locationY
-	Structure.physics:queryBoundingBox(a, b, a, b, 
-								   World.fixtureCallback)
+	self.physics:queryBoundingBox(a, b, a, b, 
+								  World.fixtureCallback)
 
 	for i, object in ipairs(World.callbackData.objects) do
 		if object[1] then
-			local index = object[1]:findPart(object[2])
-			return object[1], index, object[1]:getPartSide(index, locationX, locationY)
+			return object[1], object[2], object[2]:getPartSide(locationX, locationY)
 		end
 	end
 --[[
@@ -130,9 +164,9 @@ function World:getObjects(key)
 end
 
 --Removes a section of a structure and saves the new structure.
-function World:removeSection(structure, partIndex)
-	if structure.parts[partIndex].type == "generic" then
-		local newStructure = structure:removeSection(partIndex)
+function World:removeSection(structure, part)
+	if part.type == "generic" then
+		local newStructure = structure:removeSection(structure:findPart(part))
 		if newStructure then
 			self:addObject(newStructure, nil, "structures")
 		end
@@ -155,47 +189,50 @@ end
 function World:update(dt)
 	local remove = {}
 	local create = {}
-
-	local shipLocations = {{},{}}
-	for i, structure in ipairs(self.objects.structures) do
-		if structure.corePart then
-			local team = structure.corePart:getTeam()
-			if team then
-				if structure.corePart.isPlayer then
-					table.insert(shipLocations[team], 
-								{structure.body:getX(), structure.body:getY(),true})
-				else
-					table.insert(shipLocations[team], 
-								{structure.body:getX(), structure.body:getY()})
-				end
-			end
-			
-		end
-	end
-
-	local worldInfo = {shipLocations, self:getObjects()}
+	local nextBoarders = {0, 0, 0, 0}
 
 	for key, objectTable in pairs(self.objects) do
 		for i, object in ipairs(objectTable) do
-			c = object:update(dt, worldInfo)
-			for i, o in ipairs(c) do
-				table.insert(create, o)
+			if object.isDestroyed == false then
+				local objectX, objectY = object:getLocation()
+				if key == "structures" and object.corePart and 
+						object.corePart:getTeam() == 1 then
+					if objectX < nextBoarders[1] then
+						nextBoarders[1] = objectX
+					elseif objectX > nextBoarders[3]then
+						nextBoarders[3] = objectX
+					end
+					if objectY < nextBoarders[2] then
+						nextBoarders[2] = objectY
+					elseif objectY > nextBoarders[4] then
+						nextBoarders[4] = objectY
+					end
+				end
+
+				c = object:update(dt)
+				for i, o in ipairs(c) do
+					table.insert(create, o)
+				end
+
+				if (self.boarders and (objectX < self.boarders[1] or
+									   objectY < self.boarders[2] or
+									   objectX > self.boarders[3] or
+									   objectY > self.boarders[4])) then
+					object:destroy()
+				end
 			end
 
 			if object.isDestroyed == true then
 				table.insert(remove, {key, i})
 			end
-	--[[		local x1, y1 = Chunk.getChunkIndex(object:getLocation())
-			local x2 = self.chunkLocation[1]
-			local y2 = self.chunkLocation[2]
-			if not (x1 == x2 and y1 == y2) then
-				local chunkLocation = {x1, y1}
-				table.insert(remove, {key, i})
-				table.insert(move, {chunkLocation, key, object})
-			end
---]]
 		end
 	end
+
+	self.boarders = nextBoarders
+	self.boarders[1] = self.boarders[1] - 10000
+	self.boarders[2] = self.boarders[2] - 10000
+	self.boarders[3] = self.boarders[3] + 10000
+	self.boarders[4] = self.boarders[4] + 10000
 
 	for i, object in ipairs(remove) do
 		self.objects[object[1]][object[2]] = {"kill"}
@@ -212,10 +249,9 @@ function World:update(dt)
 	for i, object in ipairs(create) do
 		local key = object[1]
 		local value = World.objectTypes[key]
-		local newObject = value.create(object[2], object[3], object[4])
+		local newObject = value.create(self.physics, object[2], object[3], object[4])
 		table.insert(self.objects[key], newObject)
 	end
-	
 end
 
 return World

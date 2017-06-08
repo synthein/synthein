@@ -46,7 +46,15 @@ function SceneParser.loadScene(sceneName, world, location, ifSave)
 				end
 				for i = 1,6 do
 					if not l[i] then l[i] = 0 end
-					if i == 1 or i == 2 then l[i] = l[i] + location[i] end
+				end
+
+				if not location[3] then location[3] = 0 end
+
+				l[1], l[2] = Util.computeAbsCoords(l[1], l[2], location[3])
+				l[4], l[5] = Util.computeAbsCoords(l[4], l[5], location[3])
+				
+				for i = 1,3 do
+					l[i] = l[i] + location[i]
 				end
 
 				local dataString = string.match(line, "%[[-0-9., ]*%]")

@@ -24,6 +24,14 @@ function Debug.setPlayers(players)
 	Debug.players = players
 end
 
+Debug.spawn = false
+function Debug.getSpawn()
+	local value = Debug.spawn
+	Debug.spawn = false
+	return value
+end
+
+
 -- Print debug info.
 function Debug.draw()
 	if not Debug.world then
@@ -98,6 +106,9 @@ function Debug.keyboard(key)
 		world:addObject(object, chunkLocation, "structures")
 	elseif key == "3" then
 		-- Team 3, etc.
+
+	elseif key == "n" then
+		Debug.spawn = true
 
 	elseif love.keyboard.isDown("lctrl", "rctrl") then
 		-- Export the player's ship.

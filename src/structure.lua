@@ -20,7 +20,6 @@ function Structure.create(physics, location, shipTable, data)
 	self.parts = {}
 	self.partCoords = {}
 	self.partOrient = {}
-	self.fixtures = {}
 	self.maxDiameter = 1
 	self.size = 1
 	self.isDestroyed = false
@@ -322,7 +321,6 @@ function Structure:addPart(part, x, y, orientation)
 	table.insert(self.parts, part)
 	table.insert(self.partCoords, {x = x, y = y})
 	table.insert(self.partOrient, orientation)
-	table.insert(self.fixtures, fixture)
 end
 
 function Structure:recalculateSize()
@@ -374,11 +372,10 @@ function Structure:removePart(part)
 	if self.parts[partIndex] == self.corePart then
 		self.corePart = nil
 	end
-	self.fixtures[partIndex]:destroy()
+
 	self.gridTable:index(x, y, nil, true)
 	table.remove(self.parts, partIndex)
 	table.remove(self.partCoords, partIndex)
-	table.remove(self.fixtures, partIndex)
 	table.remove(self.partOrient, partIndex)
 
 	if #self.parts == 0 then

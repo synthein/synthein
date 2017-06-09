@@ -29,6 +29,7 @@ function Part:saveData()
 end
 
 function Part:setFixture(fixture)
+	if self.fixture then self.fixture:destroy() end
 	self.fixture = fixture
 	self.fixture:setUserData(self)
 end
@@ -38,13 +39,22 @@ function Part:withinPart(x, y)
 end
 
 function Part:getWorldLocation()
-	local body = self.fixture:getBody()
-	if self.location and body then
-		local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
-		local x, y = unpack(self.location)
-		x, y = body:getWorldPoints(x * Settings.PARTSIZE, y * Settings.PARTSIZE)
-		return x, y, angle
+	if not self.fixture:isDestroyed() then
+		local body = self.fixture:getBody()
+		if self.location and body then
+			local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
+			local x, y = unpack(self.location)
+			x, y = body:getWorldPoints(x * Settings.PARTSIZE,
+									   y * Settings.PARTSIZE)
+			self.worldLocation = {x, y, angle}
+		end
 	end
+
+	local a, b, c
+	if self.worldLocation then
+		a, b, c = unpack(self.worldLocation)
+	end
+	return a, b, c
 end
 
 function Part:getPartSide(locationX, locationY)
@@ -59,6 +69,7 @@ end
 function Part:damage(damage)
 	self.health = self.health - damage
 	if self.health <= 0 then
+		self.fixture:destroy()
 		self.isDestroyed = true
 	end
 end
@@ -85,7 +96,7 @@ function Part:update(dt, partsInfo, location, locationSign, orientation)
 end
 
 function Part:draw(camera)
-	x, y, angle = self:getWorldLocation()
+	local x, y, angle = self:getWorldLocation()
 	if x and y and angle then
 		camera:draw(self.image, x, y, angle, 1, 1, self.width/2, self.height/2)
 	end

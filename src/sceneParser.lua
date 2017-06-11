@@ -5,8 +5,8 @@ local Util = require("util")
 local SceneParser = {}
 
 local locStr = "%([-%d., ]*%)"
-local lstStr = "%[[-%w., ]*%]"
-local varStr = "[-%w. *]*[,%]]"
+local lstStr = "%[[-%w., %*]*%]"
+local varStr = "[-%w. %*]*[,%]]"
 local namStr = "%a[%w]+"
 --local strStr = '".*"'
 local numStr = "-?[%d.]*"
@@ -14,7 +14,7 @@ local numStr = "-?[%d.]*"
 function SceneParser.loadShip(shipName)
 end
 
-function SceneParser.loadScene(sceneName, world, location, ifSave)
+function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
 	local ships = {}
 	local index = 0
 	local ifShipString = false
@@ -69,7 +69,8 @@ function SceneParser.loadScene(sceneName, world, location, ifSave)
 					if string.match(var, "%a") then
 						if string.match(var, '"[%w]+"') then
 						elseif string.match(var, "%*[%w]+") then
-							
+							local inputKey = string.match(var, "[%w]+")
+							table.insert(data, inputs[inputKey])
 						else
 							table.insert(data, string.match(var, "[%w]+"))
 						end

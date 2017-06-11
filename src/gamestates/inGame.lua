@@ -159,7 +159,7 @@ function InGame.update(dt)
 				if rand < timeVar * disVar * veloVar or
 						(debugmode and Debug.getSpawn()) then
 					eventTime = 0
-					local scene = math.ceil(love.math.random() * 10)
+					local scene = 10 --math.ceil(love.math.random() * 10)
 					scene = tostring(scene)
 					local location = {players[1].ship.body:getX(),
 									  players[1].ship.body:getY()}
@@ -180,7 +180,8 @@ function InGame.update(dt)
 					location[2] = location[2] + netV[2]
 					location[3] = 2 * math.pi * math.random()
 
-					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, location)
+					local inputs = {playerTeam = 1, playerShip = players[1].ship}
+					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, location, nil, inputs)
 					for i,ship in ipairs(ships) do
 						world:addObject(ship)
 					end

@@ -6,20 +6,17 @@ AI.__index = AI
 AI.teamHostility = {{false, true},
 					{true, false}}
 
-AI.defaultLeaders = {}
-
 function AI.create(team)
 	local self = {}
 	setmetatable(self, AI)
 
 	self.team = team
 	self.follow = true
-	self.leader = AI.defaultLeaders[team]
 
 	return self
 end
 
-function AI:getOrders(location, physics)
+function AI:getOrders(location, physics, leader)
 	local aiX = location[1]
 	local aiY = location[2]
 	local aiAngle = location[3]
@@ -37,8 +34,8 @@ function AI:getOrders(location, physics)
 	local angle = nil
 	local active = true
 	local orders = {}
-	if self.leader and self.follow then
-		targetX, targetY = self.leader:getLocation()
+	if leader and self.follow then
+		targetX, targetY = leader:getLocation()
 		angle = Util.vectorAngle(targetX - aiX, targetY - aiY)
 		angleToTarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
 	   if Util.vectorMagnitude(targetX - aiX, targetY - aiY) > 20 * 20 then

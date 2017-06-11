@@ -7,7 +7,7 @@ local PlayerBlock = {}
 PlayerBlock.__index = PlayerBlock
 setmetatable(PlayerBlock, Part)
 
-function PlayerBlock.create()
+function PlayerBlock.create(team, leader)
 	local self = Part.create()
 	setmetatable(self, PlayerBlock)
 
@@ -23,9 +23,16 @@ function PlayerBlock.create()
 	self.orders = {}
 
 	self.isPlayer = true
+	self.team = team
+	self.leader = leader
 
-	self.team = 1
 	return self
+end
+
+function PlayerBlock:postCreate(references)
+	if self.leader then
+		self.leader = references[self.leader]
+	end
 end
 
 function PlayerBlock:getTeam()

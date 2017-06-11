@@ -9,8 +9,6 @@ Player.__index = Player
 
 Player.physics = nil
 
-Player.anchors = {}
-
 function Player.setPhysics(setphysics)
 	Player.physics = setphysics
 end
@@ -165,10 +163,10 @@ function Player:draw()
 	end
 
 	local point
-	if self.ship and not self.ship.isDetroyed and self.ship.corePart then
-		point = {Player.anchors[self.ship.corePart:getTeam()]:getLocation()}
+	if self.ship and not self.ship.isDetroyed and self.ship.corePart and self.ship.corePart.leader then
+		point = {self.ship.corePart.leader:getLocation()}
 	else
-		point = {0,1}
+		point = {0,0}
 	end
 	self.camera:drawExtras(point)
 end

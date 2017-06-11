@@ -28,14 +28,6 @@ function Spawn.spawnShip(shipID, world, location, data, shipString)
 end
 
 function Spawn.spawning(world, location, shipTable, data)
-	for i,part in ipairs(shipTable.parts) do
-		shipTable.parts[i] = Spawn.createPart(part)
-		if shipTable.loadData[i] then
-			shipTable.parts[i]:loadData(shipTable.loadData[i])
-		end
-	end
-	shipTable.loadData = nil
-
 	local player = false
 	local anchor = false
 	if shipTable.corePart == 'p' then
@@ -44,6 +36,13 @@ function Spawn.spawning(world, location, shipTable, data)
 		anchor = true
 	end
 	shipTable.corePart = Spawn.createPart(shipTable.corePart, data)
+	for i,part in ipairs(shipTable.parts) do
+		shipTable.parts[i] = Spawn.createPart(part)
+		if shipTable.loadData[i] then
+			shipTable.parts[i]:loadData(shipTable.loadData[i])
+		end
+	end
+	shipTable.loadData = nil
 	local structure = Structure.create(world.physics, location, shipTable, data)
 	if player then
 		return structure, 2
@@ -59,8 +58,8 @@ function Spawn.createPart(partChar,data)
 	if partChar == 'b'then part = Block.create()
 	elseif partChar == 'e' then part = EngineBlock.create()
 	elseif partChar == 'g' then part = GunBlock.create()
-	elseif partChar == 'a' then part = AIBlock.create(data[1])
-	elseif partChar == 'p' then part = PlayerBlock.create()
+	elseif partChar == 'a' then part = AIBlock.create(unpack(data))
+	elseif partChar == 'p' then part = PlayerBlock.create(unpack(data))
 	elseif partChar == 'n' then part = Anchor.create()
 	end
 	return part

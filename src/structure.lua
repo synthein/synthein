@@ -75,6 +75,12 @@ function Structure.create(physics, location, shipTable, data)
 	return self
 end
 
+function Structure:postCreate(references)
+	if self.corePart and self.corePart.postCreate then
+		self.corePart:postCreate(references)
+	end
+end
+
 -- The table set to nill.
 
 function Structure:destroy()

@@ -25,7 +25,7 @@ function AIBlock.create(team, leader)
 end
 
 function AIBlock:postCreate(references)
-	if self.leader then
+	if self.leader and type(self.leader) == "string" then
 		self.leader = references[self.leader]
 	end
 end

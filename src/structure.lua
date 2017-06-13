@@ -11,11 +11,13 @@ Structure.__index = Structure
 
 Structure.PARTSIZE = 20
 
-function Structure.create(physics, location, shipTable, data)
+function Structure.create(worldInfo, location, shipTable, data)
 	local self = {}
 	setmetatable(self, Structure)
 
-	self.physics = physics
+	self.worldInfo = worldInfo
+	self.physics = worldInfo.physics
+	self.events = worldInfo.events
 	self.gridTable = GridTable.create()
 	self.parts = {}
 	self.partCoords = {}
@@ -133,9 +135,8 @@ function Structure:annex(annexee, annexeePart, annexeePartSide,
 			local annexeeY = annexee.partCoords[aIndex].y
 
 	for i=1,#annexee.parts do
-		local newStructure = self:annexPart(annexee, 1, annexeeOrientation,
+		self:annexPart(annexee, 1, annexeeOrientation,
 						annexeeX, annexeeY, structureOffsetX, structureOffsetY)
-		table.insert(newStructures, newStructure)
 	end
 	return newStructures
 end
@@ -181,12 +182,11 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 	local newStructure
 	if partThere then
 		local location = {annexee.parts[partIndex]:getWorldLocation()}
-		newStructure = {"structure", location, annexee.parts[partIndex]}
+		table.insert(self.events.create, {"structure", location, annexee.parts[partIndex]})
 	else
 		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
 	end
 	annexee:removePart(annexee.parts[partIndex])
-	return newStructure
 end
 
 function Structure:removeSection(index)
@@ -200,7 +200,7 @@ function Structure:removeSection(index)
 	local partOrient = (-self.partOrient[index] + 1) % 4 + 1
 	local x, y , angle = self.parts[index]:getWorldLocation()
 	self:removePart(index)
-	local newStructure = Structure.create(self.physics, {x, y, angle}, part)
+	local newStructure = Structure.create(self.worldInfo, {x, y, angle}, part)
 	local partList = self:testConnection()
 	for i = #partList,1,-1 do
 		if partList[i] ~= 1 then
@@ -389,7 +389,7 @@ function Structure:removePart(part)
 	end
 end
 
-function Structure:removeSections(newObjects)
+function Structure:removeSections()
 	local partList = self:testConnection()
 	local structureList = {}
 	local locationList = {}
@@ -412,7 +412,7 @@ function Structure:removeSections(newObjects)
 	self:recalculateSize()
 
 	for i, structure in ipairs(structureList) do
-		table.insert(newObjects, {"structures", {self:getLocation()}, structure})
+		table.insert(self.events.create, {"structures", {self:getLocation()}, structure})
 	end
 
 	return newObjects
@@ -466,21 +466,7 @@ function Structure:update(dt)
 	for i, part in ipairs(self.parts) do
 		local l = {self.partCoords[i].x, self.partCoords[i].y}
 		local s = {Util.sign(l[1]), Util.sign(l[2])}
-		local newObject = part:update(dt, partsInfo, l, s, self.partOrient[i])
-		if newObject then
-			table.insert(newObjects, newObject)
-		end
-	end
-
-	for i = #self.parts,1,-1 do
-		if self.parts[i].isDestroyed then
-			local location = {self.parts[i]:getWorldLocation(i)}
-			self:removePart(i)
-			table.insert(newObjects, {"particles", location})
-			if #self.parts > 1 then
-				newObjects = self:removeSections(newObjects)
-			end
-		end
+		part:update(dt, partsInfo, l, s, self.partOrient[i])
 	end
 	
 	return newObjects

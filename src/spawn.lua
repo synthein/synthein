@@ -43,7 +43,7 @@ function Spawn.spawning(world, location, shipTable, data)
 		end
 	end
 	shipTable.loadData = nil
-	local structure = Structure.create(world.physics, location, shipTable, data)
+	local structure = Structure.create(world.info, location, shipTable, data)
 	if player then
 		return structure, 2
 	elseif anchor then

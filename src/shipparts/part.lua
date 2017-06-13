@@ -69,7 +69,14 @@ end
 function Part:damage(damage)
 	self.health = self.health - damage
 	if self.health <= 0 then
+		local structure = self.fixture:getBody():getUserData()
+		local events = structure.events
+		table.insert(events.create, {"particles", {self:getWorldLocation()}})
 		self.fixture:destroy()
+		structure:removePart(self)
+		if not structure.isDestroyed then
+			structure:removeSections()
+		end
 		self.isDestroyed = true
 	end
 end

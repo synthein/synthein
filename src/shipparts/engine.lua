@@ -1,4 +1,5 @@
 local Settings = require("settings")
+local Util = require("util")
 
 local Engine = {}
 Engine.__index = Engine
@@ -34,11 +35,11 @@ function Engine.create(engineType, thrust, torque)
 	return self
 end
 
-function Engine:update(part, enginesInfo, locationSign)
+function Engine:update(part, enginesInfo)
 	local body = part.fixture:getBody()
 
 	if part.location and body and enginesInfo then
-		local angle = (part.orientation - 1) * math.pi/2 + body:getAngle()
+		local angle = (part.location[3] - 1) * math.pi/2 + body:getAngle()
 		
 		local fx, fy
 		if self.engineType == 1 then
@@ -51,10 +52,10 @@ function Engine:update(part, enginesInfo, locationSign)
 				on = 1
 			end
 		elseif self.engineType == 2 then
-			local r = Engine.rotationTable[part.orientation]
-			local rotation = r[1] * locationSign[r[2]]
-			on = enginesInfo[part.orientation] + enginesInfo[7] * rotation
-			fx, fy = unpack(Engine.orientationVectors[part.orientation])
+			local r = Engine.rotationTable[part.location[3]]
+			local rotation = r[1] * Util.sign(part.location[r[2]])
+			on = enginesInfo[part.location[3]] + enginesInfo[7] * rotation
+			fx, fy = unpack(Engine.orientationVectors[part.location[3]])
 		end
 
 		if on > 0 then

@@ -51,11 +51,8 @@ function AIBlock:runMenu(i)
 	return self.ai:runMenu(i)
 end
 
-function AIBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
-
-	self.engine:update(self, partsInfo.engines, locationSign)
+function AIBlock:update(dt, partsInfo)
+	self.engine:update(self, partsInfo.engines)
 end
 
 return AIBlock

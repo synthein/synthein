@@ -51,16 +51,12 @@ function PlayerBlock:shot()
 	self.rechargeStart = 0
 end
 
-function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
-
-
+function PlayerBlock:update(dt, partsInfo)
 	local shoot = false
 	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
 	local newobject = self.gun:update(dt, shoot, self)
 
-	self.engine:update(self, partsInfo.engines, locationSign)
+	self.engine:update(self, partsInfo.engines)
 
 	self.healTime = self.healTime - dt
 	if self.healTime <= 0 then

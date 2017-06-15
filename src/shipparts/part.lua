@@ -34,6 +34,10 @@ function Part:setFixture(fixture)
 	self.fixture:setUserData(self)
 end
 
+function Part:setLocation(location)
+	self.location = location
+end
+
 function Part:withinPart(x, y)
 	return self.fixture:testPoint(x, y)
 end
@@ -42,7 +46,7 @@ function Part:getWorldLocation()
 	if not self.fixture:isDestroyed() then
 		local body = self.fixture:getBody()
 		if self.location and body then
-			local angle = (self.orientation - 1) * math.pi/2 + body:getAngle()
+			local angle = (self.location[3] - 1) * math.pi/2 + body:getAngle()
 			local x, y = unpack(self.location)
 			x, y = body:getWorldPoints(x * Settings.PARTSIZE,
 									   y * Settings.PARTSIZE)
@@ -97,9 +101,7 @@ function Part:collision(fixture, sqVelocity, pointVelocity)
 	end
 end
 
-function Part:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
+function Part:update(dt, partsInfo)
 end
 
 function Part:draw(camera)

@@ -5,6 +5,7 @@ local Util = require("util")
 local Particles = require("particles")
 local GridTable = require("gridTable")
 local Settings = require("settings")
+local StructureMath = require("structureMath")
 
 local Structure = {}
 Structure.__index = Structure
@@ -103,76 +104,33 @@ end
 -- side is the side of structurePart to add the annexee to
 function Structure:annex(annexee, annexeePart, annexeePartSide,
 				structurePart, structurePartSide)
-	local aIndex = annexee:findPart(annexeePart)
-	local bIndex = self:findPart(structurePart)
-	annexeeSide = (annexeePartSide + annexee.parts[aIndex].location[3] - 2)%4 + 1
-	local newStructures = {}
-	local structureOffsetX, structureOffsetY
-	if bIndex ~= 0 then
-		structureOffsetX = self.parts[bIndex].location[1]
-		structureOffsetY = self.parts[bIndex].location[2]
-		structureSide = (structurePartSide + self.parts[bIndex].location[3] - 2)%4 + 1
-	else
-		structureOffsetX = 0
-		structureOffsetY = 0
-	end
+	local structureOffsetX = structurePart.location[1]
+	local structureOffsetY = structurePart.location[2]
 
-	if structureSide == 1 then
-		structureOffsetY = structureOffsetY + 1
-	elseif structureSide == 2 then
-		structureOffsetX = structureOffsetX - 1
-	elseif structureSide == 3 then
-		structureOffsetY = structureOffsetY - 1
-	elseif structureSide == 4 then
-		structureOffsetX = structureOffsetX + 1
-	end
+	local annexeeX = annexeePart.location[1]
+	local annexeeY = annexeePart.location[2]
 
-	local annexeeOrientation = (structureSide - annexeePartSide - 2) % 4 +1
+	local annexeeSide = StructureMath.toDirection(annexeePartSide + annexeePart.location[3])
+	local structureSide = StructureMath.toDirection(structurePartSide + structurePart.location[3])
 
-			local annexeeX = annexee.parts[aIndex].location[1]
-			local annexeeY = annexee.parts[aIndex].location[2]
+	local annexeeBaseVector = {annexeeX, annexeeY, annexeePartSide}
+	local structureVector = {structureOffsetX, structureOffsetY, structureSide}
+
+	structureVector = StructureMath.addUnitVector(structureVector, structureSide)
+	local baseVector = StructureMath.subtractVectors(structureVector, annexeeBaseVector)
 
 	for i=1,#annexee.parts do
-		self:annexPart(annexee, 1, annexeeOrientation,
-						annexeeX, annexeeY, structureOffsetX, structureOffsetY)
+		self:annexPart(annexee, 1, baseVector)
 	end
-	return newStructures
 end
 
-function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
-							 annexeeY, structureOffsetX, structureOffsetY)
-	local x, y
-	local annexeeOffsetX = annexee.parts[partIndex].location[1] - annexeeX
-	local annexeeOffsetY = annexee.parts[partIndex].location[2] - annexeeY
-	if annexeeOrientation == 1 then
-		x = structureOffsetX + annexeeOffsetX
-		y = structureOffsetY + annexeeOffsetY
-	elseif annexeeOrientation == 2 then
-		x = structureOffsetX - annexeeOffsetY
-		y = structureOffsetY + annexeeOffsetX
-	elseif annexeeOrientation == 3 then
-		x = structureOffsetX - annexeeOffsetX
-		y = structureOffsetY - annexeeOffsetY
-	elseif annexeeOrientation == 4 then
-		x = structureOffsetX + annexeeOffsetY
-		y = structureOffsetY - annexeeOffsetX
-	end
-
-	-- Find out the orientation of the part based on the orientation of
-	-- both structures.
-	local partOrientation = annexeeOrientation
-						  + annexee.parts[partIndex].location[3] - 1
-	-- Make sure partOrientation is between 1 and 4
-	while partOrientation > 4 do
-		partOrientation = partOrientation - 4
-	end
-	while partOrientation < 1 do
-		partOrientation = partOrientation + 4
-	end
+function Structure:annexPart(annexee, partIndex, baseVector)
+	local annexeeVector = {annexee.parts[partIndex].location[1], annexee.parts[partIndex].location[2], annexee.parts[partIndex].location[3]}
+	local netVector = StructureMath.sumVectors(baseVector, annexeeVector)
 
 	local partThere = false
 	for i, part in ipairs(self.parts) do
-		if part.location[1] == x and part.location[2] == y then
+		if part.location[1] == netVector[1] and part.location[2] == netVector[2] then
 			partThere = true
 			break
 		end
@@ -180,9 +138,9 @@ function Structure:annexPart(annexee, partIndex, annexeeOrientation, annexeeX,
 	local newStructure
 	if partThere then
 		local location = {annexee.parts[partIndex]:getWorldLocation()}
-		table.insert(self.events.create, {"structure", location, annexee.parts[partIndex]})
+		table.insert(self.events.create, {"structures", location, annexee.parts[partIndex]})
 	else
-		self:addPart(annexee.parts[partIndex], x, y, partOrientation)
+		self:addPart(annexee.parts[partIndex], netVector[1], netVector[2], netVector[3])
 	end
 	annexee:removePart(annexee.parts[partIndex])
 end
@@ -201,7 +159,7 @@ function Structure:removeSection(index)
 	local partList = self:testConnection()
 	for i = #partList,1,-1 do
 		if partList[i] ~= 1 then
-			newStructure:annexPart(self, i, partOrient, partLocation[1], partLocation[2], 0, 0)
+			newStructure:annexPart(self, i, {-partLocation[1], -partLocation[2], partOrient})
 		end
 	end
 

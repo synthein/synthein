@@ -168,7 +168,7 @@ end
 --Removes a section of a structure and saves the new structure.
 function World:removeSection(structure, part)
 	if part.type == "generic" then
-		local newStructure = structure:removeSection(structure:findPart(part))
+		local newStructure = structure:removeSection(part)
 		if newStructure then
 			self:addObject(newStructure, nil, "structures")
 		end

@@ -97,8 +97,15 @@ function GridTable:loop(f, inputs)
 					local object = cTable[xMagIndex]
 					local x = xSign * xMagIndex
 					
-					local output = f(object, inputs, x, y, xSign, ySign)
-					table.insert(outputs, output)
+					if next(object) then
+						local output
+						if f then
+							output = f(object, inputs, x, y)
+						else
+							output = object
+						end
+						table.insert(outputs, output)
+					end
 				end
 			end
 		end

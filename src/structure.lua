@@ -20,7 +20,7 @@ function Structure.create(worldInfo, location, shipTable, data)
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
 	self.gridTable = GridTable.create()
-	self.parts = {}
+	--self.parts = {}
 	self.maxDiameter = 1
 	self.size = 1
 	self.isDestroyed = false
@@ -119,47 +119,48 @@ function Structure:annex(annexee, annexeePart, annexeePartSide,
 	structureVector = StructureMath.addUnitVector(structureVector, structureSide)
 	local baseVector = StructureMath.subtractVectors(structureVector, annexeeBaseVector)
 
-	for i=1,#annexee.parts do
-		self:annexPart(annexee, 1, baseVector)
+	local parts = annexee.gridTable:loop()
+	for i=1,#parts do
+		self:annexPart(annexee, parts[i], baseVector)
 	end
 end
 
-function Structure:annexPart(annexee, partIndex, baseVector)
-	local annexeeVector = {annexee.parts[partIndex].location[1], annexee.parts[partIndex].location[2], annexee.parts[partIndex].location[3]}
+function Structure:annexPart(annexee, part, baseVector)
+	local annexeeVector = {part.location[1], part.location[2], part.location[3]}
 	local netVector = StructureMath.sumVectors(baseVector, annexeeVector)
 
 	local partThere = false
-	for i, part in ipairs(self.parts) do
-		if part.location[1] == netVector[1] and part.location[2] == netVector[2] then
+	local x, y = unpack(netVector)
+print(x, y)
+	if self.gridTable:index(x, y) then
 			partThere = true
-			break
-		end
 	end
+
 	local newStructure
 	if partThere then
-		local location = {annexee.parts[partIndex]:getWorldLocation()}
-		table.insert(self.events.create, {"structures", location, annexee.parts[partIndex]})
+		local location = {part:getWorldLocation()}
+		table.insert(self.events.create, {"structures", location, part})
 	else
-		self:addPart(annexee.parts[partIndex], netVector[1], netVector[2], netVector[3])
+		self:addPart(part, netVector[1], netVector[2], netVector[3])
 	end
-	annexee:removePart(annexee.parts[partIndex])
+	annexee:removePart(part)
 end
 
-function Structure:removeSection(index)
+function Structure:removeSection(part) --index)
 	--If there is only one block in the structure then esacpe.
-	if self.parts[index] == self.corePart or #self.parts == 1 then
+	if part == self.corePart then
 		return nil
 	end
-	local part = self.parts[index]
+	--local part = self.parts[index]
 	local partLocation = part.location
 	local partOrient = (-partLocation[3] + 1) % 4 + 1
-	local x, y , angle = self.parts[index]:getWorldLocation()
-	self:removePart(index)
+	local x, y , angle = part:getWorldLocation()
+	self:removePart(part)
 	local newStructure = Structure.create(self.worldInfo, {x, y, angle}, part)
 	local partList = self:testConnection()
 	for i = #partList,1,-1 do
-		if partList[i] ~= 1 then
-			newStructure:annexPart(self, i, {-partLocation[1], -partLocation[2], partOrient})
+		if partList[i][2] ~= 1 then
+			newStructure:annexPart(self, partList[i][1], {-partLocation[1], -partLocation[2], partOrient})
 		end
 	end
 
@@ -169,15 +170,16 @@ function Structure:removeSection(index)
 end
 
 function Structure:testConnection()
+	local parts = self.gridTable:loop()
 	local partsLayout = GridTable.create()
-	for i, part in ipairs(self.parts) do
+	for i, part in ipairs(parts) do
 		local x, y = unpack(part.location)
 		partsLayout:index(x, y, {i, 0, 0})
 	end
 
 	local index
 	if self.corePart then
-		for i,part in ipairs(self.parts) do
+		for i,part in ipairs(parts) do
 			if self.corePart == part then
 				index = i
 			end
@@ -185,7 +187,7 @@ function Structure:testConnection()
 	else
 		index = 1
 	end
-	local x, y = unpack(self.parts[index].location)
+	local x, y = unpack(parts[index].location)
 	local p = partsLayout:index(x, y)
 	p[2] = 1
 	p[3] = 1
@@ -200,7 +202,7 @@ function Structure:testConnection()
 		local p = partsLayout:index(x, y)
 		local partIndex = p[1]
 		for i = 1,4 do
-			if self.parts[partIndex].connectableSides[i] then
+			if parts[partIndex].connectableSides[i] then
 				local x1 = x
 				local y1 = y
 				if i == 1 then
@@ -222,7 +224,7 @@ function Structure:testConnection()
 					state = p[2]
 				end
 				if newIndex and newIndex ~= 0 and state == 0 then
-					part = self.parts[newIndex]
+					part = parts[newIndex]
 					side = (i - part.location[3] + 2) % 4 + 1
 				end
 				if part and side and part.connectableSides[side] then
@@ -234,9 +236,9 @@ function Structure:testConnection()
 		end
 
 		if #checkParts == 0 then
-			for i in ipairs (self.parts) do
+			for i in ipairs (parts) do
 				partIndex = i
-				local x, y = unpack(self.parts[partIndex].location)
+				local x, y = unpack(parts[partIndex].location)
 				local p = partsLayout:index(x, y)
 
 				if p[2] == 0 then
@@ -252,10 +254,10 @@ function Structure:testConnection()
 	end
 
 	local partList = {}
-	for i,part in ipairs(self.parts) do
+	for i,part in ipairs(parts) do
 		local x, y = unpack(part.location)
 		local p = partsLayout:index(x, y)
-		table.insert(partList, p[3])
+		table.insert(partList, {part, p[3]})
 	end
 	return partList
 end
@@ -275,7 +277,7 @@ function Structure:addPart(part, x, y, orientation)
 	self:calculateSize(x, y)
 
 	self.gridTable:index(x, y, part)
-	table.insert(self.parts, part)
+	--table.insert(self.parts, part)
 	--table.insert(self.partCoords, {x = x, y = y})
 	--table.insert(self.partOrient, orientation)
 end
@@ -315,26 +317,26 @@ end
 -- Find the specified part and destroy it. If there are no more parts in the
 -- structure, then mark this structure for destruction.
 function Structure:removePart(part)
-	local partIndex
+--	local partIndex
 
 	-- Find out if the argument is a part object or index.
-	if type(part) == "table" then
-		partIndex = self:findPart(part)
-	elseif type(part) == "number" then
-		partIndex = part
-	else
-		error("Argument to Structure:removePart is not a part.")
-	end
+--	if type(part) == "table" then
+--		partIndex = self:findPart(part)
+--	elseif type(part) == "number" then
+	--	partIndex = part
+--	else
+--		error("Argument to Structure:removePart is not a part.")
+--	end
 	-- Destroy the part.
-	if self.parts[partIndex] == self.corePart then
+	if part == self.corePart then
 		self.corePart = nil
 	end
 
-	x, y = unpack(self.parts[partIndex].location)
+	x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
-	table.remove(self.parts, partIndex)
+	--table.remove(self.parts, partIndex)
 
-	if #self.parts == 0 then
+	if #self.body:getFixtureList() == 0 then
 		self.isDestroyed = true
 	end
 end
@@ -344,18 +346,19 @@ function Structure:removeSections()
 	local structureList = {}
 	local locationList = {}
 	for i = #partList,1,-1 do
-		if partList[i] ~= 1 then
-			for i = #structureList, partList[i]-1 do
+		if partList[i][2] ~= 1 then
+			for i = #structureList, partList[i][2]-1 do
 				table.insert(structureList, {parts = {}, partCoords = {}, partOrient = {}})
 			end
 
-			local partX = self.parts[i].location[1]
-			local partY = self.parts[i].location[2]
-			local partOrient = self.parts[i].location[3]
-			table.insert(structureList[partList[i]].parts, self.parts[i])
-			table.insert(structureList[partList[i]].partCoords, {x = partX, y = partY})
-			table.insert(structureList[partList[i]].partOrient, partOrient)
-			self:removePart(i)
+			local part = partList[i][1]
+			local partX = part.location[1]
+			local partY = part.location[2]
+			local partOrient = part.location[3]
+			table.insert(structureList[partList[i][2]].parts, part)
+			table.insert(structureList[partList[i][2]].partCoords, {x = partX, y = partY})
+			table.insert(structureList[partList[i][2]].partOrient, partOrient)
+			self:removePart(part)
 		end
 	end
 
@@ -369,8 +372,6 @@ function Structure:removeSections()
 end
 
 function Structure:command(orders)
---	local newObjects = {}
-
 	local perpendicular = 0
 	local parallel = 0
 	local rotate = 0
@@ -413,11 +414,14 @@ function Structure:update(dt)
 		partsInfo = self:command(self.corePart:getOrders())
 	end
 
-	for i, part in ipairs(self.parts) do
-		part:update(dt, partsInfo)
-	end
-	
-	return newObjects
+	self.gridTable:loop(Structure.updatePart, {dt, partsInfo})
+
+	return {}
+end
+
+function Structure.updatePart(part, inputs, x, y)
+	local dt, partsInfo = unpack(inputs)	
+	part:update(dt, partsInfo)
 end
 
 return Structure

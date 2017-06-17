@@ -50,7 +50,7 @@ function Debug.draw()
 					"Build mode: %s\n",
 					player.ship.body:getX(), player.ship.body:getY(),
 					mouseWorldX, mouseWorldY,
-					#player.ship.parts,
+					#player.ship.body:getFixtureList(),
 					(player.build and "yes" or "no")
 				)
 			else

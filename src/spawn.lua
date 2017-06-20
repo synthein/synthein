@@ -191,10 +191,11 @@ end
 function Spawn.shipPack(structure, saveThePartData)
 	local string = ""
 	local xLow, xHigh, yLow, yHigh = 0, 0, 0, 0
+	local parts = structure.gridTable:loop()
 	local stringTable = {}
-	for i,part in ipairs(structure.parts) do
-		local x = structure.partCoords[i].x
-		local y = structure.partCoords[i].y
+	for i, part in ipairs(parts) do
+		local x = part.location[1]
+		local y = part.location[2]
 		if     x < xLow  then
 			xLow = x
 		elseif x > xHigh then
@@ -212,15 +213,15 @@ function Spawn.shipPack(structure, saveThePartData)
 			table.insert(stringTable[i], {"  "})
 		end
 	end
-	for i,part in ipairs(structure.parts) do
-		local x = structure.partCoords[i].x
-		local y = structure.partCoords[i].y
+	for i, part in ipairs(parts) do
+		local x = part.location[1]
+		local y = part.location[2]
 		local tempString, a, b
 		local loadData = {}
 		--Find the string representation of the part.
 		if     getmetatable(part) == Block then a = "b"
-		elseif getmetatable(part) == Engine then a = "e"
-		elseif getmetatable(part) == Gun then a = "g"
+		elseif getmetatable(part) == EngineBlock then a = "e"
+		elseif getmetatable(part) == GunBlock then a = "g"
 		elseif getmetatable(part) == AIBlock then a = "a"
 		elseif getmetatable(part) == PlayerBlock then a = "p"
 		elseif getmetatable(part) == Anchor then a = "n"
@@ -229,7 +230,7 @@ function Spawn.shipPack(structure, saveThePartData)
 		if part == structure.corePart or (not structure.corePart and i==1) then
 			b = "*"
 		else
-			b = tostring(structure.partOrient[i])
+			b = tostring(part.location[3])
 		end
 		tempString = a .. b
 		--Add data to table

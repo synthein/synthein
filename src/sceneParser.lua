@@ -4,12 +4,12 @@ local Util = require("util")
 
 local SceneParser = {}
 
-local locStr = "%([-%d., ]*%)"
+local locStr = "%([-%d., e]*%)"
 local lstStr = "%[[-%w., %*]*%]"
 local varStr = "[-%w. %*]*[,%]]"
 local namStr = "%a[%w]+"
 --local strStr = '".*"'
-local numStr = "-?[%d.]*"
+local numStr = "-?[%d.e]*"
 
 function SceneParser.loadShip(shipName)
 end
@@ -27,7 +27,7 @@ function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
 	else
 		fileName = string.format("/res/scenes/%s.txt", sceneName)
 	end
-	if not love.filesystem.exists(fileName) then 
+	if not love.filesystem.exists(fileName) then
 		return {}, {}
 	end
 	for line in love.filesystem.lines(fileName) do
@@ -103,7 +103,7 @@ end
 function SceneParser.saveScene(sceneName, world)
 	local fileString = ""
 	local team
-	for i,structure in ipairs(world.structures) do
+	for i,structure in ipairs(world.objects.structures) do
 		if structure.corePart then
 			team = structure.corePart:getTeam()
 		end
@@ -111,9 +111,9 @@ function SceneParser.saveScene(sceneName, world)
 			team = 0
 		end
 		fileString = fileString .. "ship" .. tostring(i) .. 
-					 Util.packLocation(world.structures[i]) .. 
+					 Util.packLocation(world.objects.structures[i]) .. 
 					 Util.packData({team}) .. "\n" ..
-					 "{\n" .. Spawn.shipPack(world.structures[i], true) .. 
+					 "{\n" .. Spawn.shipPack(world.objects.structures[i], true) .. 
 					 "\n}\n"
 	end
 	if not love.filesystem.exists(sceneName .. ".txt") then

@@ -102,18 +102,28 @@ end
 
 function SceneParser.saveScene(sceneName, world)
 	local fileString = ""
-	local team
-	for i,structure in ipairs(world.objects.structures) do
+	local references = {}
+	local structures = world.objects.structures
+	for i,structure in ipairs(structures) do
+		references[structure] = "ship" .. tostring(i)
+	end
+
+	for i,structure in ipairs(structures) do
+		local team, leader
 		if structure.corePart then
 			team = structure.corePart:getTeam()
 		end
 		if not team then
 			team = 0
 		end
-		fileString = fileString .. "ship" .. tostring(i) .. 
-					 Util.packLocation(world.objects.structures[i]) .. 
-					 Util.packData({team}) .. "\n" ..
-					 "{\n" .. Spawn.shipPack(world.objects.structures[i], true) .. 
+		if 	structure.corePart and structure.corePart.leader then
+			leader = references[structure.corePart.leader]
+		end
+		
+		fileString = fileString .. references[structure] .. 
+					 Util.packLocation(structures[i]) .. 
+					 Util.packData({team, leader}) .. "\n" ..
+					 "{\n" .. Spawn.shipPack(structures[i], true) .. 
 					 "\n}\n"
 	end
 	if not love.filesystem.exists(sceneName .. ".txt") then

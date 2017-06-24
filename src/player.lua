@@ -168,7 +168,7 @@ function Player:draw()
 	else
 		point = {0,0}
 	end
-	self.camera:drawExtras(point)
+	self.camera:drawExtras(point, {self.cursorX, self.cursorY})
 end
 
 Player.callbackData = {objects = {}}

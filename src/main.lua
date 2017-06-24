@@ -37,8 +37,23 @@ function love.mousepressed(x, y, button, istouch)
 		state = newState
 	end
 end
+
 function love.mousereleased(x, y, button, istouch)
 	newState = state.mousereleased(x, y, button)
+	if newState then
+		state = newState
+	end
+end
+
+function love.joystickpressed(joystick, button)
+	newState = state.joystickpressed(joystick, button)
+	if newState then
+		state = newState
+	end
+end
+
+function love.joystickreleased(joystick, button)
+	newState = state.joystickreleased(joystick, button)
 	if newState then
 		state = newState
 	end

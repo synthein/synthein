@@ -50,7 +50,12 @@ end
 
 function Controls.isDown(control)
 	if type(control[1]) == "userdata" then
-		return control[1]:isDown(control[2])
+		if type(control[2]) == "string" then
+			local direction = control[1]:getHat(control[3])
+			return string.match(direction, control[2])
+		else
+			return control[1]:isDown(control[2])
+		end
 	else
 		return control[1].isDown(control[2])
 	end
@@ -80,10 +85,10 @@ Controls.released = {
 function Controls.defaults(joystick)
 	if joystick then
 		return {
-			forward 	= {joystick, 7}, --dpup
-			back    	= {joystick, 8}, --dpdown
-			left    	= {joystick, 9}, --dpleft
-			right   	= {joystick, 10}, --dpright
+			forward 	= {joystick, "u", 1}, --dpup
+			back    	= {joystick, "d", 1}, --dpdown
+			left    	= {joystick, "l", 1}, --dpleft
+			right   	= {joystick, "r", 1}, --dpright
 			strafeLeft	= {joystick, 5}, --leftshoulder
 			strafeRight	= {joystick, 6}, --rightshoulder
 			shoot   	= {joystick, 1}, --a
@@ -94,7 +99,7 @@ function Controls.defaults(joystick)
 			cursorX 	= {joystick, 1, "change"},
 			cursorY 	= {joystick, 2, "change"},
 			confirm		= {joystick, 1}, --a
-			cancel		= {joystick, 2}  --b
+			cancel		= {joystick, 8}  --b
 			}
 	else
 		return {

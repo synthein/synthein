@@ -118,6 +118,18 @@ function InGame.mousereleased(x, y, button)
 	return InGame
 end
 
+function InGame.joystickpressed(joystick, button)
+	for i, player in ipairs(players) do
+		player:buttonpressed(joystick, button)
+	end
+end
+
+function InGame.joystickreleased(joystick, button)
+	for i, player in ipairs(players) do
+		player:buttonreleased(joystick, button)
+	end
+end
+
 function InGame.wheelmoved(x, y)
 	for i, player in ipairs(players) do
 		if y > 0 then

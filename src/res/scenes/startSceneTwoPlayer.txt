@@ -1,20 +1,20 @@
-anchor1(0,0,0)[1]
+anchor1(-10000,0,0)[1]
 {
 g1b1b1b1g1
 b1b1n*b1b1
 e1b1b1b1e1
 }
-player1(0,100,0)[1, anchor1]
+player1(-10000,100,0)[1, anchor1]
 {
 p*
 }
-anchor2(0,0,0)[3]
+anchor2(10000,0,0)[3]
 {
 g1b1b1b1g1
 b1b1n*b1b1
 e1b1b1b1e1
 }
-player2(0,100,0)[3, anchor2]
+player2(10000,100,0)[3, anchor2]
 {
 p*
 }

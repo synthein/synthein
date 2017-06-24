@@ -1,5 +1,5 @@
 local GameState = require("gamestates/gameState")
-local NewGame = require("gamestates/newGame")
+local NewGameMenu = require("gamestates/newGameMenu")
 local LoadGameMenu = require("gamestates/loadGameMenu")
 local Menu = require("menu")
 
@@ -7,7 +7,7 @@ local MainMenu = {}
 setmetatable(MainMenu, GameState)
 
 MainMenu.font = love.graphics.newFont(36)
-local buttons = {NewGame, LoadGameMenu}
+local buttons = {NewGameMenu, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
 MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
 
@@ -17,12 +17,6 @@ function MainMenu.draw()
 	love.graphics.print("SYNTHEIN", (SCREEN_WIDTH - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
 	MainMenu.menu:draw()
 	love.graphics.setFont(previousFont)
-	love.graphics.print("ws: Forward and Backward\n" ..
-						"ad: Turn Left and Right\n" ..
-						"qe: Strafe Left and Right\n" ..
-						"p: pause\nESC: menu\n" ..
-						"Left Click: Construcuting Ships\n" ..
-						"Right Click: Deconstructing Ships", 5, 5)
 end
 
 function MainMenu.update(dt)

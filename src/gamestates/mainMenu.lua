@@ -12,7 +12,7 @@ local buttonNames = {"New Game", "Load Game"}
 MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
 
 function MainMenu.draw()
-	previousFont = love.graphics.getFont()
+	local previousFont = love.graphics.getFont()
 	love.graphics.setFont(MainMenu.font)
 	love.graphics.print("SYNTHEIN", (SCREEN_WIDTH - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
 	MainMenu.menu:draw()

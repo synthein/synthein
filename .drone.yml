@@ -60,6 +60,7 @@ pipeline:
 
   telegram:
     image: appleboy/drone-telegram
+    pull: true
     secrets: [ TELEGRAM_TOKEN ]
     when:
       event: push

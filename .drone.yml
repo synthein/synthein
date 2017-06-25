@@ -64,14 +64,15 @@ pipeline:
     secrets: [ TELEGRAM_TOKEN ]
     when:
       event: push
-      #branch: master
+      branch: master
       status: [failure, success, error]
     token: "${TELEGRAM_TOKEN}"
     to: -1001143861626
     format: markdown
     message: >
-      <strong>{{ uppercasefirst build.status }}</strong>
-      <a href=\"{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}\">{{ repo.owner }}/{{ repo.name }}</a>
-      ({{ build.branch }}) by {{ build.author }}.
-      <br>
+      **{{ uppercasefirst build.status }}**
+
+      [{{ repo.owner }}/{{ repo.name }}]({{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }})
+      in branch {{ build.branch }} by {{ build.author }}.
+
       {{ build.message }}

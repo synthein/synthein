@@ -96,8 +96,6 @@ function InGame.mousepressed(x, y, button)
 			elseif selection == "Quit" then
 				love.event.quit()
 			end
-		else
-			return InGame
 		end
 	end
 
@@ -114,8 +112,6 @@ function InGame.mousereleased(x, y, button)
 	if debugmode == true then
 		Debug.mousereleased(x, y, button)
 	end
-
-	return InGame
 end
 
 function InGame.joystickpressed(joystick, button)
@@ -210,8 +206,6 @@ function InGame.update(dt)
 	end
 
 	if debugmode then Debug.update(dt) end
-
-	return InGame
 end
 
 function InGame.draw()

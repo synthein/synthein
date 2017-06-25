@@ -1,3 +1,4 @@
+local GameState = require("gamestates/gameState")
 local MainMenu = require("gamestates/mainMenu")
 local InGame = require("gamestates/inGame")
 local NewGameMenu = require("gamestates/newGameMenu")
@@ -5,74 +6,56 @@ local LoadGameMenu = require("gamestates/loadGameMenu")
 
 local Debug = require("debugTools")
 
-local state
-local newState
+local stack = {}
 
 function love.load()
 	debugmode = true
-	state = MainMenu
+	GameState.setStack(stack)
+	table.insert(stack, MainMenu)
 end
 
 function love.resize(w, h)
-	state.resize(w, h)
+	stack[#stack].resize(w, h)
 end
 
 function love.keypressed(key)
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 	if key == "f12" then debugmode = not debugmode end
 
-	newState = state.keypressed(key)
-	if newState then
-		state = newState
-	end
+	stack[#stack].keypressed(key)
 end
 
 function love.keyreleased(key, scancode)
-	state.keyreleased(key)
+	stack[#stack].keyreleased(key)
 end
 
 function love.mousepressed(x, y, button, istouch)
-	newState = state.mousepressed(x, y, button)
-	if newState then
-		state = newState
-	end
+	stack[#stack].mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button, istouch)
-	newState = state.mousereleased(x, y, button)
-	if newState then
-		state = newState
-	end
+	stack[#stack].mousereleased(x, y, button)
 end
 
 function love.joystickpressed(joystick, button)
-	newState = state.joystickpressed(joystick, button)
-	if newState then
-		state = newState
-	end
+	stack[#stack].joystickpressed(joystick, button)
 end
 
 function love.joystickreleased(joystick, button)
-	newState = state.joystickreleased(joystick, button)
-	if newState then
-		state = newState
-	end
+	stack[#stack].joystickreleased(joystick, button)
 end
 
 function love.wheelmoved(x, y)
-	state.wheelmoved(x, y)
+	stack[#stack].wheelmoved(x, y)
 end
 
 function love.update(dt)
-	newState = state.update(dt)
-	if newState then
-		state = newState
-	end
+	stack[#stack].update(dt)
 end
 
 function love.draw()
 	SCREEN_WIDTH = love.graphics.getWidth()
 	SCREEN_HEIGHT = love.graphics.getHeight()
-	state.draw()
+	stack[#stack].draw()
 end
 

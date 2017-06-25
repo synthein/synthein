@@ -22,8 +22,6 @@ function LoadGameMenu.mousepressed(x, y, mouseButton)
 		local remainder = yRef % 75
 
 		loadGameChoice = buttons[index]
-	else
-		return MainMenu
 	end
 end
 
@@ -38,7 +36,7 @@ function LoadGameMenu.update(dt)
 
 	if loadGameChoice then
 		InitWorld.init("saves/" .. loadGameChoice, true)
-		return InGame
+		table.insert(LoadGameMenu.stack, InGame)
 	end
 end
 

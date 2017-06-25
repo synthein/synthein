@@ -1,6 +1,10 @@
 local GameState = {}
 GameState.__index = GameState
 
+function GameState.setStack(stack)
+	GameState.stack = stack
+end
+
 function GameState.update()
 end
 

@@ -19,20 +19,15 @@ function MainMenu.draw()
 	love.graphics.setFont(previousFont)
 end
 
-function MainMenu.update(dt)
-	return MainMenu
-end
-
 function MainMenu.mousepressed(x, y, mouseButton)
 	local button = MainMenu.menu:pressed(x, y)
 	if mouseButton == 1 then
 		for i, name in ipairs(buttonNames) do
 			if button == name then
-				return buttons[i]
+				table.insert(MainMenu.stack, buttons[i])
 			end
 		end
 	end
-	return MainMenu
 end
 
 return MainMenu

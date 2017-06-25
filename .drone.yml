@@ -66,7 +66,7 @@ pipeline:
       #branch: master
       status: [failure, success, error]
     token: "${TELEGRAM_TOKEN}"
-    to: 1001143861626
+    to: -1001143861626
     format: markdown
     message: >
       <strong>{{ uppercasefirst build.status }}</strong>

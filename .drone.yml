@@ -70,9 +70,9 @@ pipeline:
     to: -1001143861626
     format: html
     message: >
-      <h3>Build {{ build.status }}**</h3>
+      <b>Build {{ build.status }}</b>
 
-      <p><a href="/{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}">{{ repo.owner }}/{{ repo.name }}</a>
-      in branch {{ build.branch }} by {{ build.author }}.</p>
+      <a href="{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}">{{ repo.owner }}/{{ repo.name }}</a>
+      in branch <b>{{ build.branch }}</b> by <b>{{ build.author }}</b>.
 
-      <p>{{ build.message }}</p>
+      {{ build.message }}

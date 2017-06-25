@@ -64,7 +64,7 @@ pipeline:
       event: push
       #branch: master
       status: [failure, success, error]
-    token: notreal
+    token: ${something}
     to: "-1001143861626"
     format: markdown
     message: >
@@ -73,3 +73,12 @@ pipeline:
       ({{ build.branch }}) by {{ build.author }}.
       <br>
       {{ build.message }}
+
+  test:
+    image: alpine:latest
+    when:
+      event: push
+      #branch: master
+      status: [failure, success, error]
+    commands:
+      - echo ${something}

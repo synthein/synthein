@@ -58,14 +58,6 @@ pipeline:
       - apk update && apk add curl zip
       - scripts/package-windows.sh
 
-  bad:
-    image: alpine:latest
-    when:
-      event: push
-      branch: telegram3
-    commands:
-      - echo ${TELEGRAM_TOKEN}
-
   telegram:
     image: appleboy/drone-telegram
     secrets: [ TELEGRAM_TOKEN ]
@@ -73,8 +65,8 @@ pipeline:
       event: push
       #branch: master
       status: [failure, success, error]
-    token: ${TELEGRAM_TOKEN}
-    to: "-1001143861626"
+    token: "${TELEGRAM_TOKEN}"
+    to: 1001143861626
     format: markdown
     message: >
       <strong>{{ uppercasefirst build.status }}</strong>

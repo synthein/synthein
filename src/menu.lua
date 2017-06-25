@@ -37,10 +37,13 @@ function Menu:draw()
 								self.y + self.spacing * (i - 1),
 							    self.width, self.height)
 		love.graphics.setColor(255, 255, 255)
+		local previousFont = love.graphics.getFont()
+		love.graphics.setFont(self.font)
 		love.graphics.print(self.buttons[i], self.x + 10,
 							self.y + 75 * (i - 1) +
 								(self.height - self.textHeight)/2,
 							0, 1, 1, 0, 0, 0, 0)
+		love.graphics.setFont(previousFont)
 	end
 end
 

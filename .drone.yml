@@ -68,11 +68,6 @@ pipeline:
       status: [failure, success, error]
     token: "${TELEGRAM_TOKEN}"
     to:
-      - -1001143861626.0
+      - -1001143861626
     format: markdown
-    message: >
-      <strong>{{ uppercasefirst build.status }}</strong>
-      <a href=\"{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}\">{{ repo.owner }}/{{ repo.name }}</a>
-      ({{ build.branch }}) by {{ build.author }}.
-      <br>
-      {{ build.message }}
+    message: testing

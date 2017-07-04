@@ -216,12 +216,11 @@ end
 --]]
 
 function World:update(dt)
-	local remove = {}
-	local create = {}
 	local nextBoarders = {0, 0, 0, 0}
 
 	for key, objectTable in pairs(self.objects) do
-		for i, object in ipairs(objectTable) do
+		for i = #objectTable,1,-1 do
+			local object = objectTable[i]
 			if object.isDestroyed == false then
 				local objectX, objectY = object:getLocation()
 				if key == "structures" and object.corePart and 
@@ -238,10 +237,7 @@ function World:update(dt)
 					end
 				end
 
-				c = object:update(dt, self.info)
-				for i, o in ipairs(c) do
-					table.insert(create, o)
-				end
+				object:update(dt, self.info)
 
 				if (self.boarders and (objectX < self.boarders[1] or
 									   objectY < self.boarders[2] or
@@ -252,7 +248,7 @@ function World:update(dt)
 			end
 
 			if object.isDestroyed == true then
-				table.insert(remove, {key, i})
+				table.remove(self.objects[key], i)
 			end
 		end
 	end
@@ -262,18 +258,6 @@ function World:update(dt)
 	self.boarders[2] = self.boarders[2] - 10000
 	self.boarders[3] = self.boarders[3] + 10000
 	self.boarders[4] = self.boarders[4] + 10000
-
-	for i, object in ipairs(remove) do
-		self.objects[object[1]][object[2]] = {"kill"}
-	end
-	
-	for key, value in pairs(World.objectTypes) do
-		for i = #self.objects[key],1,-1 do
-			if self.objects[key][i][1] == "kill" then
-				table.remove(self.objects[key], i)
-			end
-		end
-	end
 	
 	for i, object in ipairs(self.events.create) do
 		local key = object[1]

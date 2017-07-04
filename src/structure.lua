@@ -95,7 +95,7 @@ end
 
 function Structure:getTeam()
 	if self.corePart then
-		return self.corePart.getTeam()
+		return self.corePart:getTeam()
 	end
 	return 0
 end

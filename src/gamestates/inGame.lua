@@ -154,44 +154,47 @@ function InGame.update(dt)
 		eventTime = eventTime + dt
 		second = second + dt
 		if second > 1 then
-			if players[1].ship then
-				timeVar = 1 - 50/(20 + eventTime)
-				if timeVar < 0 then timeVar = 0 end
-				disVar = 1 - 50/(1 + Util.vectorMagnitude(
-							players[1].ship.body:getX(),players[1].ship.body:getY())/20)
-				if disVar < 0 then disVar = 0 end
-				veloVar = 1 - 50/(1 + Util.vectorMagnitude(
-							players[1].ship.body:getLinearVelocity()))
-				if veloVar < 0 then veloVar = 0 end
-				rand = love.math.random()
-				if rand < timeVar * disVar * veloVar or
-						(debugmode and Debug.getSpawn()) then
-					eventTime = 0
-					local scene = math.ceil(love.math.random() * 10)
-					scene = tostring(scene)
-					local location = {players[1].ship.body:getX(),
-									  players[1].ship.body:getY()}
-					local vV = {players[1].ship.body:getLinearVelocity()}
-					local mag = Util.vectorMagnitude(unpack(vV))
-					local uV
-					if mag ~= 0 then
-						uV = {vV[1]/mag , vV[2]/ mag}
-					else
-						uV = {0, 1}
-					end
-					local pV = {-uV[2], uV[1]}
-					local r = 2 * (math.random() - 0.5)
-					local m = 50 * Settings.PARTSIZE / players[1].camera.zoom
-					local netV = {m * (uV[1] + r * pV[1]),
-								  m * (uV[2] + r * pV[2])}
-					location[1] = location[1] + netV[1]
-					location[2] = location[2] + netV[2]
-					location[3] = 2 * math.pi * math.random()
 
-					local inputs = {playerTeam = 1, playerShip = players[1].ship}
-					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, location, nil, inputs)
-					for i,ship in ipairs(ships) do
-						world:addObject(ship)
+			for i, player in ipairs(players) do
+				if players[1].ship then
+					timeVar = 1 - 50/(20 + eventTime)
+					if timeVar < 0 then timeVar = 0 end
+					disVar = 1 - 50/(1 + Util.vectorMagnitude(
+								player.ship.body:getX(),player.ship.body:getY())/20)
+					if disVar < 0 then disVar = 0 end
+					veloVar = 1 - 50/(1 + Util.vectorMagnitude(
+								player.ship.body:getLinearVelocity()))
+					if veloVar < 0 then veloVar = 0 end
+					rand = love.math.random()
+					if rand < timeVar * disVar * veloVar or
+							(debugmode and Debug.getSpawn()) then
+						eventTime = 0
+						local scene = math.ceil(love.math.random() * 10)
+						scene = tostring(scene)
+						local location = {players[1].ship.body:getX(),
+										  players[1].ship.body:getY()}
+						local vV = {players[1].ship.body:getLinearVelocity()}
+						local mag = Util.vectorMagnitude(unpack(vV))
+						local uV
+						if mag ~= 0 then
+							uV = {vV[1]/mag , vV[2]/ mag}
+						else
+							uV = {0, 1}
+						end
+						local pV = {-uV[2], uV[1]}
+						local r = 2 * (math.random() - 0.5)
+						local m = 50 * Settings.PARTSIZE / player.camera.zoom
+						local netV = {m * (uV[1] + r * pV[1]),
+									  m * (uV[2] + r * pV[2])}
+						location[1] = location[1] + netV[1]
+						location[2] = location[2] + netV[2]
+						location[3] = 2 * math.pi * math.random()
+
+						local inputs = {playerTeam = 1, playerShip = player.ship}
+						local ships, shipType = SceneParser.loadScene("scene" .. scene, world, location, nil, inputs)
+						for i,ship in ipairs(ships) do
+							world:addObject(ship)
+						end
 					end
 				end
 			end

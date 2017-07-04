@@ -167,7 +167,7 @@ function InGame.update(dt)
 				if rand < timeVar * disVar * veloVar or
 						(debugmode and Debug.getSpawn()) then
 					eventTime = 0
-					local scene = 10 --math.ceil(love.math.random() * 10)
+					local scene = math.ceil(love.math.random() * 10)
 					scene = tostring(scene)
 					local location = {players[1].ship.body:getX(),
 									  players[1].ship.body:getY()}

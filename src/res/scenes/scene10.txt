@@ -1,4 +1,4 @@
-CageShip(0, 0 ,0)[2]
+CageShip(0, 0 ,0)[-3]
 {
 e3      e3
 b1b1a*b1b1
@@ -8,8 +8,8 @@ b1      b1
 b1b1b1b1b1
 e1      e1
 }
-BasicShip2(-100, 0,0)[2]
-BasicShip2(100, 0,0)[2]
+BasicShip2(-100, 0,0)[-3]
+BasicShip2(100, 0,0)[-3]
 Ally(-35, -20, 0)[*playerTeam,*playerShip]
 {
 a*

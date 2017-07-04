@@ -2,6 +2,7 @@ local GameState = require("gamestates/gameState")
 local InGame = require("gamestates/inGame")
 local Menu = require("menu")
 
+local World = require("world")
 local InitWorld = require("initWorld")
 local AI = require("ai")
 
@@ -32,15 +33,13 @@ function NewGameMenu.mousepressed(x, y, mouseButton)
 			table.insert(NewGameMenu.stack, InGame)
 		elseif button == "Allied" then
 			InitWorld.init("startSceneTwoPlayer", false)
-			AI.teamHostility = {{false, true,  false},
-								{true,  false, true },
-								{false, true,  false}}
+			World.playerHostility = {{false, false},
+									 {false, false}}
 			table.insert(NewGameMenu.stack, InGame)
 		elseif button == "VS" then
 			InitWorld.init("startSceneTwoPlayer", false)
-			AI.teamHostility = {{false, true,  true },
-								{true,  false, true },
-								{true,  true,  false}}
+			World.playerHostility = {{false, true},
+									 {true, false}}
 			table.insert(NewGameMenu.stack, InGame)
 		end
 	end

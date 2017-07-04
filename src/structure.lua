@@ -93,6 +93,13 @@ function Structure:getLocation()
 	return self.body:getX(), self.body:getY(), self.body:getAngle()
 end
 
+function Structure:getTeam()
+	if self.corePart then
+		return self.corePart.getTeam()
+	end
+	return 0
+end
+
 -- Annex another structure into this one.
 -- ** After calling this method, the annexed structure will be destroyed and
 -- should be removed from any tables it is referenced in.
@@ -131,7 +138,6 @@ function Structure:annexPart(annexee, part, baseVector)
 
 	local partThere = false
 	local x, y = unpack(netVector)
-print(x, y)
 	if self.gridTable:index(x, y) then
 			partThere = true
 	end
@@ -406,12 +412,14 @@ function Structure:command(orders)
 	return commands
 end
 
-function Structure:update(dt)
-	local newObjects = {}
+function Structure:update(dt, worldInfo)
 	local partsInfo = {}
 	if self.corePart then
-		
-		partsInfo = self:command(self.corePart:getOrders())
+		local body = self.body
+		local vX, vY = body:getLinearVelocity()
+		local location = {body:getX(), body:getY(), body:getAngle(),
+					  vX, vY, body:getAngularVelocity()}
+		partsInfo = self:command(self.corePart:getOrders(location, worldInfo))
 	end
 
 	self.gridTable:loop(Structure.updatePart, {dt, partsInfo})

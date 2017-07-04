@@ -34,13 +34,9 @@ function AIBlock:getTeam()
 	return self.ai.team
 end
 
-function AIBlock:getOrders()
-	local body = self.fixture:getBody()
-	local physics = body:getWorld()
-	local vX, vY = body:getLinearVelocity()
-	local location = {body:getX(), body:getY(), body:getAngle(),
-					  vX, vY, body:getAngularVelocity()}
-	return self.ai:getOrders(location, physics, self.leader)
+function AIBlock:getOrders(location, worldInfo)
+	return self.ai:getOrders(location, worldInfo, self.leader,
+							 self.fixture:getBody())
 end
 
 function AIBlock:getMenu()

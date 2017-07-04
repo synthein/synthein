@@ -13,6 +13,8 @@ World.objectTypes = {
 	particles	= Particles
 }
 
+World.playerHostility = {{false}}
+
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
 function World.create()
@@ -24,8 +26,33 @@ function World.create()
 							  World.preSolve, World.postSolve)
 
 	self.objects = {}
+	local generalHostility = {}
+	generalHostility[0]  = false --corepartless structures
+	generalHostility[-1] = true  --pirates
+	generalHostility[-2] = false --civilians
+	generalHostility[-3] = true  --Empire
+	generalHostility[-4] = true  --Federation
+	
 	self.events = {create = {}}
-	self.info = {events = self.events, physics = self.physics}
+	local teamHostility = {playerHostility = World.playerHostility,
+						   general = generalHostility}
+	function teamHostility:test(team, otherTeam)
+		local max = math.max(team, otherTeam)
+		local min = math.min(team, otherTeam)
+		if min > 0 then
+			return self.playerHostility[team][otherTeam]
+		elseif max > 0 then
+			return self.general[min]
+		elseif max > -3 then
+			return self.general[max]
+		else
+			return team ~= otherTeam
+		end
+	end
+
+	self.info = {events = self.events, physics = self.physics, 
+					teamHostility = teamHostility}
+
 	for key, value in pairs(World.objectTypes) do
 		self.objects[key] = {}
 	end
@@ -198,7 +225,7 @@ function World:update(dt)
 			if object.isDestroyed == false then
 				local objectX, objectY = object:getLocation()
 				if key == "structures" and object.corePart and 
-						object.corePart:getTeam() == 1 then
+						object.corePart:getTeam() > 0 then
 					if objectX < nextBoarders[1] then
 						nextBoarders[1] = objectX
 					elseif objectX > nextBoarders[3]then
@@ -211,7 +238,7 @@ function World:update(dt)
 					end
 				end
 
-				c = object:update(dt)
+				c = object:update(dt, self.info)
 				for i, o in ipairs(c) do
 					table.insert(create, o)
 				end

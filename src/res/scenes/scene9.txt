@@ -1,4 +1,4 @@
-BasicShip1(-200, 0,0)[2]
-BasicShip2(-100, 0,0)[2]
-BasicShip3(100, 0,0)[2]
-BasicShip4(200, 0,0)[2]
+BasicShip1(-200, 0,0)[-4]
+BasicShip2(-100, 0,0)[-4]
+BasicShip3(100, 0,0)[-4]
+BasicShip4(200, 0,0)[-4]

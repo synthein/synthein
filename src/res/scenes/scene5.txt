@@ -1,2 +1,2 @@
-BasicShip1(-100, 0,0)[2]
-BasicShip1(100, 0,0)[2]
+BasicShip1(-100, 0,0)[-4]
+BasicShip1(100, 0,0)[-4]

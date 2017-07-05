@@ -268,18 +268,24 @@ function Structure:testConnection()
 	return partList
 end
 
--- Add one part to the structure.
--- x, y are the coordinates in the structure.
--- orientation is the orientation of the part according to the structure.
-function Structure:addPart(part, x, y, orientation)
+function Structure:addFixture(part)
 	local x1, y1, x2, y2, x3, y3, x4, y4 = part.physicsShape:getPoints()
 	local width = math.abs(x1 - x3)
 	local height = math.abs(y1 - y3)
 	local shape = love.physics.newRectangleShape(
-		x*self.PARTSIZE, y*self.PARTSIZE, width, height)
+		part.location[1]*self.PARTSIZE,
+		part.location[2]*self.PARTSIZE,
+		width, height)
 	local fixture = love.physics.newFixture(self.body, shape)
 	part:setFixture(fixture)
+end
+
+-- Add one part to the structure.
+-- x, y are the coordinates in the structure.
+-- orientation is the orientation of the part according to the structure.
+function Structure:addPart(part, x, y, orientation)
 	part:setLocation({x, y, orientation})
+	self:addFixture(part)
 	self:calculateSize(x, y)
 
 	self.gridTable:index(x, y, part)

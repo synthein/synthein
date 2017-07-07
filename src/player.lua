@@ -77,6 +77,8 @@ function Player:handleInput()
 	-----------------------
 	self.cursorX = Controls.setCursor(self.controls.cursorX, self.cursorX)
 	self.cursorY = Controls.setCursor(self.controls.cursorY, self.cursorY)
+	self.cursorX, self.cursorY = self.camera:limitCursor(self.cursorX,
+														 self.cursorY)
 	
 	-----------------------
 	---- Ship commands ----

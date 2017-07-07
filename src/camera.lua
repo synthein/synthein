@@ -87,6 +87,20 @@ function Camera:getScissor()
 	return self.scissorX, self.scissorY, self.scissorWidth, self.scissorHeight
 end
 
+function Camera:limitCursor(cursorX, cursorY)
+	if cursorX < self.scissorX then
+		cursorX = self.scissorX
+	elseif cursorX > self.scissorX + self.scissorWidth then
+		cursorX = self.scissorX + self.scissorWidth
+	end
+	if cursorY < self.scissorY then
+		cursorY = self.scissorY
+	elseif cursorY > self.scissorY + self.scissorHeight then
+		cursorY = self.scissorY + self.scissorHeight
+	end
+	return cursorX, cursorY
+end
+
 function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
     love.graphics.setScissor(self:getScissor())
 

@@ -9,8 +9,8 @@ function Camera.create()
 
 	self.x = 0
 	self.y = 0
-	self.zoom = 20
-	self.zoomInt = 0
+	self.zoomInt = 8
+	self:adjustZoom(0)
 	self.scissorX = 0
 	self.scissorY = 0
 	self.scissorWidth = 0

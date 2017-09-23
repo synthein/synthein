@@ -54,7 +54,7 @@ function Particles:draw(camera)
 		self.image,
 		self.x,
 		self.y,
-		0, 1, 1, self.ox, self.oy)
+		0, 1/20, 1/20, self.ox, self.oy)
 end
 
 return Particles

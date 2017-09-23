@@ -19,9 +19,9 @@ function Shot.create(worldInfo, location, sourcePart)
 					location[1], location[2], "dynamic")
 	self.body:setAngle(location[3])
 	self.body:setLinearVelocity(
-				Util.vectorComponents(500, location[3] + math.pi/2))
+				Util.vectorComponents(25, location[3] + math.pi/2))
 	self.body:setBullet(true)
-	self.physicsShape = love.physics.newRectangleShape(2, 2)
+	self.physicsShape = love.physics.newRectangleShape(.2, .2)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setSensor(true)
 	self.fixture:setUserData(self)
@@ -65,7 +65,7 @@ function Shot:draw(camera)
 	camera:draw(
 		self.image,
 		self.body:getX(), self.body:getY(), self.body:getAngle(),
-		1, 1, self.width/2, self.height/2)
+		.1/self.width, .5/self.height, self.width/2, self.height/2)
 end
 
 return Shot

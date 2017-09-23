@@ -10,7 +10,7 @@ local StructureMath = require("structureMath")
 local Structure = {}
 Structure.__index = Structure
 
-Structure.PARTSIZE = 20
+--Structure.PARTSIZE = 20
 
 function Structure.create(worldInfo, location, shipTable)
 	local self = {}
@@ -39,7 +39,7 @@ function Structure.create(worldInfo, location, shipTable)
 	if shipTable.corePart then
 		if shipTable.corePart.type == "control" then
 			self.body = love.physics.newBody(self.physics, x, y, "dynamic")
-			self.body:setAngularDamping(0.25)
+			self.body:setAngularDamping(5)
 			self.body:setLinearDamping(0.125)
 			self.type = "ship"
 		elseif shipTable.corePart.type == "anchor" then
@@ -50,7 +50,7 @@ function Structure.create(worldInfo, location, shipTable)
 		self.corePart = shipTable.corePart
 	else
 		self.body = love.physics.newBody(self.physics, x, y, "dynamic")
-		self.body:setAngularDamping(0.2)
+		self.body:setAngularDamping(4)
 		self.body:setLinearDamping(0.1)
 		self.type = "generic"
 	end
@@ -262,13 +262,16 @@ function Structure:testConnection()
 end
 
 function Structure:addFixture(part)
-	local x1, y1, x2, y2, x3, y3, x4, y4 = part.physicsShape:getPoints()
-	local width = math.abs(x1 - x3)
-	local height = math.abs(y1 - y3)
-	local shape = love.physics.newRectangleShape(
-		part.location[1]*self.PARTSIZE,
-		part.location[2]*self.PARTSIZE,
-		width, height)
+	--local x1, y1, x2, y2, x3, y3, x4, y4 = part.physicsShape:getPoints()
+	--local width = math.abs(x1 - x3)
+	--local height = math.abs(y1 - y3)
+	--local shape = love.physics.newRectangleShape(
+	--	part.location[1]*self.PARTSIZE,
+	--	part.location[2]*self.PARTSIZE,
+	--	width, height)
+	local shape = love.physics.newRectangleShape(part.location[1],
+												 part.location[2],
+												 1, 1)
 	local fixture = love.physics.newFixture(self.body, shape)
 	part:setFixture(fixture)
 end

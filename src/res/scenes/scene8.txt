@@ -1,2 +1,2 @@
-BasicShip4(-100, 0,0)[-4]
-BasicShip4(100, 0,0)[-4]
+BasicShip4(-5, 0,0)[-4]
+BasicShip4(5, 0,0)[-4]

@@ -17,7 +17,7 @@ function PlayerBlock.create(team, leader)
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "control"
 
-	self.engine = Engine.create(1, 150, 350)
+	self.engine = Engine.create(1, 10, 10)
 	self.gun = Gun.create()
 	self.healTime = 10
 	self.orders = {}

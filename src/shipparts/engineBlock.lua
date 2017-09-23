@@ -21,7 +21,7 @@ function EngineBlock.create(world, x, y)
 	self.connectableSides[3] = false
 	self.connectableSides[4] = false
 
-	self.engine = Engine.create(2, 250)
+	self.engine = Engine.create(2, 150)
 
 	return self
 end

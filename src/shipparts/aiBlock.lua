@@ -17,7 +17,7 @@ function AIBlock.create(team, leader)
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "control"
 
-	self.engine = Engine.create(1, 150, 350)
+	self.engine = Engine.create(1, 10, 10)
 	self.ai = AI.create(team)
 	self.leader = leader
 

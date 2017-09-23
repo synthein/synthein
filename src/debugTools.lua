@@ -85,25 +85,25 @@ function Debug.keyboard(key)
 		-- Spawn a ship part.
 		if key == "u" then
 			-- Spawn a block
-			local object = Structure.create(physics, {cameraX + 50, cameraY + 100}, Block.create())
+			local object = Structure.create(world.info, {cameraX + 50, cameraY + 100}, Block.create())
 			world:addObject(object, chunkLocation, "structures")
 		elseif key == "i" then
 			-- Spawn an engine
-			local object = Structure.create(physics, {cameraX + 112, cameraY}, EngineBlock.create())
+			local object = Structure.create(world.info, {cameraX + 112, cameraY}, EngineBlock.create())
 			world:addObject(object, chunkLocation, "structures")
 		elseif key == "o" then
 			-- Spawn a gun
-			local object = Structure.create(physics, {cameraX + 50, cameraY - 100}, GunBlock.create())
+			local object = Structure.create(world.info, {cameraX + 50, cameraY - 100}, GunBlock.create())
 			world:addObject(object, chunkLocation, "structures")
 
 		--Spawn an AI
 		elseif key == "1" then
 			-- Team 1
-			local object = Structure.create(physics, {cameraX - 200, cameraY + 200}, AIBlock.create(player.ship:getTeam()))
+			local object = Structure.create(world.info, {cameraX - 200, cameraY + 200}, AIBlock.create(player.ship:getTeam()))
 			world:addObject(object, chunkLocation, "structures")
 		elseif key == "2" then
 			-- Team 2
-			local object = Structure.create(physics, {cameraX + 200, cameraY + 200}, AIBlock.create(-3))
+			local object = Structure.create(world.info, {cameraX + 200, cameraY + 200}, AIBlock.create(-3))
 			world:addObject(object, chunkLocation, "structures")
 
 		elseif key == "n" then

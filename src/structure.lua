@@ -12,28 +12,28 @@ Structure.__index = Structure
 
 Structure.PARTSIZE = 20
 
-function Structure.create(worldInfo, location, shipTable, data)
+function Structure.create(worldInfo, location, shipTable)
 	local self = {}
 	setmetatable(self, Structure)
 
 	self.worldInfo = worldInfo
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
-	self.gridTable = GridTable.create()
-	--self.parts = {}
 	self.maxDiameter = 1
 	self.size = 1
 	self.isDestroyed = false
 
 	if not shipTable.parts then
-		if shipTable.type == "generic" then
-			shipTable = {parts = {shipTable},
-						 partCoords = {{x = 0, y = 0}},
-						 partOrient = {1}}
-		else
-			shipTable = {corePart = shipTable}
+		self.gridTable = GridTable.create()
+		self.gridTable:index(0, 0, shipTable)
+		shipTable:setLocation({0, 0, 1})
+		if shipTable.type ~= "generic" then
+			self.corePart = shipTable
 		end
+	else
+		self.gridTable = shipTable.parts
 	end
+
 	local x = location[1]
 	local y = location[2]
 	if shipTable.corePart then
@@ -66,12 +66,10 @@ function Structure.create(worldInfo, location, shipTable, data)
 	self.body:setUserData(self)
 
 	if shipTable.parts then
-		for i,part in ipairs(shipTable.parts) do
-			self:addPart(part,
-						 shipTable.partCoords[i].x,
-						 shipTable.partCoords[i].y,
-						 shipTable.partOrient[i])
+		local function callback(part, structure)
+			structure:addFixture(part)
 		end
+		self.gridTable:loop(callback, self)
 	end
 	return self
 end
@@ -136,22 +134,15 @@ function Structure:annexPart(annexee, part, baseVector)
 	local annexeeVector = {part.location[1], part.location[2], part.location[3]}
 	local netVector = StructureMath.sumVectors(baseVector, annexeeVector)
 
-	local partThere = false
 	local x, y = unpack(netVector)
 	if self.gridTable:index(x, y) then
-			partThere = true
-	end
-
-	local newStructure
-	if partThere then
-		local location = {part:getWorldLocation()}
-		table.insert(self.events.create, {"structures", location, part})
+		annexee:disconnectPart(part)
 	else
 		self:addPart(part, netVector[1], netVector[2], netVector[3])
+		annexee:removePart(part)
 	end
-	annexee:removePart(part)
 end
-
+--[[
 function Structure:removeSection(part) --index)
 	--If there is only one block in the structure then esacpe.
 	if part == self.corePart then
@@ -174,7 +165,7 @@ function Structure:removeSection(part) --index)
 
 	return newStructure
 end
-
+--]]
 function Structure:testConnection()
 	local parts = self.gridTable:loop()
 	local partsLayout = GridTable.create()
@@ -193,6 +184,7 @@ function Structure:testConnection()
 	else
 		index = 1
 	end
+
 	local x, y = unpack(parts[index].location)
 	local p = partsLayout:index(x, y)
 	p[2] = 1
@@ -265,6 +257,7 @@ function Structure:testConnection()
 		local p = partsLayout:index(x, y)
 		table.insert(partList, {part, p[3]})
 	end
+
 	return partList
 end
 
@@ -353,6 +346,70 @@ function Structure:removePart(part)
 	end
 end
 
+function Structure:disconnectPart(part)
+	self:removePart(part)
+	local savedPart
+	if not part.isDestroyed then
+		savedPart = part
+	end
+
+	local createStructures
+	local partList = self:testConnection()
+	local structureList = {}
+
+	if savedPart then
+		structureList[1] = {savedPart}
+	else
+		structureList[1] = {}
+	end
+
+	for i = #partList,1,-1 do
+		for i = #structureList, partList[i][2]-1 do
+			table.insert(structureList, {})
+		end
+
+		if partList[i][2] ~= 1 then
+			local receivingStructure
+			if savedPart then
+				receivingStructure = 1
+			else
+				receivingStructure = partList[i][2]
+			end
+
+			table.insert(structureList[receivingStructure], partList[i][1])
+		end
+	end
+
+	if savedPart then
+		structureList = {structureList[1]}
+	end
+
+	for i = 1, #structureList do
+		local partList = structureList[i]
+		if #partList > 0 then
+			local basePart = partList[1]
+			local baseVector = basePart.location
+			local location = {basePart:getWorldLocation()}
+
+			baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
+			
+			local structure = GridTable.create()
+			for j, part in ipairs(partList) do
+				local partVector = {unpack(part.location)}
+				local netVector = StructureMath.sumVectors(baseVector, partVector)
+				self:removePart(part)
+				part:setLocation(netVector)
+				structure:index(netVector[1], netVector[2], part)
+
+			end
+			table.insert(self.events.create, {"structures", location, {parts = structure}})
+		end
+	end
+	
+
+	self:recalculateSize()
+end
+--[[
 function Structure:removeSections()
 	local partList = self:testConnection()
 	local structureList = {}
@@ -367,9 +424,9 @@ function Structure:removeSections()
 			local partX = part.location[1]
 			local partY = part.location[2]
 			local partOrient = part.location[3]
-			table.insert(structureList[partList[i][2]].parts, part)
-			table.insert(structureList[partList[i][2]].partCoords, {x = partX, y = partY})
-			table.insert(structureList[partList[i][2]].partOrient, partOrient)
+			table.insert(structureList[partList[i][2] ].parts, part)
+			table.insert(structureList[partList[i][2] ].partCoords, {x = partX, y = partY})
+			table.insert(structureList[partList[i][2] ].partOrient, partOrient)
 			self:removePart(part)
 		end
 	end
@@ -382,7 +439,7 @@ function Structure:removeSections()
 
 	return newObjects
 end
-
+--]]
 function Structure:command(orders)
 	local perpendicular = 0
 	local parallel = 0

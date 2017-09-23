@@ -87,6 +87,9 @@ function Structure:destroy()
 	self.isDestroyed = true
 end
 
+-------------------------
+-- Setters and Getters --
+-------------------------
 function Structure:getLocation()
 	return self.body:getX(), self.body:getY(), self.body:getAngle()
 end
@@ -97,6 +100,48 @@ function Structure:getTeam()
 	end
 	return 0
 end
+
+-------------------------------
+-- Adding and Removing Parts --
+-------------------------------
+function Structure:addFixture(part)
+	local shape = love.physics.newRectangleShape(part.location[1],
+												 part.location[2],
+												 1, 1)
+	local fixture = love.physics.newFixture(self.body, shape)
+	part:setFixture(fixture)
+end
+
+-- Add one part to the structure.
+-- x, y are the coordinates in the structure.
+-- orientation is the orientation of the part according to the structure.
+function Structure:addPart(part, x, y, orientation)
+	part:setLocation({x, y, orientation})
+	self:addFixture(part)
+	--self:calculateSize(x, y)
+	self:recalculateSize()
+
+	self.gridTable:index(x, y, part)
+end
+
+-- If there are no more parts in the structure, 
+-- then mark this structure for destruction.
+function Structure:removePart(part)
+	if part == self.corePart then
+		self.corePart = nil
+	end
+
+	x, y = unpack(part.location)
+	self.gridTable:index(x, y, nil, true)
+
+	if #self.body:getFixtureList() == 0 then
+		self.isDestroyed = true
+	end
+end
+
+-----------------------------------------
+-- Adding and removing groups of parts --
+-----------------------------------------
 
 -- Annex another structure into this one.
 -- ** After calling this method, the annexed structure will be destroyed and
@@ -142,30 +187,7 @@ function Structure:annexPart(annexee, part, baseVector)
 		annexee:removePart(part)
 	end
 end
---[[
-function Structure:removeSection(part) --index)
-	--If there is only one block in the structure then esacpe.
-	if part == self.corePart then
-		return nil
-	end
-	--local part = self.parts[index]
-	local partLocation = part.location
-	local partOrient = (-partLocation[3] + 1) % 4 + 1
-	local x, y , angle = part:getWorldLocation()
-	self:removePart(part)
-	local newStructure = Structure.create(self.worldInfo, {x, y, angle}, part)
-	local partList = self:testConnection()
-	for i = #partList,1,-1 do
-		if partList[i][2] ~= 1 then
-			newStructure:annexPart(self, partList[i][1], {-partLocation[1], -partLocation[2], partOrient})
-		end
-	end
 
-	self:recalculateSize()
-
-	return newStructure
-end
---]]
 function Structure:testConnection()
 	local parts = self.gridTable:loop()
 	local partsLayout = GridTable.create()
@@ -261,94 +283,23 @@ function Structure:testConnection()
 	return partList
 end
 
-function Structure:addFixture(part)
-	--local x1, y1, x2, y2, x3, y3, x4, y4 = part.physicsShape:getPoints()
-	--local width = math.abs(x1 - x3)
-	--local height = math.abs(y1 - y3)
-	--local shape = love.physics.newRectangleShape(
-	--	part.location[1]*self.PARTSIZE,
-	--	part.location[2]*self.PARTSIZE,
-	--	width, height)
-	local shape = love.physics.newRectangleShape(part.location[1],
-												 part.location[2],
-												 1, 1)
-	local fixture = love.physics.newFixture(self.body, shape)
-	part:setFixture(fixture)
-end
-
--- Add one part to the structure.
--- x, y are the coordinates in the structure.
--- orientation is the orientation of the part according to the structure.
-function Structure:addPart(part, x, y, orientation)
-	part:setLocation({x, y, orientation})
-	self:addFixture(part)
-	self:calculateSize(x, y)
-
-	self.gridTable:index(x, y, part)
-	--table.insert(self.parts, part)
-	--table.insert(self.partCoords, {x = x, y = y})
-	--table.insert(self.partOrient, orientation)
-end
-
 function Structure:recalculateSize()
 	self.maxDiameter = 1
-	self.gridTable:loop(Structure.partCalculateSize, self)
-end
-
-function Structure.partCalculateSize(part, structure, x, y)
-	structure:calculateSize(x, y)
-end
-
-function Structure:calculateSize(x, y)
-	local x = math.abs(x)
-	local y = math.abs(y)
-	local d = math.max(x, y) + x + y + 1
-	if self.maxDiameter < d then
-		self.maxDiameter = d
-		self.size = math.ceil(self.maxDiameter * 0.5625 / Settings.chunkSize)
-	end
-end
-
--- Check if a part is in this structure.
--- If it is, return the index of the part.
--- If it is not, return nil.
-function Structure:findPart(query)
-	for i, part in ipairs(self.parts) do
-		if part == query then
-			return i
+	local function callback(part, self, x, y)
+		local x = math.abs(x)
+		local y = math.abs(y)
+		local d = math.max(x, y) + x + y + 1
+		if self.maxDiameter < d then
+			self.maxDiameter = d
+			self.size = math.ceil(self.maxDiameter * 0.5625/
+								  Settings.chunkSize)
 		end
 	end
 
-	return nil
+	self.gridTable:loop(callback, self)
 end
 
--- Find the specified part and destroy it. If there are no more parts in the
--- structure, then mark this structure for destruction.
-function Structure:removePart(part)
---	local partIndex
-
-	-- Find out if the argument is a part object or index.
---	if type(part) == "table" then
---		partIndex = self:findPart(part)
---	elseif type(part) == "number" then
-	--	partIndex = part
---	else
---		error("Argument to Structure:removePart is not a part.")
---	end
-	-- Destroy the part.
-	if part == self.corePart then
-		self.corePart = nil
-	end
-
-	x, y = unpack(part.location)
-	self.gridTable:index(x, y, nil, true)
-	--table.remove(self.parts, partIndex)
-
-	if #self.body:getFixtureList() == 0 then
-		self.isDestroyed = true
-	end
-end
-
+-- Part was disconnected or destroyed remove part and handle outcome.
 function Structure:disconnectPart(part)
 	self:removePart(part)
 	local savedPart
@@ -412,37 +363,13 @@ function Structure:disconnectPart(part)
 
 	self:recalculateSize()
 end
---[[
-function Structure:removeSections()
-	local partList = self:testConnection()
-	local structureList = {}
-	local locationList = {}
-	for i = #partList,1,-1 do
-		if partList[i][2] ~= 1 then
-			for i = #structureList, partList[i][2]-1 do
-				table.insert(structureList, {parts = {}, partCoords = {}, partOrient = {}})
-			end
 
-			local part = partList[i][1]
-			local partX = part.location[1]
-			local partY = part.location[2]
-			local partOrient = part.location[3]
-			table.insert(structureList[partList[i][2] ].parts, part)
-			table.insert(structureList[partList[i][2] ].partCoords, {x = partX, y = partY})
-			table.insert(structureList[partList[i][2] ].partOrient, partOrient)
-			self:removePart(part)
-		end
-	end
+-------------------------
+-- Mangement functions --
+-------------------------
 
-	self:recalculateSize()
-
-	for i, structure in ipairs(structureList) do
-		table.insert(self.events.create, {"structures", {self:getLocation()}, structure})
-	end
-
-	return newObjects
-end
---]]
+-- Restructure input from player or output from ai
+-- make the information easy for parts to handle.
 function Structure:command(orders)
 	local perpendicular = 0
 	local parallel = 0
@@ -478,6 +405,8 @@ function Structure:command(orders)
 	return commands
 end
 
+-- Handle commands
+-- Update each part
 function Structure:update(dt, worldInfo)
 	local partsInfo = {}
 	if self.corePart then
@@ -488,14 +417,12 @@ function Structure:update(dt, worldInfo)
 		partsInfo = self:command(self.corePart:getOrders(location, worldInfo))
 	end
 
-	self.gridTable:loop(Structure.updatePart, {dt, partsInfo})
+	local function callback(part, inputs, x, y)
+		local dt, partsInfo = unpack(inputs)	
+		part:update(dt, partsInfo)
+	end
 
-	return {}
-end
-
-function Structure.updatePart(part, inputs, x, y)
-	local dt, partsInfo = unpack(inputs)	
-	part:update(dt, partsInfo)
+	self.gridTable:loop(callback, {dt, partsInfo})
 end
 
 return Structure

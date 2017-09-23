@@ -191,7 +191,7 @@ function World:getObjects(key)
 		return self.objects
 	end
 end
-
+--[[
 --Removes a section of a structure and saves the new structure.
 function World:removeSection(structure, part)
 	if part.type == "generic" then
@@ -201,7 +201,7 @@ function World:removeSection(structure, part)
 		end
 	end
 end
-
+--]]
 --[[
 --Merges two structures.
 --Any overlapping parts from the annexee are placed in new structures.

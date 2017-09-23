@@ -13,6 +13,7 @@ local Util = require("util")
 local Structure = require("structure")
 local World = require("world")
 local AI = require("ai")
+local GridTable = require("gridTable")
 
 local Spawn = {}
 
@@ -23,34 +24,14 @@ function Spawn.spawnShip(shipID, world, location, data, shipString)
 	else
 		stringLength = #shipString
 	end
-	local shipTable = Spawn.shipUnpack(shipString, stringLength)
-	return Spawn.spawning(world, location, shipTable, data)
+	local shipTable = Spawn.shipUnpack(shipString, stringLength, data)
+	return Spawn.spawning(world, location, shipTable)
 end
 
-function Spawn.spawning(world, location, shipTable, data)
-	local player = false
-	local anchor = false
-	if shipTable.corePart == 'p' then
-		player = true
-	elseif shipTable.corePart == 'n' then
-		anchor = true
-	end
-	shipTable.corePart = Spawn.createPart(shipTable.corePart, data)
-	for i,part in ipairs(shipTable.parts) do
-		shipTable.parts[i] = Spawn.createPart(part)
-		if shipTable.loadData[i] then
-			shipTable.parts[i]:loadData(shipTable.loadData[i])
-		end
-	end
+function Spawn.spawning(world, location, shipTable)
 	shipTable.loadData = nil
-	local structure = Structure.create(world.info, location, shipTable, data)
-	if player then
-		return structure, 2
-	elseif anchor then
-		return structure, 3
-	else
-		return structure, 1
-	end
+	local structure = Structure.create(world.info, location, shipTable)
+	return structure, shipTable.shipType
 end
 
 function Spawn.createPart(partChar,data)
@@ -75,12 +56,9 @@ function Spawn.loadShipFromFile(ship)
 	return nil, nil
 end
 
-function Spawn.shipUnpack(shipString, stringLength)
+function Spawn.shipUnpack(shipString, stringLength, shipData)
 	local shipTable = {}
-	shipTable.parts = {}
-	shipTable.partCoords = {}
-	shipTable.partOrient = {}
-	shipTable.loadData = {}
+	shipTable.parts = GridTable.create()
 	local loadDataTable = {}
 	local location = {}
 	local loadData = {}
@@ -143,7 +121,6 @@ function Spawn.shipUnpack(shipString, stringLength)
 
 		j = 0
 		k = 0
-		local partIndex = 1
 		for i = 1, stringLength do
 			local c = shipString:sub(i,i)
 			local nc = shipString:sub(i + 1, i + 1)
@@ -162,24 +139,28 @@ function Spawn.shipUnpack(shipString, stringLength)
 				j = 0
 				k = k + 1
 			elseif c == 'b' or c == 'e' or c == 'g' or c == 'a' or c == 'p' or c == 'n' then
+				local part = Spawn.createPart(c, shipData)
+				local orientation
 				if nc == '*' then
 					if c == 'a' or c == 'p' or c == 'n'then
-						shipTable.corePart = c
-						shipTable.corePartData = data
-					else
-					shipTable.parts[partIndex] = c
-					shipTable.partCoords[partIndex] = {x = 0, y = 0}
-					shipTable.partOrient[partIndex] = 1
-					shipTable.loadData[partIndex] = data
-					partIndex = partIndex + 1
+						shipTable.corePart = part
 					end
+					if c == 'p' then
+						shipTable.shipType = 2
+					elseif c == 'n' then
+						shipTable.shipType = 3
+					else
+						shipTable.shipType = 1
+					end
+					orientation = 1
 				elseif nc == '1' or nc == '2' or nc == '3' or nc == '4' then
-					shipTable.parts[partIndex] = c
-					shipTable.partCoords[partIndex] = {x = x, y = y}
-					shipTable.partOrient[partIndex] = tonumber(nc)
-					shipTable.loadData[partIndex] = data
-					partIndex = partIndex + 1
+					orientation = tonumber(nc)
 				end
+				if data then
+					part:loadData(data)
+				end
+				part:setLocation({x, y, orientation})
+				shipTable.parts:index(x, y, part)
 			elseif c == '{' or c == '}' then
 				break
 			end

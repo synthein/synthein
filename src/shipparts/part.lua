@@ -76,12 +76,9 @@ function Part:damage(damage)
 		local structure = self.fixture:getBody():getUserData()
 		local events = structure.events
 		table.insert(events.create, {"particles", {self:getWorldLocation()}})
-		self.fixture:destroy()
-		structure:removePart(self)
-		if not structure.isDestroyed then
-			structure:removeSections()
-		end
 		self.isDestroyed = true
+		self.fixture:destroy()
+		structure:disconnectPart(self)
 	end
 end
 

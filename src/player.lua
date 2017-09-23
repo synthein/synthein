@@ -124,7 +124,7 @@ function Player:buttonpressed(source, button)
 				part = nil
 			end
 			if structure and part then
-				world:removeSection(structure, part)
+				structure:disconnectPart(part)
 			end
 		end
 	end

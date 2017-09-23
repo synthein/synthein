@@ -4,11 +4,11 @@ g1b1b1b1g1
 b1b1n*b1b1
 e1b1b1b1e1
 }
-player1(-100,0,0)[1, anchor]
+player1(-5,0,0)[1, anchor]
 {
 p*
 }
-player2(100,0,0)[1, anchor]
+player2(5,0,0)[1, anchor]
 {
 p*
 }

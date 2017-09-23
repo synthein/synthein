@@ -48,8 +48,7 @@ function Part:getWorldLocation()
 		if self.location and body then
 			local angle = (self.location[3] - 1) * math.pi/2 + body:getAngle()
 			local x, y = unpack(self.location)
-			x, y = body:getWorldPoints(x * Settings.PARTSIZE,
-									   y * Settings.PARTSIZE)
+			x, y = body:getWorldPoints(x, y)
 			self.worldLocation = {x, y, angle}
 		end
 	end
@@ -85,12 +84,10 @@ end
 function Part:collision(fixture, sqVelocity, pointVelocity)
 	object = fixture:getUserData()
 	x, y, mass, inertia = fixture:getMassData()
-	local partSize = Settings.PARTSIZE
-	local div = partSize * partSize
-	local damage = math.floor(sqVelocity * mass * 10 / div / div)
+	local damage = math.floor(sqVelocity * mass / 40)
 	object:damage(damage)
 	local body = self.fixture:getBody()
-	local mult = -damage * partSize
+	local mult = -damage
 
 	local xI, yI = unpack(pointVelocity)
 	if xI and yI then
@@ -104,7 +101,7 @@ end
 function Part:draw(camera)
 	local x, y, angle = self:getWorldLocation()
 	if x and y and angle then
-		camera:draw(self.image, x, y, angle, 1, 1, self.width/2, self.height/2)
+		camera:draw(self.image, x, y, angle, 1/Settings.PARTSIZE, 1/Settings.PARTSIZE, self.width/2, self.height/2)
 	end
 end
 

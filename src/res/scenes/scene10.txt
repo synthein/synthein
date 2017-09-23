@@ -8,9 +8,9 @@ b1      b1
 b1b1b1b1b1
 e1      e1
 }
-BasicShip2(-100, 0,0)[-3]
-BasicShip2(100, 0,0)[-3]
-Ally(-35, -20, 0)[*playerTeam,*playerShip]
+BasicShip2(-5, 0,0)[-3]
+BasicShip2(5, 0,0)[-3]
+Ally(0, -2, 0)[*playerTeam,*playerShip]
 {
 a*
 }

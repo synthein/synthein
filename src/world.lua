@@ -191,29 +191,6 @@ function World:getObjects(key)
 		return self.objects
 	end
 end
---[[
---Removes a section of a structure and saves the new structure.
-function World:removeSection(structure, part)
-	if part.type == "generic" then
-		local newStructure = structure:removeSection(part)
-		if newStructure then
-			self:addObject(newStructure, nil, "structures")
-		end
-	end
-end
---]]
---[[
---Merges two structures.
---Any overlapping parts from the annexee are placed in new structures.
-function World:annex(annexee, annexeePartIndex, annexeePartSide,
-					 structure, structurePartIndex, structurePartSide)
-	local newStructures = structure:annex(annexee, annexeePartIndex,
-					annexeePartSide, structurePartIndex, structurePartSide)
-	for i = 1,#newStructures do
-		table.insert(self.structures, newStructures[1])
-	end
-end
---]]
 
 function World:update(dt)
 	local nextBoarders = {0, 0, 0, 0}
@@ -262,7 +239,7 @@ function World:update(dt)
 	for i, object in ipairs(self.events.create) do
 		local key = object[1]
 		local value = World.objectTypes[key]
-		local newObject = value.create(self.info, object[2], object[3], object[4])
+		local newObject = value.create(self.info, object[2], object[3])
 		table.insert(self.objects[key], newObject)
 	end
 	self.events.create = {}

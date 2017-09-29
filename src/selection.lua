@@ -102,7 +102,7 @@ function Selection:draw(cursorX, cursorY)
 			end
 		end
 		if strength then
-			self.camera:drawCircleMenu(x, y, angle, 10, strength)
+			self.camera:drawCircleMenu(x, y, angle, .5, strength)
 		end
 	end
 	if self.build then

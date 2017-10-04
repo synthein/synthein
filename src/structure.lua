@@ -134,6 +134,8 @@ function Structure:removePart(part)
 	x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 
+	part.fixture:destroy()
+
 	if #self.body:getFixtureList() == 0 then
 		self.isDestroyed = true
 	end
@@ -183,8 +185,8 @@ function Structure:annexPart(annexee, part, baseVector)
 	if self.gridTable:index(x, y) then
 		annexee:disconnectPart(part)
 	else
-		self:addPart(part, netVector[1], netVector[2], netVector[3])
 		annexee:removePart(part)
+		self:addPart(part, netVector[1], netVector[2], netVector[3])
 	end
 end
 
@@ -351,7 +353,9 @@ function Structure:disconnectPart(part)
 			for j, part in ipairs(partList) do
 				local partVector = {unpack(part.location)}
 				local netVector = StructureMath.sumVectors(baseVector, partVector)
-				self:removePart(part)
+				if part ~= savedPart then
+					self:removePart(part)
+				end
 				part:setLocation(netVector)
 				structure:index(netVector[1], netVector[2], part)
 

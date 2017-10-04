@@ -29,7 +29,6 @@ function Part:saveData()
 end
 
 function Part:setFixture(fixture)
-	if self.fixture then self.fixture:destroy() end
 	self.fixture = fixture
 	self.fixture:setUserData(self)
 end
@@ -76,7 +75,6 @@ function Part:damage(damage)
 		local events = structure.events
 		table.insert(events.create, {"particles", {self:getWorldLocation()}})
 		self.isDestroyed = true
-		self.fixture:destroy()
 		structure:disconnectPart(self)
 	end
 end

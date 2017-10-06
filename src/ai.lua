@@ -37,7 +37,7 @@ function AI:getOrders(location, worldInfo, leader, body)
 		targetX, targetY = leader:getLocation()
 		angle = Util.vectorAngle(targetX - aiX, targetY - aiY)
 		angleToTarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
-	   if Util.vectorMagnitude(targetX - aiX, targetY - aiY) > 20 * 20 then
+	   if Util.vectorMagnitude(targetX - aiX, targetY - aiY) > 20 then
 			if angleToTarget < -math.pi/10 then
 				table.insert(orders, "right")
 			elseif angleToTarget > math.pi/10 then

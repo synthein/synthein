@@ -40,7 +40,7 @@ function Structure.create(worldInfo, location, shipTable)
 		if shipTable.corePart.type == "control" then
 			self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 			self.body:setAngularDamping(1)
-			self.body:setLinearDamping(1)
+			self.body:setLinearDamping(.1)
 			self.type = "ship"
 		elseif shipTable.corePart.type == "anchor" then
 			self.body = love.physics.newBody(self.physics, x, y, "static")
@@ -50,8 +50,8 @@ function Structure.create(worldInfo, location, shipTable)
 		self.corePart = shipTable.corePart
 	else
 		self.body = love.physics.newBody(self.physics, x, y, "dynamic")
-		self.body:setAngularDamping(4)
-		self.body:setLinearDamping(0.1)
+		self.body:setAngularDamping(.1)
+		self.body:setLinearDamping(0.01)
 		self.type = "generic"
 	end
 	if location[3] then

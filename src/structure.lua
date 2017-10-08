@@ -46,7 +46,6 @@ function Structure.create(worldInfo, location, shipTable)
 			self.body = love.physics.newBody(self.physics, x, y, "static")
 			self.type = "anchor"
 		end
-		self:addPart(shipTable.corePart, 0, 0, 1)
 		self.corePart = shipTable.corePart
 	else
 		self.body = love.physics.newBody(self.physics, x, y, "dynamic")
@@ -71,6 +70,7 @@ function Structure.create(worldInfo, location, shipTable)
 		end
 		self.gridTable:loop(callback, self)
 	end
+
 	return self
 end
 
@@ -133,10 +133,16 @@ function Structure:removePart(part)
 
 	x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
-
 	part.fixture:destroy()
 
-	if #self.body:getFixtureList() == 0 then
+--	for i,fixture in ipairs(self.body:getFixtureList()) do
+--		if not fixture:isDestroyed() then
+--			return
+--		end
+--	end
+	
+	local parts = self.gridTable:loop()
+	if #parts <= 0 then
 		self.isDestroyed = true
 	end
 end
@@ -304,6 +310,10 @@ end
 -- Part was disconnected or destroyed remove part and handle outcome.
 function Structure:disconnectPart(part)
 	self:removePart(part)
+	if self.isDestroyed then
+		return
+	end	
+
 	local savedPart
 	if not part.isDestroyed then
 		savedPart = part

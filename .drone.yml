@@ -60,16 +60,19 @@ pipeline:
 
   telegram:
     image: appleboy/drone-telegram
+    pull: true
+    secrets: [ TELEGRAM_TOKEN ]
     when:
       event: push
       branch: master
       status: [failure, success, error]
     token: "${TELEGRAM_TOKEN}"
     to: -1001143861626
-    format: markdown
+    format: html
     message: >
-      <strong>{{ uppercasefirst build.status }}</strong>
-      <a href=\"{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}\">{{ repo.owner }}/{{ repo.name }}</a>
-      ({{ build.branch }}) by {{ build.author }}.
-      <br>
+      <b>Build {{ build.status }}</b>
+
+      <a href="{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}">{{ repo.owner }}/{{ repo.name }}</a>
+      in branch <b>{{ build.branch }}</b> by <b>{{ build.author }}</b>.
+
       {{ build.message }}

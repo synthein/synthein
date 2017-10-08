@@ -14,6 +14,9 @@ end
 function GameState.keypressed()
 end
 
+function GameState.keyreleased()
+end
+
 function GameState.mousepressed()
 end
 

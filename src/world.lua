@@ -24,6 +24,8 @@ function World.create()
 							  World.preSolve, World.postSolve)
 
 	self.objects = {}
+	self.events = {create = {}}
+	self.info = {events = self.events, physics = self.physics}
 	for key, value in pairs(World.objectTypes) do
 		self.objects[key] = {}
 	end
@@ -166,7 +168,7 @@ end
 --Removes a section of a structure and saves the new structure.
 function World:removeSection(structure, part)
 	if part.type == "generic" then
-		local newStructure = structure:removeSection(structure:findPart(part))
+		local newStructure = structure:removeSection(part)
 		if newStructure then
 			self:addObject(newStructure, nil, "structures")
 		end
@@ -246,12 +248,13 @@ function World:update(dt)
 		end
 	end
 	
-	for i, object in ipairs(create) do
+	for i, object in ipairs(self.events.create) do
 		local key = object[1]
 		local value = World.objectTypes[key]
-		local newObject = value.create(self.physics, object[2], object[3], object[4])
+		local newObject = value.create(self.info, object[2], object[3], object[4])
 		table.insert(self.objects[key], newObject)
 	end
+	self.events.create = {}
 end
 
 return World

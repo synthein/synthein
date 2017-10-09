@@ -2,7 +2,6 @@ local Controls = {}
 
 local mouse = love.mouse
 local keyboard = love.keyboard
-local getJoysticks = love.joystick.getJoysticks
 
 function Controls.getOrders(controls)
 	local orders = {}
@@ -39,7 +38,7 @@ function Controls.setCursor(control, Cursor)
 	elseif control[2] == "yAxis" then
 		cursorChange = control[1].getY()
 	else
-		cursorChange = control[1].getAxis(control[2])
+		cursorChange = control[1]:getAxis(control[2])
 	end
 	
 	if control[3] == "set" then
@@ -50,7 +49,16 @@ function Controls.setCursor(control, Cursor)
 end
 
 function Controls.isDown(control)
-	return control[1].isDown(control[2])
+	if type(control[1]) == "userdata" then
+		if type(control[2]) == "string" then
+			local direction = control[1]:getHat(control[3])
+			return string.match(direction, control[2])
+		else
+			return control[1]:isDown(control[2])
+		end
+	else
+		return control[1].isDown(control[2])
+	end
 end
 
 Controls.shipCommands = {
@@ -74,39 +82,44 @@ Controls.released = {
 	build   	= "build"
 }
 
-Controls.defaults = {
-	keyboard = {
-		forward 	= {keyboard, "w"},
-		back    	= {keyboard, "s"},
-		left    	= {keyboard, "a"},
-		right   	= {keyboard, "d"},
-		strafeLeft	= {keyboard, "q"},
-		strafeRight	= {keyboard, "e"},
-		shoot   	= {keyboard, "space"},
-		build   	= {mouse, 1},
-		destroy 	= {mouse, 2},
-		zoomOut		= {mouse, "-yWheel"},
-		zoomIn		= {mouse, "yWheel"},
-		cursorX 	= {mouse, "xAxis", "set"},
-		cursorY 	= {mouse, "yAxis", "set"},
-		confirm		= {keyboard, "return"},
-		cancel		= {keyboard, "escape"}
-	},
-	gamepad = {
-		forward 	= {getJoysticks()[1], "dpup"},
-		back    	= {getJoysticks()[1], "dpdown"},
-		left    	= {getJoysticks()[1], "dpleft"},
-		right   	= {getJoysticks()[1], "dpright"},
-		strafeLeft	= {getJoysticks()[1], "leftshoulder"},
-		strafeRight	= {getJoysticks()[1], "rightshoulder"},
-		shoot   	= {getJoysticks()[1], "a"},
-		build   	= {getJoysticks()[1], "y"},
-		destroy 	= {getJoysticks()[1], "x"},
-		cursorX 	= {getJoysticks()[1], 1, "change"},
-		cursorY 	= {getJoysticks()[1], 2, "change"},
-		confirm		= {getJoysticks()[1], "a"},
-		cancel		= {getJoysticks()[1], "b"}
-	}
-}
+function Controls.defaults(joystick)
+	if joystick then
+		return {
+			forward 	= {joystick, "u", 1}, --dpup
+			back    	= {joystick, "d", 1}, --dpdown
+			left    	= {joystick, "l", 1}, --dpleft
+			right   	= {joystick, "r", 1}, --dpright
+			strafeLeft	= {joystick, 5}, --leftshoulder
+			strafeRight	= {joystick, 6}, --rightshoulder
+			shoot   	= {joystick, 1}, --a
+			build   	= {joystick, 4}, --y
+			destroy 	= {joystick, 3}, --x
+			zoomOut		= {mouse, "-yWheel"},
+			zoomIn		= {mouse, "yWheel"},
+			cursorX 	= {joystick, 1, "change"},
+			cursorY 	= {joystick, 2, "change"},
+			confirm		= {joystick, 1}, --a
+			cancel		= {joystick, 8}  --b
+			}
+	else
+		return {
+			forward 	= {keyboard, "w"},
+			back    	= {keyboard, "s"},
+			left    	= {keyboard, "a"},
+			right   	= {keyboard, "d"},
+			strafeLeft	= {keyboard, "q"},
+			strafeRight	= {keyboard, "e"},
+			shoot   	= {keyboard, "space"},
+			build   	= {mouse, 1},
+			destroy 	= {mouse, 2},
+			zoomOut		= {mouse, "-yWheel"},
+			zoomIn		= {mouse, "yWheel"},
+			cursorX 	= {mouse, "xAxis", "set"},
+			cursorY 	= {mouse, "yAxis", "set"},
+			confirm		= {keyboard, "return"},
+			cancel		= {keyboard, "escape"}
+			}
+	end
+end
 
 return Controls

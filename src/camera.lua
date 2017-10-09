@@ -16,6 +16,7 @@ function Camera.create()
 	self.scissorWidth = 0
 	self.scissorHeight = 0
 	self.compass = love.graphics.newImage("res/images/compass.png")
+	self.cursor = love.graphics.newImage("res/images/pointer.png")
 	return self
 end
 
@@ -95,7 +96,7 @@ function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
     love.graphics.setScissor()
 end
 
-function Camera:drawExtras(anchorLocation)
+function Camera:drawExtras(anchorLocation, cursor)
     love.graphics.setScissor(self:getScissor())
 	--draw the compass in the lower right hand coner 60 pixels from the edges
 	love.graphics.draw(
@@ -104,6 +105,7 @@ function Camera:drawExtras(anchorLocation)
 			self.scissorY + self.scissorHeight - 60,
 			math.atan2(self.x - anchorLocation[1], self.y - anchorLocation[2]) + math.pi,
 			1, 1, 25, 25)
+	love.graphics.draw(self.cursor, cursor[1]-2, cursor[2]-2)
     love.graphics.setScissor()
 end
 

@@ -1,54 +1,32 @@
 local GameState = require("gamestates/gameState")
-local NewGame = require("gamestates/newGame")
+local NewGameMenu = require("gamestates/newGameMenu")
 local LoadGameMenu = require("gamestates/loadGameMenu")
+local Menu = require("menu")
 
 local MainMenu = {}
 setmetatable(MainMenu, GameState)
 
 MainMenu.font = love.graphics.newFont(36)
-local buttons = {NewGame, LoadGameMenu}
+local buttons = {NewGameMenu, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
+MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
 
 function MainMenu.draw()
-	previousFont = love.graphics.getFont()
+	local previousFont = love.graphics.getFont()
 	love.graphics.setFont(MainMenu.font)
-	button_width = 500
-	button_height = 50
-	text_height = 40
 	love.graphics.print("SYNTHEIN", (SCREEN_WIDTH - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
-	for i,button in ipairs(buttons) do
-		love.graphics.setColor(100, 100, 100)
-		love.graphics.rectangle("fill", (SCREEN_WIDTH - button_width)/2, 175 + 75 * i, button_width, button_height)
-		love.graphics.setColor(255, 255, 255)
-		love.graphics.print(buttonNames[i], (SCREEN_WIDTH - button_width)/2 + 10, 175 + 75 * i + button_height/2 - text_height/2, 0, 1, 1, 0, 0, 0, 0)
-	end
+	MainMenu.menu:draw()
 	love.graphics.setFont(previousFont)
-	love.graphics.print("ws: Forward and Backward\n" ..
-						"ad: Turn Left and Right\n" ..
-						"qe: Strafe Left and Right\n" ..
-						"p: pause\nESC: menu\n" ..
-						"Left Click: Construcuting Ships\n" ..
-						"Right Click: Deconstructing Ships", 5, 5)
-end
-
-function MainMenu.update(dt)
-	return MainMenu
 end
 
 function MainMenu.mousepressed(x, y, mouseButton)
+	local button = MainMenu.menu:pressed(x, y)
 	if mouseButton == 1 then
-		if x < (SCREEN_WIDTH - button_width)/2 or x > (SCREEN_WIDTH + button_width)/2 then
-			return MainMenu
+		for i, name in ipairs(buttonNames) do
+			if button == name then
+				table.insert(MainMenu.stack, buttons[i])
+			end
 		end
-		local yRef = y - 175
-		local index = math.floor(yRef/75)
-		local remainder = yRef % 75
-		if index < 1 or index > #buttons or remainder > 50 then
-			return MainMenu
-		end
-		return buttons[index]
-	else
-		return MainMenu
 	end
 end
 

@@ -5,11 +5,12 @@ Particles.__index = Particles
 
 local explosionImage = love.graphics.newImage("res/images/explosion.png")
 
-function Particles.create(physics, location)
+function Particles.create(worldInfo, location)
 	self = {}
 	setmetatable(self, Particles)
 
-	self.physics = physics
+	self.physics = worldInfo.physics
+	self.events = worldInfo.events
 	local x, y = unpack(location)
 	self.body = love.physics.newBody(self.physics, x, y, "static")
 	self.physicsShape = love.physics.newRectangleShape(40, 40)

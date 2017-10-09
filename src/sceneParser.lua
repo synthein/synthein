@@ -4,10 +4,17 @@ local Util = require("util")
 
 local SceneParser = {}
 
+local locStr = "%([-%d., e]*%)"
+local lstStr = "%[[-%w., %*]*%]"
+local varStr = "[-%w. %*]*[,%]]"
+local namStr = "%a[%w]+"
+--local strStr = '".*"'
+local numStr = "-?[%d.e]*"
+
 function SceneParser.loadShip(shipName)
 end
 
-function SceneParser.loadScene(sceneName, world, location, ifSave)
+function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
 	local ships = {}
 	local index = 0
 	local ifShipString = false
@@ -20,7 +27,7 @@ function SceneParser.loadScene(sceneName, world, location, ifSave)
 	else
 		fileName = string.format("/res/scenes/%s.txt", sceneName)
 	end
-	if not love.filesystem.exists(fileName) then 
+	if not love.filesystem.exists(fileName) then
 		return {}, {}
 	end
 	for line in love.filesystem.lines(fileName) do
@@ -36,12 +43,11 @@ function SceneParser.loadScene(sceneName, world, location, ifSave)
 				shipString = shipString .. line .. '\n'
 			end
 		else
-			if string.match(line, "%w%([-0-9., ]*%)%[[-0-9., ]*%]")then
+			if string.match(line, namStr .. locStr .. lstStr) then
 				shipID = string.match(line, "%w+")
-
-				locationString = string.match(line, "%([-0-9., ]*%)")
+				locationString = string.match(line, locStr)
 				local l = {}
-				for coord in string.gmatch(locationString, "[-0-9.]+") do 
+				for coord in string.gmatch(locationString, numStr) do 
 					table.insert(l, tonumber(coord))
 				end
 				for i = 1,6 do
@@ -57,12 +63,23 @@ function SceneParser.loadScene(sceneName, world, location, ifSave)
 					l[i] = l[i] + location[i]
 				end
 
-				local dataString = string.match(line, "%[[-0-9., ]*%]")
+				local dataString = string.match(line, lstStr)
 				local data = {}
-				for var in string.gmatch(dataString, "[-0-9.]+") do 
-					table.insert(data, tonumber(var))
+				for var in string.gmatch(dataString, varStr) do
+					if string.match(var, "%a") then
+						if string.match(var, '"[%w]+"') then
+						elseif string.match(var, "%*[%w]+") then
+							local inputKey = string.match(var, "[%w]+")
+							table.insert(data, inputs[inputKey])
+						else
+							table.insert(data, string.match(var, "[%w]+"))
+						end
+					elseif string.match(var, numStr) then
+						table.insert(data, tonumber(string.match(var, numStr)))
+					else
+						table.insert(data, false)
+					end
 				end
-				if not data[1] then data[1] = 1 end
 				index = index + 1
 				ships[index] = {shipID, l, data}
 			elseif string.match(line, "%s*%{") then
@@ -72,26 +89,41 @@ function SceneParser.loadScene(sceneName, world, location, ifSave)
 	end
 	spawnedShips = {}
 	local shipType = {}
+	local references = {}
 	for i,ship in ipairs(ships) do
 		spawnedShips[i], shipType[i] = Spawn.spawnShip(ship[1], world, ship[2], ship[3], ship[4])
+		references[ship[1]] = spawnedShips[i]
+	end
+	for i,ship in ipairs(spawnedShips) do
+		ship:postCreate(references)
 	end
 	return spawnedShips, shipType
 end
 
 function SceneParser.saveScene(sceneName, world)
 	local fileString = ""
-	local team
-	for i,structure in ipairs(world.structures) do
+	local references = {}
+	local structures = world.objects.structures
+	for i,structure in ipairs(structures) do
+		references[structure] = "ship" .. tostring(i)
+	end
+
+	for i,structure in ipairs(structures) do
+		local team, leader
 		if structure.corePart then
 			team = structure.corePart:getTeam()
 		end
 		if not team then
 			team = 0
 		end
-		fileString = fileString .. "ship" .. tostring(i) .. 
-					 Util.packLocation(world.structures[i]) .. 
-					 Util.packData({team}) .. "\n" ..
-					 "{\n" .. Spawn.shipPack(world.structures[i], true) .. 
+		if 	structure.corePart and structure.corePart.leader then
+			leader = references[structure.corePart.leader]
+		end
+		
+		fileString = fileString .. references[structure] .. 
+					 Util.packLocation(structures[i]) .. 
+					 Util.packData({team, leader}) .. "\n" ..
+					 "{\n" .. Spawn.shipPack(structures[i], true) .. 
 					 "\n}\n"
 	end
 	if not love.filesystem.exists(sceneName .. ".txt") then

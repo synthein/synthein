@@ -10,7 +10,7 @@ e1      e1
 }
 BasicShip2(-100, 0,0)[2]
 BasicShip2(100, 0,0)[2]
-Ally(-35, -20, 0)[1]
+Ally(-35, -20, 0)[*playerTeam,*playerShip]
 {
 a*
 }

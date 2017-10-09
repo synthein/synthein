@@ -22,7 +22,8 @@ function Gun:update(dt, shoot, part)
 		if shoot then
 			self.recharge = true
 			self.rechargeTime = 0
-			return {"shots", {part:getWorldLocation()}, part}
+			local events = part.fixture:getBody():getUserData().events
+			table.insert(events.create, {"shots", {part:getWorldLocation()}, part})
 		end
 	end
 end

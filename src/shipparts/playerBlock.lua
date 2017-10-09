@@ -7,7 +7,7 @@ local PlayerBlock = {}
 PlayerBlock.__index = PlayerBlock
 setmetatable(PlayerBlock, Part)
 
-function PlayerBlock.create()
+function PlayerBlock.create(team, leader)
 	local self = Part.create()
 	setmetatable(self, PlayerBlock)
 
@@ -23,9 +23,16 @@ function PlayerBlock.create()
 	self.orders = {}
 
 	self.isPlayer = true
+	self.team = team
+	self.leader = leader
 
-	self.team = 1
 	return self
+end
+
+function PlayerBlock:postCreate(references)
+	if self.leader and type(self.leader) == "string" then
+		self.leader = references[self.leader]
+	end
 end
 
 function PlayerBlock:getTeam()
@@ -44,16 +51,12 @@ function PlayerBlock:shot()
 	self.rechargeStart = 0
 end
 
-function PlayerBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
-
-
+function PlayerBlock:update(dt, partsInfo)
 	local shoot = false
 	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
 	local newobject = self.gun:update(dt, shoot, self)
 
-	self.engine:update(self, partsInfo.engines, locationSign)
+	self.engine:update(self, partsInfo.engines)
 
 	self.healTime = self.healTime - dt
 	if self.healTime <= 0 then

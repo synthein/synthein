@@ -7,7 +7,7 @@ local AIBlock = {}
 AIBlock.__index = AIBlock
 setmetatable(AIBlock, Part)
 
-function AIBlock.create(team)
+function AIBlock.create(team, leader)
 	local self = Part.create()
 	setmetatable(self, AIBlock)
 
@@ -19,8 +19,15 @@ function AIBlock.create(team)
 
 	self.engine = Engine.create(1, 150, 350)
 	self.ai = AI.create(team)
+	self.leader = leader
 
 	return self
+end
+
+function AIBlock:postCreate(references)
+	if self.leader and type(self.leader) == "string" then
+		self.leader = references[self.leader]
+	end
 end
 
 function AIBlock:getTeam()
@@ -33,7 +40,7 @@ function AIBlock:getOrders()
 	local vX, vY = body:getLinearVelocity()
 	local location = {body:getX(), body:getY(), body:getAngle(),
 					  vX, vY, body:getAngularVelocity()}
-	return self.ai:getOrders(location, physics)
+	return self.ai:getOrders(location, physics, self.leader)
 end
 
 function AIBlock:getMenu()
@@ -44,11 +51,8 @@ function AIBlock:runMenu(i)
 	return self.ai:runMenu(i)
 end
 
-function AIBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
-
-	self.engine:update(self, partsInfo.engines, locationSign)
+function AIBlock:update(dt, partsInfo)
+	self.engine:update(self, partsInfo.engines)
 end
 
 return AIBlock

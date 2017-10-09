@@ -26,11 +26,8 @@ function EngineBlock.create(world, x, y)
 	return self
 end
 
-function EngineBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
-	
-	if self.engine:update(self, partsInfo.engines, locationSign) then
+function EngineBlock:update(dt, partsInfo)
+	if self.engine:update(self, partsInfo.engines) then
 		self.image = self.imageActive
 	else
 		self.image = self.imageInactive

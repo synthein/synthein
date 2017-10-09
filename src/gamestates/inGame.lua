@@ -96,8 +96,6 @@ function InGame.mousepressed(x, y, button)
 			elseif selection == "Quit" then
 				love.event.quit()
 			end
-		else
-			return InGame
 		end
 	end
 
@@ -114,8 +112,18 @@ function InGame.mousereleased(x, y, button)
 	if debugmode == true then
 		Debug.mousereleased(x, y, button)
 	end
+end
 
-	return InGame
+function InGame.joystickpressed(joystick, button)
+	for i, player in ipairs(players) do
+		player:buttonpressed(joystick, button)
+	end
+end
+
+function InGame.joystickreleased(joystick, button)
+	for i, player in ipairs(players) do
+		player:buttonreleased(joystick, button)
+	end
 end
 
 function InGame.wheelmoved(x, y)
@@ -159,7 +167,7 @@ function InGame.update(dt)
 				if rand < timeVar * disVar * veloVar or
 						(debugmode and Debug.getSpawn()) then
 					eventTime = 0
-					local scene = math.ceil(love.math.random() * 10)
+					local scene = 10 --math.ceil(love.math.random() * 10)
 					scene = tostring(scene)
 					local location = {players[1].ship.body:getX(),
 									  players[1].ship.body:getY()}
@@ -180,7 +188,8 @@ function InGame.update(dt)
 					location[2] = location[2] + netV[2]
 					location[3] = 2 * math.pi * math.random()
 
-					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, location)
+					local inputs = {playerTeam = 1, playerShip = players[1].ship}
+					local ships, ifPlayer = SceneParser.loadScene("scene" .. scene, world, location, nil, inputs)
 					for i,ship in ipairs(ships) do
 						world:addObject(ship)
 					end
@@ -197,8 +206,6 @@ function InGame.update(dt)
 	end
 
 	if debugmode then Debug.update(dt) end
-
-	return InGame
 end
 
 function InGame.draw()

@@ -4,10 +4,10 @@ local InGame = require("gamestates/inGame")
 local Player = require("player")
 local SceneParser = require("sceneParser")
 local World = require("world")
-local Structure = require("structure")
-local Shot = require("shot")
-local Particles = require("particles")
-local AI = require("ai")
+--local Structure = require("structure")
+--local Shot = require("shot")
+--local Particles = require("particles")
+--local AI = require("ai")
 
 local InitWorld = {}
 
@@ -19,20 +19,15 @@ function InitWorld.init(scene, ifSave)
 	local players = {}
 	for i,ship in ipairs(ships) do
 		if shipType[i] == 2 then
-			table.insert(AI.defaultLeaders, ship)
-			table.insert(players, Player.create(world, Controls.defaults.keyboard, ship))
-		elseif  shipType[i] == 3 then
-			table.insert(Player.anchors, ship)
+			if #players == 0 then
+				table.insert(players, Player.create(world, Controls.defaults(), ship))
+			else
+				local joystick = love.joystick.getJoysticks()[1]
+				table.insert(players, Player.create(world, Controls.defaults(joystick), ship))
+			end
 		end
 
 		world:addObject(ship)
-	end
-	
-	for i,ship in ipairs(ships) do
-		if ship.corePart and ship.corePart.ai then
-			local ai = ship.corePart.ai
-			ai.leader = AI.defaultLeaders[ai.team]
-		end
 	end
 
 	InGame.setplayers(players)

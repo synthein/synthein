@@ -4,7 +4,7 @@ local Screen = require("screen")
 local Shot = {}
 Shot.__index = Shot
 
-function Shot.create(physics, location, sourcePart)
+function Shot.create(worldInfo, location, sourcePart)
 	local self = {}
 	setmetatable(self, Shot)
 
@@ -13,7 +13,8 @@ function Shot.create(physics, location, sourcePart)
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.physics = physics
+	self.physics = worldInfo.physics
+	self.events = worldInfo.events
 	self.body = love.physics.newBody(self.physics, 
 					location[1], location[2], "dynamic")
 	self.body:setAngle(location[3])

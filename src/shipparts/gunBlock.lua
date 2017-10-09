@@ -25,10 +25,7 @@ function GunBlock.create(world, x, y)
 	return self
 end
 
-function GunBlock:update(dt, partsInfo, location, locationSign, orientation)
-	self.location = location
-	self.orientation = orientation
-
+function GunBlock:update(dt, partsInfo)
 	local shoot = false
 	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
 	local newObject = self.gun:update(dt, shoot, self)

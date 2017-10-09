@@ -21,9 +21,11 @@ function InitWorld.init(scene, playerHostility, ifSave)
 		if shipType[i] == 2 then
 			if #players == 0 then
 				table.insert(players, Player.create(world, Controls.defaults(), ship))
-			else
-				local joystick = love.joystick.getJoysticks()[1]
-				table.insert(players, Player.create(world, Controls.defaults(joystick), ship))
+			elseif #players > 0 then
+				local joystick = love.joystick.getJoysticks()[#players]
+				if joystick then
+					table.insert(players, Player.create(world, Controls.defaults(joystick), ship))
+				end
 			end
 		end
 

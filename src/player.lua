@@ -7,12 +7,6 @@ local Selection = require("selection")
 local Player = {}
 Player.__index = Player
 
-Player.physics = nil
-
-function Player.setPhysics(setphysics)
-	Player.physics = setphysics
-end
-
 function Player.create(world, controls, structure)
 	local self = {}
 	setmetatable(self, Player)
@@ -97,41 +91,39 @@ end
 function Player:buttonpressed(source, button)
 	local order = Controls.testPressed(self.controls, source, button)
 
+	if not order then
+		return
+	end
+
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then
 		self.selected:pressed(cursorX, cursorY)
-	end
-	if order == "destroy" then
+
+	elseif order == "destroy" then
 		if self.build then
 			self.build = nil
 		else
-			local team
-			if self.ship and self.ship.corePart then
-				team = self.ship.corePart:getTeam()
+			if not self.ship or not self.ship.corePart then
+				return
 			end
-			local structure, part, partSide= world:getObject(cursorX, cursorY, "structures")
-			--local partIndex
-			--if partInfo then
-			--	partIndex = partInfo[1]
-			--end
+			local team = self.ship.corePart:getTeam()
+			local structure, part, partSide = world:getObject(cursorX, cursorY,
+															  "structures")
 			
-			local structureTeam
-			if structure and structure.corePart then
-				structureTeam = structure.corePart:getTeam()
+			if not structure or not structure.corePart or not part then
+				return
 			end
-			if structureTeam and team and structureTeam ~= team then
-				structure = nil
-				part = nil
+			local structureTeam = structure.corePart:getTeam()
+			if structureTeam and structureTeam ~= team then
+				return
 			end
-			if structure and part then
-				structure:disconnectPart(part)
-			end
+
+			structure:disconnectPart(part)
 		end
-	end
-	if order == "zoomIn" then
+
+	elseif order == "zoomIn" then
 		self.camera:adjustZoom(1)
-	end
-	if order == "zoomOut" then
+	elseif order == "zoomOut" then
 		self.camera:adjustZoom(-1)
 	end
 end
@@ -151,11 +143,17 @@ function Player:draw()
 		self.camera:setY(self.ship.body:getY())
 	end
 
-	Player.callbackData.objects = {}
+	local callbackData = {}
 	local a, b, c, d = self.camera:getWorldBoarder()
-	self.world.physics:queryBoundingBox(a, b, c, d, Player.fixtureCallback)
 
-	for drawlayer, object in ipairs(Player.callbackData.objects) do
+	function callback(fixture)
+		table.insert(callbackData, fixture:getUserData())
+		return true
+	end
+
+	self.world.physics:queryBoundingBox(a, b, c, d, callback)
+
+	for drawlayer, object in ipairs(callbackData) do
 		object:draw(self.camera)
 	end
 
@@ -165,19 +163,13 @@ function Player:draw()
 	end
 
 	local point
-	if self.ship and not self.ship.isDetroyed and self.ship.corePart and self.ship.corePart.leader then
+	if self.ship and self.ship.corePart and self.ship.corePart.leader then
 		point = {self.ship.corePart.leader:getLocation()}
 	else
 		point = {0,0}
 	end
+
 	self.camera:drawExtras(point, {self.cursorX, self.cursorY})
-end
-
-Player.callbackData = {objects = {}}
-
-function Player.fixtureCallback(fixture)
-	table.insert(Player.callbackData.objects, fixture:getUserData())
-	return true
 end
 
 return Player

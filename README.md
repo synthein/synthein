@@ -50,7 +50,7 @@ To add a block to your ship or an AI ally's ship:
  
 ### Debug Mode
 
-Press F12 to enter or leave debug mode. You can tell if you are in debug mode by looking at the top left corner of the screen. In debug mode, the screen shows some information in the top left corner.
+Press F12 to enter or leave debug mode. You can tell if you are in debug mode by looking at the top left corner of the screen: in debug mode, the screen shows some information in the top left corner.
 
 * The first row of debug information is the x and y coordinates of your ship.
 * Row 2 is the x and y coordinates of the mouse cursor.

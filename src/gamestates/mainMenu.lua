@@ -30,4 +30,8 @@ function MainMenu.mousepressed(x, y, mouseButton)
 	end
 end
 
+function MainMenu.resize(w, h)
+	MainMenu.menu:resize(w, h)
+end
+
 return MainMenu

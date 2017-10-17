@@ -45,6 +45,10 @@ function love.joystickreleased(joystick, button)
 	stack[#stack].joystickreleased(joystick, button)
 end
 
+function love.resize(w, h)
+	stack[#stack].resize(w, h)
+end
+
 function love.wheelmoved(x, y)
 	stack[#stack].wheelmoved(x, y)
 end

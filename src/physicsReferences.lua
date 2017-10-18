@@ -22,7 +22,7 @@ local catergoryOrder = {
 
 --Generate category values.
 local bit = 1
-for i,v in ipairs(catergoryOrder)
+for i,v in ipairs(catergoryOrder) do
 	categories[v] = bit
 	bit = bit *2
 end
@@ -41,11 +41,11 @@ masks = {
 local collision = {"missiles", "general"}
 local noCollision = {"cameras", "visual", "shields", "projectiles"}
 
-for i,v in ipairs(collision)
+for i,v in ipairs(collision) do
 	groups[v] = i
 end
 
-for i,v in ipairs(noCollision)
+for i,v in ipairs(noCollision) do
 	groups[v] = -i
 end
 

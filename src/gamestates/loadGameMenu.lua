@@ -35,7 +35,7 @@ function LoadGameMenu.update(dt)
 	end
 
 	if loadGameChoice then
-		InitWorld.init("saves/" .. loadGameChoice, true)
+		InitWorld.init("saves/" .. loadGameChoice, nil , true)
 		table.insert(LoadGameMenu.stack, InGame)
 	end
 end

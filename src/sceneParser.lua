@@ -15,6 +15,7 @@ function SceneParser.loadShip(shipName)
 end
 
 function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
+print("load scene")
 	local ships = {}
 	local index = 0
 	local ifShipString = false
@@ -23,11 +24,15 @@ function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
 	local locationString
 	local fileName
 	if ifSave then
-		fileName = string.format("%s.txt", sceneName)
+		fileName = string.format("/%s.txt", sceneName)
 	else
 		fileName = string.format("/res/scenes/%s.txt", sceneName)
 	end
 	if not love.filesystem.exists(fileName) then
+print("file does not exist")
+print(love.filesystem.exists("/saves"))
+print(fileName)
+print(love.filesystem.exists("/saves" .. fileName))
 		return {}, {}
 	end
 	for line in love.filesystem.lines(fileName) do
@@ -90,6 +95,7 @@ function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
 	spawnedShips = {}
 	local shipType = {}
 	local references = {}
+print(#ships)
 	for i,ship in ipairs(ships) do
 		spawnedShips[i], shipType[i] = Spawn.spawnShip(ship[1], world, ship[2], ship[3], ship[4])
 		references[ship[1]] = spawnedShips[i]

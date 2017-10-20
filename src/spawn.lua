@@ -1,13 +1,8 @@
 -- Spawn some ships or other objects based on a table containing all of the
 -- data required to produce them. This module is designed to be called in
 -- SceneParser and Saves.
+local PartRegistry = require("shipparts/partRegistry")
 local Part = require("shipparts/part")
-local Block = require("shipparts/block")
-local EngineBlock = require("shipparts/engineBlock")
-local GunBlock = require("shipparts/gunBlock")
-local AIBlock = require("shipparts/aiBlock")
-local PlayerBlock = require("shipparts/playerBlock")
-local Anchor = require("shipparts/anchor")
 local Tserial = require("tserial")
 local Util = require("util")
 local Structure = require("structure")
@@ -34,18 +29,6 @@ function Spawn.spawning(world, location, shipTable)
 	return structure, shipTable.shipType
 end
 
-function Spawn.createPart(partChar,data)
-	local part
-	if partChar == 'b'then part = Block.create()
-	elseif partChar == 'e' then part = EngineBlock.create()
-	elseif partChar == 'g' then part = GunBlock.create()
-	elseif partChar == 'a' then part = AIBlock.create(unpack(data))
-	elseif partChar == 'p' then part = PlayerBlock.create(unpack(data))
-	elseif partChar == 'n' then part = Anchor.create()
-	end
-	return part
-end
-
 function Spawn.loadShipFromFile(ship)
 	local contents, size
 	if ship then
@@ -57,6 +40,7 @@ function Spawn.loadShipFromFile(ship)
 end
 
 function Spawn.shipUnpack(shipString, stringLength, shipData)
+print("ship unpack")
 	local shipTable = {}
 	shipTable.parts = GridTable.create()
 	local loadDataTable = {}
@@ -139,7 +123,8 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 				j = 0
 				k = k + 1
 			elseif c == 'b' or c == 'e' or c == 'g' or c == 'a' or c == 'p' or c == 'n' then
-				local part = Spawn.createPart(c, shipData)
+print(c)
+				local part = PartRegistry.createPart(c, shipData)
 				local orientation
 				if nc == '*' then
 					if c == 'a' or c == 'p' or c == 'n'then
@@ -170,6 +155,7 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 end
 
 function Spawn.shipPack(structure, saveThePartData)
+	PartRegistry.setPartChars()
 	local string = ""
 	local xLow, xHigh, yLow, yHigh = 0, 0, 0, 0
 	local parts = structure.gridTable:loop()
@@ -199,6 +185,10 @@ function Spawn.shipPack(structure, saveThePartData)
 		local y = part.location[2]
 		local tempString, a, b
 		local loadData = {}
+
+		a = part.partChar
+print(a)
+--[[
 		--Find the string representation of the part.
 		if     getmetatable(part) == Block then a = "b"
 		elseif getmetatable(part) == EngineBlock then a = "e"
@@ -207,6 +197,7 @@ function Spawn.shipPack(structure, saveThePartData)
 		elseif getmetatable(part) == PlayerBlock then a = "p"
 		elseif getmetatable(part) == Anchor then a = "n"
 		end
+--]]
 
 		if part == structure.corePart or (not structure.corePart and i==1) then
 			b = "*"

@@ -23,6 +23,8 @@ function LoadGameMenu.update(dt)
 		buttonName = string.gsub(fileName, ".txt", "")
 		table.insert(LoadGameMenu.menu.buttons, buttonName)
 	end
+
+	LoadGameMenu.menu:update(dt)
 end
 
 function LoadGameMenu.draw()
@@ -38,7 +40,15 @@ function LoadGameMenu.mousepressed(x, y, mouseButton)
 end
 
 function LoadGameMenu.resize(w, h)
-	MainMenu.menu:resize(w, h)
+	LoadGameMenu.menu:resize(w, h)
+end
+
+function LoadGameMenu.mousemoved(x, y)
+	LoadGameMenu.menu:mousemoved(x, y)
+end
+
+function LoadGameMenu.wheelmoved(x, y)
+	LoadGameMenu.menu:wheelmoved(x, y)
 end
 
 return LoadGameMenu

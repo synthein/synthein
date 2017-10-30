@@ -8,7 +8,6 @@ local InitWorld = require("initWorld")
 local LoadGameMenu = {}
 setmetatable(LoadGameMenu, GameState)
 
-LoadGameMenu.font = love.graphics.newFont(18)
 local buttons = {}
 local files = love.filesystem.getDirectoryItems("saves")
 for i, fileName in pairs(files) do

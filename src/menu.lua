@@ -22,14 +22,12 @@ function Menu.create(x, y, size, buttons)
 end
 
 function Menu:getButtonAt(x, y)
-	print(self.scrollY)
 	if x > self.x and x < self.x + self.buttonWidth and y > self.y then
 		local yRef = y - self.y + self.scrollY
 		local index = math.floor(yRef/self.buttonSpacing) + 1
 		local remainder = yRef % self.buttonSpacing
 		if index > 0 and index <= #self.buttons and
 		   remainder < self.buttonSpacing then
-		   print(index) --debug
 			return index
 		end
 	end
@@ -44,19 +42,20 @@ function Menu:update(dt)
 	self.scrollY = self.scrollY + self.scrollVelocity * dt
 	self.scrollVelocity = self.scrollVelocity * 0.98
 
-	if self.scrollY < 0 then
-		self.scrollY = 0
-		if self.scrollVelocity < 0 then
-			self.scrollVelocity = 0
-		end
-	end
-
 	local menuHeight = self:getHeight()
-	local visibleHeight = love.graphics.getHeight
-	if self.scrollY > menuHeight - self.visibleHeight then
-		self.scrollY = 0
-		if self.scrollVelocity > menuHeight then
-			self.scrollVelocity = 0
+	if menuHeight > self.visibleHeight then
+		if self.scrollY < 0 then
+			self.scrollY = 0
+			if self.scrollVelocity < 0 then
+				self.scrollVelocity = 0
+			end
+		end
+
+		if self.scrollY > menuHeight - self.visibleHeight then
+			self.scrollY = menuHeight - self.visibleHeight
+			if self.scrollVelocity > menuHeight then
+				self.scrollVelocity = 0
+			end
 		end
 	end
 end
@@ -100,11 +99,13 @@ function Menu:mousemoved(x, y)
 end
 
 function Menu:wheelmoved(x, y)
-	local scrollSpeed = 150
-	if y < 0 then
-		self.scrollVelocity = -scrollSpeed
-	elseif y > 0 then
-		self.scrollVelocity = scrollSpeed
+	if self:getHeight() > self.visibleHeight then
+		local scrollSpeed = 150
+		if y < 0 then
+			self.scrollVelocity = scrollSpeed
+		elseif y > 0 then
+			self.scrollVelocity = -scrollSpeed
+		end
 	end
 end
 

@@ -40,7 +40,7 @@ function Menu:pressed(x, y)
 end
 
 function Menu:draw()
-	for i=self.selectedButton,Util.min(#self.buttons, self.drawableButtons) do
+	for i=self.selectedButton,math.min(#self.buttons, self.drawableButtons) do
 		love.graphics.setColor(100, 100, 100)
 		love.graphics.rectangle("fill", self.x,
 								self.y + self.buttonSpacing * (i - 1),

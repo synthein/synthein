@@ -29,6 +29,10 @@ function love.keyreleased(key, scancode)
 	stack[#stack].keyreleased(key)
 end
 
+function love.mousemoved(x, y)
+	stack[#stack].mousemoved(x, y)
+end
+
 function love.mousepressed(x, y, button, istouch)
 	stack[#stack].mousepressed(x, y, button)
 end

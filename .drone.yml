@@ -64,7 +64,7 @@ pipeline:
       event: push
       branch: master
     commands:
-      - apk update && apk add graphviz
+      - apk update && apk add graphviz-dev
       - luarocks GRAPHVIZ_DIR=/usr/share/graphviz install luagraph
       - scripts/depencency-graph.lua src/main.lua
       - 'curl -T out.png -uxordspar0:${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png'

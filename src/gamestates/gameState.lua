@@ -14,6 +14,15 @@ end
 function GameState.keypressed()
 end
 
+function GameState.keyreleased()
+end
+
+function GameState.mousemoved()
+end
+
+function GameState.wheelmoved()
+end
+
 function GameState.mousepressed()
 end
 

@@ -29,6 +29,10 @@ function love.keyreleased(key, scancode)
 	stack[#stack].keyreleased(key)
 end
 
+function love.mousemoved(x, y)
+	stack[#stack].mousemoved(x, y)
+end
+
 function love.mousepressed(x, y, button, istouch)
 	stack[#stack].mousepressed(x, y, button)
 end
@@ -43,6 +47,10 @@ end
 
 function love.joystickreleased(joystick, button)
 	stack[#stack].joystickreleased(joystick, button)
+end
+
+function love.resize(w, h)
+	stack[#stack].resize(w, h)
 end
 
 function love.wheelmoved(x, y)

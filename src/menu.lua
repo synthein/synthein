@@ -5,46 +5,116 @@ function Menu.create(x, y, size, buttons)
 	self = {}
 	setmetatable(self, Menu)
 
-	self.width = size * 100
-	self.height = size * 10
-	self.spacing = size * 15
+	self.buttonWidth = size * 100
+	self.buttonHeight = size * 10
+	self.buttonSpacing = size * 15
 	self.textHeight = size * 8
-	self.x = x - self.width/2
+	self.x = x - self.buttonWidth/2
 	self.y = y
+	self.visibleHeight = love.graphics.getHeight() - self.y
 	self.buttons = buttons
+	self.scrollY = 0
+	self.scrollVelocity = 0
+    self.selectedButton = 0
 	self.font = love.graphics.newFont(size * 7)
 
 	return self
 end
 
-function Menu:pressed(x, y)
-	if x > self.x and x < self.x + self.width and y > self.y then
-		local yRef = y - self.y
-		local index = math.floor(yRef/self.spacing) + 1
-		local remainder = yRef % self.spacing
+function Menu:getButtonAt(x, y)
+	if x > self.x and x < self.x + self.buttonWidth and y > self.y then
+		local yRef = y - self.y + self.scrollY
+		local index = math.floor(yRef/self.buttonSpacing) + 1
+		local remainder = yRef % self.buttonSpacing
 		if index > 0 and index <= #self.buttons and
-				remainder < self.spacing then
-			return self.buttons[index]
+		   remainder < self.buttonSpacing then
+			return index
 		end
 	end
 	return nil
 end
 
+function Menu:getHeight()
+	return #self.buttons * self.buttonSpacing
+end
+
+function Menu:update(dt)
+	self.scrollY = self.scrollY + self.scrollVelocity * dt
+	self.scrollVelocity = self.scrollVelocity * 0.98
+
+	local menuHeight = self:getHeight()
+	if menuHeight > self.visibleHeight then
+		if self.scrollY < 0 then
+			self.scrollY = 0
+			if self.scrollVelocity < 0 then
+				self.scrollVelocity = 0
+			end
+		end
+
+		if self.scrollY > menuHeight - self.visibleHeight then
+			self.scrollY = menuHeight - self.visibleHeight
+			if self.scrollVelocity > menuHeight then
+				self.scrollVelocity = 0
+			end
+		end
+	end
+end
+
 function Menu:draw()
-	for i,button in ipairs(self.buttons) do
-		love.graphics.setColor(100, 100, 100)
-		love.graphics.rectangle("fill", self.x,
-								self.y + self.spacing * (i - 1),
-							    self.width, self.height)
+	for i, button in ipairs(self.buttons) do
+		if i == self.selectedButton then
+			love.graphics.setColor(180, 180, 180)
+		else
+			love.graphics.setColor(100, 100, 100)
+		end
+		love.graphics.rectangle(
+			"fill",
+			self.x,
+			self.y + self.buttonSpacing * (i - 1) - self.scrollY,
+			self.buttonWidth, self.buttonHeight
+		)
 		love.graphics.setColor(255, 255, 255)
 		local previousFont = love.graphics.getFont()
 		love.graphics.setFont(self.font)
-		love.graphics.print(self.buttons[i], self.x + 10,
-							self.y + 75 * (i - 1) +
-								(self.height - self.textHeight)/2,
-							0, 1, 1, 0, 0, 0, 0)
+		love.graphics.print(
+			self.buttons[i],
+			self.x + 10,
+			self.y + 75 * (i - 1) + (self.buttonHeight - self.textHeight)/2 - self.scrollY,
+			0, 1, 1, 0, 0, 0, 0
+		)
 		love.graphics.setFont(previousFont)
 	end
+end
+
+function Menu:resize(w, h)
+	self.visibleHeight = h - self.y
+end
+
+function Menu:mousemoved(x, y)
+	index = self:getButtonAt(x, y)
+	if index == nil then
+		return
+	end
+	self.selectedButton = index
+end
+
+function Menu:wheelmoved(x, y)
+	if self:getHeight() > self.visibleHeight then
+		local scrollSpeed = 150
+		if y < 0 then
+			self.scrollVelocity = scrollSpeed
+		elseif y > 0 then
+			self.scrollVelocity = -scrollSpeed
+		end
+	end
+end
+
+function Menu:pressed(x, y)
+	index = self:getButtonAt(x, y)
+	if index == nil then
+		return nil
+	end
+	return self.buttons[index]
 end
 
 return Menu

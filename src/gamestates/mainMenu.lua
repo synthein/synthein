@@ -10,6 +10,11 @@ MainMenu.font = love.graphics.newFont(36)
 local buttons = {NewGameMenu, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
 MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
+print(MainMenu.menu.x)
+
+function MainMenu.update(dt)
+	MainMenu.menu:update(dt)
+end
 
 function MainMenu.draw()
 	local previousFont = love.graphics.getFont()
@@ -28,6 +33,18 @@ function MainMenu.mousepressed(x, y, mouseButton)
 			end
 		end
 	end
+end
+
+function MainMenu.resize(w, h)
+	MainMenu.menu:resize(w, h)
+end
+
+function MainMenu.mousemoved(x, y)
+	MainMenu.menu:mousemoved(x, y)
+end
+
+function MainMenu.wheelmoved(x, y)
+	MainMenu.menu:wheelmoved(x, y)
 end
 
 return MainMenu

@@ -40,7 +40,6 @@ function Spawn.loadShipFromFile(ship)
 end
 
 function Spawn.shipUnpack(shipString, stringLength, shipData)
-print("ship unpack")
 	local shipTable = {}
 	shipTable.parts = GridTable.create()
 	local loadDataTable = {}
@@ -123,7 +122,6 @@ print("ship unpack")
 				j = 0
 				k = k + 1
 			elseif c == 'b' or c == 'e' or c == 'g' or c == 'a' or c == 'p' or c == 'n' then
-print(c)
 				local part = PartRegistry.createPart(c, shipData)
 				local orientation
 				if nc == '*' then
@@ -187,7 +185,6 @@ function Spawn.shipPack(structure, saveThePartData)
 		local loadData = {}
 
 		a = part.partChar
-print(a)
 --[[
 		--Find the string representation of the part.
 		if     getmetatable(part) == Block then a = "b"

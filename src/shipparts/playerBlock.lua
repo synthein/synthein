@@ -1,7 +1,6 @@
 local Part = require("shipparts/part")
 local Engine = require("shipparts/engine")
 local Gun = require("shipparts/gun")
-local Settings = require("settings")
 
 local PlayerBlock = {}
 PlayerBlock.__index = PlayerBlock

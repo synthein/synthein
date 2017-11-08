@@ -1,8 +1,6 @@
 local Particles = require("particles")
 local Shot = require("shot")
 local Structure = require("structure")
-local Util = require("util")
-local Settings = require("settings")
 
 local World = {}
 World.__index = World

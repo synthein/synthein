@@ -1,6 +1,4 @@
-local Util = require("util")
 local Controls = require("controls")
-local World = require("world")
 local Screen = require("screen")
 local Selection = require("selection")
 

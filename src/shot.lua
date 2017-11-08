@@ -1,5 +1,4 @@
 local Util = require("util")
-local Screen = require("screen")
 
 local Shot = {}
 Shot.__index = Shot

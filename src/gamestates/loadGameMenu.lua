@@ -1,7 +1,6 @@
 local GameState = require("gamestates/gameState")
 local InGame = require("gamestates/inGame")
 local Menu = require("menu")
-local SceneParser = require("sceneParser")
 
 local InitWorld = require("initWorld")
 

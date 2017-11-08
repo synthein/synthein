@@ -1,6 +1,3 @@
-local Part = require("shipparts/part")
-local AI = require("ai")
-local AIBlock = require("shipparts/aiBlock")
 local Util = require("util")
 local Particles = require("particles")
 local GridTable = require("gridTable")

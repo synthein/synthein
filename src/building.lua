@@ -1,6 +1,4 @@
 local Util = require("util")
-local World = require("world")
-local Screen = require("screen")
 
 local Building = {}
 Building.__index = Building

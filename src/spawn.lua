@@ -2,12 +2,9 @@
 -- data required to produce them. This module is designed to be called in
 -- SceneParser and Saves.
 local PartRegistry = require("shipparts/partRegistry")
-local Part = require("shipparts/part")
 local Tserial = require("tserial")
 local Util = require("util")
 local Structure = require("structure")
-local World = require("world")
-local AI = require("ai")
 local GridTable = require("gridTable")
 
 local Spawn = {}

@@ -1,5 +1,3 @@
-local Screen = require("screen")
-
 local Particles = {}
 Particles.__index = Particles
 

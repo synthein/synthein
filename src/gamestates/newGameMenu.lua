@@ -4,7 +4,6 @@ local Menu = require("menu")
 
 local World = require("world")
 local InitWorld = require("initWorld")
-local AI = require("ai")
 
 local NewGameMenu = {}
 setmetatable(NewGameMenu, GameState)

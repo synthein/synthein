@@ -4,10 +4,6 @@ local InGame = require("gamestates/inGame")
 local Player = require("player")
 local SceneParser = require("sceneParser")
 local World = require("world")
---local Structure = require("structure")
---local Shot = require("shot")
---local Particles = require("particles")
---local AI = require("ai")
 
 local InitWorld = {}
 

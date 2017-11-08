@@ -42,22 +42,6 @@ function Util.absVal(x)
 	return x
 end
 
-function Util.max(a, b)
-	if a > b then
-		return a
-	else
-		return b
-	end
-end
-
-function Util.min(a,b)
-	if a < b then
-		return a
-	else
-		return b
-	end
-end
-
 function Util.packLocation(input)
 	location = {}
 	if input.body then

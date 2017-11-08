@@ -29,6 +29,9 @@ end
 function GameState.joystickreleased()
 end
 
+function GameState.mousemoved()
+end
+
 function GameState.wheelmoved()
 end
 

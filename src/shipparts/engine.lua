@@ -67,8 +67,7 @@ function Engine:update(part, enginesInfo)
 		if self.isActive then
 			fx, fy = body:getWorldVector(fx, fy)
 			local x, y = unpack(part.location)
-			x, y = body:getWorldPoints(x * Settings.PARTSIZE,
-									   y * Settings.PARTSIZE)
+			x, y = body:getWorldPoints(x, y)
 			body:applyForce(fx * self.thrust, fy * self.thrust, x, y)
 
 			if self.torque then

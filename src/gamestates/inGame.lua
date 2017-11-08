@@ -5,7 +5,6 @@ local World = require("world")
 local Screen = require("screen")
 local Util = require("util")
 local SceneParser = require("sceneParser")
-local Settings = require("settings")
 
 local GameState = require("gamestates/gameState")
 
@@ -183,7 +182,7 @@ function InGame.update(dt)
 						end
 						local pV = {-uV[2], uV[1]}
 						local r = 2 * (math.random() - 0.5)
-						local m = 50 * Settings.PARTSIZE / player.camera.zoom
+						local m = 100 / player.camera.zoom
 						local netV = {m * (uV[1] + r * pV[1]),
 									  m * (uV[2] + r * pV[2])}
 						location[1] = location[1] + netV[1]

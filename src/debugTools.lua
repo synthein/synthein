@@ -2,12 +2,6 @@ local Structure = require("structure")
 local Spawn = require("spawn")
 local PartRegistry = require("shipparts/partRegistry")
 
--- Ship parts
-local AIBlock = require("shipparts/aiBlock")
-local Block = require("shipparts/block")
-local EngineBlock = require("shipparts/engineBlock")
-local GunBlock = require("shipparts/gunBlock")
-
 local Debug = {}
 
 -- This should be called when the game is initialized so that the debug tools

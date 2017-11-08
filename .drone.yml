@@ -61,7 +61,7 @@ pipeline:
   generate-dependency-graph:
     image: abaez/luarocks:latest
     when:
-      event: push
+      event: never
       branch: master
     commands:
       - apk update && apk add graphviz-dev

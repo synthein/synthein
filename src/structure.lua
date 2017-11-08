@@ -1,5 +1,4 @@
 local Util = require("util")
-local Particles = require("particles")
 local GridTable = require("gridTable")
 local Settings = require("settings")
 local StructureMath = require("structureMath")
@@ -61,12 +60,10 @@ function Structure.create(worldInfo, location, shipTable)
 	end
 	self.body:setUserData(self)
 
-	if shipTable.parts then
-		local function callback(part, structure)
-			structure:addFixture(part)
-		end
-		self.gridTable:loop(callback, self)
+	local function callback(part, structure)
+		structure:addFixture(part)
 	end
+	self.gridTable:loop(callback, self)
 
 	return self
 end

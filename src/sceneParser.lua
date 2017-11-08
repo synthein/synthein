@@ -15,7 +15,6 @@ function SceneParser.loadShip(shipName)
 end
 
 function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
-print("load scene")
 	local ships = {}
 	local index = 0
 	local ifShipString = false
@@ -29,10 +28,7 @@ print("load scene")
 		fileName = string.format("/res/scenes/%s.txt", sceneName)
 	end
 	if not love.filesystem.exists(fileName) then
-print("file does not exist")
-print(love.filesystem.exists("/saves"))
-print(fileName)
-print(love.filesystem.exists("/saves" .. fileName))
+		print(fileName, "file does not exist")
 		return {}, {}
 	end
 	for line in love.filesystem.lines(fileName) do

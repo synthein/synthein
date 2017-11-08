@@ -32,6 +32,9 @@ function PartRegistry.setPartChars()
 end
 
 function PartRegistry.createPart(partChar,data)
+	if not data then
+		data = {}
+	end
 	return partsList[partChar].create(unpack(data))
 end
 

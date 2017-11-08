@@ -1,7 +1,6 @@
-local AI = require("ai")
 local Structure = require("structure")
 local Spawn = require("spawn")
-local Screen = require("screen")
+local PartRegistry = require("shipparts/partRegistry")
 
 -- Ship parts
 local AIBlock = require("shipparts/aiBlock")
@@ -82,29 +81,30 @@ function Debug.keyboard(key)
 	local physics = world.physics
 	for i, player in ipairs(Debug.players) do
 		local cameraX, cameraY = player.camera:getPosition()
+		local part, location
 		-- Spawn a ship part.
 		if key == "u" then
 			-- Spawn a block
-			local object = Structure.create(world.info, {cameraX + 50, cameraY + 100}, Block.create())
-			world:addObject(object, chunkLocation, "structures")
+			location = {cameraX, cameraY + 5}
+			part = PartRegistry.createPart('b')
 		elseif key == "i" then
 			-- Spawn an engine
-			local object = Structure.create(world.info, {cameraX + 112, cameraY}, EngineBlock.create())
-			world:addObject(object, chunkLocation, "structures")
+			location = {cameraX + 5, cameraY + 5}
+			part = PartRegistry.createPart('e')
 		elseif key == "o" then
 			-- Spawn a gun
-			local object = Structure.create(world.info, {cameraX + 50, cameraY - 100}, GunBlock.create())
-			world:addObject(object, chunkLocation, "structures")
+			location = {cameraX - 5, cameraY + 5}
+			part = PartRegistry.createPart('g')
 
 		--Spawn an AI
 		elseif key == "1" then
 			-- Team 1
-			local object = Structure.create(world.info, {cameraX - 200, cameraY + 200}, AIBlock.create(player.ship:getTeam()))
-			world:addObject(object, chunkLocation, "structures")
+			location = {cameraX - 10, cameraY + 10}
+			part = PartRegistry.createPart('a', {player.ship:getTeam()})
 		elseif key == "2" then
 			-- Team 2
-			local object = Structure.create(world.info, {cameraX + 200, cameraY + 200}, AIBlock.create(-3))
-			world:addObject(object, chunkLocation, "structures")
+			location = {cameraX + 10, cameraY + 10}
+			part = PartRegistry.createPart('a', {-3})
 
 		elseif key == "n" then
 			Debug.spawn = true
@@ -115,6 +115,11 @@ function Debug.keyboard(key)
 				local string = Spawn.shipPack(Debug.player.ship, true)
 				love.filesystem.write("playerShip.txt", string)
 			end
+		end
+
+		if part and location then
+			local object = Structure.create(world.info, location, part)
+			world:addObject(object, nil, "structures")
 		end
 	end
 end

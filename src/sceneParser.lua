@@ -14,24 +14,15 @@ local numStr = "-?[%d.e]*"
 function SceneParser.loadShip(shipName)
 end
 
-function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
+function SceneParser.loadScene(sceneLines, world, location, inputs)
 	local ships = {}
 	local index = 0
 	local ifShipString = false
 	local shipString = ""
 	local shipID
 	local locationString
-	local fileName
-	if ifSave then
-		fileName = string.format("/%s.txt", sceneName)
-	else
-		fileName = string.format("/res/scenes/%s.txt", sceneName)
-	end
-	if not love.filesystem.exists(fileName) then
-		print(fileName, "file does not exist")
-		return {}, {}
-	end
-	for line in love.filesystem.lines(fileName) do
+
+	for line in sceneLines do
 		if ifShipString then
 			if string.match(line, "%}") then
 				if not string.match(line, "%s%}") then

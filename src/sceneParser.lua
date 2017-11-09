@@ -102,7 +102,7 @@ print(#ships)
 	return spawnedShips, shipType
 end
 
-function SceneParser.saveScene(sceneName, world)
+function SceneParser.saveScene(world)
 	local fileString = ""
 	local references = {}
 	local structures = world.objects.structures
@@ -128,14 +128,8 @@ function SceneParser.saveScene(sceneName, world)
 					 "{\n" .. Spawn.shipPack(structures[i], true) .. 
 					 "\n}\n"
 	end
-	if not love.filesystem.exists(sceneName .. ".txt") then
-		file = love.filesystem.newFile(sceneName .. ".txt")
-		file:open("w")
-		file:write(fileString)
-		file:close()
-	else
-		love.filesystem.write(sceneName .. ".txt", fileString)
-	end
+
+	return fileString
 end
 
 return SceneParser

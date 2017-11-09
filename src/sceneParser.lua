@@ -1,4 +1,4 @@
--- This module loads scenes and ship files from res/ships and res/scenes.
+-- SceneParser serializes and deserializes scenes and ships as strings.
 local Spawn = require("spawn")
 local Util = require("util")
 
@@ -94,7 +94,7 @@ print(#ships)
 end
 
 function SceneParser.saveScene(world)
-	local fileString = ""
+	local sceneString = ""
 	local references = {}
 	local structures = world.objects.structures
 	for i,structure in ipairs(structures) do
@@ -113,14 +113,14 @@ function SceneParser.saveScene(world)
 			leader = references[structure.corePart.leader]
 		end
 		
-		fileString = fileString .. references[structure] .. 
+		sceneString = sceneString .. references[structure] .. 
 					 Util.packLocation(structures[i]) .. 
 					 Util.packData({team, leader}) .. "\n" ..
 					 "{\n" .. Spawn.shipPack(structures[i], true) .. 
 					 "\n}\n"
 	end
 
-	return fileString
+	return sceneString
 end
 
 return SceneParser

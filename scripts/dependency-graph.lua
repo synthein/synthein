@@ -9,39 +9,49 @@
 -- use the `dot` command.
 
 function printUsage()
-	print('Usage: dependency-graph.lua [--text | --dot] [ROOT_FILE]')
+	print('Usage: dependency-graph.lua [--text | --dot] [--dir ROOT_DIR] [ROOT_FILE]')
 	print('If ROOT_FILE is unspecified, main.lua will be used.')
 end
 
-function main(arg)
+function main(args)
 	local dot
-	local rootFile
-	for i, option in ipairs(arg) do
-		if option == '--text' then
-			dot = false
-		elseif option == '--dot' then
-			dot = true
+	local dir, file
+	local skip
+	for i, arg in ipairs(args) do
+		if skip then
+			skip = false
 		else
-			if rootFile == nil then
-				rootFile = string.gsub(option, '%.lua$', '')
+			if arg == '--text' then
+				dot = false
+			elseif arg == '--dot' then
+				dot = true
+			elseif arg == '--dir' then
+				dir = args[i+1]
+				skip = true
 			else
-				print('Unrecognized argument: ' .. option)
-				printUsage()
-				os.exit(1)
+				if file == nil then
+					file = string.gsub(arg, '%.lua$', '')
+				else
+					print('Unrecognized argument: ' .. arg)
+					printUsage()
+					os.exit(1)
+				end
 			end
 		end
 	end
 
-	if rootFile == nil then
-		rootFile = 'main'
-	end
+	file = file or 'main'
 
-	local dir, file
-	if string.match(rootFile, '/') then
-		dir, file = string.match(rootFile, '(.*/)([^/]*)$')
+	if dir then
+		if not string.match(dir, '/$') then
+			dir = dir .. '/'
+		end
 	else
-		dir = ''
-		file = rootFile
+		if string.match(file, '/') then
+			dir, file = string.match(file, '(.*/)([^/]*)$')
+		else
+			dir = './'
+		end
 	end
 
 	local dependencies = {}

@@ -1,4 +1,4 @@
--- This module loads scenes and ship files from res/ships and res/scenes.
+-- SceneParser serializes and deserializes scenes and ships as strings.
 local Spawn = require("spawn")
 local Util = require("util")
 
@@ -14,24 +14,15 @@ local numStr = "-?[%d.e]*"
 function SceneParser.loadShip(shipName)
 end
 
-function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
+function SceneParser.loadScene(sceneLines, world, location, inputs)
 	local ships = {}
 	local index = 0
 	local ifShipString = false
 	local shipString = ""
 	local shipID
 	local locationString
-	local fileName
-	if ifSave then
-		fileName = string.format("/%s.txt", sceneName)
-	else
-		fileName = string.format("/res/scenes/%s.txt", sceneName)
-	end
-	if not love.filesystem.exists(fileName) then
-		print(fileName, "file does not exist")
-		return {}, {}
-	end
-	for line in love.filesystem.lines(fileName) do
+
+	for line in sceneLines do
 		if ifShipString then
 			if string.match(line, "%}") then
 				if not string.match(line, "%s%}") then
@@ -102,8 +93,8 @@ print(#ships)
 	return spawnedShips, shipType
 end
 
-function SceneParser.saveScene(sceneName, world)
-	local fileString = ""
+function SceneParser.saveScene(world)
+	local sceneString = ""
 	local references = {}
 	local structures = world.objects.structures
 	for i,structure in ipairs(structures) do
@@ -122,20 +113,14 @@ function SceneParser.saveScene(sceneName, world)
 			leader = references[structure.corePart.leader]
 		end
 		
-		fileString = fileString .. references[structure] .. 
+		sceneString = sceneString .. references[structure] .. 
 					 Util.packLocation(structures[i]) .. 
 					 Util.packData({team, leader}) .. "\n" ..
 					 "{\n" .. Spawn.shipPack(structures[i], true) .. 
 					 "\n}\n"
 	end
-	if not love.filesystem.exists(sceneName .. ".txt") then
-		file = love.filesystem.newFile(sceneName .. ".txt")
-		file:open("w")
-		file:write(fileString)
-		file:close()
-	else
-		love.filesystem.write(sceneName .. ".txt", fileString)
-	end
+
+	return sceneString
 end
 
 return SceneParser

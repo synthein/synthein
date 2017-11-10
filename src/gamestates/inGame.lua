@@ -5,6 +5,7 @@ local World = require("world")
 local Screen = require("screen")
 local Util = require("util")
 local SceneParser = require("sceneParser")
+local Gamesave = require("gamesave")
 
 local GameState = require("gamestates/gameState")
 
@@ -203,7 +204,11 @@ function InGame.update(dt)
 
 	-- Save the game.
 	if not typingSaveName and #saveName > 0 then
-		SceneParser.saveScene("saves/" .. saveName, world)
+                local ok, message = Gamesave.save(saveName, world)
+                if not ok then
+                  print("Failed to save the game: " .. message)
+                end
+
 		saveName = ""
 	end
 

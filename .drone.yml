@@ -82,7 +82,7 @@ pipeline:
     message: >
       <b>Build {{ build.status }}</b>
 
-      <a href="{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}">{{ repo.owner }}/{{ repo.name }}</a>
-      in branch <b>{{ commit.branch }}</b> by <b>{{ commit.author }}</b>.
+      <a href="{{ build.link }}">{{ repo.owner }}/{{ repo.name }}</a> in branch
+      <b>{{ commit.branch }}</b> by <b>{{ commit.author }}</b>.
 
       {{ commit.message }}

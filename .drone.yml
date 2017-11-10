@@ -59,14 +59,13 @@ pipeline:
       - scripts/package-windows.sh
 
   generate-dependency-graph:
-    image: abaez/luarocks:latest
+    image: abaez/lua:latest
     when:
       event: never
       branch: master
     commands:
-      - apk update && apk add graphviz-dev
-      - luarocks GRAPHVIZ_DIR=/usr/share/graphviz GRAPHVIZ_INCDIR=/usr/include install luagraph
-      - scripts/dependency-graph.lua src/main.lua
+      - apk update && apk add graphviz
+      - scripts/dependency-graph.lua src/main.lua | dot -T png > out.png
       - 'curl -T out.png -uxordspar0:${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png'
 
   telegram:

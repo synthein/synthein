@@ -67,7 +67,7 @@ pipeline:
     commands:
       - apk update && apk add graphviz
       - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
-      - 'curl -T out.png -uxordspar0:$${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png'
+      - 'curl --fail -T out.png -uxordspar0:$${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png'
 
   telegram:
     image: appleboy/drone-telegram

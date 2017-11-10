@@ -65,7 +65,7 @@ pipeline:
       branch: master
     commands:
       - apk update && apk add graphviz
-      - scripts/dependency-graph.lua src/main.lua | dot -T png > out.png
+      - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
       - 'curl -T out.png -uxordspar0:${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png'
 
   telegram:

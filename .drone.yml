@@ -61,7 +61,7 @@ pipeline:
   generate-dependency-graph:
     image: abaez/lua:latest
     when:
-      event: never
+      event: push
       branch: master
     commands:
       - apk update && apk add graphviz

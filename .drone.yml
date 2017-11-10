@@ -60,6 +60,7 @@ pipeline:
 
   generate-dependency-graph:
     image: abaez/lua:latest
+    secrets: [ BINTRAY_API_KEY ]
     when:
       event: push
       branch: master

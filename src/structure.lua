@@ -1,12 +1,9 @@
-local Util = require("util")
 local GridTable = require("gridTable")
 local Settings = require("settings")
 local StructureMath = require("structureMath")
 
 local Structure = {}
 Structure.__index = Structure
-
---Structure.PARTSIZE = 20
 
 function Structure.create(worldInfo, location, shipTable)
 	local self = {}

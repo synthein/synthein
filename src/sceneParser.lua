@@ -9,7 +9,7 @@ local lstStr = "%[[-%w., %*]*%]"
 local varStr = "[-%w. %*]*[,%]]"
 local namStr = "%a[%w]+"
 --local strStr = '".*"'
-local numStr = "-?[%d.e]*"
+local numStr = "[-%d.e]*"
 
 function SceneParser.loadShip(shipName)
 end
@@ -91,7 +91,6 @@ function SceneParser.loadScene(sceneName, world, location, ifSave, inputs)
 	spawnedShips = {}
 	local shipType = {}
 	local references = {}
-print(#ships)
 	for i,ship in ipairs(ships) do
 		spawnedShips[i], shipType[i] = Spawn.spawnShip(ship[1], world, ship[2], ship[3], ship[4])
 		references[ship[1]] = spawnedShips[i]

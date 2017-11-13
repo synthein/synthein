@@ -32,7 +32,7 @@ end
 function LoadGameMenu.mousepressed(x, y, mouseButton)
 	local loadGameChoice = LoadGameMenu.menu:pressed(x, y)
 	if loadGameChoice then
-		InitWorld.init(loadGameChoice, nil , true)
+		InitWorld.init(loadGameChoice, {{false}} , true)
 		table.insert(LoadGameMenu.stack, InGame)
 	end
 end

@@ -1,8 +1,5 @@
 local GameState = require("gamestates/gameState")
 local MainMenu = require("gamestates/mainMenu")
-local InGame = require("gamestates/inGame")
-local NewGameMenu = require("gamestates/newGameMenu")
-local LoadGameMenu = require("gamestates/loadGameMenu")
 
 local Debug = require("debugTools")
 

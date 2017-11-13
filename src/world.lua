@@ -11,11 +11,9 @@ World.objectTypes = {
 	particles	= Particles
 }
 
-World.playerHostility = {{false}}
-
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
-function World.create()
+function World.create(playerHostility)
 	self = {}
 	setmetatable(self, World)
 
@@ -32,7 +30,7 @@ function World.create()
 	generalHostility[-4] = true  --Federation
 	
 	self.events = {create = {}}
-	local teamHostility = {playerHostility = World.playerHostility,
+	local teamHostility = {playerHostility = playerHostility,
 						   general = generalHostility}
 	function teamHostility:test(team, otherTeam)
 		local max = math.max(team, otherTeam)

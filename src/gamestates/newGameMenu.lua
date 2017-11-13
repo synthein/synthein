@@ -1,8 +1,6 @@
 local GameState = require("gamestates/gameState")
 local InGame = require("gamestates/inGame")
 local Menu = require("menu")
-
-local World = require("world")
 local InitWorld = require("initWorld")
 
 local NewGameMenu = {}
@@ -24,21 +22,26 @@ end
 function NewGameMenu.mousepressed(x, y, mouseButton)
 	local button = NewGameMenu.menu:pressed(x, y)
 	if mouseButton == 1 then
+		local start = true
 		if button == "Single Player" then
-			InitWorld.init("startScene", false)
-			table.insert(NewGameMenu.stack, InGame)
+			InitWorld.init("startScene", {{false}}, false)
 		elseif button == "COOP" then
-			InitWorld.init("startSceneCOOP", false)
-			table.insert(NewGameMenu.stack, InGame)
+			InitWorld.init("startSceneCOOP",
+						   {{false, false}, {false, false}},
+						   false)
 		elseif button == "Allied" then
-			InitWorld.init("startSceneTwoPlayer", false)
-			World.playerHostility = {{false, false},
-									 {false, false}}
-			table.insert(NewGameMenu.stack, InGame)
+			InitWorld.init("startSceneTwoPlayer",
+						   {{false, false}, {false, false}},
+						   false)
 		elseif button == "VS" then
-			InitWorld.init("startSceneTwoPlayer", false)
-			World.playerHostility = {{false, true},
-									 {true, false}}
+			InitWorld.init("startSceneTwoPlayer",
+						   {{false, true}, {true, false}},
+						   false)
+		else
+			start = false
+		end
+
+		if start then
 			table.insert(NewGameMenu.stack, InGame)
 		end
 	end

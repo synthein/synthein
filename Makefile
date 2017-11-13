@@ -11,10 +11,13 @@ appimage: love
 mac: love
 	${env} scripts/package-mac.sh
 
+snap: love
+	${env} scripts/package-linux-snap.sh
+
 windows: love
 	${env} scripts/package-windows.sh
 
 clean:
 	rm -rf build/
 
-.PHONY: clean
+.PHONY: all appimage clean love mac snap windows

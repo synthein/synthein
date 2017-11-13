@@ -59,15 +59,15 @@ pipeline:
       - scripts/package-windows.sh
 
   generate-dependency-graph:
-    image: abaez/luarocks:latest
+    image: abaez/lua:latest
+    secrets: [ BINTRAY_API_KEY ]
     when:
-      event: never
+      event: push
       branch: master
     commands:
-      - apk update && apk add graphviz-dev
-      - luarocks GRAPHVIZ_DIR=/usr/share/graphviz GRAPHVIZ_INCDIR=/usr/include install luagraph
-      - scripts/dependency-graph.lua src/main.lua
-      - 'curl -T out.png -uxordspar0:${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png'
+      - apk update && apk add graphviz
+      - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
+      - 'curl --fail -T out.png -uxordspar0:$${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png?publish=1&override=1'
 
   telegram:
     image: appleboy/drone-telegram
@@ -77,13 +77,12 @@ pipeline:
       event: push
       branch: master
       status: [failure, success, error]
-    token: "${TELEGRAM_TOKEN}"
     to: -1001143861626
     format: html
     message: >
       <b>Build {{ build.status }}</b>
 
-      <a href="{{ system.link_url }}/{{ repo.owner }}/{{ repo.name }}/{{ build.number }}">{{ repo.owner }}/{{ repo.name }}</a>
-      in branch <b>{{ build.branch }}</b> by <b>{{ build.author }}</b>.
+      <a href="{{ build.link }}">{{ repo.owner }}/{{ repo.name }}</a> in branch
+      <b>{{ commit.branch }}</b> by <b>{{ commit.author }}</b>.
 
-      {{ build.message }}
+      {{ commit.message }}

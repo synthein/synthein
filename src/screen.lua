@@ -12,6 +12,10 @@ function Screen.createCamera()
 	return newCamera
 end
 
+function Screen.clearCameras()
+	Screen.cameras = {}
+end
+
 function Screen.arrange()
 	local n = #Screen.cameras
 	local screenWidth = love.graphics.getWidth()

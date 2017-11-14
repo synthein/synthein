@@ -1,0 +1,45 @@
+name: synthein
+version: '{{version}}'
+summary: A space ship building and combat game
+description: |
+    Synthein is a game about blowing up space ships and using their parts to
+    make your space ship bigger and better.
+icon: desktop/icon.png
+
+grade: '{{grade}}'
+confinement: devmode
+
+parts:
+    synthein:
+        source: ../build
+        plugin: dump
+        stage:
+            - bin/*
+            - usr/*
+        prime:
+            - bin/*
+            - usr/*
+    love:
+        source: ../build/love
+        plugin: dump
+        stage-packages:
+            - libluajit-5.1-2
+            - libfreetype6
+            - libmodplug1
+            - libmpg123-0
+            - libogg0
+            - libopenal1
+            - libphysfs1
+            - libsdl2-2.0-0
+            - libtheora0
+            - libvorbisfile3
+            - zlib1g
+        stage:
+            - usr/*
+        prime:
+            - usr/*
+
+apps:
+    synthein:
+        command: bin/synthein
+        desktop: usr/share/applications/synthein.desktop

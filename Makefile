@@ -1,21 +1,24 @@
-env = SYNTHEIN_VERSION=devel LOVE_VERSION=0.10.2
+synthein_version = devel
+love_version = 0.10.2
 
-all: love mac windows
+env = SYNTHEIN_VERSION=$(synthein_version) LOVE_VERSION=$(love_version)
 
-love:
-	${env} scripts/package-love.sh
+love: build/synthein-$(synthein_version).love
+
+build/synthein-$(synthein_version).love: src
+	$(env) scripts/package-love.sh
 
 appimage: love
-	${env} scripts/package-linux-appimage.sh
+	$(env) scripts/package-linux-appimage.sh
 
 mac: love
-	${env} scripts/package-mac.sh
+	$(env) scripts/package-mac.sh
 
 snap: love
-	${env} scripts/package-linux-snap.sh
+	$(env) scripts/package-linux-snap.sh
 
 windows: love
-	${env} scripts/package-windows.sh
+	$(env) scripts/package-windows.sh
 
 clean:
 	rm -rf build/

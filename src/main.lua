@@ -3,12 +3,11 @@ local MainMenu = require("gamestates/mainMenu")
 
 local Debug = require("debugTools")
 
-local stack = {}
+local stack = {MainMenu}
 
 function love.load()
 	debugmode = true
 	GameState.setStack(stack)
-	table.insert(stack, MainMenu)
 end
 
 function love.resize(w, h)

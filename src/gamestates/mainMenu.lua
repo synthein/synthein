@@ -10,7 +10,6 @@ MainMenu.font = love.graphics.newFont(36)
 local buttons = {NewGameMenu, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
 MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
-print(MainMenu.menu.x)
 
 function MainMenu.update(dt)
 	MainMenu.menu:update(dt)
@@ -29,7 +28,7 @@ function MainMenu.mousepressed(x, y, mouseButton)
 	if mouseButton == 1 then
 		for i, name in ipairs(buttonNames) do
 			if button == name then
-				table.insert(MainMenu.stack, buttons[i])
+				GameState.stackPush(buttons[i])
 			end
 		end
 	end

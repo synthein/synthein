@@ -42,7 +42,7 @@ function NewGameMenu.mousepressed(x, y, mouseButton)
 		end
 
 		if start then
-			table.insert(NewGameMenu.stack, InGame)
+			GameState.stackReplace(InGame)
 		end
 	end
 end

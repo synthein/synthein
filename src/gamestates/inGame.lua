@@ -20,7 +20,7 @@ local second = 0
 
 local pauseMenu = {}
 pauseMenu.font = love.graphics.newFont(18)
-pauseMenu.buttons = {"Save", "Quit"}
+pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 local typingSaveName = false
 local saveName = ""
 
@@ -91,8 +91,8 @@ function InGame.mousepressed(x, y, button)
 
 			if selection == "Save" then
 				typingSaveName = true
-			elseif selection == "Load" then
-				return LoadGameMenu
+			elseif selection == "Main Menu" then
+				GameState.stackPop()
 			elseif selection == "Quit" then
 				love.event.quit()
 			end

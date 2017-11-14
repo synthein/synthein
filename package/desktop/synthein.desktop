@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Synthein
+Comment=A space ship building and combat game
+Exec=synthein
+Icon=synthein
+Terminal=false
+Type=Application
+Categories=Game;StrategyGame;
+GenericName=
+Keywords=game

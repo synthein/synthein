@@ -33,8 +33,19 @@ pipeline:
     commands:
       - export SYNTHEIN_VERSION=${DRONE_TAG}
       - export LOVE_VERSION=0.10.2
-      - apt-get update && apt-get install curl zip
+      - apt-get update && apt-get -y install curl zip
       - scripts/package-linux-appimage.sh
+
+  package-linux-snap:
+    image: ubuntu:16.04
+    when:
+      event: tag
+      branch: refs/tags/*
+    commands:
+      - export SYNTHEIN_VERSION=${DRONE_TAG}
+      - export LOVE_VERSION=0.10.2
+      - apt-get update && apt-get -y install binutils curl xz-utils
+      - scripts/package-linux-snap.sh
 
   package-mac:
     image: alpine:latest

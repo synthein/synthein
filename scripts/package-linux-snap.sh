@@ -26,8 +26,19 @@ fi
 ar -p love_${LOVE_VERSION}ppa1_amd64.deb data.tar.xz | tar -xJ
 ar -p liblove0_${LOVE_VERSION}ppa1_amd64.deb data.tar.xz | tar -xJ
 
-echo "Building snap package."
+echo "Preparing Synthein for packaging."
 cd "${ROOT_DIR}/build"
+install -D synthein-${SYNTHEIN_VERSION}.love usr/share/games/synthein/synthein.love
+cat > synthein.sh <<END
+#!/bin/sh
+exec love /usr/share/games/synthein/synthein.love "$@"
+END
+install -D -m0755 synthein.sh bin/synthein
+install -D -m0644 ../package/desktop/synthein.desktop usr/share/applications/synthein.desktop
+install -D -m0644 ../package/desktop/icon.png usr/share/pixmaps/icon.png
+
+echo "Building snap package."
+cd "${ROOT_DIR}/package"
 cp snap/snapcraft.yaml.template snap/snapcraft.yaml
 sed -i "s/{{version}}/${SYNTHEIN_VERSION}/" snap/snapcraft.yaml
 if [ ${SYNTHEIN_VERSION} = 'devel' ]; then
@@ -36,15 +47,5 @@ else
   sed -i "s/{{grade}}/stable/" snap/snapcraft.yaml
 fi
 
-# Synthein files
-install -D synthein-${SYNTHEIN_VERSION}.love usr/share/games/synthein/synthein.love
-cat > synthein.sh <<END
-#!/bin/sh
-exec love /usr/share/games/synthein/synthein.love "$@"
-END
-install -D -m0755 synthein.sh bin/synthein
-
 snapcraft clean
-snapcraft
-
-echo "Built $(find . -name synthein*.snap)."
+snapcraft snap -o "${ROOT_DIR}/build/synthein_${SYNTHEIN_VERSION}_amd64.snap"

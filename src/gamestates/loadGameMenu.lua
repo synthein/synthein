@@ -1,8 +1,7 @@
 local GameState = require("gamestates/gameState")
-local InGame = require("gamestates/inGame")
 local Menu = require("menu")
 
-local InitWorld = require("initWorld")
+local InitWorld = require("gamestates/initWorld")
 
 local LoadGameMenu = {}
 setmetatable(LoadGameMenu, GameState)
@@ -32,8 +31,10 @@ end
 function LoadGameMenu.mousepressed(x, y, mouseButton)
 	local loadGameChoice = LoadGameMenu.menu:pressed(x, y)
 	if loadGameChoice then
-		InitWorld.init(loadGameChoice, {{false}} , true)
-		GameState.stackReplace(InGame)
+		InitWorld.scene = loadGameChoice
+		InitWorld.playerHostility = {{false}}
+		InitWorld.ifSave = true
+		GameState.stackReplace(InitWorld)
 	end
 end
 

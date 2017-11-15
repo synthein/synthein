@@ -6,20 +6,27 @@ local SceneParser = require("sceneParser")
 local World = require("world")
 local Gamesave = require("gamesave")
 
-local InitWorld = {}
+local GameState = require("gamestates/gameState")
 
-function InitWorld.init(scene, playerHostility, ifSave)
-	world = World.create(playerHostility)
+local InitWorld = {}
+setmetatable(InitWorld, GameState)
+
+InitWorld.scene = {}
+InitWorld.playerHostility = {}
+InitWorld.ifSave = {}
+
+function InitWorld.update(dt)
+	world = World.create(InitWorld.playerHostility)
 	love.physics.setMeter(1) -- there are 20 pixels per meter
 
 	local sceneLines
-	if ifSave then
-		sceneLines, message = Gamesave.load(scene)
+	if InitWorld.ifSave then
+		sceneLines, message = Gamesave.load(InitWorld.scene)
 		if not sceneLines then
 			print("Failed to load game: " .. message)
 		end
 	else
-		local fileName = string.format("/res/scenes/%s.txt", scene)
+		local fileName = string.format("/res/scenes/%s.txt", InitWorld.scene)
 		sceneLines = love.filesystem.lines(fileName)
 	end
 
@@ -45,6 +52,8 @@ function InitWorld.init(scene, playerHostility, ifSave)
 
 	Debug.setWorld(world)
 	Debug.setPlayers(players)
+
+	GameState.stackReplace(InGame)
 end
 
 return InitWorld

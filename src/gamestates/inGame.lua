@@ -1,12 +1,10 @@
 local Debug = require("debugTools")
 local Player = require("player")
 local Structure = require("structure")
-local World = require("world")
 local Screen = require("screen")
 local Util = require("util")
 local SceneParser = require("sceneParser")
 local Gamesave = require("gamesave")
-local Screen = require("screen")
 
 local GameState = require("gamestates/gameState")
 

@@ -1,5 +1,12 @@
 build
 
+# Snap build files:
+package/snap/snapcraft.yaml
+package/snap/.snapcraft/
+package/parts
+package/stage
+package/prime
+
 # Vim files:
 *.swp
 *.un~

@@ -9,9 +9,19 @@ icon: desktop/icon.png
 grade: '{{grade}}'
 confinement: devmode
 
+apps:
+    synthein:
+        command: bin/synthein
+        desktop: usr/share/applications/synthein.desktop
+        plugs:
+            - desktop
+            - pulseaudio
+            - x11
+            - wayland
+
 parts:
     synthein:
-        source: ../build
+        source: ../build/synthein-system
         plugin: dump
         stage:
             - bin/*
@@ -20,7 +30,7 @@ parts:
             - bin/*
             - usr/*
     love:
-        source: ../build/love
+        source: ../build/love-system
         plugin: dump
         stage-packages:
             - libluajit-5.1-2
@@ -36,10 +46,9 @@ parts:
             - zlib1g
         stage:
             - usr/*
+            - -usr/bin/X11
+            - -usr/lib/gcc/x86_64-linux-gnu/6.0.0
         prime:
             - usr/*
-
-apps:
-    synthein:
-        command: bin/synthein
-        desktop: usr/share/applications/synthein.desktop
+            - -usr/bin/X11
+            - -usr/lib/gcc/x86_64-linux-gnu/6.0.0

@@ -29,7 +29,7 @@ function Player.create(world, controls, structure)
 	return self
 end
 
-function Player:handleInput()
+function Player:handleInput(menuOpen)
 
 	if self.ship then
 		self.camera:setX(self.ship.body:getX())
@@ -84,6 +84,7 @@ function Player:handleInput()
 			self.ship = nil
 		end
 	end
+	return menuOpen
 end
 
 function Player:buttonpressed(source, button)

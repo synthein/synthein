@@ -1,6 +1,5 @@
 local Debug = require("debugTools")
 local Player = require("player")
-local Structure = require("structure")
 local Screen = require("screen")
 local Util = require("util")
 local SceneParser = require("sceneParser")
@@ -17,6 +16,7 @@ local paused = false
 local eventTime = 0
 local second = 0
 
+local menuOpen = false
 local pauseMenu = {}
 pauseMenu.font = love.graphics.newFont(18)
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
@@ -141,7 +141,7 @@ function InGame.update(dt)
 
 	-- Send input to the players.
 	for i, player in ipairs(players) do
-		player:handleInput()
+		menuOpen = player:handleInput(menuOpen)
 	end
 
 	if paused or menuOpen then

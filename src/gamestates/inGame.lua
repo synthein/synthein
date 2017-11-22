@@ -36,10 +36,6 @@ function InGame.resize(w, h)
 end
 
 function InGame.keypressed(key)
-	for i, player in ipairs(players) do
-		player:buttonpressed(love.keyboard, key)
-	end
-
 	if typingSaveName then
 		if key:match("^%w$") then
 			saveName = saveName .. key
@@ -52,6 +48,10 @@ function InGame.keypressed(key)
 			typingSaveName = false
 		end
 	else
+		for i, player in ipairs(players) do
+			player:buttonpressed(love.keyboard, key)
+		end
+
 		if key == "p" or key == "pause" then
 			paused = not paused
 		end
@@ -65,14 +65,18 @@ function InGame.keypressed(key)
 end
 
 function InGame.keyreleased(key)
-	for i, player in ipairs(players) do
-		player:buttonreleased(love.keyboard, key)
+	if not typingSaveName then
+		for i, player in ipairs(players) do
+			player:buttonreleased(love.keyboard, key)
+		end
 	end
 end
 
 function InGame.mousepressed(x, y, button)
-	for i, player in ipairs(players) do
-		player:buttonpressed(love.mouse, button)
+	if not typingSaveName then
+		for i, player in ipairs(players) do
+			player:buttonpressed(love.mouse, button)
+		end
 	end
 
 	if menuOpen then

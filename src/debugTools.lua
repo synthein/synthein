@@ -1,6 +1,5 @@
 local Structure = require("structure")
 local Spawn = require("spawn")
-local PartRegistry = require("shipparts/partRegistry")
 
 local Debug = {}
 
@@ -74,33 +73,8 @@ function Debug.keyboard(key)
 	local world = Debug.world
 	local physics = world.physics
 	for i, player in ipairs(Debug.players) do
-		local cameraX, cameraY = player.camera:getPosition()
-		local part, location
-		-- Spawn a ship part.
-		if key == "u" then
-			-- Spawn a block
-			location = {cameraX, cameraY + 5}
-			part = PartRegistry.createPart('b')
-		elseif key == "i" then
-			-- Spawn an engine
-			location = {cameraX + 5, cameraY + 5}
-			part = PartRegistry.createPart('e')
-		elseif key == "o" then
-			-- Spawn a gun
-			location = {cameraX - 5, cameraY + 5}
-			part = PartRegistry.createPart('g')
 
-		--Spawn an AI
-		elseif key == "1" then
-			-- Team 1
-			location = {cameraX - 10, cameraY + 10}
-			part = PartRegistry.createPart('a', {player.ship:getTeam()})
-		elseif key == "2" then
-			-- Team 2
-			location = {cameraX + 10, cameraY + 10}
-			part = PartRegistry.createPart('a', {-3})
-
-		elseif key == "n" then
+		if key == "n" then
 			Debug.spawn = true
 
 		elseif love.keyboard.isDown("lctrl", "rctrl") then
@@ -109,11 +83,6 @@ function Debug.keyboard(key)
 				local string = Spawn.shipPack(Debug.player.ship, true)
 				love.filesystem.write("playerShip.txt", string)
 			end
-		end
-
-		if part and location then
-			local object = Structure.create(world.info, location, part)
-			world:addObject(object, nil, "structures")
 		end
 	end
 end

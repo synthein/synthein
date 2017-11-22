@@ -138,10 +138,22 @@ function InGame.wheelmoved(x, y)
 end
 
 function InGame.update(dt)
-
+	local openMenu, closeMenu = false, false
 	-- Send input to the players.
 	for i, player in ipairs(players) do
-		menuOpen = player:handleInput(menuOpen)
+		openMenu  = openMenu  or player.openMenu 
+		player.openMenu  = false
+		closeMenu = closeMenu or player.closeMenu
+		player.closeMenu = false
+		player.menuOpen = menuOpen
+		
+		player:handleInput()
+	end
+
+	if closeMenu then
+		menuOpen = false
+	elseif openMenu then
+		menuOpen = true
 	end
 
 	if paused or menuOpen then

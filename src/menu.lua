@@ -1,7 +1,7 @@
 local Menu = {}
 Menu.__index = Menu
 
-function Menu.create(x, y, size, buttons)
+function Menu.create(x, y, size, buttons, camera)
 	self = {}
 	setmetatable(self, Menu)
 
@@ -17,6 +17,7 @@ function Menu.create(x, y, size, buttons)
 	self.scrollVelocity = 0
     self.selectedButton = 0
 	self.font = love.graphics.newFont(size * 7)
+	self.camera = camera
 
 	return self
 end
@@ -61,12 +62,24 @@ function Menu:update(dt)
 end
 
 function Menu:draw()
+	local x, y
+	if self.camera then
+		love.graphics.setScissor(self.camera:getScissor())
+		x, y = self.camera:getScissor()
+		x = x + self.x
+		y = y + self.y
+	else
+		x = self.x
+		y = self.y
+	end
+
 	for i, button in ipairs(self.buttons) do
 		if i == self.selectedButton then
 			love.graphics.setColor(180, 180, 180)
 		else
 			love.graphics.setColor(100, 100, 100)
 		end
+		
 		love.graphics.rectangle(
 			"fill",
 			self.x,
@@ -83,6 +96,10 @@ function Menu:draw()
 			0, 1, 1, 0, 0, 0, 0
 		)
 		love.graphics.setFont(previousFont)
+	end
+	
+	if self.camera then
+		love.graphics.setScissor()
 	end
 end
 

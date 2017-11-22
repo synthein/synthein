@@ -1,6 +1,8 @@
 local Controls = require("controls")
 local Screen = require("screen")
 local Selection = require("selection")
+local Menu = require("menu")
+local PartRegistry = require("shipparts/partRegistry")
 
 local Player = {}
 Player.__index = Player
@@ -15,6 +17,11 @@ function Player.create(world, controls, structure)
 	self.camera = Screen.createCamera()
 	self.selected = Selection.create(world, self.ship.corePart:getTeam(),
 									self.camera)
+	self.menu = nil
+	self.menuOpen = false
+	self.closeMenu = false
+	self.openMenu = false
+	self.menuButtonNames = {"Block", "Engine", "Gun", "AI", "Enemy"}
 
 	self.selection = nil
 	self.cancelKeyDown = false
@@ -29,40 +36,12 @@ function Player.create(world, controls, structure)
 	return self
 end
 
-function Player:handleInput(menuOpen)
+function Player:handleInput()
 
 	if self.ship then
 		self.camera:setX(self.ship.body:getX())
 		self.camera:setY(self.ship.body:getY())
 	end
-
-	-----------------------
-	----- Cancel/Quit -----
-	-----------------------
-	if not self.cancelKeyDown then
-		-- Open the pause menu.
-		if menuOpen then
-			if Controls.isDown(self.controls.cancel) then
-				menuOpen = false
-				self.cancelKeyDown = true
-			end
-
-		elseif Controls.isDown(self.controls.cancel) then
-			-- If selection mode is not enabled, quit the game when the cancel key
-			-- is pressed.
-			if not self.selection then
-				menuOpen = true
-			else
-				-- If selection mode is enabled, just leave selection mode.
-				self.selection = nil
-			end
-			self.cancelKeyDown = true
-		end
-
-	elseif not Controls.isDown(self.controls.cancel) then
-		self.cancelKeyDown = false
-	end
-
 	
 	-----------------------
 	----- Set Cursor  -----
@@ -84,51 +63,122 @@ function Player:handleInput(menuOpen)
 			self.ship = nil
 		end
 	end
-	return menuOpen
 end
 
 function Player:buttonpressed(source, button)
-	local order = Controls.testPressed(self.controls, source, button)
+	local menuButton = Controls.test("menu", self.controls, source, button)
+	local order = Controls.test("pressed", self.controls, source, button)
 
-	if not order then
-		return
-	end
-
-	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
-	if order == "build" then
-		self.selected:pressed(cursorX, cursorY)
-
-	elseif order == "destroy" then
-		if self.build then
-			self.build = nil
-		else
-			if not self.ship or not self.ship.corePart then
-				return
-			end
-			local team = self.ship.corePart:getTeam()
-			local structure, part, partSide = world:getObject(cursorX, cursorY,
-															  "structures")
-			
-			if not structure or not structure.corePart or not part then
-				return
-			end
-			local structureTeam = structure.corePart:getTeam()
-			if structureTeam and structureTeam ~= team then
-				return
-			end
-
-			structure:disconnectPart(part)
+	if self.menuOpen then
+		if not menuButton then
+			return
+		end
+		if menuButton == "cancel" then
+			-- Exit menu if canel is pressed.
+			self.closeMenu = true
+		end
+	elseif self.menu then
+		if not menuButton then
+			return
 		end
 
-	elseif order == "zoomIn" then
-		self.camera:adjustZoom(1)
-	elseif order == "zoomOut" then
-		self.camera:adjustZoom(-1)
+		if menuButton == "cancel" then
+			-- Exit menu if canel is pressed.
+			self.menu = nil
+		elseif menuButton == "confirm" then
+			local buttonInt = self.menu:getButtonAt(self.cursorX, self.cursorY)
+			local button = self.menuButtonNames[buttonInt]
+
+			local cameraX, cameraY = self.camera:getPosition()
+			local part, location
+			if button == "Block" then
+				-- Spawn a block
+				location = {cameraX, cameraY + 5}
+				part = PartRegistry.createPart('b')
+			elseif button == "Engine" then
+				-- Spawn an engine
+				location = {cameraX + 5, cameraY + 5}
+				part = PartRegistry.createPart('e')
+			elseif button == "Gun" then
+				-- Spawn a gun
+				location = {cameraX - 5, cameraY + 5}
+				part = PartRegistry.createPart('g')
+			elseif button == "AI" then
+				--Spawn an AI
+				location = {cameraX - 10, cameraY + 10}
+				part = PartRegistry.createPart('a', {self.ship:getTeam()})
+			elseif button == "Enemy" then
+				--Spawn an Enemy
+				location = {cameraX + 10, cameraY + 10}
+				part = PartRegistry.createPart('a', {-3})
+			end
+
+			if part and location then
+				table.insert(world.info.events.create,
+							 {"structures", location, part})
+			end
+			self.menu = nil
+		end
+	else
+		if menuButton == "cancel" then
+			if self.selection then
+				-- If selection mode is enabled, just leave selection mode.
+				self.selection = nil
+			else
+				-- If selection mode is not enabled, open the menu when the 
+				-- cancel key is pressed.
+				self.openMenu = true
+			end
+
+			return
+		elseif not order then
+			return
+		else
+			local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, 
+																self.cursorY)
+			if order == "build" then
+				self.selected:pressed(cursorX, cursorY)
+
+			elseif order == "destroy" then
+				if self.build then
+					self.build = nil
+				else
+					if not self.ship or not self.ship.corePart then
+						return
+					end
+					local team = self.ship.corePart:getTeam()
+					local structure, part, partSide = world:getObject(cursorX, cursorY,
+																	  "structures")
+			
+					if not structure or not structure.corePart or not part then
+						return
+					end
+					local structureTeam = structure.corePart:getTeam()
+					if structureTeam and structureTeam ~= team then
+						return
+					end
+
+					structure:disconnectPart(part)
+				end
+
+			elseif order == "playerMenu" then
+				if debugmode then
+					
+					local x, y, width, height = self.camera:getScissor()
+					self.menu = Menu.create(width/2, 100, 5,
+											self.menuButtonNames, self.camera)
+				end
+			elseif order == "zoomIn" then
+				self.camera:adjustZoom(1)
+			elseif order == "zoomOut" then
+				self.camera:adjustZoom(-1)
+			end
+		end
 	end
 end
 
 function Player:buttonreleased(source, button)
-	local order = Controls.testReleased(self.controls, source, button)
+	local order = Controls.test("released", self.controls, source, button)
 
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then
@@ -166,6 +216,10 @@ function Player:draw()
 		point = {self.ship.corePart.leader:getLocation()}
 	else
 		point = {0,0}
+	end
+
+	if self.menu then
+		self.menu:draw()
 	end
 
 	self.camera:drawExtras(point, {self.cursorX, self.cursorY})

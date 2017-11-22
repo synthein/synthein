@@ -13,17 +13,8 @@ function Controls.getOrders(controls)
 	return orders
 end
 
-function Controls.testPressed(controls, source, button)
-	for key, value in pairs(Controls.pressed) do
-		local control = controls[key]
-		if control[1] == source and control[2] == button then
-			return value
-		end
-	end
-end
-
-function Controls.testReleased(controls, source, button)
-	for key, value in pairs(Controls.pressed) do
+function Controls.test(mode, controls, source, button)
+	for key, value in pairs(Controls[mode]) do
 		local control = controls[key]
 		if control[1] == source and control[2] == button then
 			return value
@@ -72,6 +63,7 @@ Controls.shipCommands = {
 }
 
 Controls.pressed = {
+	playerMenu  = "playerMenu",
 	build   	= "build",
 	destroy 	= "destroy",
 	zoomOut		= "zoomOut",
@@ -80,6 +72,11 @@ Controls.pressed = {
 
 Controls.released = {
 	build   	= "build"
+}
+
+Controls.menu = {
+	confirm		= "confirm",
+	cancel		= "cancel"
 }
 
 function Controls.defaults(joystick)
@@ -94,6 +91,7 @@ function Controls.defaults(joystick)
 			shoot   	= {joystick, 1}, --a
 			build   	= {joystick, 4}, --y
 			destroy 	= {joystick, 3}, --x
+			playerMenu  = {joystick, 7},
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
 			cursorX 	= {joystick, 1, "change"},
@@ -112,11 +110,12 @@ function Controls.defaults(joystick)
 			shoot   	= {keyboard, "space"},
 			build   	= {mouse, 1},
 			destroy 	= {mouse, 2},
+			playerMenu  = {keyboard, "i"},
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
 			cursorX 	= {mouse, "xAxis", "set"},
 			cursorY 	= {mouse, "yAxis", "set"},
-			confirm		= {keyboard, "return"},
+			confirm		= {mouse, 1},
 			cancel		= {keyboard, "escape"}
 			}
 	end

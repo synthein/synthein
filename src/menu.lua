@@ -15,7 +15,7 @@ function Menu.create(x, y, size, buttons, camera)
 	self.buttons = buttons
 	self.scrollY = 0
 	self.scrollVelocity = 0
-    self.selectedButton = 0
+	self.selectedButton = 0
 	self.font = love.graphics.newFont(size * 7)
 	self.camera = camera
 

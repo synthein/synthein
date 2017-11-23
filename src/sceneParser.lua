@@ -4,23 +4,41 @@ local Util = require("util")
 
 local SceneParser = {}
 
-local locStr = "%([-%d., e]*%)"
-local lstStr = "%[[-%w., %*]*%]"
-local varStr = "[-%w. %*]*[,%]]"
-local namStr = "%a[%w]+"
---local strStr = '".*"'
 local numStr = "[-%d.e]*"
+--local strStr = '".*"'
+local varStr = "[-%w. %*]*[,%]]"
+local namStr = "(%a%w+)"
+
+local locStr = "(%([-%d., e]*%))"
+local lstStr = "(%[[-%w., %*]*%])"
+local idStr = namStr .. "%s*="
+local objStr = locStr .. "%s*" .. lstStr .. "%s*(%w*)%s*({?)"
 
 function SceneParser.loadShip(shipName)
 end
 
 function SceneParser.loadScene(sceneLines, world, location, inputs)
-	local ships = {}
+	local ship
 	local index = 0
 	local ifShipString = false
 	local shipString = ""
-	local shipID
-	local locationString
+	local playerShips = {}
+	local objects = {}
+	local references = {}
+	local key = "structures"
+
+	function spawnObject(key, ship)
+		local shipID, location, data, shipInfo, shipType = unpack(ship)
+		local object, player = Spawn.spawnObject(world, key, location,
+												 data, shipInfo, shipType)
+		table.insert(objects, object)
+		if player then
+			table.insert(playerShips, object)
+		end
+		if ship[1] then
+			references[ship[1]] = object
+		end
+	end
 
 	for line in sceneLines do
 		if ifShipString then
@@ -29,15 +47,26 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				shipString = shipString .. ""
 				end
 				ifShipString = false
-				ships[index][4] = shipString
+				ship[4] = shipString
+				ship[5] = false
+				spawnObject(key, ship)
 				shipString = ""
 			else
 				shipString = shipString .. line .. '\n'
 			end
 		else
-			if string.match(line, namStr .. locStr .. lstStr) then
-				shipID = string.match(line, "%w+")
-				locationString = string.match(line, locStr)
+			if string.match(line, locStr) then
+				local shipID = string.match(line, idStr)
+				if not shipID then
+					shipID = false
+				end
+				
+				local locationString, dataString, shipType, bracket = 
+					string.match(line, objStr)
+				if bracket == "{" then
+					ifShipString = true
+				end
+
 				local l = {}
 				for coord in string.gmatch(locationString, numStr) do 
 					table.insert(l, tonumber(coord))
@@ -55,7 +84,6 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					l[i] = l[i] + location[i]
 				end
 
-				local dataString = string.match(line, lstStr)
 				local data = {}
 				for var in string.gmatch(dataString, varStr) do
 					if string.match(var, "%a") then
@@ -72,24 +100,25 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 						table.insert(data, false)
 					end
 				end
+
 				index = index + 1
-				ships[index] = {shipID, l, data}
+				if shipType == "" then
+					ship = {shipID, l, data}
+				else
+					ship = {shipID, l, data, shipType, true}
+					spawnObject(key, ship)
+				end
+				
 			elseif string.match(line, "%s*%{") then
 				ifShipString = true
 			end
 		end
 	end
-	spawnedShips = {}
-	local shipType = {}
-	local references = {}
-	for i,ship in ipairs(ships) do
-		spawnedShips[i], shipType[i] = Spawn.spawnShip(ship[1], world, ship[2], ship[3], ship[4])
-		references[ship[1]] = spawnedShips[i]
+
+	for i,object in ipairs(objects) do
+		object:postCreate(references)
 	end
-	for i,ship in ipairs(spawnedShips) do
-		ship:postCreate(references)
-	end
-	return spawnedShips, shipType
+	return playerShips
 end
 
 function SceneParser.saveScene(world)

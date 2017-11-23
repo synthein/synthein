@@ -1,16 +1,16 @@
-CageShip(0, 0 ,0)[-3]
+Cage = (0, 0 ,0)[-3]
 {
 e3      e3
-b1b1a*b1b1
+b1b1b*b1b1
 b1      b1
 b1      b1
 b1      b1
 b1b1b1b1b1
 e1      e1
 }
-BasicShip2(-5, 0,0)[-3]
-BasicShip2(5, 0,0)[-3]
-Ally(0, -2, 0)[*playerTeam,*playerShip]
+(-5, 0,0)[-3, Cage]BasicShip2
+(5, 0,0)[-3, Cage]BasicShip2
+(0, -2, 0)[*playerTeam,*playerShip]
 {
 a*
 }

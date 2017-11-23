@@ -1,4 +1,3 @@
-local Structure = require("structure")
 local Spawn = require("spawn")
 
 local Debug = {}

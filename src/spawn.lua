@@ -6,8 +6,36 @@ local Tserial = require("tserial")
 local Util = require("util")
 local Structure = require("structure")
 local GridTable = require("gridTable")
+local World = require("world")
 
 local Spawn = {}
+
+function Spawn.spawnObject(world, key, location, data, shipInfo, shipType)
+	local player = false
+	if key == "structures" then
+		local stringLength, shipString
+		if shipType then
+			shipString, stringLength = Spawn.loadShipFromFile(shipInfo)
+		else
+			shipString = shipInfo
+			stringLength = #shipString
+		end
+
+		data, player = Spawn.shipUnpack(shipString, stringLength, data)
+	end
+
+	local value = World.objectTypes[key]
+	local object = value.create(world.info, location, data)
+	world:addObject(object, chunkLocation, key)
+	return object, player
+end
+
+
+
+
+
+
+
 
 function Spawn.spawnShip(shipID, world, location, data, shipString)
 	local stringLength
@@ -38,6 +66,7 @@ end
 
 function Spawn.shipUnpack(shipString, stringLength, shipData)
 	local shipTable = {}
+	local player = false
 	shipTable.parts = GridTable.create()
 	local loadDataTable = {}
 	local location = {}
@@ -124,13 +153,9 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 				if nc == '*' then
 					if c == 'a' or c == 'p' or c == 'n'then
 						shipTable.corePart = part
-					end
-					if c == 'p' then
-						shipTable.shipType = 2
-					elseif c == 'n' then
-						shipTable.shipType = 3
-					else
-						shipTable.shipType = 1
+						if c == 'p' then
+							player = true
+						end
 					end
 					orientation = 1
 				elseif nc == '1' or nc == '2' or nc == '3' or nc == '4' then
@@ -146,7 +171,7 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 			end
 		end
 	end
-	return shipTable
+	return shipTable, player
 end
 
 function Spawn.shipPack(structure, saveThePartData)

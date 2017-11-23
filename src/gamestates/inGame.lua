@@ -1,5 +1,4 @@
 local Debug = require("debugTools")
-local Player = require("player")
 local Screen = require("screen")
 local Util = require("util")
 local SceneParser = require("sceneParser")

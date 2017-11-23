@@ -30,21 +30,17 @@ function InitWorld.update(dt)
 		sceneLines = love.filesystem.lines(fileName)
 	end
 
-	local ships, shipType = SceneParser.loadScene(sceneLines, world, {0, 0})
+	local playerShips = SceneParser.loadScene(sceneLines, world, {0, 0})
 	local players = {}
-	for i,ship in ipairs(ships) do
-		if shipType[i] == 2 then
-			if #players == 0 then
-				table.insert(players, Player.create(world, Controls.defaults(), ship))
-			elseif #players > 0 then
-				local joystick = love.joystick.getJoysticks()[#players]
-				if joystick then
-					table.insert(players, Player.create(world, Controls.defaults(joystick), ship))
-				end
+	for i,ship in ipairs(playerShips) do
+		if #players == 0 then
+			table.insert(players, Player.create(world, Controls.defaults(), ship))
+		elseif #players > 0 then
+			local joystick = love.joystick.getJoysticks()[#players]
+			if joystick then
+				table.insert(players, Player.create(world, Controls.defaults(joystick), ship))
 			end
 		end
-
-		world:addObject(ship)
 	end
 
 	InGame.setplayers(players)

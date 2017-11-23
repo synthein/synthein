@@ -1,14 +1,14 @@
-anchor(0,0,0)[1]
+anchor = (0,0,0)[1]
 {
 g1b1b1b1g1
 b1b1n*b1b1
 e1b1b1b1e1
 }
-player1(-5,0,0)[1, anchor]
+(-5,0,0)[1, anchor]
 {
 p*
 }
-player2(5,0,0)[1, anchor]
+(5,0,0)[1, anchor]
 {
 p*
 }

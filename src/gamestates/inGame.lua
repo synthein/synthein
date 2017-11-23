@@ -220,10 +220,10 @@ function InGame.update(dt)
 
 	-- Save the game.
 	if not typingSaveName and #saveName > 0 then
-                local ok, message = Gamesave.save(saveName, world)
-                if not ok then
-                  print("Failed to save the game: " .. message)
-                end
+		local ok, message = Gamesave.save(saveName, world)
+		if not ok then
+			print("Failed to save the game: " .. message)
+		end
 
 		saveName = ""
 	end

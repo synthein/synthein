@@ -114,7 +114,7 @@ function Player:buttonpressed(source, button)
 			end
 
 			if part and location then
-				table.insert(world.info.events.create,
+				table.insert(self.world.info.events.create,
 							 {"structures", location, part})
 			end
 			self.menu = nil

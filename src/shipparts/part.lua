@@ -71,9 +71,15 @@ end
 function Part:damage(damage)
 	self.health = self.health - damage
 	if self.health <= 0 then
-		local structure = self.fixture:getBody():getUserData()
+		local body = self.fixture:getBody()
+		local structure = body:getUserData()
 		local events = structure.events
-		table.insert(events.create, {"particles", {self:getWorldLocation()}})
+		local location = {self:getWorldLocation()}
+		local vx, vy 
+		vx, vy = body:getLinearVelocityFromLocalPoint(unpack(self.location))
+		location[4] = vx
+		location[5] = vy
+		table.insert(events.create, {"particles", location})
 		self.isDestroyed = true
 		structure:disconnectPart(self)
 	end

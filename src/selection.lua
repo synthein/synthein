@@ -18,38 +18,57 @@ function Selection.create(world, team, camera)
 	return self
 end
 
-function Selection:pressed(cursorX, cursorY)
-	local structure, part, partSide = world:getObject(cursorX, cursorY, "structures")
+function Selection:pressed(cursorX, cursorY, order)
+	local structure, part, partSide = 
+		self.world:getObject(cursorX, cursorY, "structures")
 	if structure and part then
 		if self.build then
-			if self.build.mode == 3 then
-				if not structure.corePart or 
-						structure.corePart:getTeam() == self.team then
-					self.structure = structure
-					self.part = part
-					if self.build:setStructure(structure, part) then
-						self.structure = nil
-						self.part = nil
-						self.build = nil
-					end
-				end
-			end
-		else
-			if structure.corePart then
-				local corePart = structure.corePart
-				if corePart == part then
-					if corePart:getTeam() == self.team and corePart.ai then
+			if order == "build" then
+				if self.build.mode == 3 then
+					if not structure.corePart or 
+							structure.corePart:getTeam() == self.team then
 						self.structure = structure
 						self.part = part
+						if self.build:setStructure(structure, part) then
+							self.structure = nil
+							self.part = nil
+							self.build = nil
+						end
 					end
 				end
-			else
-				self.build = Building.create(self.world, self.camera)
-				self.build:setAnnexee(structure, part)
-				self.structure = structure
-				self.part = part
+			elseif order == "destroy" then
+				self.structure = nil
+				self.part = nil
+				self.build = nil
+			end
+		else
+			if order == "build" then
+				if structure.corePart then
+					local corePart = structure.corePart
+					if corePart == part then
+						if corePart:getTeam() == self.team and corePart.ai then
+							self.structure = structure
+							self.part = part
+						end
+					end
+				else
+					self.build = Building.create(self.world, self.camera)
+					self.build:setAnnexee(structure, part)
+					self.structure = structure
+					self.part = part
+				end
+			elseif order == "destroy" then
+				if not structure.corePart or 
+						structure.corePart:getTeam() == self.team then
+					structure:disconnectPart(part)
+				end
 			end
 		end
+
+	else
+		self.structure = nil
+		self.part = nil
+		self.build = nil
 	end
 end
 

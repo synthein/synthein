@@ -9,18 +9,17 @@ function Particles.create(worldInfo, location, data)
 
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
-	local x, y = unpack(location)
-	self.body = love.physics.newBody(self.physics, x, y, "static")
+	local x, y, a, vx, vy = unpack(location)
+	self.body = love.physics.newBody(self.physics, x, y, "dynamic")
+	self.body:setLinearVelocity(vx, vy)
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
 	self.fixture:setSensor(true)
 	self.image = explosionImage
-	self.x = x
-	self.y = y
 	self.ox = 20
 	self.oy = 20
-	self.time = 0.3
+	self.time = 5 --0.3
 	self.isDestroyed = false
 	self.data = data
 
@@ -44,7 +43,7 @@ function Particles:collision(fixture)
 end
 
 function Particles:getLocation()
-	return self.x, self.y
+	return self.body:getPosition()
 end
 
 function Particles:update(dt)
@@ -57,11 +56,8 @@ function Particles:update(dt)
 end
 
 function Particles:draw(camera)
-	camera:draw(
-		self.image,
-		self.x,
-		self.y,
-		0, 1/20, 1/20, self.ox, self.oy)
+	local x, y = self:getLocation()
+	camera:draw(self.image, x, y, 0, 1/20, 1/20, self.ox, self.oy)
 end
 
 return Particles

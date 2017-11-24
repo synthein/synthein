@@ -32,7 +32,6 @@ function LoadGameMenu.mousepressed(x, y, mouseButton)
 	local loadGameChoice = LoadGameMenu.menu:pressed(x, y)
 	if loadGameChoice then
 		InitWorld.scene = loadGameChoice
-		InitWorld.playerHostility = {{false}}
 		InitWorld.ifSave = true
 		GameState.stackReplace(InitWorld)
 	end

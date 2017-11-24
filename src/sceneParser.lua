@@ -128,8 +128,11 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 end
 
 function SceneParser.saveScene(world)
-	local sceneString = ""
 	local references = {}
+	local sceneString = "teamhostility = " ..
+		Tserial.pack(world.info.teamHostility.playerHostility, nil, false) ..
+		"\n[scene]\n"
+
 
 	for key, table in pairs(world.objects) do
 		for index, object in ipairs(table) do

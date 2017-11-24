@@ -14,6 +14,8 @@ local lstStr = "(%[[-%w., %*]*%])"
 local idStr = namStr .. "%s*="
 local objStr = locStr .. "%s*" .. lstStr .. "%s*(%w*)%s*({?)"
 
+local keyStr = "%[(%l%a*)%]"
+
 function SceneParser.loadShip(shipName)
 end
 
@@ -35,8 +37,8 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 		if player then
 			table.insert(playerShips, object)
 		end
-		if ship[1] then
-			references[ship[1]] = object
+		if shipID then
+			references[shipID] = object
 		end
 	end
 
@@ -102,7 +104,9 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				end
 
 				index = index + 1
-				if shipType == "" then
+				if key ~= "structures" then
+					spawnObject(key, {shipID, l, data})
+				elseif shipType == "" then
 					ship = {shipID, l, data}
 				else
 					ship = {shipID, l, data, shipType, true}
@@ -111,6 +115,8 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				
 			elseif string.match(line, "%s*%{") then
 				ifShipString = true
+			elseif string.match(line, keyStr) then
+				key = string.match(line, keyStr)
 			end
 		end
 	end
@@ -124,28 +130,27 @@ end
 function SceneParser.saveScene(world)
 	local sceneString = ""
 	local references = {}
-	local structures = world.objects.structures
-	for i,structure in ipairs(structures) do
-		references[structure] = "ship" .. tostring(i)
+
+	for key, table in pairs(world.objects) do
+		for index, object in ipairs(table) do
+			references[object] = key .. tostring(index)
+		end
 	end
 
-	for i,structure in ipairs(structures) do
-		local team, leader
-		if structure.corePart then
-			team = structure.corePart:getTeam()
+	for key, table in pairs(world.objects) do
+		sceneString = sceneString .. "[" .. key .. "]\n"
+		for index, object in ipairs(table) do
+			local data = object:getSaveData(references)
+			local string = references[object] .. " = " ..
+							Util.packLocation(object) .. 
+						 	Util.packData(data) .. "\n" 
+			if key == "structures" then
+				string = string .. "{\n" ..
+									Spawn.shipPack(object, true)
+								.. "\n}\n"
+			end
+			sceneString = sceneString .. string
 		end
-		if not team then
-			team = 0
-		end
-		if 	structure.corePart and structure.corePart.leader then
-			leader = references[structure.corePart.leader]
-		end
-		
-		sceneString = sceneString .. references[structure] .. 
-					 Util.packLocation(structures[i]) .. 
-					 Util.packData({team, leader}) .. "\n" ..
-					 "{\n" .. Spawn.shipPack(structures[i], true) .. 
-					 "\n}\n"
 	end
 
 	return sceneString

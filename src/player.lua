@@ -136,30 +136,8 @@ function Player:buttonpressed(source, button)
 		else
 			local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, 
 																self.cursorY)
-			if order == "build" then
-				self.selected:pressed(cursorX, cursorY)
-
-			elseif order == "destroy" then
-				if self.build then
-					self.build = nil
-				else
-					if not self.ship or not self.ship.corePart then
-						return
-					end
-					local team = self.ship.corePart:getTeam()
-					local structure, part, partSide = world:getObject(cursorX, cursorY,
-																	  "structures")
-			
-					if not structure or not structure.corePart or not part then
-						return
-					end
-					local structureTeam = structure.corePart:getTeam()
-					if structureTeam and structureTeam ~= team then
-						return
-					end
-
-					structure:disconnectPart(part)
-				end
+			if order == "build" or order == "destroy" then
+				self.selected:pressed(cursorX, cursorY, order)
 
 			elseif order == "playerMenu" then
 				if debugmode then

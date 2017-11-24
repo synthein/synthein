@@ -32,8 +32,23 @@ function Shot.create(worldInfo, location, sourcePart)
 	return self
 end
 
+function Shot:postCreate(references)
+	local time, structure, x, y = unpack(self.sourcePart)
+	self.time = time
+	structure = references[structure]
+	self.sourcePart = structure.gridTable:index(x, y)
+end
+
 function Shot:getLocation()
 	return self.body:getX(), self.body:getY(), self.angle
+end
+
+function Shot:getSaveData(references)
+	local part = self.sourcePart
+	local x, y = unpack(part.location)
+	local structure = part.fixture:getBody():getUserData()
+	structure = references[structure]
+	return {self.time, structure, x, y}
 end
 
 function Shot:collision(fixture)

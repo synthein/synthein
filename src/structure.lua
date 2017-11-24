@@ -92,6 +92,16 @@ function Structure:getTeam()
 	return 0
 end
 
+function Structure:getSaveData(references)
+	local team = self:getTeam()
+	local leader
+	if self.corePart and self.corePart.leader then
+		leader = references[self.corePart.leader]
+	end
+
+	return {team, leader}
+end
+
 -------------------------------
 -- Adding and Removing Parts --
 -------------------------------

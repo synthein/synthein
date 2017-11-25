@@ -58,7 +58,7 @@ function GridTable:index(x, y, set, clear)
 
 	if object then
 		if clear then
-			cTable[xMagIndex] = {}
+			cTable[xMagIndex] = false
 		elseif set then
 			cTable[xMagIndex] = set
 		else
@@ -97,7 +97,7 @@ function GridTable:loop(f, inputs)
 					local object = cTable[xMagIndex]
 					local x = xSign * xMagIndex
 					
-					if next(object) then
+					if object then
 						local output
 						if f then
 							output = f(object, inputs, x, y)

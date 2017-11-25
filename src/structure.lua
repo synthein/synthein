@@ -310,6 +310,10 @@ end
 
 -- Part was disconnected or destroyed remove part and handle outcome.
 function Structure:disconnectPart(part)
+	if #self.gridTable:loop() == 1 and not part.isDestroyed then
+		return
+	end
+
 	self:removePart(part)
 	if self.isDestroyed then
 		return

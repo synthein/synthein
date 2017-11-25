@@ -29,6 +29,11 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 	local references = {}
 	local key = "structures"
 
+	if type(sceneLines) == "string" then
+		local fileName = "res/scenes/" .. sceneLines .. ".txt"
+		sceneLines = love.filesystem.lines(fileName)
+	end
+
 	function spawnObject(key, ship)
 		local shipID, location, data, shipInfo, shipType = unpack(ship)
 		local object, player = Spawn.spawnObject(world, key, location,

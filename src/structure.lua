@@ -437,7 +437,16 @@ function Structure:update(dt, worldInfo)
 	end
 
 	local function callback(part, inputs, x, y)
-		local dt, partsInfo = unpack(inputs)	
+		local dt, partsInfo = unpack(inputs)
+--[[
+print("hello")
+print(part)
+print(#self.gridTable:loop())
+
+for k,v in pairs(part) do
+print(k,v)
+end
+--]]
 		part:update(dt, partsInfo)
 	end
 

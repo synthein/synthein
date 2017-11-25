@@ -70,7 +70,9 @@ function GridTable:index(x, y, set, clear)
 				if i == xMagIndex then
 					table.insert(cTable, set)
 				else
-					table.insert(cTable, false)
+					if cTable ~= nil then
+						table.insert(cTable, false)
+					end
 				end
 			end
 		else

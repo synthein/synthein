@@ -315,7 +315,7 @@ function Structure:disconnectPart(part)
 	end
 
 	self:removePart(part)
-	if self.isDestroyed then
+	if self.isDestroyed and part.isDestroyed then
 		return
 	end	
 

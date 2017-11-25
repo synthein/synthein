@@ -84,9 +84,9 @@ function World.beginContact(a, b, coll)
 
 		objectA:collision(b, sqV, {aVX, aVY})
 		objectB:collision(a, sqV, {aVX, aVY})
-	elseif aSensor then
+	elseif aSensor and not bSensor then
 		objectA:collision(b)
-	elseif bSensor then
+	elseif bSensor and not aSensor then
 		objectB:collision(a)
 	end
 end

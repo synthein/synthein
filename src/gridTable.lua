@@ -6,9 +6,9 @@ function GridTable.create()
 	setmetatable(self, GridTable)
 
 	self.core = {
-				 { {{},{},{}} },
-				 { {{},{},{}} },
-				 { {{},{},{}} }
+				 { {{false},{false},{false}} },
+				 { {{false},{false},{false}} },
+				 { {{false},{false},{false}} }
 			    }
 
 	return self
@@ -34,8 +34,8 @@ function GridTable:index(x, y, set, clear)
 
 	if not bTable then
 		if set then
-			for i = #aTable,yMagIndex do
-				table.insert(aTable, {{},{},{}})
+			for i = (#aTable + 1), yMagIndex do
+				table.insert(aTable, {{false},{false},{false}})
 			end
 			bTable = aTable[yMagIndex]
 		else
@@ -56,7 +56,7 @@ function GridTable:index(x, y, set, clear)
 	cTable = bTable[xSignIndex]
 	object = cTable[xMagIndex]
 
-	if object then
+	if object ~= nil then
 		if clear then
 			cTable[xMagIndex] = false
 		elseif set then
@@ -70,7 +70,7 @@ function GridTable:index(x, y, set, clear)
 				if i == xMagIndex then
 					table.insert(cTable, set)
 				else
-					table.insert(cTable, {})
+					table.insert(cTable, false)
 				end
 			end
 		else

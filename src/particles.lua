@@ -19,7 +19,7 @@ function Particles.create(worldInfo, location, data)
 	self.image = explosionImage
 	self.ox = 20
 	self.oy = 20
-	self.time = 5 --0.3
+	self.time = 0.3
 	self.isDestroyed = false
 	self.data = data
 

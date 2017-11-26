@@ -197,99 +197,87 @@ function Structure:annexPart(annexee, part, baseVector)
 	end
 end
 
-function Structure:testConnection()
-	local parts = self.gridTable:loop()
-	local partsLayout = GridTable.create()
-	for i, part in ipairs(parts) do
-		local x, y = unpack(part.location)
-		partsLayout:index(x, y, {i, 0, 0})
-	end
-
-	local index
-	if self.corePart then
-		for i,part in ipairs(parts) do
-			if self.corePart == part then
-				index = i
-			end
-		end
-	else
-		index = 1
-	end
-
-	local x, y = unpack(parts[index].location)
-	local p = partsLayout:index(x, y)
-	p[2] = 1
-	p[3] = 1
-
-	local structureIndex = 1
-	local checkParts = {{x, y}}
-	while #checkParts ~= 0 do
-		local x = checkParts[#checkParts][1]
-		local y = checkParts[#checkParts][2]
-		table.remove(checkParts, #checkParts)
-
-		local p = partsLayout:index(x, y)
-		local partIndex = p[1]
-		for i = 1,4 do
-			if parts[partIndex].connectableSides[i] then
-				local x1 = x
-				local y1 = y
-				if i == 1 then
-					y1 = y + 1
-				elseif i == 2 then
-					x1 = x - 1
-				elseif i == 3 then
-					y1 = y - 1
-				elseif i == 4 then
-					x1 = x + 1
-				end
-
-				local part, side, newIndex, state
-
-				local p = partsLayout:index(x1, y1)
-
-				if p then
-					newIndex = p[1]
-					state = p[2]
-				end
-				if newIndex and newIndex ~= 0 and state == 0 then
-					part = parts[newIndex]
-					side = (i - part.location[3] + 2) % 4 + 1
-				end
-				if part and side and part.connectableSides[side] then
-					table.insert(checkParts, {x1, y1})
-					p[2] = 1
-					p[3] = structureIndex
-				end
-			end
-		end
-
-		if #checkParts == 0 then
-			for i in ipairs (parts) do
-				partIndex = i
-				local x, y = unpack(parts[partIndex].location)
-				local p = partsLayout:index(x, y)
-
-				if p[2] == 0 then
-					structureIndex = structureIndex + 1
-					p[2] = 1
-					p[3] = structureIndex
-
-					table.insert(checkParts, {x, y})
-					break
-				end
+function Structure:testConnection(testPoints)
+	local keep = {}
+	for i, location in ipairs(testPoints) do
+		local x, y = unpack(location)
+		 if self.gridTable:index(x, y) then
+			if x ~= 0 or y ~= 0 then
+				table.insert(keep, {x, y})
 			end
 		end
 	end
-
-	local partList = {}
-	for i,part in ipairs(parts) do
-		local x, y = unpack(part.location)
-		local p = partsLayout:index(x, y)
-		table.insert(partList, {part, p[3]})
+	testPoints = keep
+	local testedPoints = {}
+	local points = {}
+	local clusters = {}
+	local tested = GridTable.create()
+	if self.gridTable:index(0, 0) then
+		tested:index(0, 0, 2)
 	end
 
-	return partList
+	while #testPoints ~= 0 do
+		table.insert(points, table.remove(testPoints))
+		local x, y = unpack(points[1])
+		tested:index(x, y, 1)
+
+		while #points ~= 0 do
+			local point = table.remove(points)
+			table.insert(testedPoints, point)
+			for i = 1,4 do
+				local newPoint = StructureMath.addUnitVector(point, i)
+
+				local part = self.gridTable:index(unpack(point))
+				local newPart = self.gridTable:index(unpack(newPoint))
+				if part and newPart then
+					local partSide = (i - part.location[3]) % 4 + 1
+					local partConnect = part.connectableSides[partSide]
+					local newPartSide = (i - newPart.location[3] + 2) % 4 + 1
+					local newPartConnect = newPart.connectableSides[newPartSide]
+					if partConnect and newPartConnect then
+						for i = #testPoints, 1, -1 do
+							if newPoint == testPoints[i] then
+								table.remove(testPoints, i)
+							end
+						end
+						local value = tested:index(unpack(newPoint))
+
+						if value == 2 then
+							for i, testedPoint in ipairs(testedPoints) do
+								local x, y = unpack(testedPoint)
+								tested:index(x, y, 2)
+							end
+
+							for i, point in ipairs(points) do
+								local x, y = unpack(point)
+								tested:index(x, y, 2)
+							end
+							testedPoints = {}
+							points = {}
+							break
+						elseif value ~= 1 then
+							local x, y = unpack(newPoint)
+							tested:index(x, y, 1)
+							table.insert(points, newPoint)
+						end
+					end
+				end
+			end
+		end
+
+		if #testedPoints ~= 0 then
+			table.insert(clusters, testedPoints)
+			testedPoints = {}
+		end
+	end
+	
+	for i, group in ipairs(clusters) do
+		for j, location in ipairs(group) do
+			group[j] = self.gridTable:index(unpack(location))
+		end
+	end
+
+	return clusters
 end
 
 function Structure:recalculateSize()
@@ -325,58 +313,46 @@ function Structure:disconnectPart(part)
 	end
 
 	local createStructures
-	local partList = self:testConnection()
-	local structureList = {}
+	local points = {}
+	for i = 1,4 do
+		table.insert(points, StructureMath.addUnitVector(part.location, i))
+	end
+	local clusters = self:testConnection(points)
+	local structureList
 
 	if savedPart then
-		structureList[1] = {savedPart}
-	else
-		structureList[1] = {}
-	end
-
-	for i = #partList,1,-1 do
-		for i = #structureList, partList[i][2]-1 do
-			table.insert(structureList, {})
-		end
-
-		if partList[i][2] ~= 1 then
-			local receivingStructure
-			if savedPart then
-				receivingStructure = 1
-			else
-				receivingStructure = partList[i][2]
+		structureList = {{savedPart}}
+		for i, group in ipairs(clusters) do
+			for j, part in ipairs(group) do
+				table.insert(structureList[1], part)
 			end
-
-			table.insert(structureList[receivingStructure], partList[i][1])
 		end
-	end
-
-	if savedPart then
-		structureList = {structureList[1]}
+	else
+		structureList = clusters
 	end
 
 	for i = 1, #structureList do
 		local partList = structureList[i]
-		if #partList > 0 then
-			local basePart = partList[1]
-			local baseVector = basePart.location
-			local location = {basePart:getWorldLocation()}
+		local basePart = partList[1]
+		local baseVector = basePart.location
+		local location = {basePart:getWorldLocation()}
 
-			baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
-			
-			local structure = GridTable.create()
-			for j, part in ipairs(partList) do
-				local partVector = {unpack(part.location)}
-				local netVector = StructureMath.sumVectors(baseVector, partVector)
-				if part ~= savedPart then
-					self:removePart(part)
-				end
-				part:setLocation(netVector)
-				structure:index(netVector[1], netVector[2], part)
-
+		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
+		
+		local structure = GridTable.create()
+		for j, part in ipairs(partList) do
+			local partVector = {unpack(part.location)}
+			local netVector = StructureMath.sumVectors(baseVector, partVector)
+			if part ~= savedPart then
+				self:removePart(part)
 			end
-			table.insert(self.events.create, {"structures", location, {parts = structure}})
+			part:setLocation(netVector)
+			structure:index(netVector[1], netVector[2], part)
+
 		end
+
+		local newStructure = {"structures", location, {parts = structure}}
+		table.insert(self.events.create, newStructure)
 	end
 	
 
@@ -405,7 +381,7 @@ function Structure:command(orders)
 		if order == "shoot" then shoot = true end
 	end
 
-	local engines = {0, 0, 0, 0, parallel, perpendicular, rotate, self.body}
+	local engines = {0, 0, 0, 0, parallel, perpendicular, rotate}
 
 	if parallel > 0 then
 		engines[1] = 1

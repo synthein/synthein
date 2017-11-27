@@ -12,13 +12,19 @@ function Shot.create(worldInfo, location, sourcePart)
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
+	local shotVel = {Util.vectorComponents(25, location[3] + math.pi/2)}
+	local partX, partY = unpack(sourcePart.location)
+	local partBody = sourcePart.fixture:getBody()
+	local bodyVel = {partBody:getLinearVelocityFromLocalPoint(partX, partY)}
+	local vx = shotVel[1] + bodyVel[1]
+	local vy = shotVel[2] + bodyVel[2]
+
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
 	self.body = love.physics.newBody(self.physics, 
 					location[1], location[2], "dynamic")
 	self.body:setAngle(location[3])
-	self.body:setLinearVelocity(
-				Util.vectorComponents(25, location[3] + math.pi/2))
+	self.body:setLinearVelocity(vx, vy)
 	self.body:setBullet(true)
 	self.physicsShape = love.physics.newRectangleShape(.2, .2)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)

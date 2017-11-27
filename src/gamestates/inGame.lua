@@ -199,7 +199,8 @@ function InGame.update(dt)
 						end
 						local pV = {-uV[2], uV[1]}
 						local r = 2 * (math.random() - 0.5)
-						local m = 100 / player.camera.zoom
+						local m = 1000 / player.camera.zoom
+						if m < 100 then m = 100 end
 						local netV = {m * (uV[1] + r * pV[1]),
 									  m * (uV[2] + r * pV[2])}
 						location[1] = location[1] + netV[1]

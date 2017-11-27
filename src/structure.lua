@@ -235,9 +235,11 @@ function Structure:testConnection(testPoints)
 					local newPartSide = (i - newPart.location[3] + 2) % 4 + 1
 					local newPartConnect = newPart.connectableSides[newPartSide]
 					if partConnect and newPartConnect then
-						for i = #testPoints, 1, -1 do
-							if newPoint == testPoints[i] then
-								table.remove(testPoints, i)
+						for j = #testPoints, 1, -1 do
+							local ax, ay = unpack(newPoint)
+							local bx, by = unpack(testPoints[j])
+							if ax == bx and ay == by then
+								table.remove(testPoints, j)
 							end
 						end
 						local value = tested:index(unpack(newPoint))

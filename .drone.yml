@@ -2,8 +2,7 @@ pipeline:
   test-syntax:
     image: alpine:latest
     commands:
-      - apk update && apk add lua curl zip
-      - find src -name '*.lua' -exec luac -p {} +
+      - make check
 
   package-love-dev:
     image: alpine:latest

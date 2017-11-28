@@ -20,6 +20,9 @@ snap: love
 windows: love
 	$(env) scripts/package-windows.sh
 
+check:
+	find src -name '*.lua' -exec luac -p {} +
+
 clean:
 	rm -rf build/
 

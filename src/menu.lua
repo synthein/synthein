@@ -1,6 +1,8 @@
 local Menu = {}
 Menu.__index = Menu
 
+Menu.scrollSpeed = 150
+
 function Menu.create(x, y, size, buttons, camera)
 	self = {}
 	setmetatable(self, Menu)
@@ -45,6 +47,9 @@ function Menu:update(dt)
 
 	local menuHeight = self:getHeight()
 	if menuHeight > self.visibleHeight then
+		-- Reset scroll position and velocity if we hit the top or bottom of
+		-- the menu.
+		-- Top of the menu:
 		if self.scrollY < 0 then
 			self.scrollY = 0
 			if self.scrollVelocity < 0 then
@@ -52,11 +57,22 @@ function Menu:update(dt)
 			end
 		end
 
+		-- Bottom of the menu:
 		if self.scrollY > menuHeight - self.visibleHeight then
 			self.scrollY = menuHeight - self.visibleHeight
 			if self.scrollVelocity > menuHeight then
 				self.scrollVelocity = 0
 			end
+		end
+
+		-- Scroll toward the selected button if it is off the screen.
+		local buttonTopY = self.y + self.buttonSpacing * (self.selectedButton - 1) - self.scrollY
+		local buttonBottomY = self.y + self.buttonSpacing * (self.selectedButton - 1) + self.buttonHeight - self.scrollY
+
+		if buttonTopY < self.y then
+			self.scrollVelocity = -self.scrollSpeed
+		elseif buttonBottomY > self.y + self.visibleHeight then
+			self.scrollVelocity = self.scrollSpeed
 		end
 	end
 end
@@ -107,6 +123,20 @@ function Menu:resize(w, h)
 	self.visibleHeight = h - self.y
 end
 
+function Menu:keypressed(key)
+	if key == "up" then
+		if self.selectedButton > 1 then
+			self.selectedButton = self.selectedButton - 1
+		end
+	elseif key == "down" then
+		if self.selectedButton < #self.buttons then
+			self.selectedButton = self.selectedButton + 1
+		end
+	elseif key == "return" then
+		return self.buttons[self.selectedButton]
+	end
+end
+
 function Menu:mousemoved(x, y)
 	index = self:getButtonAt(x, y)
 	if index == nil then
@@ -117,11 +147,10 @@ end
 
 function Menu:wheelmoved(x, y)
 	if self:getHeight() > self.visibleHeight then
-		local scrollSpeed = 150
 		if y < 0 then
-			self.scrollVelocity = scrollSpeed
+			self.scrollVelocity = self.scrollSpeed
 		elseif y > 0 then
-			self.scrollVelocity = -scrollSpeed
+			self.scrollVelocity = -self.scrollSpeed
 		end
 	end
 end

@@ -23,6 +23,10 @@ function NewGameMenu.draw()
 end
 
 function NewGameMenu.keypressed(key)
+	if key == "escape" then
+		GameState.stackPop()
+	end
+
 	local button = NewGameMenu.menu:keypressed(key)
 	local start = true
 	if button == "Single Player" then

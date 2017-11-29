@@ -1,7 +1,7 @@
 local GameState = require("gamestates/gameState")
-local NewGameMenu = require("gamestates/newGameMenu")
 local LoadGameMenu = require("gamestates/loadGameMenu")
 local Menu = require("menu")
+local NewGameMenu = require("gamestates/newGameMenu")
 
 local MainMenu = {}
 setmetatable(MainMenu, GameState)

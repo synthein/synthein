@@ -24,6 +24,10 @@ function MainMenu.draw()
 end
 
 function MainMenu.keypressed(key)
+	if key == "escape" then
+		love.event.quit()
+	end
+
 	local button = MainMenu.menu:keypressed(key)
 	for i, name in ipairs(buttonNames) do
 		if button == name then

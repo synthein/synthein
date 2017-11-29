@@ -29,6 +29,10 @@ function LoadGameMenu.draw()
 end
 
 function LoadGameMenu.keypressed(key)
+	if key == "escape" then
+		GameState.stackPop()
+	end
+
 	local loadGameChoice = LoadGameMenu.menu:keypressed(key)
 	if loadGameChoice then
 		InitWorld.scene = loadGameChoice

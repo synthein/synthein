@@ -1,8 +1,8 @@
 pipeline:
   test-syntax:
-    image: alpine:latest
+    image: abaez/lua:latest
     commands:
-      - make check
+      - find src -name '*.lua' -exec luac -p {} +
 
   package-love-dev:
     image: alpine:latest

@@ -28,6 +28,15 @@ function LoadGameMenu.draw()
 	LoadGameMenu.menu:draw()
 end
 
+function LoadGameMenu.keypressed(key)
+	local loadGameChoice = LoadGameMenu.menu:keypressed(key)
+	if loadGameChoice then
+		InitWorld.scene = loadGameChoice
+		InitWorld.ifSave = true
+		GameState.stackReplace(InitWorld)
+	end
+end
+
 function LoadGameMenu.mousepressed(x, y, mouseButton)
 	local loadGameChoice = LoadGameMenu.menu:pressed(x, y)
 	if loadGameChoice then

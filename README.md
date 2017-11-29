@@ -10,10 +10,10 @@ Synthein (working title) is a game about blowing up space ships and using their 
 
 ### Planned Features [![Stories in Ready](https://badge.waffle.io/synthein/synthein.png?label=ready&title=Ready)](http://waffle.io/synthein/synthein)
 
-*  AI allies that you can give orders to (follow, guard, patrol)
-*  a customizable automated base
-*  storable ship configurations
-*  an open world with randomly generated things to encounter and explore
+* AI allies that you can give orders to (follow, guard, patrol)
+* a customizable automated base
+* storable ship configurations
+* an open world with randomly generated things to encounter and explore
 
 ![screenshot](http://i.imgur.com/b2QnY5A.png)
 
@@ -21,11 +21,15 @@ Synthein (working title) is a game about blowing up space ships and using their 
 
 Synthein is developed using the LÖVE framework. To run the game:
 
-First, download and install LÖVE from [love2d.org](love2d.org).
+ 1. Install LÖVE
 
-Next, on **UNIX-like** systems, run love from the command line with the directory of this game as an argument, e.g. ```love synthein-master```.
+    Download and install LÖVE from [love2d.org](love2d.org).
 
-On **Windows**, drag the game directory onto ```love.exe```.
+ 2. Run the game
+
+    On **UNIX-like** systems, run love from the command line with the directory of this game as an argument, e.g. `love synthein-master`.
+
+    On **Windows**, drag the game directory onto `love.exe`.
 
 For more information, see the [LÖVE wiki guide](https://www.love2d.org/wiki/Getting_Started#Running_Games) on running LÖVE games.
 
@@ -33,11 +37,11 @@ For more information, see the [LÖVE wiki guide](https://www.love2d.org/wiki/Get
 
 ### Controls
 
-Fly your ship around with W, A, S, and D.
-Strafe left and right with Q and E.
-Toggle fullscreen mode with F11.
-Toggle debug mode with F12.
-Press escape to save the game or quit.
+* Fly your ship around with W, A, S, and D.
+* Strafe left and right with Q and E.
+* Toggle fullscreen mode with F11.
+* Toggle debug mode with F12.
+* Press escape to save the game or quit.
 
 ### Building
 

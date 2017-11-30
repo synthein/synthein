@@ -48,6 +48,9 @@ end
 function GameState.wheelmoved()
 end
 
+function GameState.textinput()
+end
+
 function GameState.resize()
 end
 

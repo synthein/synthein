@@ -179,8 +179,10 @@ function Camera.indexToAngle(index, division, startAngle)
 	return - startAngle + math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
-function Camera:print(string)
-	love.graphics.print(string, self.scissorX + 5, self.scissorY + 5)
+function Camera:print(string, x, y)
+	x = x or 0
+	y = y or 0
+	love.graphics.print(string, self.scissorX + x, self.scissorY + y)
 end
 
 return Camera

@@ -12,7 +12,7 @@ for i, fileName in pairs(files) do
 	buttonName = string.gsub(fileName, ".txt", "")
 	table.insert(buttons, buttonName)
 end
-LoadGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttons)
+if love.graphics then LoadGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttons) end
 
 function LoadGameMenu.update(dt)
 	LoadGameMenu.menu.buttons = {}

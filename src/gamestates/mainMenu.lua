@@ -6,10 +6,14 @@ local NewGameMenu = require("gamestates/newGameMenu")
 local MainMenu = {}
 setmetatable(MainMenu, GameState)
 
-MainMenu.font = love.graphics.newFont(36)
 local buttons = {NewGameMenu, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
-MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
+if love.graphics then
+	MainMenu.font = love.graphics.newFont(36)
+	MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
+else
+	MainMenu.menu = Menu.create(0, 0, 5, buttonNames)
+end
 
 function MainMenu.update(dt)
 	MainMenu.menu:update(dt)

@@ -31,4 +31,7 @@ clean:
 dep:
 	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display
 
-.PHONY: all appimage check clean dep love mac snap windows
+test:
+	love src --test
+
+.PHONY: all appimage check clean dep love mac snap test windows

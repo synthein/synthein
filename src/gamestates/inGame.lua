@@ -17,7 +17,7 @@ local second = 0
 
 local menuOpen = false
 local pauseMenu = {}
-pauseMenu.font = love.graphics.newFont(18)
+if love.graphics then pauseMenu.font = love.graphics.newFont(18) end
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 local typingSaveName = false
 local saveName = ""

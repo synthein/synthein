@@ -31,6 +31,9 @@ parts:
       - usr/*
   love:
     plugin: nil
-    build-packages:
-      - love_{{love_version}}ppa1_amd64.deb
-      - liblove0_{{love_version}}ppa1_amd64.deb
+    prepare: |
+      echo "deb http://ppa.launchpad.net/bartbes/love-stable/ubuntu xenial main" >> /etc/apt/sources.list
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 61F881CBF3A87BDF74E398A4F192197F81992645
+      apt update
+    stage-packages:
+      - love

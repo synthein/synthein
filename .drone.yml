@@ -1,12 +1,12 @@
 pipeline:
   test-syntax:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     commands:
       - make check
       - make test
 
   package-love-dev:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     when:
       event: push
       branch: master
@@ -14,7 +14,7 @@ pipeline:
       - make love synthein_version=c${DRONE_COMMIT:8}
 
   package-love-release:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
@@ -22,7 +22,7 @@ pipeline:
       - make love synthein_version=${DRONE_TAG}
 
   package-linux-appimage:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     when:
       event: never
       branch: refs/tags/*
@@ -30,7 +30,7 @@ pipeline:
       - make appimage synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-linux-snap:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
@@ -39,7 +39,7 @@ pipeline:
       - make snap synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-mac:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
@@ -47,7 +47,7 @@ pipeline:
       - make mac synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-windows:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
@@ -55,7 +55,7 @@ pipeline:
       - make windows synthein_version=${DRONE_TAG} love_version=0.10.2
 
   generate-dependency-graph:
-    image: xordspar0/build-love
+    image: xordspar0/love-build
     secrets: [ BINTRAY_API_KEY ]
     when:
       event: push

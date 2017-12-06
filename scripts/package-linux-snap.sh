@@ -8,11 +8,9 @@ if [ ! -f "${ROOT_DIR}/build/synthein-${SYNTHEIN_VERSION}.love" ]; then
 	exit 1
 fi
 
+cd "${ROOT_DIR}/build"
+
 echo "Getting Linux LÖVE binaries."
-if [ ! -d "${ROOT_DIR}/build/love-system" ]; then
-	mkdir -p "${ROOT_DIR}/build/love-system"
-fi
-cd "${ROOT_DIR}/build/love-system"
 
 lovebin_pkg="love_${LOVE_VERSION}ppa1_amd64.deb"
 lovelib_pkg="liblove0_${LOVE_VERSION}ppa1_amd64.deb"
@@ -23,11 +21,7 @@ if [ ! -f "${lovelib_pkg}" ]; then
 	curl -L -O "https://bitbucket.org/rude/love/downloads/${lovelib_pkg}"
 fi
 
-ar -p love_${LOVE_VERSION}ppa1_amd64.deb data.tar.xz | tar -xJ
-ar -p liblove0_${LOVE_VERSION}ppa1_amd64.deb data.tar.xz | tar -xJ
-
 echo "Preparing Synthein for packaging."
-cd "${ROOT_DIR}/build"
 install -D synthein-${SYNTHEIN_VERSION}.love synthein-system/usr/share/games/synthein/synthein.love
 cat > synthein.sh <<END
 #!/bin/sh
@@ -41,6 +35,7 @@ echo "Building snap package."
 cd "${ROOT_DIR}/package"
 cp snap/snapcraft.yaml.template snap/snapcraft.yaml
 sed -i "s/{{version}}/${SYNTHEIN_VERSION}/" snap/snapcraft.yaml
+sed -i "s/{{love_version}}/${LOVE_VERSION}/" snap/snapcraft.yaml
 if [ ${SYNTHEIN_VERSION} = 'devel' ]; then
   sed -i "s/{{grade}}/devel/" snap/snapcraft.yaml
 else

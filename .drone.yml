@@ -35,6 +35,7 @@ pipeline:
       event: tag
       branch: refs/tags/*
     commands:
+      - apt-get update && apt-get -y install snapcraft
       - make snap synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-mac:

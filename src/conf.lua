@@ -36,7 +36,7 @@ function love.conf(t)
 
 	for i, flag in ipairs(arg) do
 		if flag == "--test" then
-			t.window, t.modules.window, t.modules.graphics = false, false, false
+			t.window, t.modules.window, t.modules.graphics, t.modules.audio = false, false, false, false
 		end
 	end
 end

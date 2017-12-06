@@ -2,7 +2,9 @@ pipeline:
   test-syntax:
     image: abaez/lua:latest
     commands:
-      - find src -name '*.lua' -exec luac -p {} +
+      - apk update && apk add make
+      - make check
+      - make test
 
   package-love-dev:
     image: alpine:latest

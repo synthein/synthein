@@ -13,13 +13,13 @@ function Menu.create(x, y, size, buttons, camera)
 	self.textHeight = size * 8
 	self.x = x - self.buttonWidth/2
 	self.y = y
-	self.visibleHeight = love.graphics.getHeight() - self.y
+	self.visibleHeight = 0
 	self.buttons = buttons
 	self.scrollY = 0
 	self.scrollVelocity = 0
 	self.selectedButton = 0
-	self.font = love.graphics.newFont(size * 7)
 	self.camera = camera
+	if love.graphics then self.font = love.graphics.newFont(size * 7) end
 
 	return self
 end
@@ -78,6 +78,7 @@ function Menu:update(dt)
 end
 
 function Menu:draw()
+	self.visibleHeight = love.graphics.getHeight() - self.y
 	local x, y
 	if self.camera then
 		love.graphics.setScissor(self.camera:getScissor())

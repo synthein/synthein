@@ -1,8 +1,6 @@
 local Particles = {}
 Particles.__index = Particles
 
-local explosionImage = love.graphics.newImage("res/images/explosion.png")
-
 function Particles.create(worldInfo, location, data)
 	self = {}
 	setmetatable(self, Particles)
@@ -16,7 +14,7 @@ function Particles.create(worldInfo, location, data)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
 	self.fixture:setSensor(true)
-	self.image = explosionImage
+	self.image = love.graphics.newImage("res/images/explosion.png")
 	self.ox = 20
 	self.oy = 20
 	self.time = 0.3

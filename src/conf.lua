@@ -33,4 +33,10 @@ function love.conf(t)
 	t.modules.timer = true               -- Enable the timer module (boolean)
 	t.modules.window = true              -- Enable the window module (boolean)
 	t.modules.thread = true              -- Enable the thread module (boolean)
+
+	for i, flag in ipairs(arg) do
+		if flag == "--test" then
+			t.window, t.modules.window, t.modules.graphics, t.modules.audio = false, false, false, false
+		end
+	end
 end

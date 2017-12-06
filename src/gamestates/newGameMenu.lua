@@ -6,7 +6,7 @@ local NewGameMenu = {}
 setmetatable(NewGameMenu, GameState)
 
 local buttonNames = {"Single Player", "COOP", "Allied", "VS"}
-NewGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
+if love.graphics then NewGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames) end
 
 function NewGameMenu.update(dt)
 	NewGameMenu.menu:update(dt)

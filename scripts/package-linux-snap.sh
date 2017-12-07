@@ -10,17 +10,6 @@ fi
 
 cd "${ROOT_DIR}/build"
 
-echo "Getting Linux LÖVE binaries."
-
-lovebin_pkg="love_${LOVE_VERSION}ppa1_amd64.deb"
-lovelib_pkg="liblove0_${LOVE_VERSION}ppa1_amd64.deb"
-if [ ! -f "${lovebin_pkg}" ]; then
-	curl -L -O "https://bitbucket.org/rude/love/downloads/${lovebin_pkg}"
-fi
-if [ ! -f "${lovelib_pkg}" ]; then
-	curl -L -O "https://bitbucket.org/rude/love/downloads/${lovelib_pkg}"
-fi
-
 echo "Preparing Synthein for packaging."
 install -D synthein-${SYNTHEIN_VERSION}.love synthein-system/usr/share/games/synthein/synthein.love
 cat > synthein.sh <<END
@@ -29,7 +18,7 @@ exec love /usr/share/games/synthein/synthein.love "$@"
 END
 install -D -m0755 synthein.sh synthein-system/bin/synthein
 install -D -m0644 ../package/desktop/synthein.desktop synthein-system/usr/share/applications/synthein.desktop
-install -D -m0644 ../package/desktop/icon.png synthein-system/usr/share/pixmaps/icon.png
+install -D -m0644 ../package/desktop/synthein.png synthein-system/usr/share/pixmaps/synthein.png
 
 echo "Building snap package."
 cd "${ROOT_DIR}/package"

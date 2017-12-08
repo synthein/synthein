@@ -13,7 +13,6 @@ function Menu.create(x, y, size, buttons, camera)
 	self.textHeight = size * 8
 	self.x = x - self.buttonWidth/2
 	self.y = y
-	self.visibleHeight = 0
 	self.buttons = buttons
 	self.scrollY = 0
 	self.scrollVelocity = 0
@@ -46,7 +45,7 @@ function Menu:update(dt)
 	self.scrollVelocity = self.scrollVelocity * 0.98
 
 	local menuHeight = self:getHeight()
-	if menuHeight > self.visibleHeight then
+	if self.visibleHeight and menuHeight > self.visibleHeight then
 		-- Reset scroll position and velocity if we hit the top or bottom of
 		-- the menu.
 		-- Top of the menu:

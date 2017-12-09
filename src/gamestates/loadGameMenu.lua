@@ -12,7 +12,7 @@ for i, fileName in pairs(files) do
 	buttonName = string.gsub(fileName, ".txt", "")
 	table.insert(buttons, buttonName)
 end
-LoadGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttons)
+if love.graphics then LoadGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttons) end
 
 function LoadGameMenu.update(dt)
 	LoadGameMenu.menu.buttons = {}
@@ -26,6 +26,19 @@ end
 
 function LoadGameMenu.draw()
 	LoadGameMenu.menu:draw()
+end
+
+function LoadGameMenu.keypressed(key)
+	if key == "escape" then
+		GameState.stackPop()
+	end
+
+	local loadGameChoice = LoadGameMenu.menu:keypressed(key)
+	if loadGameChoice then
+		InitWorld.scene = loadGameChoice
+		InitWorld.ifSave = true
+		GameState.stackReplace(InitWorld)
+	end
 end
 
 function LoadGameMenu.mousepressed(x, y, mouseButton)

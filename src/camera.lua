@@ -102,16 +102,16 @@ function Camera:limitCursor(cursorX, cursorY)
 end
 
 function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
-    love.graphics.setScissor(self:getScissor())
+	love.graphics.setScissor(self:getScissor())
 
 	x, y, sx, sy = self:getScreenCoords(x, y, sx, sy)
 	love.graphics.draw(image, x, y, -angle, sx, sy, ox, oy)
 
-    love.graphics.setScissor()
+	love.graphics.setScissor()
 end
 
 function Camera:drawExtras(anchorLocation, cursor)
-    love.graphics.setScissor(self:getScissor())
+	love.graphics.setScissor(self:getScissor())
 	--draw the compass in the lower right hand coner 60 pixels from the edges
 	love.graphics.draw(
 			self.compass,
@@ -120,11 +120,11 @@ function Camera:drawExtras(anchorLocation, cursor)
 			math.atan2(self.x - anchorLocation[1], self.y - anchorLocation[2]) + math.pi,
 			1, 1, 25, 25)
 	love.graphics.draw(self.cursor, cursor[1]-2, cursor[2]-2)
-    love.graphics.setScissor()
+	love.graphics.setScissor()
 end
 
 function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
-    love.graphics.setScissor(self:getScissor())
+	love.graphics.setScissor(self:getScissor())
 
 	local x, y
 	x, y, size = self:getScreenCoords(centerX, centerY, size, 0)
@@ -152,7 +152,7 @@ function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
 
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setStencilTest()
-    love.graphics.setScissor()
+	love.graphics.setScissor()
 end
 
 function Camera:circleMenuStencilFunction()
@@ -179,8 +179,10 @@ function Camera.indexToAngle(index, division, startAngle)
 	return - startAngle + math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
-function Camera:print(string)
-	love.graphics.print(string, self.scissorX + 5, self.scissorY + 5)
+function Camera:print(string, x, y)
+	x = x or 0
+	y = y or 0
+	love.graphics.print(string, self.scissorX + x, self.scissorY + y)
 end
 
 return Camera

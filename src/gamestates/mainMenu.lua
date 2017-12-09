@@ -1,15 +1,19 @@
 local GameState = require("gamestates/gameState")
-local NewGameMenu = require("gamestates/newGameMenu")
 local LoadGameMenu = require("gamestates/loadGameMenu")
 local Menu = require("menu")
+local NewGameMenu = require("gamestates/newGameMenu")
 
 local MainMenu = {}
 setmetatable(MainMenu, GameState)
 
-MainMenu.font = love.graphics.newFont(36)
 local buttons = {NewGameMenu, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
-MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
+if love.graphics then
+	MainMenu.font = love.graphics.newFont(36)
+	MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
+else
+	MainMenu.menu = Menu.create(0, 0, 5, buttonNames)
+end
 
 function MainMenu.update(dt)
 	MainMenu.menu:update(dt)
@@ -23,9 +27,22 @@ function MainMenu.draw()
 	love.graphics.setFont(previousFont)
 end
 
+function MainMenu.keypressed(key)
+	if key == "escape" then
+		love.event.quit()
+	end
+
+	local button = MainMenu.menu:keypressed(key)
+	for i, name in ipairs(buttonNames) do
+		if button == name then
+			GameState.stackPush(buttons[i])
+		end
+	end
+end
+
 function MainMenu.mousepressed(x, y, mouseButton)
-	local button = MainMenu.menu:pressed(x, y)
 	if mouseButton == 1 then
+		local button = MainMenu.menu:pressed(x, y)
 		for i, name in ipairs(buttonNames) do
 			if button == name then
 				GameState.stackPush(buttons[i])

@@ -1,11 +1,11 @@
 local Debug = require("debugTools")
-local Screen = require("screen")
-local Util = require("util")
-local SceneParser = require("sceneParser")
 local Gamesave = require("gamesave")
+local SceneParser = require("sceneParser")
+local Screen = require("screen")
+local Utf8 = require("utf8")
+local Util = require("util")
 
 local GameState = require("gamestates/gameState")
-
 local InGame = {}
 setmetatable(InGame, GameState)
 
@@ -17,7 +17,7 @@ local second = 0
 
 local menuOpen = false
 local pauseMenu = {}
-pauseMenu.font = love.graphics.newFont(18)
+if love.graphics then pauseMenu.font = love.graphics.newFont(18) end
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 local typingSaveName = false
 local saveName = ""
@@ -34,12 +34,23 @@ function InGame.resize(w, h)
 	Screen.arrange()
 end
 
-function InGame.keypressed(key)
+function InGame.textinput(key)
 	if typingSaveName then
 		if key:match("^%w$") then
 			saveName = saveName .. key
-		elseif key == "backspace" then
-			saveName = saveName:sub(1, -2)
+		end
+	end
+end
+
+function InGame.keypressed(key)
+	if typingSaveName then
+		if key == "backspace" then
+			-- The string is utf-8 encoded, so the last character of the string
+			-- could be multiple bytes.
+			local byteoffset = Utf8.offset(saveName, -1)
+			if byteoffset then
+				saveName = saveName:sub(1, byteoffset - 1)
+			end
 		elseif key == "return" then
 			typingSaveName = false
 		elseif key == "escape" then
@@ -56,7 +67,7 @@ function InGame.keypressed(key)
 		end
 	end
 
-	if debugmode == true then
+	if debugmode then
 		Debug.keyboard(key)
 	end
 
@@ -221,10 +232,10 @@ function InGame.update(dt)
 
 	-- Save the game.
 	if not typingSaveName and #saveName > 0 then
-                local ok, message = Gamesave.save(saveName, world)
-                if not ok then
-                  print("Failed to save the game: " .. message)
-                end
+		local ok, message = Gamesave.save(saveName, world)
+		if not ok then
+			print("Failed to save the game: " .. message)
+		end
 
 		saveName = ""
 	end

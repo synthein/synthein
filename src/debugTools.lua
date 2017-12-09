@@ -29,41 +29,45 @@ function Debug.draw()
 		return
 	end
 	for i, player in ipairs(Debug.players) do
-		mouseWorldX, mouseWorldY =
-			player.camera:getWorldCoords(love.mouse.getX(), love.mouse.getY())
 		if player and player.camera then
-			local debugString
+			-- Gather debug data
+			local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
+			local mouseWorldX, mouseWorldY = player.camera:getWorldCoords(mouseX, mouseY)
+			local buildStatus = player.build and "yes" or "no"
+			local shipParts
+			local shipX, shipY
+
 			if player.ship then
-				debugString = string.format(
-					"%.3f    %.3f\n"..
-					"%.3f    %.3f\n"..
-					"Number of ship parts: %d\n"..
-					"Build mode: %s\n",
-					player.ship.body:getX(), player.ship.body:getY(),
-					mouseWorldX, mouseWorldY,
-					#player.ship.body:getFixtureList(),
-					(player.build and "yes" or "no")
-				)
+				shipX, shipY = player.ship.body:getX(), player.ship.body:getY()
+				shipParts = #player.ship.body:getFixtureList()
 			else
-				debugString = string.format(
-					"%.3f    %.3f\n"..
-					"%.3f    %.3f\n"..
-					"Number of chunks: %d\n"..
-					"Number of ship parts: %d\n"..
-					"Build mode: %s\n",
-					0, 0,
-					mouseWorldX, mouseWorldY,
-					0, 0,
-					(player.build and "yes" or "no")
-				)
+				shipX, shipY = 0, 0
+				shipParts = 0
 			end
-			player.camera:print(debugString)
+
+			-- Print the debug information.
+			player.camera:print(
+				string.format("%.0f %.0f\n", mouseWorldX, mouseWorldY),
+				mouseX + 10, mouseY + 10
+			)
+			player.camera:print(
+				string.format("Ship position: (%.3f, %.3f)\n" ..
+				              "Number of ship parts: %d\n" ..
+							  "Build mode: %s\n",
+							  shipX, shipY,
+				              shipParts,
+							  buildStatus
+				)
+			)
 		end
 	end
 end
 
 function Debug.update(dt)
 	if Debug.mouseJoint then
+		local mouseWorldX, mouseWorldY =
+			Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
+												   love.mouse.getY())
 		Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
 	end
 end
@@ -87,9 +91,9 @@ function Debug.keyboard(key)
 end
 
 function Debug.mousepressed(mouseX, mouseY, button)
-		mouseWorldX, mouseWorldY =
-			Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
-												   love.mouse.getY())
+	local mouseWorldX, mouseWorldY =
+		Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
+		                                       love.mouse.getY())
 	if button == 3 then
 		structure = Debug.world:getStructure(mouseWorldX, mouseWorldY)
 		if structure then

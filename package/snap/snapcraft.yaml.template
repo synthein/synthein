@@ -2,53 +2,47 @@ name: synthein
 version: '{{version}}'
 summary: A space ship building and combat game
 description: |
-    Synthein is a game about blowing up space ships and using their parts to
-    make your space ship bigger and better.
-icon: desktop/icon.png
+  Synthein is a game about blowing up space ships and using their parts to
+  make your space ship bigger and better.
+icon: desktop/synthein.png
 
 grade: '{{grade}}'
 confinement: devmode
 
 apps:
-    synthein:
-        command: bin/synthein
-        desktop: usr/share/applications/synthein.desktop
-        plugs:
-            - desktop
-            - pulseaudio
-            - x11
-            - wayland
+  synthein:
+    command: bin/synthein
+    desktop: usr/share/applications/synthein.desktop
+    plugs:
+      - desktop
+      - pulseaudio
+      - x11
+      - wayland
 
 parts:
-    synthein:
-        source: ../build/synthein-system
-        plugin: dump
-        stage:
-            - bin/*
-            - usr/*
-        prime:
-            - bin/*
-            - usr/*
-    love:
-        source: ../build/love-system
-        plugin: dump
-        stage-packages:
-            - libluajit-5.1-2
-            - libfreetype6
-            - libmodplug1
-            - libmpg123-0
-            - libogg0
-            - libopenal1
-            - libphysfs1
-            - libsdl2-2.0-0
-            - libtheora0
-            - libvorbisfile3
-            - zlib1g
-        stage:
-            - usr/*
-            - -usr/bin/X11
-            - -usr/lib/gcc/x86_64-linux-gnu/6.0.0
-        prime:
-            - usr/*
-            - -usr/bin/X11
-            - -usr/lib/gcc/x86_64-linux-gnu/6.0.0
+  synthein:
+    source: ../build/synthein-system
+    plugin: dump
+    stage:
+      - bin/*
+      - usr/*
+    prime:
+      - bin/*
+      - usr/*
+  ppa:
+    plugin: nil
+    prepare: |
+      echo "deb http://ppa.launchpad.net/bartbes/love-stable/ubuntu xenial main" >> /etc/apt/sources.list
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 61F881CBF3A87BDF74E398A4F192197F81992645
+      apt-get update
+  love:
+    after: [ ppa ]
+    plugin: nil
+    stage-packages:
+      - love
+    organize:
+      usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-8.0.so: usr/lib/x86_64-linux-gnu/libpulsecommon-8.0.so
+    stage:
+      - -usr/bin/X11
+      - -usr/lib/gcc
+      - -usr/share/doc

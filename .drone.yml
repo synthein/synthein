@@ -1,82 +1,67 @@
 pipeline:
   test-syntax:
-    image: alpine:latest
+    image: xordspar0/love-build
     commands:
-      - apk update && apk add lua curl zip
-      - find src -name '*.lua' -exec luac -p {} +
+      - make check
+      - make test
 
   package-love-dev:
-    image: alpine:latest
+    image: xordspar0/love-build
     when:
       event: push
       branch: master
     commands:
-      - export SYNTHEIN_VERSION=c${DRONE_COMMIT:8}
-      - apk update && apk add zip
-      - scripts/package-love.sh
+      - make love synthein_version=c${DRONE_COMMIT:8}
 
   package-love-release:
-    image: alpine:latest
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
     commands:
-      - export SYNTHEIN_VERSION=${DRONE_TAG}
-      - apk update && apk add zip
-      - scripts/package-love.sh
+      - make love synthein_version=${DRONE_TAG}
 
   package-linux-appimage:
-    image: ubuntu:14.04
+    image: xordspar0/love-build
     when:
       event: never
       branch: refs/tags/*
     commands:
-      - export SYNTHEIN_VERSION=${DRONE_TAG}
-      - export LOVE_VERSION=0.10.2
-      - apt-get update && apt-get -y install curl zip
-      - scripts/package-linux-appimage.sh
+      - make appimage synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-linux-snap:
-    image: ubuntu:16.04
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
     commands:
-      - export SYNTHEIN_VERSION=${DRONE_TAG}
-      - export LOVE_VERSION=0.10.2
-      - apt-get update && apt-get -y install binutils curl xz-utils
-      - scripts/package-linux-snap.sh
+      - apt-get update && apt-get -y install snapcraft
+      - make snap synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-mac:
-    image: alpine:latest
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
     commands:
-      - export SYNTHEIN_VERSION=${DRONE_TAG}
-      - export LOVE_VERSION=0.10.2
-      - apk update && apk add curl zip
-      - scripts/package-mac.sh
+      - make mac synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-windows:
-    image: alpine:latest
+    image: xordspar0/love-build
     when:
       event: tag
       branch: refs/tags/*
     commands:
-      - export SYNTHEIN_VERSION=${DRONE_TAG}
-      - export LOVE_VERSION=0.10.2
-      - apk update && apk add curl zip
-      - scripts/package-windows.sh
+      - make windows synthein_version=${DRONE_TAG} love_version=0.10.2
 
   generate-dependency-graph:
-    image: abaez/lua:latest
+    image: xordspar0/love-build
     secrets: [ BINTRAY_API_KEY ]
     when:
       event: push
       branch: master
     commands:
-      - apk update && apk add graphviz
+      - apt-get update && apt-get -y install graphviz
       - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
       - 'curl --fail -T out.png -uxordspar0:$${BINTRAY_API_KEY} https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png?publish=1&override=1'
 

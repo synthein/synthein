@@ -3,6 +3,7 @@ love_version = 0.10.2
 
 env = SYNTHEIN_VERSION=$(synthein_version) LOVE_VERSION=$(love_version)
 
+# Building commands
 love: build/synthein-$(synthein_version).love
 
 build/synthein-$(synthein_version).love: src
@@ -20,7 +21,17 @@ snap: love
 windows: love
 	$(env) scripts/package-windows.sh
 
+# Maintenance commands
+check:
+	find src -name '*.lua' -exec luac -p {} +
+
 clean:
 	rm -rf build/
 
-.PHONY: all appimage clean love mac snap windows
+dep:
+	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display
+
+test:
+	love src --test
+
+.PHONY: all appimage check clean dep love mac snap test windows

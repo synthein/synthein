@@ -8,6 +8,12 @@ local stack = {MainMenu}
 function love.load()
 	debugmode = true
 	GameState.setStack(stack)
+
+	for i, flag in ipairs(arg) do
+		if flag == "--test" then
+			love.event.quit()
+		end
+	end
 end
 
 function love.resize(w, h)
@@ -43,6 +49,10 @@ end
 
 function love.joystickreleased(joystick, button)
 	stack[#stack].joystickreleased(joystick, button)
+end
+
+function love.textinput(key)
+	stack[#stack].textinput(key)
 end
 
 function love.resize(w, h)

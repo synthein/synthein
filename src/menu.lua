@@ -18,10 +18,10 @@ function Menu.create(x, y, size, buttons, camera)
 	self.buttons = buttons
 	self.scrollY = 0
 	self.scrollVelocity = 0
-	self.selectedButton = 0
+	self.selectedButton = nil
 	self.camera = camera
 	if love.graphics then self.font = love.graphics.newFont(size * 7) end
-	if love.graphics then self.visibleHeight = love.graphics.getHeight() - self.y - 20 end
+	if love.graphics then self.visibleHeight = love.graphics.getHeight() - self.y - self.buttonMargin end
 
 	return self
 end
@@ -43,7 +43,7 @@ end
 
 function Menu:getHeight()
 	return self.buttonMargin * 2
-	       + (#self.buttons - 1) * self.buttonHeight
+	       + #self.buttons * self.buttonHeight
 	       + (#self.buttons - 1) * self.buttonSpacing
 end
 
@@ -56,29 +56,31 @@ function Menu:update(dt)
 		-- Reset scroll position and velocity if we hit the top or bottom of
 		-- the menu.
 		-- Top of the menu:
-		if self.scrollY < 20 then
-			self.scrollY = 20
+		if self.scrollY < 0 then
+			self.scrollY = 0
 			if self.scrollVelocity < 0 then
 				self.scrollVelocity = 0
 			end
 		end
 
 		-- Bottom of the menu:
-		if self.scrollY > menuHeight - self.visibleHeight - 20 then
-			self.scrollY = menuHeight - self.visibleHeight - 20
+		if self.scrollY > menuHeight - self.visibleHeight then
+			self.scrollY = menuHeight - self.visibleHeight
 			if self.scrollVelocity > menuHeight then
 				self.scrollVelocity = 0
 			end
 		end
 
 		-- Scroll toward the selected button if it is off the screen.
-		local buttonTopY = self.y + self.buttonSpacing * (self.selectedButton - 1) - self.scrollY
-		local buttonBottomY = self.y + self.buttonSpacing * (self.selectedButton - 1) + self.buttonHeight - self.scrollY
+		if self.selectedButton then
+			local buttonTopY = self.y + (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1) - self.scrollY
+			local buttonBottomY = self.y + (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1) + self.buttonHeight - self.scrollY
 
-		if buttonTopY < self.y then
-			self.scrollVelocity = -self.scrollSpeed
-		elseif buttonBottomY > self.y + self.visibleHeight then
-			self.scrollVelocity = self.scrollSpeed
+			if buttonTopY < self.y then
+				self.scrollVelocity = -self.scrollSpeed
+			elseif buttonBottomY > self.y + self.visibleHeight then
+				self.scrollVelocity = self.scrollSpeed
+			end
 		end
 	end
 end
@@ -100,7 +102,7 @@ function Menu:draw()
 	love.graphics.rectangle(
 		"fill",
 		x, y,
-		self.width, math.min(self:getHeight() + self.buttonMargin * 2, self.visibleHeight))
+		self.width, math.min(self:getHeight(), self.visibleHeight))
 
 	for i, button in ipairs(self.buttons) do
 		if i == self.selectedButton then
@@ -157,6 +159,7 @@ function Menu:mousemoved(x, y)
 end
 
 function Menu:wheelmoved(x, y)
+	self.selectedButton = nil
 	if self:getHeight() > self.visibleHeight then
 		if y < 0 then
 			self.scrollVelocity = self.scrollSpeed

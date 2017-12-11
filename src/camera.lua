@@ -128,12 +128,27 @@ function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
 
 	local x, y
 	x, y, size = self:getScreenCoords(centerX, centerY, size, 0)
-	Camera.circleMenuX = x
-	Camera.circleMenuY = y
-	Camera.circleMenuAngle = angle
-	Camera.circleMenuSize = size
-	Camera.circleMenuDivision = #strength
-	love.graphics.stencil(Camera.circleMenuStencilFunction, "replace", 1)
+	local circleMenuX = x
+	local circleMenuY = y
+	local circleMenuAngle = angle
+	local circleMenuSize = size
+	local circleMenuDivision = #strength
+
+	local stencilCallback
+	function stencilCallback()
+		love.graphics.setLineWidth(math.ceil(circleMenuSize/5))
+
+		for i = 1, circleMenuDivision do
+			local angle = Camera.indexToAngle(i, circleMenuDivision,
+											  circleMenuAngle)
+			local x, y = Util.vectorComponents(5 * circleMenuSize, angle)
+			x = x + circleMenuX
+			y = y + circleMenuY
+			love.graphics.line(x, y, circleMenuX, circleMenuY)
+		end
+	end
+
+	love.graphics.stencil(stencilCallback, "replace", 1)
 	love.graphics.setStencilTest("equal", 0)
 	love.graphics.setLineWidth(size)
 	for i, color in ipairs(strength) do
@@ -153,19 +168,6 @@ function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setStencilTest()
 	love.graphics.setScissor()
-end
-
-function Camera:circleMenuStencilFunction()
-	love.graphics.setLineWidth(math.ceil(Camera.circleMenuSize/5))
-
-	for i = 1,Camera.circleMenuDivision do
-		local angle = Camera.indexToAngle(i, Camera.circleMenuDivision,
-										  Camera.circleMenuAngle)
-		local x, y = Util.vectorComponents(5 * Camera.circleMenuSize, angle)
-		x = x + Camera.circleMenuX
-		y = y + Camera.circleMenuY
-		love.graphics.line(x, y, Camera.circleMenuX, Camera.circleMenuY)
-	end
 end
 
 function Camera.indexToAngle(index, division, startAngle)

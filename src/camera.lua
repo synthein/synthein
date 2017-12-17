@@ -6,6 +6,17 @@ Camera.__index = Camera
 function Camera.create()
 	local self = {}
 	setmetatable(self, Camera)
+	function self.__index(t, k)	
+		local newFunction
+		function newFunction(...)
+			love.graphics.setScissor(Camera:getScissor())
+			love.graphics.translate(self.scissorX, self.scissorY)
+			love.graphics[k](...)
+			love.graphics.origin()
+			love.graphics.setScissor()
+		end
+		return newFunction
+	end
 
 	self.x = 0
 	self.y = 0
@@ -17,6 +28,10 @@ function Camera.create()
 	self.scissorHeight = 0
 	self.compass = love.graphics.newImage("res/images/compass.png")
 	self.cursor = love.graphics.newImage("res/images/pointer.png")
+
+	self.graphics = {}
+	setmetatable(self.graphics, self)
+
 	return self
 end
 

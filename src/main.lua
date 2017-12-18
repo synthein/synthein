@@ -6,10 +6,12 @@ local Debug = require("debugTools")
 local stack = {MainMenu}
 
 function love.load()
-	debugmode = true
 	GameState.setStack(stack)
 
 	for i, flag in ipairs(arg) do
+		if flag == "--debug" then
+			debugmode = true
+		end
 		if flag == "--test" then
 			love.event.quit()
 		end

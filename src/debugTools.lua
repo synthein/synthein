@@ -50,7 +50,9 @@ function Debug.draw()
 
 			-- Print the debug information.
 			player.camera:print(
-				string.format("%.0f %.0f\n", mouseWorldX, mouseWorldY),
+				string.format("%.0f %.0f\n",
+				              math.floor(mouseWorldX + 0.5),
+				              math.floor(mouseWorldY + 0.5)),
 				mouseX + 10, mouseY + 10
 			)
 			player.camera:print(

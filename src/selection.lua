@@ -1,4 +1,5 @@
 local Building = require("building")
+local CircleMenu = require("circleMenu")
 local Util = require("util")
 
 local Selection = {}
@@ -11,6 +12,8 @@ function Selection.create(world, team, camera)
 	self.world = world
 	self.team = team
 	self.camera = camera
+	self.circleMenu = CircleMenu.create(self.camera)
+
 	self.build = nil
 	self.sturcture = nil
 	self.partIndex = nil
@@ -121,7 +124,7 @@ function Selection:draw(cursorX, cursorY)
 			end
 		end
 		if strength then
-			self.camera:drawCircleMenu(x, y, angle, .5, strength)
+			self.circleMenu:draw(x, y, angle, 1, strength)
 		end
 	end
 	if self.build then

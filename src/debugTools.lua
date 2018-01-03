@@ -28,6 +28,9 @@ function Debug.draw()
 	if not Debug.world then
 		return
 	end
+	love.graphics.print(
+		string.format("%3d", love.timer.getFPS()),
+		SCREEN_WIDTH - 20, 0)
 	for i, player in ipairs(Debug.players) do
 		if player and player.camera then
 			-- Gather debug data

@@ -1,5 +1,3 @@
-local Util = require("util")
-
 local Camera = {}
 Camera.__index = Camera
 
@@ -138,62 +136,38 @@ function Camera:drawExtras(anchorLocation, cursor)
 	love.graphics.setScissor()
 end
 
-function Camera:drawCircleMenu(centerX, centerY, angle, size, strength)
-	love.graphics.setScissor(self:getScissor())
-
-	local x, y
-	x, y, size = self:getScreenCoords(centerX, centerY, size, 0)
-	local circleMenuX = x
-	local circleMenuY = y
-	local circleMenuAngle = angle
-	local circleMenuSize = size
-	local circleMenuDivision = #strength
-
-	local stencilCallback
-	function stencilCallback()
-		love.graphics.setLineWidth(math.ceil(circleMenuSize/5))
-
-		for i = 1, circleMenuDivision do
-			local angle = Camera.indexToAngle(i, circleMenuDivision,
-											  circleMenuAngle)
-			local x, y = Util.vectorComponents(5 * circleMenuSize, angle)
-			x = x + circleMenuX
-			y = y + circleMenuY
-			love.graphics.line(x, y, circleMenuX, circleMenuY)
-		end
+function Camera:enable(inWorld)
+	love.graphics.setScissor(Camera:getScissor())
+	love.graphics.translate(self.scissorX, self.scissorY)
+	if inWorld then
+		love.graphics.translate(self.scissorWidth/2, self.scissorHeight/2)
+		love.graphics.scale(self.zoom, -self.zoom)
+		love.graphics.translate(- self.x, - self.y)
+		--x =  self.zoom * (worldX - self.x) + self.scissorX + self.scissorWidth/2
+		--y = -self.zoom * (worldY - self.y) + self.scissorY + self.scissorHeight/2
 	end
+end
 
-	love.graphics.stencil(stencilCallback, "replace", 1)
-	love.graphics.setStencilTest("equal", 0)
-	love.graphics.setLineWidth(size)
-	for i, color in ipairs(strength) do
-		if color ~= 0 then
-			if color == 1 then
-				love.graphics.setColor(32, 64, 144, 192)
-			elseif color == 2 then
-				love.graphics.setColor(80, 128, 192, 192)
-			end
-			love.graphics.arc("line", "open", x, y, 
-				math.ceil(3.5*size),
-				- angle + math.pi * (-0.5 + ((i-1)*2-1)/#strength),
-				- angle + math.pi * (-0.5 + ((i)*2-1)/#strength), 5*size)
-		end
-	end
-
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.setStencilTest()
+function Camera:disable()
+	love.graphics.origin()
 	love.graphics.setScissor()
 end
 
-function Camera.indexToAngle(index, division, startAngle)
-	--This system is layed out like a clock face
-	-- -startAngle	converts it from clockwise to counterclockwise
-	-- * math.pi	changes 0 to 2 into 0 to 2pi
-	-- -0.5			sets index 1 to the noon position
-	-- / division	changes 0 to 2division into 0 to 2
-	-- -1			causes the center of index 1 to be straight up
-	-- * 2 			changes 0 to division into 0 to 2division 
-	return - startAngle + math.pi * (-0.5 + ((index) * 2 - 1) / division)
+function Camera:run(f, inWorld)
+	self:enable(inWorld)
+	f()
+	self:disable()
+end
+
+function Camera.wrap(f, inWorld)
+	local object = {}
+	function object:wrapped(...)
+		self.camera:enable(inWorld)
+		f(...)
+		self.camera:disable()
+	end
+
+	return object.wrapped
 end
 
 function Camera:print(string, x, y)

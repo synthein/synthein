@@ -1,0 +1,19 @@
+- turrets that can turn
+- mount/docking points for AI ships
+- asteroids that could damage ships and the base, but have resources when destroyed
+- joints (snake-shaped ships?)
+- magnetic blocks
+- fabrication (ships, individual blocks)
+- modules (shipyard, storage, etc.)
+- automated resource collecting AIs
+- resources
+  - energy? (solar panels, energy cells, etc.)
+  - probably metal
+  - maybe something specifically for making engines, weapons
+
+Name ideas:
+
+- Metalsynthesis
+- Asterain
+- Areios
+- Electrome

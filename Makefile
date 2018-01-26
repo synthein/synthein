@@ -23,7 +23,7 @@ windows: love
 
 # Maintenance commands
 check:
-	find src -name '*.lua' -exec luac -p {} +
+	scripts/check.sh
 
 clean:
 	rm -rf build/

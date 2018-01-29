@@ -1,14 +1,15 @@
 #!/bin/sh
 set -e
 
-ROOT_DIR=$(pwd)
+root_dir="$(pwd)"
+build_dir="${root_dir}/build"
 
-if [ ! -f "${ROOT_DIR}/build/synthein-${SYNTHEIN_VERSION}.love" ]; then
+if [ ! -f "${build_dir}/synthein-${SYNTHEIN_VERSION}.love" ]; then
 	echo "Need to build the .love file first."
 	exit 1
 fi
 
-cd "${ROOT_DIR}/build"
+cd "${build_dir}"
 
 echo "Preparing Synthein for packaging."
 install -D synthein-${SYNTHEIN_VERSION}.love synthein-system/usr/share/games/synthein/synthein.love
@@ -21,7 +22,7 @@ install -D -m0644 ../package/desktop/synthein.desktop synthein-system/usr/share/
 install -D -m0644 ../package/desktop/synthein.png synthein-system/usr/share/pixmaps/synthein.png
 
 echo "Building snap package."
-cd "${ROOT_DIR}/package"
+cd "${root_dir}/package"
 cp snap/snapcraft.yaml.template snap/snapcraft.yaml
 sed -i "s/{{version}}/${SYNTHEIN_VERSION}/" snap/snapcraft.yaml
 sed -i "s/{{love_version}}/${LOVE_VERSION}/" snap/snapcraft.yaml
@@ -32,4 +33,4 @@ else
 fi
 
 snapcraft clean
-snapcraft snap -o "${ROOT_DIR}/build/synthein_${SYNTHEIN_VERSION}.snap"
+snapcraft snap -o "${build_dir}/synthein_${SYNTHEIN_VERSION}.snap"

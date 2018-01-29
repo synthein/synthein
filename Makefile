@@ -23,7 +23,7 @@ windows: love
 
 # Maintenance commands
 check:
-	scripts/check.sh
+	find src -name '*.lua' -exec luac -p {} +
 
 clean:
 	rm -rf build/
@@ -31,7 +31,10 @@ clean:
 dep:
 	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display
 
+luacheck:
+	find src -name '*.lua' -exec luacheck --std=luajit+love {} +
+
 test:
 	love src --test
 
-.PHONY: all appimage check clean dep love mac snap test windows
+.PHONY: appimage check clean dep love luacheck mac snap test windows

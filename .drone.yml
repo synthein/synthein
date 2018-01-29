@@ -76,9 +76,9 @@ pipeline:
     to: -1001143861626
     format: html
     message: >
-      <b>Build {{ build.status }}</b>
+      <a href="{{ build.link }}">Build {{ build.status }}</a>
 
-      <a href="{{ build.link }}">{{ repo.owner }}/{{ repo.name }}</a> in branch
+      <a href="https://github.com/synthein/synthein">{{ repo.owner }}/{{ repo.name }}</a> in branch
       <b>{{ commit.branch }}</b> by <b>{{ commit.author }}</b>.
 
       {{ commit.message }}

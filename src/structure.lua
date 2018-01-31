@@ -307,7 +307,7 @@ function Structure:disconnectPart(part)
 	self:removePart(part)
 	if self.isDestroyed and part.isDestroyed then
 		return
-	end	
+	end
 
 	local savedPart
 	if not part.isDestroyed then
@@ -323,10 +323,16 @@ function Structure:disconnectPart(part)
 	local structureList
 
 	if savedPart then
-		structureList = {{savedPart}}
-		for i, group in ipairs(clusters) do
-			for j, part in ipairs(group) do
-				table.insert(structureList[1], part)
+		if not self.corePart then
+print("no core part")
+			structureList = clusters
+			table.insert(structureList, {savedPart})
+		else
+			structureList = {{savedPart}}
+			for i, group in ipairs(clusters) do
+				for j, part in ipairs(group) do
+					table.insert(structureList[1], part)
+				end
 			end
 		end
 	else

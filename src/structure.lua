@@ -324,7 +324,6 @@ function Structure:disconnectPart(part)
 
 	if savedPart then
 		if not self.corePart then
-print("no core part")
 			structureList = clusters
 			table.insert(structureList, {savedPart})
 		else

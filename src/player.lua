@@ -14,7 +14,10 @@ function Player.create(world, controls, structure)
 	self.world = world
 	self.controls = controls
 	self.ship = structure
+print("player wrap")
 	self.camera = Screen.createCamera()
+	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
+
 	self.selected = Selection.create(world, self.ship.corePart:getTeam(),
 									self.camera)
 	self.menu = nil
@@ -170,19 +173,7 @@ function Player:draw()
 		self.camera:setY(self.ship.body:getY())
 	end
 
-	local callbackData = {}
-	local a, b, c, d = self.camera:getWorldBoarder()
-
-	function callback(fixture)
-		table.insert(callbackData, fixture:getUserData())
-		return true
-	end
-
-	self.world.physics:queryBoundingBox(a, b, c, d, callback)
-
-	for drawlayer, object in ipairs(callbackData) do
-		object:draw(self.camera)
-	end
+	self:drawWorldObjects(self.world, self.camera:getWorldBoarder())
 
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if self.selected then
@@ -201,6 +192,21 @@ function Player:draw()
 	end
 
 	self.camera:drawExtras(point, {self.cursorX, self.cursorY})
+end
+
+function Player.drawWorldObjects(world, a, b, c, d)
+	local callbackData = {}
+
+	function callback(fixture)
+		table.insert(callbackData, fixture:getUserData())
+		return true
+	end
+
+	world.physics:queryBoundingBox(a, b, c, d, callback)
+
+	for drawlayer, object in ipairs(callbackData) do
+		object:draw()
+	end
 end
 
 return Player

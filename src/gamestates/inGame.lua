@@ -86,8 +86,6 @@ function InGame.keyreleased(key)
 end
 
 function InGame.mousepressed(x, y, button)
-	local screen_width = love.graphics.getWidth()
-
 	if not typingSaveName then
 		for _, player in ipairs(players) do
 			player:buttonpressed(love.mouse, button)

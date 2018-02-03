@@ -4,7 +4,7 @@ Menu.__index = Menu
 Menu.scrollSpeed = 150
 
 function Menu.create(x, y, size, buttons)
-	self = {}
+	local self = {}
 	setmetatable(self, Menu)
 
 	self.x = x
@@ -95,13 +95,13 @@ function Menu:draw()
 		x, y,
 		self.width, math.min(self:getHeight(), self.visibleHeight))
 
-	for i, button in ipairs(self.buttons) do
+	for i, _ in ipairs(self.buttons) do
 		if i == self.selectedButton then
 			love.graphics.setColor(150, 150, 150)
 		else
 			love.graphics.setColor(100, 100, 100)
 		end
-		
+
 		love.graphics.rectangle(
 			"fill",
 			x + self.buttonMargin,
@@ -123,7 +123,7 @@ function Menu:draw()
 	love.graphics.pop()
 end
 
-function Menu:resize(w, h)
+function Menu:resize(_, h) --(w, h)
 	self.visibleHeight = h - self.y
 end
 
@@ -142,14 +142,14 @@ function Menu:keypressed(key)
 end
 
 function Menu:mousemoved(x, y)
-	index = self:getButtonAt(x, y)
+	local index = self:getButtonAt(x, y)
 	if index == nil then
 		return
 	end
 	self.selectedButton = index
 end
 
-function Menu:wheelmoved(x, y)
+function Menu:wheelmoved(_, y) --(x, y)
 	self.selectedButton = nil
 	if self:getHeight() > self.visibleHeight then
 		if y < 0 then
@@ -161,7 +161,7 @@ function Menu:wheelmoved(x, y)
 end
 
 function Menu:pressed(x, y)
-	index = self:getButtonAt(x, y)
+	local index = self:getButtonAt(x, y)
 	if index == nil then
 		return nil
 	end

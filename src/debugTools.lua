@@ -30,8 +30,8 @@ function Debug.draw()
 	end
 	love.graphics.print(
 		string.format("%3d", love.timer.getFPS()),
-		SCREEN_WIDTH - 20, 0)
-	for i, player in ipairs(Debug.players) do
+		love.graphics.getWidth() - 20, 0)
+	for _, player in ipairs(Debug.players) do
 		if player and player.camera then
 			-- Gather debug data
 			local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
@@ -68,7 +68,7 @@ function Debug.draw()
 	end
 end
 
-function Debug.update(dt)
+function Debug.update() --(dt)
 	if Debug.mouseJoint then
 		local mouseWorldX, mouseWorldY =
 			Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
@@ -78,9 +78,9 @@ function Debug.update(dt)
 end
 
 function Debug.keyboard(key)
-	local world = Debug.world
-	local physics = world.physics
-	for i, player in ipairs(Debug.players) do
+	--local world = Debug.world
+	--local physics = world.physics
+--	for i, player in ipairs(Debug.players) do
 
 		if key == "n" then
 			Debug.spawn = true
@@ -92,15 +92,15 @@ function Debug.keyboard(key)
 				love.filesystem.write("playerShip.txt", string)
 			end
 		end
-	end
+--	end
 end
 
-function Debug.mousepressed(mouseX, mouseY, button)
+function Debug.mousepressed(_, _, button) --(mouseX, mouseY, button)
 	local mouseWorldX, mouseWorldY =
 		Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
 		                                       love.mouse.getY())
 	if button == 3 then
-		structure = Debug.world:getStructure(mouseWorldX, mouseWorldY)
+		local structure = Debug.world:getStructure(mouseWorldX, mouseWorldY)
 		if structure then
 			Debug.mouseJoint = love.physics.newMouseJoint(structure.body,
 														  mouseWorldX,
@@ -110,7 +110,7 @@ function Debug.mousepressed(mouseX, mouseY, button)
 	end
 end
 
-function Debug.mousereleased(x, y, button)
+function Debug.mousereleased(_, _, button) --(x, y, button)
 	if button == 3 then
 		if Debug.mouseJoint then
 			Debug.mouseJoint:destroy()

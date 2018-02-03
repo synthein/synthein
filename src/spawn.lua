@@ -2,7 +2,6 @@
 -- data required to produce them. This module is designed to be called in
 -- SceneParser and Saves.
 local PartRegistry = require("shipparts/partRegistry")
-local Tserial = require("tserial")
 local Util = require("util")
 local Structure = require("structure")
 local GridTable = require("gridTable")
@@ -26,7 +25,7 @@ function Spawn.spawnObject(world, key, location, data, shipInfo, shipType)
 
 	local value = World.objectTypes[key]
 	local object = value.create(world.info, location, data)
-	world:addObject(object, chunkLocation, key)
+	world:addObject(object, key)
 	return object, player
 end
 
@@ -88,9 +87,9 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 				for a = 1,(stringLength-i) do
 					c = shipString:sub(i + a, i + a)
 					if c == ')' then
-						locationString = shipString:sub(i + 1, i + a - 1)
+						local locationString = shipString:sub(i + 1, i + a - 1)
 						location = {}
-						for coord in string.gmatch(locationString, "[-0-9.]+") do 
+						for coord in string.gmatch(locationString, "[-0-9.]+") do
 							table.insert(location, tonumber(coord))
 						end
 					end
@@ -101,7 +100,7 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 					if c == ']' then
 						local dataString = shipString:sub(i + 1, i + a - 1)
 						loadData = {}
-						for var in string.gmatch(dataString, "[-0-9.]+") do 
+						for var in string.gmatch(dataString, "[-0-9.]+") do
 							table.insert(loadData, tonumber(var))
 						end
 					end
@@ -133,7 +132,7 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 		for i = 1, stringLength do
 			local c = shipString:sub(i,i)
 			local nc = shipString:sub(i + 1, i + 1)
-			local angle = 1
+--			local angle = 1
 			local data
 			j = j + 1
 			x = (j - baseJ)/2
@@ -141,7 +140,7 @@ function Spawn.shipUnpack(shipString, stringLength, shipData)
 			if loadDataTable[1] then
 				if loadDataTable[1][1][1] == x and loadDataTable[1][1][2]	== y then
 					data = loadDataTable[1][2]
-				end	
+				end
 			end
 
 			if c == '\n' then
@@ -180,7 +179,7 @@ function Spawn.shipPack(structure, saveThePartData)
 	local xLow, xHigh, yLow, yHigh = 0, 0, 0, 0
 	local parts = structure.gridTable:loop()
 	local stringTable = {}
-	for i, part in ipairs(parts) do
+	for _, part in ipairs(parts) do
 		local x = part.location[1]
 		local y = part.location[2]
 		if     x < xLow  then
@@ -196,7 +195,7 @@ function Spawn.shipPack(structure, saveThePartData)
 	end
 	for i = 1, (yHigh - yLow + 1) do
 		table.insert(stringTable, {})
-		for j = 1, (xHigh - xLow + 1) do
+		for _ = 1, (xHigh - xLow + 1) do
 			table.insert(stringTable[i], {"  "})
 		end
 	end
@@ -204,7 +203,7 @@ function Spawn.shipPack(structure, saveThePartData)
 		local x = part.location[1]
 		local y = part.location[2]
 		local tempString, a, b
-		local loadData = {}
+--		local loadData = {}
 
 		a = part.partChar
 --[[
@@ -234,7 +233,7 @@ function Spawn.shipPack(structure, saveThePartData)
 	--Put strings together
 	local dataString = ""
 	for i = 1,#stringTable do
-		ii = #stringTable - i + 1
+		local ii = #stringTable - i + 1
 		for j = 1,#stringTable[ii] do
 			string = string .. stringTable[ii][j][1]
 			if stringTable[ii][j][2]then

@@ -48,9 +48,9 @@ function Building:setSide(partSide)
 		else
 			return true
 		end
-	elseif self.mode == 4 then 
+	elseif self.mode == 4 then
 		if self.structurePart.connectableSides[partSide] then
-			self.structurePartSide = partSide 
+			self.structurePartSide = partSide
 			if self.annexee and self.annexeePart and self.annexeePartSide
 				and self.structure and self.structurePart
 				and self.structurePartSide then
@@ -64,8 +64,8 @@ function Building:setSide(partSide)
 end
 
 function Building.getStrengthTable(part, partSide)
-	connectableSides = part.connectableSides
-	strength = {}
+	local connectableSides = part.connectableSides
+	local strength = {}
 	for i = 1, 4 do
 		if connectableSides[i] then
 			if i == partSide then
@@ -77,7 +77,7 @@ function Building.getStrengthTable(part, partSide)
 			table.insert(strength, 0)
 		end
 	end
-	strengthX = strength[2]
+	local strengthX = strength[2]
 	strength[2] = strength[4]
 	strength[4] = strengthX
 	return strength
@@ -91,7 +91,7 @@ function Building:draw()
 		self.camera:draw(self.pointerImage,
 						 x + offsetX,
 						 y + offsetY,
-						 angle, 
+						 angle,
 						 1/20, 1/20, self.pointerWidth/2, self.pointerWidth/2)
 	end
 end
@@ -124,7 +124,7 @@ end
 --	if self.mode == 1 then
 --
 --	elseif self.mode == 3 then
---		self.structure, self.structurePart = 
+--		self.structure, self.structurePart =
 --		self.world:getStructure(mouseWorldX,mouseWorldY)
 --		self.mode = 4
 --		if not self.structure or (self.structure.corePart and self.structure.corePart:getTeam() ~= self.team) then
@@ -138,7 +138,7 @@ end
 --function Building:released(cursorX, cursorY)
 --	local withinPart = true
 --	if self.mode == 2 then
---		withinPart, self.annexeePartSide = 
+--		withinPart, self.annexeePartSide =
 --			self.annexee:withinPart(self.annexee:findPart(self.annexeePart), cursorX, cursorY)
 --		if not self.annexeePart.connectableSides[self.annexeePartSide] then
 --			return true --end build
@@ -149,7 +149,7 @@ end
 --		return false  --don't end build
 --
 --	elseif self.mode == 4 then
---		withinPart, self.structurePartSide = 
+--		withinPart, self.structurePartSide =
 --			self.structure:withinPart(self.structure:findPart(self.structurePart), cursorX, cursorY)
 --		if withinPart then
 --			return false  --don't end build
@@ -169,7 +169,7 @@ end
 --	local withinPart
 --	if self.mode == 2 then
 --		local partX, partY, partAngle = self.annexee:getAbsPartCoords(self.annexee:findPart(self.annexeePart))
---		withinPart, self.annexeePartSide = 
+--		withinPart, self.annexeePartSide =
 --			self.annexee:withinPart(self.annexee:findPart(self.annexeePart), cursorX, cursorY)
 --		if withinPart then
 --			self.annexeePartSide = nil
@@ -180,7 +180,7 @@ end
 --		)
 --	elseif self.mode == 4 and self.structure then
 --		local partX, partY, partAngle = self.structure:getAbsPartCoords(self.structure:findPart(self.structurePart))
---		withinPart, self.structurePartSide = 
+--		withinPart, self.structurePartSide =
 --			self.structure:withinPart(self.structure:findPart(self.structurePart), cursorX, cursorY)
 --		if withinPart then
 --			self.structurePartSide = nil
@@ -199,7 +199,7 @@ end
 --						 self.pointerImage,
 --						 x + offsetX,
 --						 y + offsetY,
---						 angle, 
+--						 angle,
 --						 1, 1, self.pointerWidth/2, self.pointerWidth/2
 --		)
 --	end
@@ -212,7 +212,7 @@ end
 --			self.pointerImage,
 --			x + offsetX,
 --			y + offsetY,
---			angle, 
+--			angle,
 --			1, 1, self.pointerWidth/2, self.pointerWidth/2
 --		)
 --	end

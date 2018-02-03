@@ -43,7 +43,7 @@ function Util.absVal(x)
 end
 
 function Util.packLocation(input)
-	location = {}
+	local location = {}
 	if input.body then
 		location[1] = input.body:getX()
 		location[2] = input.body:getY()
@@ -53,7 +53,7 @@ function Util.packLocation(input)
 	else
 		location = input
 	end
-	locationString = "("
+	local locationString = "("
 	for i in ipairs(location) do
 		if not (i == 1) then locationString = locationString .. ","	end
 		locationString = locationString .. tostring(location[i])
@@ -66,7 +66,7 @@ function Util.unpackLocation()
 end
 
 function Util.packData(data)
-	dataString = "["
+	local dataString = "["
 	for i in ipairs(data) do
 		if not (i == 1) then dataString = dataString .. ","	end
 		dataString = dataString .. tostring(data[i])

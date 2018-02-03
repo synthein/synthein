@@ -15,10 +15,10 @@ local idStr = namStr .. "%s*="
 local objStr = locStr .. "%s*" .. lstStr .. "%s*(%w*)%s*({?)"
 
 local keyStr = "%[(%l%a*)%]"
-
+--[[
 function SceneParser.loadShip(shipName)
 end
-
+--]]
 function SceneParser.loadScene(sceneLines, world, location, inputs)
 	local ship
 	local index = 0
@@ -34,7 +34,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 		sceneLines = love.filesystem.lines(fileName)
 	end
 
-	function spawnObject(key, ship)
+	local function spawnObject(key, ship)
 		local shipID, location, data, shipInfo, shipType = unpack(ship)
 		local object, player = Spawn.spawnObject(world, key, location,
 												 data, shipInfo, shipType)
@@ -67,15 +67,15 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				if not shipID then
 					shipID = false
 				end
-				
-				local locationString, dataString, shipType, bracket = 
+
+				local locationString, dataString, shipType, bracket =
 					string.match(line, objStr)
 				if bracket == "{" then
 					ifShipString = true
 				end
 
 				local l = {}
-				for coord in string.gmatch(locationString, numStr) do 
+				for coord in string.gmatch(locationString, numStr) do
 					table.insert(l, tonumber(coord))
 				end
 				for i = 1,6 do
@@ -86,7 +86,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 
 				l[1], l[2] = Util.computeAbsCoords(l[1], l[2], location[3])
 				l[4], l[5] = Util.computeAbsCoords(l[4], l[5], location[3])
-				
+
 				for i = 1,3 do
 					l[i] = l[i] + location[i]
 				end
@@ -117,7 +117,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					ship = {shipID, l, data, shipType, true}
 					spawnObject(key, ship)
 				end
-				
+
 			elseif string.match(line, "%s*%{") then
 				ifShipString = true
 			elseif string.match(line, keyStr) then
@@ -126,7 +126,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 		end
 	end
 
-	for i,object in ipairs(objects) do
+	for _, object in ipairs(objects) do
 		object:postCreate(references)
 	end
 	return playerShips
@@ -147,11 +147,11 @@ function SceneParser.saveScene(world)
 
 	for key, table in pairs(world.objects) do
 		sceneString = sceneString .. "[" .. key .. "]\n"
-		for index, object in ipairs(table) do
+		for _, object in ipairs(table) do
 			local data = object:getSaveData(references)
 			local string = references[object] .. " = " ..
-							Util.packLocation(object) .. 
-						 	Util.packData(data) .. "\n" 
+							Util.packLocation(object) ..
+							Util.packData(data) .. "\n"
 			if key == "structures" then
 				string = string .. "{\n" ..
 									Spawn.shipPack(object, true)

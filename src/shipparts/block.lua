@@ -4,7 +4,7 @@ local Block = {}
 Block.__index = Block
 setmetatable(Block, Part)
 
-function Block.create(world, x, y)
+function Block.create()
 	local self = Part.create()
 	setmetatable(self, Block)
 

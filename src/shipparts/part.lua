@@ -64,7 +64,7 @@ function Part:getPartSide(locationX, locationY)
 	local angleToCursor = Util.vectorAngle(locationX - partX,
 										   locationY - partY)
 	local angleDifference = angleToCursor - partAngle
-	partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
+	local partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
 	return partSide
 end
 
@@ -75,7 +75,7 @@ function Part:damage(damage)
 		local structure = body:getUserData()
 		local events = structure.events
 		local location = {self:getWorldLocation()}
-		local vx, vy 
+		local vx, vy
 		vx, vy = body:getLinearVelocityFromLocalPoint(unpack(self.location))
 		location[4] = vx
 		location[5] = vy
@@ -86,8 +86,8 @@ function Part:damage(damage)
 end
 
 function Part:collision(fixture, sqVelocity, pointVelocity)
-	object = fixture:getUserData()
-	x, y, mass, inertia = fixture:getMassData()
+	local object = fixture:getUserData()
+	local _, _, mass, _ = fixture:getMassData()
 	local damage = math.floor(sqVelocity * mass / 40)
 	object:damage(damage)
 	local body = self.fixture:getBody()
@@ -99,7 +99,7 @@ function Part:collision(fixture, sqVelocity, pointVelocity)
 	end
 end
 
-function Part:update(dt, partsInfo)
+function Part:update() --(dt, partsInfo)
 end
 
 function Part:draw()

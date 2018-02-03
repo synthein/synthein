@@ -34,7 +34,7 @@ function AI:getOrders(location, worldInfo, leader, body)
 		shoot = false
 	else
 		local objects = {}
-		function fixtureCallback(fixture)
+		local function fixtureCallback(fixture)
 			local objectBody = fixture:getBody()
 			if not fixture:isSensor() and objectBody ~= body then
 				table.insert(objects, fixture:getUserData())
@@ -42,13 +42,13 @@ function AI:getOrders(location, worldInfo, leader, body)
 			return true
 		end
 
-		physics:queryBoundingBox(aiX - 500, aiY - 500, aiX + 500, aiY + 500, 
-							 	 fixtureCallback)
+		physics:queryBoundingBox(aiX - 500, aiY - 500, aiX + 500, aiY + 500,
+								 fixtureCallback)
 
 		-- Search for any enemies.
 		if #objects > 0 then
 			local targetMSq = nil
-			for i, object in ipairs(objects) do
+			for _, object in ipairs(objects) do
 				-- Look for core blocks.
 				if object.getTeam and
 				   teamHostility:test(self.team, object:getTeam()) then
@@ -99,7 +99,7 @@ function AI:getOrders(location, worldInfo, leader, body)
 
 		if shoot then
 			local hit = true
-			function RayCastCallback(fixture, x, y, xn, yn, fraction)
+			local function RayCastCallback(fixture, _, _, _, _, _) --(fixture, x, y, xn, yn, fraction)
 				local structure = fixture:getBody():getUserData()
 				if structure and structure.corePart then
 					local team = structure.corePart:getTeam()

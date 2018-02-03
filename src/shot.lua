@@ -21,7 +21,7 @@ function Shot.create(worldInfo, location, sourcePart)
 
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
-	self.body = love.physics.newBody(self.physics, 
+	self.body = love.physics.newBody(self.physics,
 					location[1], location[2], "dynamic")
 	self.body:setAngle(location[3])
 	self.body:setLinearVelocity(vx, vy)
@@ -58,7 +58,7 @@ function Shot:getSaveData(references)
 end
 
 function Shot:collision(fixture)
-	object = fixture:getUserData()
+	local object = fixture:getUserData()
 	if object ~= self.sourcePart and self.firstContact then
 		object:damage(1)
 		self:destroy()
@@ -72,7 +72,7 @@ function Shot:destroy()
 end
 
 
-function Shot:update(dt, worldInfo)
+function Shot:update(dt) --(dt, worldInfo)
 	self.time = self.time + dt
 	if self.time > 5 then
 		self:destroy()
@@ -81,7 +81,7 @@ function Shot:update(dt, worldInfo)
 	return {}
 end
 
-function Shot:draw(camera)
+function Shot:draw()
 	love.graphics.draw(
 		self.image,
 		self.body:getX(), self.body:getY(), self.body:getAngle(),

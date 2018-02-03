@@ -31,7 +31,7 @@ function Controls.setCursor(control, Cursor)
 	else
 		cursorChange = control[1]:getAxis(control[2])
 	end
-	
+
 	if control[3] == "set" then
 		return cursorChange
 	elseif control[3] == "change" then

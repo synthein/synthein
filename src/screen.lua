@@ -6,7 +6,7 @@ Screen.__index = Screen
 Screen.cameras = {}
 
 function Screen.createCamera()
-	newCamera = Camera.create()
+	local newCamera = Camera.create()
 	table.insert(Screen.cameras, newCamera)
 	Screen.arrange(love.graphics.getWidth(), love.graphics.getHeight())
 	return newCamera

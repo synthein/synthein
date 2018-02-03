@@ -5,8 +5,8 @@ local PhysicsReferences = {}
 
 local fixtures = {categories = {}, masks = {}, groups ={}}
 local categories = fixtures.categories
-local masks = fixtures.mask
-local groups = fixture.groups
+--local masks = fixtures.mask
+local groups = fixtures.groups
 
 
 --If a collision occurs the fixture with the category that comes first will have
@@ -22,13 +22,14 @@ local catergoryOrder = {
 
 --Generate category values.
 local bit = 1
-for i,v in ipairs(catergoryOrder) do
+for _, v in ipairs(catergoryOrder) do
 	categories[v] = bit
 	bit = bit *2
 end
 
 --Anything included collides. It is required for both that are involed to
 --include the other.
+--[[
 masks = {
 	camera = {"visual", "shields", "projectiles", "general"},
 	visual = {"cameras"},
@@ -36,16 +37,16 @@ masks = {
 	projectile = {"cameras", "shields", "projectiles", "general"},
 	general = {"cameras", "projectiles", "general"}
 }
-
+--]]
 --Groups determine if they collide with themselfs
 local collision = {"missiles", "general"}
 local noCollision = {"cameras", "visual", "shields", "projectiles"}
 
-for i,v in ipairs(collision) do
+for i, v in ipairs(collision) do
 	groups[v] = i
 end
 
-for i,v in ipairs(noCollision) do
+for i, v in ipairs(noCollision) do
 	groups[v] = -i
 end
 

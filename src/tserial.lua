@@ -1,7 +1,7 @@
 --- Tserial v1.5, a simple table serializer which turns tables into Lua script
 -- @author Taehl (SelfMadeSpirit@gmail.com)
-Tserial = {}
-TSerial = Tserial	-- for backwards-compatibility
+local Tserial = {}
+--TSerial = Tserial	-- for backwards-compatibility
 
 --- Serializes a table into a string, in form of Lua script.
 -- @param t table to be serialized (may not contain any circular reference)

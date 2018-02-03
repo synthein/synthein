@@ -48,7 +48,7 @@ function Player:handleInput()
 		self.camera:setX(self.ship.body:getX())
 		self.camera:setY(self.ship.body:getY())
 	end
-	
+
 	-----------------------
 	----- Set Cursor  -----
 	-----------------------
@@ -56,7 +56,7 @@ function Player:handleInput()
 	self.cursorY = Controls.setCursor(self.controls.cursorY, self.cursorY)
 	self.cursorX, self.cursorY = self.camera:limitCursor(self.cursorX,
 														 self.cursorY)
-	
+
 	-----------------------
 	---- Ship commands ----
 	-----------------------
@@ -131,7 +131,7 @@ function Player:buttonpressed(source, button)
 				-- If selection mode is enabled, just leave selection mode.
 				self.selection = nil
 			else
-				-- If selection mode is not enabled, open the menu when the 
+				-- If selection mode is not enabled, open the menu when the
 				-- cancel key is pressed.
 				self.openMenu = true
 			end
@@ -140,15 +140,15 @@ function Player:buttonpressed(source, button)
 		elseif not order then
 			return
 		else
-			local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, 
+			local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX,
 																self.cursorY)
 			if order == "build" or order == "destroy" then
 				self.selected:pressed(cursorX, cursorY, order)
 
 			elseif order == "playerMenu" then
 				if debugmode then
-					
-					local x, y, width, height = self.camera:getScissor()
+
+					local _, _, width, _ = self.camera:getScissor()
 					self.menu = Menu.create(width/2, 100, 5,
 											self.menuButtonNames, self.camera)
 				end
@@ -164,7 +164,7 @@ end
 function Player:buttonreleased(source, button)
 	local order = Controls.test("released", self.controls, source, button)
 
-	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
+	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then
 		self.selected:released(cursorX, cursorY)
 	end
@@ -184,7 +184,7 @@ function Player:drawWorldObjects()
 	local a, b, c, d = self.camera:getWorldBoarder()
 	local callbackData = {}
 
-	function callback(fixture)
+	local function callback(fixture)
 		table.insert(callbackData, fixture:getUserData())
 		return true
 	end
@@ -197,7 +197,7 @@ function Player:drawWorldObjects()
 end
 
 function Player:drawExtras()
-	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
+	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)
 	end

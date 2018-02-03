@@ -178,10 +178,6 @@ function Player:draw()
 
 	self:drawWorldObjects()
 	self:drawExtras()
-
-	if self.menu then
-		self.menu:draw()
-	end
 end
 
 function Player:drawWorldObjects()
@@ -204,6 +200,10 @@ function Player:drawExtras()
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)
+	end
+
+	if self.menu then
+		self.menu:draw()
 	end
 
 	local point

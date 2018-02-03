@@ -4,6 +4,7 @@ local SceneParser = require("sceneParser")
 local Screen = require("screen")
 local Utf8 = require("utf8")
 local Util = require("util")
+local Menu = require("menu")
 
 local GameState = require("gamestates/gameState")
 local InGame = {}
@@ -21,6 +22,8 @@ if love.graphics then pauseMenu.font = love.graphics.newFont(18) end
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 local typingSaveName = false
 local saveName = ""
+
+local menu = Menu.create(love.graphics.getWidth() / 2, 225, 5, pauseMenu.buttons)
 
 function InGame.setplayers(playerTable)
 	players = playerTable
@@ -93,15 +96,7 @@ function InGame.mousepressed(x, y, button)
 
 	if menuOpen then
 		if button == 1 then
-			if x < (screen_width - button_width)/2 or x > (screen_width + button_width)/2 then
-				return InGame
-			end
-			local yRef = y - 175
-			local index = math.floor(yRef/75)
-			local remainder = yRef % 75
-			if index < 1 or index > #pauseMenu.buttons or remainder > 50 then
-				return InGame
-			end
+			local index = menu:getButtonAt(x, y)
 			local selection = pauseMenu.buttons[index]
 
 			if selection == "Save" then
@@ -256,28 +251,7 @@ function InGame.draw()
 		love.graphics.print("Paused", screen_width/2-24, 30)
 	end
 	if menuOpen then
-		local previousFont = love.graphics.getFont()
-		love.graphics.setFont(pauseMenu.font)
-		button_width = 500
-		button_height = 50
-		text_height = 40
-
-		-- Draw a background box behind the menu.
-		love.graphics.setColor(200, 200, 200)
-		love.graphics.rectangle("fill",
-			(screen_width - button_width)/2 - 25,
-			150 + 75,
-			button_width + 50,
-			#pauseMenu.buttons * (button_height + 25) + 25)
-
-		-- Draw the buttons.
-		for i,button in ipairs(pauseMenu.buttons) do
-			love.graphics.setColor(100, 100, 100)
-			love.graphics.rectangle("fill", (screen_width - button_width)/2, 175 + 75 * i, button_width, button_height)
-			love.graphics.setColor(255, 255, 255)
-			love.graphics.print(button, (screen_width - button_width)/2 + 10, 175 + 75 * i + button_height/2 - text_height/2, 0, 1, 1, 0, 0, 0, 0)
-		end
-		love.graphics.setFont(previousFont)
+		menu:draw()
 	end
 	if typingSaveName then
 		love.graphics.print("Type a name to use for your save, then press enter:", screen_width/2-150, 60)

@@ -4,7 +4,7 @@ local EngineBlock = {}
 EngineBlock.__index = EngineBlock
 setmetatable(EngineBlock, Part)
 
-function EngineBlock.create(world, x, y)
+function EngineBlock.create()
 	local self = Part.create()
 	setmetatable(self, EngineBlock)
 
@@ -26,7 +26,7 @@ function EngineBlock.create(world, x, y)
 	return self
 end
 
-function EngineBlock:update(dt, partsInfo)
+function EngineBlock:update(_, partsInfo) --(dt, partsInfo)
 	if self.engine:update(self, partsInfo.engines) then
 		self.image = self.imageActive
 	else

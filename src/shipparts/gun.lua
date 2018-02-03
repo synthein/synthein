@@ -1,3 +1,4 @@
+local Part = require("shipparts/part")
 local StructureMath = require("structureMath")
 
 local Gun = {}

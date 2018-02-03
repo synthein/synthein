@@ -5,7 +5,7 @@ local GunBlock = {}
 GunBlock.__index = GunBlock
 setmetatable(GunBlock, Part)
 
-function GunBlock.create(world, x, y)
+function GunBlock.create()
 	local self = Part.create()
 	setmetatable(self, GunBlock)
 

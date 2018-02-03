@@ -1,3 +1,4 @@
+local Part = require("shipparts/part")
 local StructureMath = require("structureMath")
 local Util = require("util")
 
@@ -29,7 +30,7 @@ function Engine:update(part, enginesInfo)
 	end
 
 	if self.engineType == 1 then
-		if enginesInfo[5] == 0 and 
+		if enginesInfo[5] == 0 and
 		   enginesInfo[6] == 0 and
 		   enginesInfo[7] == 0 then
 			active = false
@@ -47,7 +48,7 @@ function Engine:update(part, enginesInfo)
 		-- Determine local force direction
 		fx, fy = unpack(StructureMath.addUnitVector({0, 0}, orientation))
 	end
-	
+
 	if active then
 		-- Applying the forces and the torque
 		fx, fy = body:getWorldVector(fx, fy)

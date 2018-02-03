@@ -46,7 +46,7 @@ function AIBlock:runMenu(i)
 	return self.ai:runMenu(i)
 end
 
-function AIBlock:update(dt, partsInfo)
+function AIBlock:update(_, partsInfo) --(dt, partsInfo)
 	self.engine:update(self, partsInfo.engines)
 end
 

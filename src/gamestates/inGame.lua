@@ -4,6 +4,7 @@ local SceneParser = require("sceneParser")
 local Screen = require("screen")
 local Utf8 = require("utf8")
 local Util = require("util")
+local Menu = require("menu")
 
 local GameState = require("gamestates/gameState")
 local InGame = {}
@@ -22,6 +23,8 @@ pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 local typingSaveName = false
 local saveName = ""
 
+local menu = Menu.create(love.graphics.getWidth() / 2, 225, 5, pauseMenu.buttons)
+
 function InGame.setplayers(playerTable)
 	players = playerTable
 end
@@ -31,7 +34,7 @@ function InGame.setWorld(setworld)
 end
 
 function InGame.resize(w, h)
-	Screen.arrange()
+	Screen.arrange(w, h)
 end
 
 function InGame.textinput(key)
@@ -58,7 +61,7 @@ function InGame.keypressed(key)
 			typingSaveName = false
 		end
 	else
-		for i, player in ipairs(players) do
+		for _, player in ipairs(players) do
 			player:buttonpressed(love.keyboard, key)
 		end
 
@@ -76,30 +79,24 @@ end
 
 function InGame.keyreleased(key)
 	if not typingSaveName then
-		for i, player in ipairs(players) do
+		for _, player in ipairs(players) do
 			player:buttonreleased(love.keyboard, key)
 		end
 	end
 end
 
 function InGame.mousepressed(x, y, button)
+	local screen_width = love.graphics.getWidth()
+
 	if not typingSaveName then
-		for i, player in ipairs(players) do
+		for _, player in ipairs(players) do
 			player:buttonpressed(love.mouse, button)
 		end
 	end
 
 	if menuOpen then
 		if button == 1 then
-			if x < (SCREEN_WIDTH - button_width)/2 or x > (SCREEN_WIDTH + button_width)/2 then
-				return InGame
-			end
-			local yRef = y - 175
-			local index = math.floor(yRef/75)
-			local remainder = yRef % 75
-			if index < 1 or index > #pauseMenu.buttons or remainder > 50 then
-				return InGame
-			end
+			local index = menu:getButtonAt(x, y)
 			local selection = pauseMenu.buttons[index]
 
 			if selection == "Save" then
@@ -120,7 +117,7 @@ function InGame.mousepressed(x, y, button)
 end
 
 function InGame.mousereleased(x, y, button)
-	for i, player in ipairs(players) do
+	for _, player in ipairs(players) do
 		player:buttonreleased(love.mouse, button)
 	end
 
@@ -130,19 +127,19 @@ function InGame.mousereleased(x, y, button)
 end
 
 function InGame.joystickpressed(joystick, button)
-	for i, player in ipairs(players) do
+	for _, player in ipairs(players) do
 		player:buttonpressed(joystick, button)
 	end
 end
 
 function InGame.joystickreleased(joystick, button)
-	for i, player in ipairs(players) do
+	for _, player in ipairs(players) do
 		player:buttonreleased(joystick, button)
 	end
 end
 
-function InGame.wheelmoved(x, y)
-	for i, player in ipairs(players) do
+function InGame.wheelmoved(_, y) --(x, y)
+	for _, player in ipairs(players) do
 		if y > 0 then
 			player:buttonpressed(love.mouse, "yWheel")
 		elseif y < 0 then
@@ -154,13 +151,13 @@ end
 function InGame.update(dt)
 	local openMenu, closeMenu = false, false
 	-- Send input to the players.
-	for i, player in ipairs(players) do
-		openMenu  = openMenu  or player.openMenu 
+	for _, player in ipairs(players) do
+		openMenu  = openMenu  or player.openMenu
 		player.openMenu  = false
 		closeMenu = closeMenu or player.closeMenu
 		player.closeMenu = false
 		player.menuOpen = menuOpen
-		
+
 		player:handleInput()
 	end
 
@@ -170,8 +167,7 @@ function InGame.update(dt)
 		menuOpen = true
 	end
 
-	if paused or menuOpen then
-	else
+	if not (paused or menuOpen) then
 
 
 		-- Update the game world.
@@ -182,17 +178,17 @@ function InGame.update(dt)
 		second = second + dt
 		if second > 1 then
 
-			for i, player in ipairs(players) do
+			for _, player in ipairs(players) do
 				if players[1].ship then
-					timeVar = 1 - 50/(20 + eventTime)
+					local timeVar = 1 - 50/(20 + eventTime)
 					if timeVar < 0 then timeVar = 0 end
-					disVar = 1 - 50/(1 + Util.vectorMagnitude(
+					local disVar = 1 - 50/(1 + Util.vectorMagnitude(
 								player.ship.body:getX(),player.ship.body:getY())/20)
 					if disVar < 0 then disVar = 0 end
-					veloVar = 1 - 50/(1 + Util.vectorMagnitude(
+					local veloVar = 1 - 50/(1 + Util.vectorMagnitude(
 								player.ship.body:getLinearVelocity()))
 					if veloVar < 0 then veloVar = 0 end
-					rand = love.math.random()
+					local rand = love.math.random()
 					if rand < timeVar * disVar * veloVar or
 							(debugmode and Debug.getSpawn()) then
 						eventTime = 0
@@ -219,8 +215,8 @@ function InGame.update(dt)
 						location[3] = 2 * math.pi * math.random()
 
 						local inputs = {playerTeam = 1, playerShip = player.ship}
-						local ships, shipType = SceneParser.loadScene("scene" .. scene, world, location, nil, inputs)
-						for i,ship in ipairs(ships) do
+						local ships = SceneParser.loadScene("scene" .. scene, world, location, nil, inputs)
+						for _, ship in ipairs(ships) do
 							world:addObject(ship)
 						end
 					end
@@ -244,42 +240,22 @@ function InGame.update(dt)
 end
 
 function InGame.draw()
+	local screen_width = love.graphics.getWidth()
 
-	for i, player in ipairs(players) do
+	for _, player in ipairs(players) do
 		player:draw()
 	end
 	love.graphics.origin()
 
 	if paused then
-		love.graphics.print("Paused", SCREEN_WIDTH/2-24, 30)
+		love.graphics.print("Paused", screen_width/2-24, 30)
 	end
 	if menuOpen then
-		local previousFont = love.graphics.getFont()
-		love.graphics.setFont(pauseMenu.font)
-		button_width = 500
-		button_height = 50
-		text_height = 40
-
-		-- Draw a background box behind the menu.
-		love.graphics.setColor(200, 200, 200)
-		love.graphics.rectangle("fill",
-			(SCREEN_WIDTH - button_width)/2 - 25,
-			150 + 75,
-			button_width + 50,
-			#pauseMenu.buttons * (button_height + 25) + 25)
-
-		-- Draw the buttons.
-		for i,button in ipairs(pauseMenu.buttons) do
-			love.graphics.setColor(100, 100, 100)
-			love.graphics.rectangle("fill", (SCREEN_WIDTH - button_width)/2, 175 + 75 * i, button_width, button_height)
-			love.graphics.setColor(255, 255, 255)
-			love.graphics.print(button, (SCREEN_WIDTH - button_width)/2 + 10, 175 + 75 * i + button_height/2 - text_height/2, 0, 1, 1, 0, 0, 0, 0)
-		end
-		love.graphics.setFont(previousFont)
+		menu:draw()
 	end
 	if typingSaveName then
-		love.graphics.print("Type a name to use for your save, then press enter:", SCREEN_WIDTH/2-150, 60)
-		love.graphics.print(saveName, SCREEN_WIDTH/2-150, 90)
+		love.graphics.print("Type a name to use for your save, then press enter:", screen_width/2-150, 60)
+		love.graphics.print(saveName, screen_width/2-150, 90)
 	end
 
 	-- Print debug info.

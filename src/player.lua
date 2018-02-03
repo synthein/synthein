@@ -15,6 +15,9 @@ function Player.create(world, controls, structure)
 	self.controls = controls
 	self.ship = structure
 	self.camera = Screen.createCamera()
+	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
+	self.drawExtras = self.camera.wrap(Player.drawExtras, false)
+
 	self.selected = Selection.create(world, self.ship.corePart:getTeam(),
 									self.camera)
 	self.menu = nil
@@ -32,6 +35,9 @@ function Player.create(world, controls, structure)
 	self.partY = nil
 	self.cursorX = 0
 	self.cursorY = 0
+
+	self.compass = love.graphics.newImage("res/images/compass.png")
+	self.cursor = love.graphics.newImage("res/images/pointer.png")
 
 	return self
 end
@@ -170,8 +176,13 @@ function Player:draw()
 		self.camera:setY(self.ship.body:getY())
 	end
 
-	local callbackData = {}
+	self:drawWorldObjects()
+	self:drawExtras()
+end
+
+function Player:drawWorldObjects()
 	local a, b, c, d = self.camera:getWorldBoarder()
+	local callbackData = {}
 
 	function callback(fixture)
 		table.insert(callbackData, fixture:getUserData())
@@ -181,12 +192,18 @@ function Player:draw()
 	self.world.physics:queryBoundingBox(a, b, c, d, callback)
 
 	for drawlayer, object in ipairs(callbackData) do
-		object:draw(self.camera)
+		object:draw()
 	end
+end
 
+function Player:drawExtras()
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)
+	end
+
+	if self.menu then
+		self.menu:draw()
 	end
 
 	local point
@@ -195,12 +212,16 @@ function Player:draw()
 	else
 		point = {0,0}
 	end
-
-	if self.menu then
-		self.menu:draw()
-	end
-
-	self.camera:drawExtras(point, {self.cursorX, self.cursorY})
+	local x, y = self.camera:getPosition()
+	local _, _, width, height = self.camera:getScissor()
+	--draw the compass in the lower right hand coner 60 pixels from the edges
+	love.graphics.draw(
+			self.compass,
+			width - 60,
+			height - 60,
+			math.atan2(x - point[1], y - point[2]) + math.pi,
+			1, 1, 25, 25)
+	love.graphics.draw(self.cursor, self.cursorX - 2, self.cursorY - 2)
 end
 
 return Player

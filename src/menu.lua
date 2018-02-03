@@ -3,7 +3,7 @@ Menu.__index = Menu
 
 Menu.scrollSpeed = 150
 
-function Menu.create(x, y, size, buttons, camera)
+function Menu.create(x, y, size, buttons)
 	self = {}
 	setmetatable(self, Menu)
 
@@ -19,7 +19,6 @@ function Menu.create(x, y, size, buttons, camera)
 	self.scrollY = 0
 	self.scrollVelocity = 0
 	self.selectedButton = nil
-	self.camera = camera
 	if love.graphics then self.font = love.graphics.newFont(size * 7) end
 	if love.graphics then self.visibleHeight = love.graphics.getHeight() - self.y - self.buttonMargin end
 
@@ -87,17 +86,9 @@ end
 
 function Menu:draw()
 	love.graphics.push("all")
-	local x, y
-	if self.camera then
-		x, y = self.camera:getScissor()
-		x = x + self.x - self.width / 2
-		y = y + self.y
-	else
-		x = self.x - self.width / 2
-		y = self.y
-	end
+	local x = self.x - self.width / 2
+	local y = self.y
 
-	love.graphics.setScissor(x, y, self.width, self.visibleHeight)
 	love.graphics.setColor(200, 200, 200)
 	love.graphics.rectangle(
 		"fill",

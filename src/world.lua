@@ -14,7 +14,7 @@ World.objectTypes = {
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
 function World.create(playerHostility)
-	self = {}
+	local self = {}
 	setmetatable(self, World)
 
 	self.physics = love.physics.newWorld()
@@ -28,7 +28,7 @@ function World.create(playerHostility)
 	generalHostility[-2] = false --civilians
 	generalHostility[-3] = true  --Empire
 	generalHostility[-4] = true  --Federation
-	
+
 	self.events = {create = {}}
 	local teamHostility = {playerHostility = playerHostility,
 						   general = generalHostility}
@@ -46,10 +46,10 @@ function World.create(playerHostility)
 		end
 	end
 
-	self.info = {events = self.events, physics = self.physics, 
+	self.info = {events = self.events, physics = self.physics,
 					teamHostility = teamHostility}
 
-	for key, value in pairs(World.objectTypes) do
+	for key, _ in pairs(World.objectTypes) do
 		self.objects[key] = {}
 	end
 
@@ -70,11 +70,11 @@ function World.beginContact(a, b, coll)
 		local x, y = coll:getPositions()
 		local bodyA = a:getBody()
 		local bodyB = b:getBody()
-		local sq
+		local sqV, aVX, aVY, bVX, bVY
 
 		if x and y then
-			local aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
-			local bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
+			aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
+			bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
 			local dVX = aVX - bVX
 			local dVY = aVY - bVY
 			sqV = (dVX * dVX) + (dVY * dVY)
@@ -90,26 +90,26 @@ function World.beginContact(a, b, coll)
 		objectB:collision(a)
 	end
 end
- 
- 
-function World.endContact(a, b, coll)
+
+
+function World.endContact() --(a, b, coll)
 	--print("endContact")
 end
- 
+
 function World.preSolve(a, b, coll)
 	--print("preSolve")
-	objectA = a:getUserData()
-	objectB = b:getUserData()
+	local objectA = a:getUserData()
+	local objectB = b:getUserData()
 	if objectA.isDestroyed or objectB.isDestroyed then
 		coll:setEnabled(false)
 	end
 end
- 
-function World.postSolve(a, b, coll, normalimpulse, tangentimpulse)
+
+function World.postSolve() --(a, b, coll, normalimpulse, tangentimpulse)
 	--print("postSolve")
 end
 
-function World:addObject(object, chunkLocation, key)
+function World:addObject(object, objectKey)
 	if objectKey == nil then
 		for key, value in pairs(World.objectTypes) do
 			if value == object.__index then
@@ -123,7 +123,7 @@ function World:addObject(object, chunkLocation, key)
 	end
 	table.insert(self.objects[objectKey], object)
 end
-
+--[[
 function World:getChunk(location)
 	local x = location[1]
 	local y = location[2]
@@ -134,7 +134,7 @@ function World:getChunk(location)
 	end
 	return chunk
 end
-
+--]]
 World.callbackData = {objects = {}}
 
 function World.fixtureCallback(fixture)
@@ -146,14 +146,14 @@ end
 
 --Get the structure and part under at the location.
 --Also return the side of the part that is closed if there is a part.
-function World:getObject(locationX, locationY, key)
+function World:getObject(locationX, locationY) --, key)
 	World.callbackData.objects = {}
 	local a = locationX
 	local b = locationY
-	self.physics:queryBoundingBox(a, b, a, b, 
+	self.physics:queryBoundingBox(a, b, a, b,
 								  World.fixtureCallback)
 
-	for i, object in ipairs(World.callbackData.objects) do
+	for _, object in ipairs(World.callbackData.objects) do
 		if object[1] then
 			return object[1], object[2], object[2]:getPartSide(locationX, locationY)
 		end
@@ -196,7 +196,7 @@ function World:update(dt)
 			local object = objectTable[i]
 			if object.isDestroyed == false then
 				local objectX, objectY = object:getLocation()
-				if key == "structures" and object.corePart and 
+				if key == "structures" and object.corePart and
 						object.corePart:getTeam() > 0 then
 					if objectX < nextBoarders[1] then
 						nextBoarders[1] = objectX
@@ -231,8 +231,8 @@ function World:update(dt)
 	self.boarders[2] = self.boarders[2] - 10000
 	self.boarders[3] = self.boarders[3] + 10000
 	self.boarders[4] = self.boarders[4] + 10000
-	
-	for i, object in ipairs(self.events.create) do
+
+	for _, object in ipairs(self.events.create) do
 		local key = object[1]
 		local value = World.objectTypes[key]
 		local newObject = value.create(self.info, object[2], object[3])

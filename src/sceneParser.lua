@@ -1,6 +1,7 @@
 -- SceneParser serializes and deserializes scenes and ships as strings.
 local Spawn = require("spawn")
 local Util = require("util")
+local Tserial = require("tserial")
 
 local SceneParser = {}
 

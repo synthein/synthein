@@ -23,7 +23,7 @@ function CircleMenu.indexToAngle(index, division, startAngle)
 	return startAngle - math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
-function CircleMenu.draw(x, y, angle, size, strength)
+function CircleMenu:draw(x, y, angle, size, strength)
 	local division = #strength
 
 	-- Function that defines the lines seperating the arc segments

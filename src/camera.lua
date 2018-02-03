@@ -24,8 +24,6 @@ function Camera.create()
 	self.scissorY = 0
 	self.scissorWidth = 0
 	self.scissorHeight = 0
-	self.compass = love.graphics.newImage("res/images/compass.png")
-	self.cursor = love.graphics.newImage("res/images/pointer.png")
 
 	self.graphics = {}
 	setmetatable(self.graphics, self)
@@ -123,19 +121,6 @@ function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
 	love.graphics.setScissor()
 end
 
-function Camera:drawExtras(anchorLocation, cursor)
-	love.graphics.setScissor(self:getScissor())
-	--draw the compass in the lower right hand coner 60 pixels from the edges
-	love.graphics.draw(
-			self.compass,
-			self.scissorX + self.scissorWidth - 60,
-			self.scissorY + self.scissorHeight - 60,
-			math.atan2(self.x - anchorLocation[1], self.y - anchorLocation[2]) + math.pi,
-			1, 1, 25, 25)
-	love.graphics.draw(self.cursor, cursor[1]-2, cursor[2]-2)
-	love.graphics.setScissor()
-end
-
 function Camera:enable(inWorld)
 	love.graphics.setScissor(Camera:getScissor())
 	love.graphics.translate(self.scissorX, self.scissorY)
@@ -160,14 +145,11 @@ function Camera:run(f, inWorld)
 end
 
 function Camera.wrap(f, inWorld)
-	local object = {}
-	function object:wrapped(...)
+	return function(self, ...)
 		self.camera:enable(inWorld)
-		f(...)
+		f(self, ...)
 		self.camera:disable()
 	end
-
-	return object.wrapped
 end
 
 function Camera:print(string, x, y)

@@ -82,10 +82,10 @@ function Shot:update(dt, worldInfo)
 end
 
 function Shot:draw(camera)
-	camera:draw(
+	love.graphics.draw(
 		self.image,
 		self.body:getX(), self.body:getY(), self.body:getAngle(),
-		.1/self.width, .5/self.height, self.width/2, self.height/2)
+		.1/self.width, -.5/self.height, self.width/2, self.height/2)
 end
 
 return Shot

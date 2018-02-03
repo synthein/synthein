@@ -53,9 +53,9 @@ function Particles:update(dt)
 	return {}
 end
 
-function Particles:draw(camera)
+function Particles:draw()
 	local x, y = self:getLocation()
-	camera:draw(self.image, x, y, 0, 1/20, 1/20, self.ox, self.oy)
+	love.graphics.draw(self.image, x, y, 0, 1/20, -1/20, self.ox, self.oy)
 end
 
 return Particles

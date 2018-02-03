@@ -20,9 +20,10 @@ function MainMenu.update(dt)
 end
 
 function MainMenu.draw()
+	local screen_width = love.graphics.getWidth()
 	local previousFont = love.graphics.getFont()
 	love.graphics.setFont(MainMenu.font)
-	love.graphics.print("SYNTHEIN", (SCREEN_WIDTH - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
+	love.graphics.print("SYNTHEIN", (screen_width - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
 	MainMenu.menu:draw()
 	love.graphics.setFont(previousFont)
 end

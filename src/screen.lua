@@ -8,7 +8,7 @@ Screen.cameras = {}
 function Screen.createCamera()
 	newCamera = Camera.create()
 	table.insert(Screen.cameras, newCamera)
-	Screen.arrange()
+	Screen.arrange(love.graphics.getWidth(), love.graphics.getHeight())
 	return newCamera
 end
 
@@ -16,10 +16,8 @@ function Screen.clearCameras()
 	Screen.cameras = {}
 end
 
-function Screen.arrange()
+function Screen.arrange(screenWidth, screenHeight)
 	local n = #Screen.cameras
-	local screenWidth = love.graphics.getWidth()
-	local screenHeight = love.graphics.getHeight()
 	local screenArea = screenWidth * screenHeight
 	local cameraArea = screenArea / n
 	local columns = math.ceil(screenWidth/math.sqrt(cameraArea)-0.5)

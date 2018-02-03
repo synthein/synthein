@@ -22,13 +22,13 @@ function Selection.create(world, team, camera)
 end
 
 function Selection:pressed(cursorX, cursorY, order)
-	local structure, part, partSide = 
+	local structure, part =
 		self.world:getObject(cursorX, cursorY, "structures")
 	if structure and part then
 		if self.build then
 			if order == "build" then
 				if self.build.mode == 3 then
-					if not structure.corePart or 
+					if not structure.corePart or
 							structure.corePart:getTeam() == self.team then
 						self.structure = structure
 						self.part = part
@@ -61,7 +61,7 @@ function Selection:pressed(cursorX, cursorY, order)
 					self.part = part
 				end
 			elseif order == "destroy" then
-				if not structure.corePart or 
+				if not structure.corePart or
 						structure.corePart:getTeam() == self.team then
 					structure:disconnectPart(part)
 				end
@@ -79,7 +79,7 @@ function Selection:released(cursorX, cursorY)
 	if self.structure and self.part then
 		local partSide = self.part:getPartSide(cursorX, cursorY)
 		local withinPart = self.part:withinPart(cursorX, cursorY)
-		local x, y, angle = self.part:getWorldLocation(self.partIndex)
+		local x, y = self.part:getWorldLocation(self.partIndex)
 		if not withinPart then
 			if self.build then
 				if self.build:setSide(partSide) then
@@ -88,7 +88,7 @@ function Selection:released(cursorX, cursorY)
 			else
 				local strength = self.part:getMenu()
 				local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
-				local index = self:angleToIndex(newAngle, #strength)
+				local index = self.angleToIndex(newAngle, #strength)
 				self.part:runMenu(index)
 			end
 			self.structure = nil
@@ -102,7 +102,7 @@ function Selection:released(cursorX, cursorY)
 	end
 end
 
-function Selection:angleToIndex(angle, length)
+function Selection.angleToIndex(angle, length)
 	local index = math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
 	return index
 end
@@ -111,14 +111,14 @@ function Selection:draw(cursorX, cursorY)
 	if self.structure and self.part then
 		local partSide = self.part:getPartSide(cursorX, cursorY)
 		local x, y, angle = self.part:getWorldLocation()
-		local strength = nil
+		local strength
 		if self.build then
 			strength = Building.getStrengthTable(self.part, partSide)
 		else
 			angle = 0
 			strength = self.part:getMenu()
 			local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
-			local index = self:angleToIndex(newAngle, #strength)
+			local index = self.angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2
 			end

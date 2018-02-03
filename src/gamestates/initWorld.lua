@@ -16,8 +16,8 @@ InitWorld.scene = {}
 InitWorld.playerHostility = {}
 InitWorld.ifSave = {}
 
-function InitWorld.update(dt)
-	local sceneLines
+function InitWorld.update() --(dt)
+	local sceneLines, message
 	if InitWorld.ifSave then
 		sceneLines, message = Gamesave.load(InitWorld.scene)
 		if not sceneLines then
@@ -42,7 +42,7 @@ function InitWorld.update(dt)
 
 	local playerShips = SceneParser.loadScene(sceneLines, world, {0, 0})
 	local players = {}
-	for i,ship in ipairs(playerShips) do
+	for _, ship in ipairs(playerShips) do
 		if #players == 0 then
 			table.insert(players, Player.create(world, Controls.defaults(), ship))
 		elseif #players > 0 then

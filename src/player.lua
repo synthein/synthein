@@ -14,9 +14,9 @@ function Player.create(world, controls, structure)
 	self.world = world
 	self.controls = controls
 	self.ship = structure
-print("player wrap")
 	self.camera = Screen.createCamera()
 	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
+	self.drawExtras = self.camera.wrap(Player.drawExtras, false)
 
 	self.selected = Selection.create(world, self.ship.corePart:getTeam(),
 									self.camera)
@@ -35,6 +35,9 @@ print("player wrap")
 	self.partY = nil
 	self.cursorX = 0
 	self.cursorY = 0
+
+	self.compass = love.graphics.newImage("res/images/compass.png")
+	self.cursor = love.graphics.newImage("res/images/pointer.png")
 
 	return self
 end
@@ -173,8 +176,31 @@ function Player:draw()
 		self.camera:setY(self.ship.body:getY())
 	end
 
-	self:drawWorldObjects(self.world, self.camera:getWorldBoarder())
+	self:drawWorldObjects()
+	self:drawExtras()
 
+	if self.menu then
+		self.menu:draw()
+	end
+end
+
+function Player:drawWorldObjects()
+	local a, b, c, d = self.camera:getWorldBoarder()
+	local callbackData = {}
+
+	function callback(fixture)
+		table.insert(callbackData, fixture:getUserData())
+		return true
+	end
+
+	self.world.physics:queryBoundingBox(a, b, c, d, callback)
+
+	for drawlayer, object in ipairs(callbackData) do
+		object:draw()
+	end
+end
+
+function Player:drawExtras()
 	cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)
@@ -186,27 +212,16 @@ function Player:draw()
 	else
 		point = {0,0}
 	end
-
-	if self.menu then
-		self.menu:draw()
-	end
-
-	self.camera:drawExtras(point, {self.cursorX, self.cursorY})
-end
-
-function Player.drawWorldObjects(world, a, b, c, d)
-	local callbackData = {}
-
-	function callback(fixture)
-		table.insert(callbackData, fixture:getUserData())
-		return true
-	end
-
-	world.physics:queryBoundingBox(a, b, c, d, callback)
-
-	for drawlayer, object in ipairs(callbackData) do
-		object:draw()
-	end
+	local x, y = self.camera:getPosition()
+	local _, _, width, height = self.camera:getScissor()
+	--draw the compass in the lower right hand coner 60 pixels from the edges
+	love.graphics.draw(
+			self.compass,
+			width - 60,
+			height - 60,
+			math.atan2(x - point[1], y - point[2]) + math.pi,
+			1, 1, 25, 25)
+	love.graphics.draw(self.cursor, self.cursorX - 2, self.cursorY - 2)
 end
 
 return Player

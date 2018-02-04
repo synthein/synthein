@@ -125,7 +125,7 @@ function AI:getOrders(location, worldInfo, leader, body)
 end
 
 function AI:getMenu()
-	return {1, 0, 0, 1, 0, 0}
+	return {1, 0, 0, 1, 0, 0}, {"Follow", "", "", "Stay", "", ""}
 end
 
 function AI:runMenu(i)

@@ -23,7 +23,7 @@ function CircleMenu.indexToAngle(index, division, startAngle)
 	return startAngle - math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
-function CircleMenu:draw(x, y, angle, size, strength)
+function CircleMenu:draw(x, y, angle, size, strength, lables)
 	local division = #strength
 
 	-- Function that defines the lines seperating the arc segments
@@ -65,10 +65,33 @@ function CircleMenu:draw(x, y, angle, size, strength)
 		end
 	end
 
-	-- Set color to whie
-	love.graphics.setColor(255, 255, 255, 255)
 	-- Clear stencil
 	love.graphics.setStencilTest()
+
+	-- Set color to light blue
+	love.graphics.setColor(80, 128, 192, 192)
+
+	-- Set font
+	local previousFont = love.graphics.getFont()
+	local font = love.graphics.newFont(size * 50)
+	love.graphics.setFont(font)
+
+	-- Print lables 
+	if lables then
+		for i = 1, division do
+			local angleToText = CircleMenu.indexToAngle(i - .5, division, angle)
+			local textX, textY = Util.vectorComponents(3 * size, angleToText)
+			textX = textX + x
+			textY = textY + y
+			love.graphics.print(lables[i], textX, textY, 0,
+								1/100, -1/100,
+								size * 12.5 * #lables[i], size * 25)
+		end
+	end
+
+	-- Set color to whie
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setFont(previousFont)
 end
 
 return CircleMenu

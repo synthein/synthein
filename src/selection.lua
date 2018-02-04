@@ -111,12 +111,12 @@ function Selection:draw(cursorX, cursorY)
 	if self.structure and self.part then
 		local partSide = self.part:getPartSide(cursorX, cursorY)
 		local x, y, angle = self.part:getWorldLocation()
-		local strength
+		local strength, lables
 		if self.build then
 			strength = Building.getStrengthTable(self.part, partSide)
 		else
 			angle = 0
-			strength = self.part:getMenu()
+			strength, lables = self.part:getMenu()
 			local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
 			local index = self.angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
@@ -124,7 +124,7 @@ function Selection:draw(cursorX, cursorY)
 			end
 		end
 		if strength then
-			self.circleMenu:draw(x, y, angle, 1, strength)
+			self.circleMenu:draw(x, y, angle, 1, strength, lables)
 		end
 	end
 	if self.build then

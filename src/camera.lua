@@ -4,17 +4,6 @@ Camera.__index = Camera
 function Camera.create()
 	local self = {}
 	setmetatable(self, Camera)
-	function self.__index(t, k)	
-		local newFunction
-		function newFunction(...)
-			love.graphics.setScissor(Camera:getScissor())
-			love.graphics.translate(self.scissorX, self.scissorY)
-			love.graphics[k](...)
-			love.graphics.origin()
-			love.graphics.setScissor()
-		end
-		return newFunction
-	end
 
 	self.x = 0
 	self.y = 0
@@ -44,14 +33,14 @@ function Camera:setY(newY)
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
-	x =  (cursorX - self.scissorWidth/2  - self.scissorX) / self.zoom + self.x
-	y = -(cursorY - self.scissorHeight/2 - self.scissorY) / self.zoom + self.y
+	local x =  (cursorX - self.scissorWidth/2  - self.scissorX) / self.zoom + self.x
+	local y = -(cursorY - self.scissorHeight/2 - self.scissorY) / self.zoom + self.y
 	return x, y
 end
 
 function Camera:getScreenCoords(worldX, worldY, a, b)
-	x =  self.zoom * (worldX - self.x) + self.scissorX + self.scissorWidth/2
-	y = -self.zoom * (worldY - self.y) + self.scissorY + self.scissorHeight/2
+	local x =  self.zoom * (worldX - self.x) + self.scissorX + self.scissorWidth/2
+	local y = -self.zoom * (worldY - self.y) + self.scissorY + self.scissorHeight/2
 	a = self.zoom * a
 	b = self.zoom * b
 	return x, y, a, b
@@ -73,8 +62,7 @@ function Camera:adjustZoom(step)
 
 	self.zoom = 10 ^ exponential
 
-	if remainder == 0 then
-	elseif remainder == 1 then
+	if remainder == 1 then
 		self.zoom = self.zoom * 1.5 --10 ^ (1 / 6) = 1.47
 	elseif remainder == 2 then
 		self.zoom = self.zoom * 2   --10 ^ (2 / 6) = 2.15

@@ -125,14 +125,14 @@ function Structure:addPart(part, x, y, orientation)
 	self.gridTable:index(x, y, part)
 end
 
--- If there are no more parts in the structure, 
+-- If there are no more parts in the structure,
 -- then mark this structure for destruction.
 function Structure:removePart(part)
 	if part == self.corePart then
 		self.corePart = nil
 	end
 
-	x, y = unpack(part.location)
+	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 	part.fixture:destroy()
 
@@ -141,7 +141,7 @@ function Structure:removePart(part)
 --			return
 --		end
 --	end
-	
+
 	local parts = self.gridTable:loop()
 	if #parts <= 0 then
 		self.isDestroyed = true
@@ -199,7 +199,7 @@ end
 
 function Structure:testConnection(testPoints)
 	local keep = {}
-	for i, location in ipairs(testPoints) do
+	for _, location in ipairs(testPoints) do
 		local x, y = unpack(location)
 		 if self.gridTable:index(x, y) then
 			if x ~= 0 or y ~= 0 then
@@ -245,12 +245,12 @@ function Structure:testConnection(testPoints)
 						local value = tested:index(unpack(newPoint))
 
 						if value == 2 then
-							for i, testedPoint in ipairs(testedPoints) do
+							for _, testedPoint in ipairs(testedPoints) do
 								local x, y = unpack(testedPoint)
 								tested:index(x, y, 2)
 							end
 
-							for i, point in ipairs(points) do
+							for _, point in ipairs(points) do
 								local x, y = unpack(point)
 								tested:index(x, y, 2)
 							end
@@ -272,8 +272,8 @@ function Structure:testConnection(testPoints)
 			testedPoints = {}
 		end
 	end
-	
-	for i, group in ipairs(clusters) do
+
+	for _, group in ipairs(clusters) do
 		for j, location in ipairs(group) do
 			group[j] = self.gridTable:index(unpack(location))
 		end
@@ -285,8 +285,8 @@ end
 function Structure:recalculateSize()
 	self.maxDiameter = 1
 	local function callback(part, self, x, y)
-		local x = math.abs(x)
-		local y = math.abs(y)
+		x = math.abs(x)
+		y = math.abs(y)
 		local d = math.max(x, y) + x + y + 1
 		if self.maxDiameter < d then
 			self.maxDiameter = d
@@ -314,7 +314,7 @@ function Structure:disconnectPart(part)
 		savedPart = part
 	end
 
-	local createStructures
+
 	local points = {}
 	for i = 1,4 do
 		table.insert(points, StructureMath.addUnitVector(part.location, i))
@@ -328,8 +328,8 @@ function Structure:disconnectPart(part)
 			table.insert(structureList, {savedPart})
 		else
 			structureList = {{savedPart}}
-			for i, group in ipairs(clusters) do
-				for j, part in ipairs(group) do
+			for _, group in ipairs(clusters) do
+				for _, part in ipairs(group) do
 					table.insert(structureList[1], part)
 				end
 			end
@@ -345,9 +345,9 @@ function Structure:disconnectPart(part)
 		local location = {basePart:getWorldLocation()}
 
 		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
-		
+
 		local structure = GridTable.create()
-		for j, part in ipairs(partList) do
+		for _, part in ipairs(partList) do
 			local partVector = {unpack(part.location)}
 			local netVector = StructureMath.sumVectors(baseVector, partVector)
 			if part ~= savedPart then
@@ -361,7 +361,7 @@ function Structure:disconnectPart(part)
 		local newStructure = {"structures", location, {parts = structure}}
 		table.insert(self.events.create, newStructure)
 	end
-	
+
 
 	self:recalculateSize()
 end
@@ -378,7 +378,7 @@ function Structure:command(orders)
 	local rotate = 0
 	local shoot = false
 
-	for j, order in ipairs(orders) do
+	for _, order in ipairs(orders) do
 		if order == "forward" then parallel = parallel + 1 end
 		if order == "back" then parallel = parallel - 1 end
 		if order == "strafeLeft" then perpendicular = perpendicular - 1 end
@@ -403,7 +403,7 @@ function Structure:command(orders)
 	end
 
 	local commands = {engines = engines, guns = {shoot = shoot}}
-	
+
 	return commands
 end
 
@@ -419,7 +419,7 @@ function Structure:update(dt, worldInfo)
 		partsInfo = self:command(self.corePart:getOrders(location, worldInfo))
 	end
 
-	local function callback(part, inputs, x, y)
+	local function callback(part, inputs) --(part, inputs, x, y)
 		local dt, partsInfo = unpack(inputs)
 		part:update(dt, partsInfo)
 	end

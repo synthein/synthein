@@ -1,4 +1,7 @@
+-- Parent Table
 local Part = require("shipparts/part")
+
+-- Component
 local Gun = require("shipparts/gun")
 
 local GunBlock = {}
@@ -13,8 +16,6 @@ function GunBlock.create()
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
-
 	self.gun = Gun.create()
 
 	-- GunBlocks can only connect to things on their bottom side.
@@ -28,9 +29,8 @@ end
 function GunBlock:update(dt, partsInfo)
 	local shoot = false
 	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
-	local newObject = self.gun:update(dt, shoot, self)
-
-	return newObject
+	-- Update engine and return value in case there is a new shot.
+	return self.gun:update(dt, shoot, self)
 end
 
 return GunBlock

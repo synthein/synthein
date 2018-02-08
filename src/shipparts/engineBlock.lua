@@ -1,5 +1,9 @@
-local Engine = require("shipparts/engine")
+-- Parent Table
 local Part = require("shipparts/part")
+
+-- Component
+local Engine = require("shipparts/engine")
+
 local EngineBlock = {}
 EngineBlock.__index = EngineBlock
 setmetatable(EngineBlock, Part)
@@ -14,8 +18,6 @@ function EngineBlock.create()
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
-
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[2] = false
 	self.connectableSides[3] = false
@@ -27,6 +29,7 @@ function EngineBlock.create()
 end
 
 function EngineBlock:update(_, partsInfo) --(dt, partsInfo)
+	-- Update engine and set correct image.
 	if self.engine:update(self, partsInfo.engines) then
 		self.image = self.imageActive
 	else

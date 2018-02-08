@@ -12,8 +12,6 @@ function Block.create()
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
-
 	return self
 end
 

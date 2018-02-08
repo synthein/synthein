@@ -105,7 +105,7 @@ end
 function Part:draw()
 	local x, y, angle = self:getWorldLocation()
 	if x and y and angle then
-		love.graphics.draw(self.image, x, y, angle, 1/Settings.PARTSIZE, -1/Settings.PARTSIZE, self.width/2, self.height/2)
+		love.graphics.draw(self.image, x, y, angle, 1/self.width, -1/self.height, self.width/2, self.height/2)
 	end
 end
 

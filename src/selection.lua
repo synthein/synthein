@@ -61,8 +61,9 @@ function Selection:pressed(cursorX, cursorY, order)
 					self.part = part
 				end
 			elseif order == "destroy" then
-				if not structure.corePart or
-						structure.corePart:getTeam() == self.team then
+				local corePart = structure.corePart
+				local team = structure:getTeam()
+				if team == 0 or (team == self.team and part ~= corePart) then
 					structure:disconnectPart(part)
 				end
 			end

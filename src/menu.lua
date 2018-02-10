@@ -95,6 +95,14 @@ function Menu:draw()
 		x, y,
 		self.width, math.min(self:getHeight(), self.visibleHeight))
 
+	local stencilFunction = function()
+		love.graphics.rectangle("fill", x, y,
+								self.width, self.visibleHeight)
+	end
+
+	love.graphics.stencil(stencilFunction, "replace", 1)
+    love.graphics.setStencilTest("greater", 0)
+
 	for i, _ in ipairs(self.buttons) do
 		if i == self.selectedButton then
 			love.graphics.setColor(150, 150, 150)

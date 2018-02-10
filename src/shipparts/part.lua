@@ -93,8 +93,10 @@ function Part:collision(fixture, sqVelocity, pointVelocity)
 	local body = self.fixture:getBody()
 	local mult = -damage
 
+	if mult < -10 then mult = -10 end
+	mult = mult / 10
 	local xI, yI = unpack(pointVelocity)
-	if xI and yI then
+	if body:getUserData() and xI and yI then
 		body:applyLinearImpulse(xI * mult, yI * mult)
 	end
 end

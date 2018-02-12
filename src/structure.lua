@@ -169,7 +169,7 @@ function Structure:annex(annexee, annexeePart, annexeePartSide,
 	local annexeeX = annexeePart.location[1]
 	local annexeeY = annexeePart.location[2]
 
-	local annexeeSide = StructureMath.toDirection(annexeePartSide + annexeePart.location[3])
+	local annexeePartSide = StructureMath.toDirection(annexeePartSide + annexeePart.location[3])
 	local structureSide = StructureMath.toDirection(structurePartSide + structurePart.location[3])
 
 	local annexeeBaseVector = {annexeeX, annexeeY, annexeePartSide}

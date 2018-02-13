@@ -169,10 +169,10 @@ function Structure:annex(annexee, annexeePart, annexeePartSide,
 	local annexeeX = annexeePart.location[1]
 	local annexeeY = annexeePart.location[2]
 
-	local annexeePartSide = StructureMath.toDirection(annexeePartSide + annexeePart.location[3])
+	local annexeeSide = StructureMath.toDirection(annexeePartSide + annexeePart.location[3])
 	local structureSide = StructureMath.toDirection(structurePartSide + structurePart.location[3])
 
-	local annexeeBaseVector = {annexeeX, annexeeY, annexeePartSide}
+	local annexeeBaseVector = {annexeeX, annexeeY, annexeeSide}
 	local structureVector = {structureOffsetX, structureOffsetY, structureSide}
 
 	structureVector = StructureMath.addUnitVector(structureVector, structureSide)
@@ -218,8 +218,8 @@ function Structure:testConnection(testPoints)
 
 	while #testPoints ~= 0 do
 		table.insert(points, table.remove(testPoints))
-		local x, y = unpack(points[1])
-		tested:index(x, y, 1)
+		local testedPointX, TestedPointY = unpack(points[1])
+		tested:index(testedPointX, TestedPointY, 1)
 
 		while #points ~= 0 do
 			local point = table.remove(points)
@@ -250,8 +250,8 @@ function Structure:testConnection(testPoints)
 								tested:index(x, y, 2)
 							end
 
-							for _, point in ipairs(points) do
-								local x, y = unpack(point)
+							for _, eachPoint in ipairs(points) do
+								local x, y = unpack(eachPoint)
 								tested:index(x, y, 2)
 							end
 							testedPoints = {}
@@ -329,8 +329,8 @@ function Structure:disconnectPart(part)
 		else
 			structureList = {{savedPart}}
 			for _, group in ipairs(clusters) do
-				for _, part in ipairs(group) do
-					table.insert(structureList[1], part)
+				for _, eachPart in ipairs(group) do
+					table.insert(structureList[1], eachPart)
 				end
 			end
 		end
@@ -347,14 +347,14 @@ function Structure:disconnectPart(part)
 		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 
 		local structure = GridTable.create()
-		for _, part in ipairs(partList) do
-			local partVector = {unpack(part.location)}
+		for _, eachPart in ipairs(partList) do
+			local partVector = {unpack(eachPart.location)}
 			local netVector = StructureMath.sumVectors(baseVector, partVector)
-			if part ~= savedPart then
-				self:removePart(part)
+			if eachPart ~= savedPart then
+				self:removePart(eachPart)
 			end
-			part:setLocation(netVector)
-			structure:index(netVector[1], netVector[2], part)
+			eachPart:setLocation(netVector)
+			structure:index(netVector[1], netVector[2], eachPart)
 
 		end
 
@@ -420,8 +420,7 @@ function Structure:update(dt, worldInfo)
 	end
 
 	local function callback(part, inputs) --(part, inputs, x, y)
-		local dt, partsInfo = unpack(inputs)
-		part:update(dt, partsInfo)
+		part:update(unpack(inputs))
 	end
 
 	self.gridTable:loop(callback, {dt, partsInfo})

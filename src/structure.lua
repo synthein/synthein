@@ -419,11 +419,8 @@ function Structure:update(dt, worldInfo)
 		partsInfo = self:command(self.corePart:getOrders(location, worldInfo))
 	end
 
-	local function callback(part, inputs) --(part, inputs, x, y)
-		part:update(unpack(inputs))
-	end
-
-	self.gridTable:loop(callback, {dt, partsInfo})
+	-- Call update on each part
+    self.gridTable:loop("update", {dt, partsInfo}, true)
 end
 
 return Structure

@@ -81,7 +81,7 @@ function GridTable:index(x, y, set, clear)
 	end
 end
 
-function GridTable:loop(f, inputs)
+function GridTable:loop(f, inputs, addSelf)
 	local outputs = {}
 	for ySignIndex = 1,3 do
 		local aTable = self.core[ySignIndex]
@@ -102,7 +102,19 @@ function GridTable:loop(f, inputs)
 					if object then
 						local output
 						if f then
-							output = f(object, inputs, x, y)
+							if type(f) == "function" then
+								output = f(object, inputs, x, y)
+							elseif type(f) == "string" then
+								if object[f] then
+									if addSelf then
+										object[f](object, unpack(inputs))
+									else
+										object[f](unpack(inputs))
+									end
+								end
+							else
+								return {}
+							end
 						else
 							output = object
 						end

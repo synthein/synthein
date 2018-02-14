@@ -210,7 +210,7 @@ function World:update(dt)
 					end
 				end
 
-				object:update(dt, self.info)
+				object:update(dt)
 
 				if (self.boarders and (objectX < self.boarders[1] or
 									   objectY < self.boarders[2] or

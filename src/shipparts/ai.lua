@@ -13,10 +13,13 @@ function AI.create(team)
 	return self
 end
 
-function AI:getOrders(location, worldInfo, leader, body)
+function AI:getOrders(worldInfo, leader, body)
 	local physics = worldInfo.physics
 	local teamHostility = worldInfo.teamHostility
-	local aiX, aiY, aiAngle, aiXV, aiYV, aiAngleVol = unpack(location)
+	local aiX, aiY = body:getPosition()
+	local aiAngle = body:getAngle()
+	local aiXV, aiYV = body:getLinearVelocity()
+	local aiAngleVol = body:getAngularVelocity()
 
 	local target, leaderX, leaderY, leaderMSq
 	local leaderFollow = false

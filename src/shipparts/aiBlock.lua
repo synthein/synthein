@@ -33,8 +33,8 @@ function AIBlock:getTeam()
 	return self.ai.team
 end
 
-function AIBlock:getOrders(location, worldInfo)
-	return self.ai:getOrders(location, worldInfo, self.leader,
+function AIBlock:getOrders()
+	return self.ai:getOrders(self.worldInfo, self.leader,
 							 self.fixture:getBody())
 end
 

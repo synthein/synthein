@@ -40,6 +40,7 @@ function Structure.create(worldInfo, location, shipTable)
 			self.type = "anchor"
 		end
 		self.corePart = shipTable.corePart
+		self.corePart.worldInfo = worldInfo
 	else
 		self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 		self.body:setAngularDamping(.1)
@@ -373,6 +374,13 @@ end
 -- Restructure input from player or output from ai
 -- make the information easy for parts to handle.
 function Structure:command(orders)
+	local orders
+	if self.corePart then
+		orders = self.corePart:getOrders()
+	else
+		return {}
+	end
+
 	local perpendicular = 0
 	local parallel = 0
 	local rotate = 0
@@ -409,15 +417,8 @@ end
 
 -- Handle commands
 -- Update each part
-function Structure:update(dt, worldInfo)
-	local partsInfo = {}
-	if self.corePart then
-		local body = self.body
-		local vX, vY = body:getLinearVelocity()
-		local location = {body:getX(), body:getY(), body:getAngle(),
-					  vX, vY, body:getAngularVelocity()}
-		partsInfo = self:command(self.corePart:getOrders(location, worldInfo))
-	end
+function Structure:update(dt)
+	local partsInfo = self:command()
 
 	-- Call update on each part
     self.gridTable:loop("update", {dt, partsInfo}, true)

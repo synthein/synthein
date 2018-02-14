@@ -72,7 +72,7 @@ function Shot:destroy()
 end
 
 
-function Shot:update(dt) --(dt, worldInfo)
+function Shot:update(dt)
 	self.time = self.time + dt
 	if self.time > 5 then
 		self:destroy()

@@ -28,53 +28,37 @@ function NewGameMenu.keypressed(key)
 	end
 
 	local button = NewGameMenu.menu:keypressed(key)
-	local start = true
-	if button == "Single Player" then
-		InitWorld.scene = "startScene"
-		InitWorld.playerHostility = {{false}}
-	elseif button == "COOP" then
-		InitWorld.scene = "startSceneCOOP"
-		InitWorld.playerHostility = {{false, false}, {false, false}}
-	elseif button == "Allied" then
-		InitWorld.scene = "startSceneTwoPlayer"
-		InitWorld.playerHostility = {{false, false}, {false, false}}
-	elseif button == "VS" then
-		InitWorld.scene = "startSceneTwoPlayer"
-		InitWorld.playerHostility = {{false, true}, {true, false}}
-	else
-		start = false
-	end
-
-	if start then
-		InitWorld.ifSave = false
-		GameState.stackReplace(InitWorld)
-	end
+	NewGameMenu.testButton(button)
 end
 
 function NewGameMenu.mousepressed(x, y, mouseButton)
 	local button = NewGameMenu.menu:pressed(x, y)
 	if mouseButton == 1 then
-		local start = true
-		if button == "Single Player" then
-			InitWorld.scene = "startScene"
-			InitWorld.playerHostility = {{false}}
-		elseif button == "COOP" then
-			InitWorld.scene = "startSceneCOOP"
-			InitWorld.playerHostility = {{false, false}, {false, false}}
-		elseif button == "Allied" then
-			InitWorld.scene = "startSceneTwoPlayer"
-			InitWorld.playerHostility = {{false, false}, {false, false}}
-		elseif button == "VS" then
-			InitWorld.scene = "startSceneTwoPlayer"
-			InitWorld.playerHostility = {{false, true}, {true, false}}
-		else
-			start = false
-		end
+		NewGameMenu.testButton(button)
+	end
+end
 
-		if start then
-			InitWorld.ifSave = false
-			GameState.stackReplace(InitWorld)
-		end
+function NewGameMenu.testButton(button)
+	local scene, playerHostility
+	local start = true
+	if button == "Single Player" then
+		scene = "startScene"
+		playerHostility = {{false}}
+	elseif button == "COOP" then
+		scene = "startSceneCOOP"
+		playerHostility = {{false, false}, {false, false}}
+	elseif button == "Allied" then
+		scene = "startSceneTwoPlayer"
+		playerHostility = {{false, false}, {false, false}}
+	elseif button == "VS" then
+		scene = "startSceneTwoPlayer"
+		playerHostility = {{false, true}, {true, false}}
+	else
+		start = false
+	end
+
+	if start then
+		GameState.stackReplace(InitWorld, {scene, playerHostility, false})
 	end
 end
 

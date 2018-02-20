@@ -34,19 +34,17 @@ function LoadGameMenu.keypressed(key)
 	end
 
 	local loadGameChoice = LoadGameMenu.menu:keypressed(key)
-	if loadGameChoice then
-		InitWorld.scene = loadGameChoice
-		InitWorld.ifSave = true
-		GameState.stackReplace(InitWorld)
-	end
+	LoadGameMenu.LoadGame(loadGameChoice)
 end
 
-function LoadGameMenu.mousepressed(x, y) --(x, y, mouseButton)
+function LoadGameMenu.mousepressed(x, y, mouseButton)
 	local loadGameChoice = LoadGameMenu.menu:pressed(x, y)
-	if loadGameChoice then
-		InitWorld.scene = loadGameChoice
-		InitWorld.ifSave = true
-		GameState.stackReplace(InitWorld)
+	LoadGameMenu.LoadGame(loadGameChoice)
+end
+
+function LoadGameMenu.LoadGame(scene)
+	if scene then
+		GameState.stackReplace(InitWorld, {scene, {}, true})
 	end
 end
 

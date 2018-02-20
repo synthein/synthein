@@ -10,8 +10,6 @@ local GameState = require("gamestates/gameState")
 local InGame = {}
 setmetatable(InGame, GameState)
 
-local world
-local players = {}
 local paused = false
 local eventTime = 0
 local second = 0
@@ -25,15 +23,16 @@ if love.graphics then
 	pauseMenu.font = love.graphics.newFont(18)
 	menu = Menu.create(love.graphics.getWidth() / 2, 225, 5, pauseMenu.buttons)
 end
+
 local typingSaveName = false
 local saveName = ""
 
-function InGame.setplayers(playerTable)
-	players = playerTable
-end
+local world, players
+function InGame.load(...)
+	world, players = ...
 
-function InGame.setWorld(setworld)
-	world = setworld
+	Debug.setWorld(world)
+	Debug.setPlayers(players)
 end
 
 function InGame.resize(w, h)

@@ -9,13 +9,18 @@ function GameState.stackPop()
 	table.remove(GameState.stack, #GameState.stack)
 end
 
-function GameState.stackPush(state)
+function GameState.stackPush(state, inputs)
 	table.insert(GameState.stack, state)
+	if not inputs then inputs = {} end
+	state.load(unpack(inputs))
 end
 
-function GameState.stackReplace(state)
+function GameState.stackReplace(state, inputs)
 	GameState.stackPop()
-	GameState.stackPush(state)
+	GameState.stackPush(state, inputs)
+end
+
+function GameState.load()
 end
 
 function GameState.update()

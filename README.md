@@ -1,4 +1,4 @@
-# Synthein
+# Synthein [![CI Status](https://drone.webgears.k.vu/api/badges/synthein/synthein/status.svg?branch=master)](https://drone.webgears.k.vu/synthein/synthein) [![Chat Channel](https://img.shields.io/badge/telegram-chat-lightgrey.svg)](https://t.me/synthein)
 
 Synthein (working title) is a game about blowing up space ships and using their parts to make your space ship bigger and better.
 

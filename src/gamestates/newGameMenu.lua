@@ -58,7 +58,8 @@ function NewGameMenu.testButton(button)
 	end
 
 	if start then
-		GameState.stackReplace(InitWorld, {scene, playerHostility, false})
+		local callList = NewGameMenu.stackQueue:replace(InitWorld)
+		callList.load(scene, playerHostility, false)
 	end
 end
 

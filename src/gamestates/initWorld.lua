@@ -49,7 +49,7 @@ function InitWorld.load(scene, playerHostility, ifSave)
 		end
 	end
 
-	GameState.stackReplace(InGame, {world, players})
+	InitWorld.stackQueue:replace(InGame).load(world, players)
 end
 
 return InitWorld

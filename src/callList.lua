@@ -25,29 +25,35 @@ function CallList.create(reference, options)
 		self[k] = v
 	end
 
+	local returnInformation = self.returnInformation
+	self.returnInformation = nil
 
-	local list__index = function(t, key)
-		local updateInformation
-		local returnInformation = self.returnInformation
-		if type(returnInformation) == "function" then
-			returnInformation, updateInformation = returnInformation()
-		end
-
-		local info = debug.getinfo(2)
-
-		local codeLocation = info.short_src .. ":" .. info.currentline ..
-							 ":"-- in function '" .. name .. "'"
-
-		local reference = {key, nil, updateInformation, codeLocation}
-		table.insert(t, reference)
-		return function(...)
-			reference[2] = {...}
-			return returnInformation
-		end
+	local addIndex = function(t, key)
+		return CallList.addIndex(t, key, returnInformation)
 	end
 
-	self.list = Util.createDummyObject(list__index)
+	self.list = Util.createDummyObject(addIndex)
+
 	return self
+end
+
+function CallList.addIndex(t, key, returnInformation)
+	local updateInformation
+	if type(returnInformation) == "function" then
+		returnInformation, updateInformation = returnInformation()
+	end
+
+	local info = debug.getinfo(2)
+
+	local codeLocation = info.short_src .. ":" .. info.currentline ..
+						 ":"-- in function '" .. name .. "'"
+
+	local reference = {key, nil, updateInformation, codeLocation}
+	table.insert(t, reference)
+	return function(...)
+		reference[2] = {...}
+		return returnInformation
+	end
 end
 
 function CallList:process()

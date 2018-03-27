@@ -33,7 +33,7 @@ function InitWorld.load(scene, playerHostility, ifSave)
 
 	end
 
-	local world = World.create(playerHostility)
+	local world = World(playerHostility)
 	love.physics.setMeter(1) -- there are 20 pixels per meter
 
 	local playerShips = SceneParser.loadScene(sceneLines, world, {0, 0})

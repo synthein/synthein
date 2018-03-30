@@ -1,4 +1,4 @@
-require("class.lua")
+require("class")
 local StackManager = require("stackManager")
 local MainMenu = require("gamestates/mainMenu")
 

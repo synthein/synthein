@@ -2,10 +2,7 @@ local Particles = require("particles")
 local Shot = require("shot")
 local Structure = require("structure")
 
--- Debug
-local testParent  = setmetatable({__call = function() print("this is a world object") end}, {__call = function() print("testparent __call function") return {} end})
-
-local World = class()-- testParent)
+local World = class()
 
 World.objectTypes = {
 	structures	= Structure,

@@ -1,9 +1,8 @@
-local function object(self, ...)
-	local parent = getmetatable(self).__index
-	local object = setmetatable((parent and parent(...)) or {}, self)
-	-- Run the create function
-	if self.create then object:create(...) end
-	-- Return the object
+-- Create a new object
+local function object(class, ...)
+	local parent = getmetatable(class).__index
+	local object = setmetatable((parent and parent(...)) or {}, class)
+	if class.create then object:create(...) end
 	return object
 end
 

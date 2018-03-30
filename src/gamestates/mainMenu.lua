@@ -36,7 +36,7 @@ function MainMenu.keypressed(key)
 	local button = MainMenu.menu:keypressed(key)
 	for i, name in ipairs(buttonNames) do
 		if button == name then
-			GameState.stackPush(buttons[i])
+			MainMenu.stackQueue:push(buttons[i])
 		end
 	end
 end
@@ -46,7 +46,7 @@ function MainMenu.mousepressed(x, y, mouseButton)
 		local button = MainMenu.menu:pressed(x, y)
 		for i, name in ipairs(buttonNames) do
 			if button == name then
-				GameState.stackPush(buttons[i])
+				MainMenu.stackQueue:push(buttons[i])
 			end
 		end
 	end

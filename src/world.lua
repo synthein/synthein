@@ -2,8 +2,7 @@ local Particles = require("particles")
 local Shot = require("shot")
 local Structure = require("structure")
 
-local World = {}
-World.__index = World
+local World = class()
 
 World.objectTypes = {
 	structures	= Structure,
@@ -13,9 +12,7 @@ World.objectTypes = {
 
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
-function World.create(playerHostility)
-	local self = {}
-	setmetatable(self, World)
+function World:create(playerHostility)
 
 	self.physics = love.physics.newWorld()
 	self.physics:setCallbacks(World.beginContact, World.endContact,
@@ -54,8 +51,6 @@ function World.create(playerHostility)
 	end
 
 	self.boarders = nil
-
-	return self
 end
 
 function World.beginContact(a, b, coll)

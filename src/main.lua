@@ -1,3 +1,4 @@
+require("class")
 local GameState = require("gamestates/gameState")
 local MainMenu = require("gamestates/mainMenu")
 

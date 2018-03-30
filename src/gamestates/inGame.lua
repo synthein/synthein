@@ -104,7 +104,7 @@ function InGame.mousepressed(x, y, button)
 			elseif selection == "Main Menu" then
 				menuOpen = false
 				Screen.clearCameras()
-				GameState.stackPop()
+				InGame.stackQueue:pop()
 			elseif selection == "Quit" then
 				love.event.quit()
 			end

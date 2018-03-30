@@ -78,4 +78,15 @@ end
 function Util.unpackLocation()
 end
 
+function Util.createDummyObject(indexFunction)
+	return setmetatable({}, {__index = indexFunction})
+end
+
+function Util.renameFunctionAndCall(name, f, inputs)
+	local string = "return function(f, inputs) local " .. name ..
+					" = f; return" .. name .."(unpackinputs) end"
+	local renameAndCall = loadstring(string)()
+	return renameAndCall(f, inputs)
+end
+
 return Util

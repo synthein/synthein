@@ -44,7 +44,7 @@ end
 
 function LoadGameMenu.LoadGame(scene)
 	if scene then
-		GameState.stackReplace(InitWorld, {scene, {}, true})
+		LoadGameMenu.stackQueue:replace(InitWorld).load(scene, {}, true)
 	end
 end
 

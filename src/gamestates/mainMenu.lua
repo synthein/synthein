@@ -30,7 +30,7 @@ end
 
 function MainMenu.keypressed(key)
 	if key == "escape" then
-		love.event.quit()	
+		love.event.quit()
 	end
 
 	local button = MainMenu.menu:keypressed(key)

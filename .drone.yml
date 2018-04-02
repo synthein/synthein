@@ -1,6 +1,8 @@
 pipeline:
   test-syntax:
     image: xordspar0/love-build
+    when:
+      event: push
     commands:
       - make check
       - make test

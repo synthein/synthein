@@ -1,43 +1,15 @@
-local GameState = {}
-GameState.__index = GameState
+local enabledFunctions = require("gamestates/enabledFunctions")
 
-function GameState.load()
+local function emptyFunction() end
+
+local function index(t, key)
+	return getmetatable(t)[key] or (enabledFunctions[key] and emptyFunction)
 end
 
-function GameState.update()
+local function call(self)
+	return setmetatable({}, self)
 end
 
-function GameState.draw()
-end
-
-function GameState.keypressed()
-end
-
-function GameState.keyreleased()
-end
-
-function GameState.mousepressed()
-end
-
-function GameState.mousereleased()
-end
-
-function GameState.joystickpressed()
-end
-
-function GameState.joystickreleased()
-end
-
-function GameState.mousemoved()
-end
-
-function GameState.wheelmoved()
-end
-
-function GameState.textinput()
-end
-
-function GameState.resize()
-end
+local GameState = setmetatable({__index = index}, {__call = call})
 
 return GameState

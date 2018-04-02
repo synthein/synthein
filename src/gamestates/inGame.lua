@@ -7,8 +7,7 @@ local Util = require("util")
 local Menu = require("menu")
 
 local GameState = require("gamestates/gameState")
-local InGame = {}
-setmetatable(InGame, GameState)
+local InGame = GameState()
 
 local paused = false
 local eventTime = 0
@@ -19,7 +18,7 @@ local pauseMenu = {}
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 
 local menu
-if love.graphics then 
+if love.graphics then
 	pauseMenu.font = love.graphics.newFont(18)
 	menu = Menu.create(love.graphics.getWidth() / 2, 225, 5, pauseMenu.buttons)
 end

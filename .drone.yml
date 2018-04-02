@@ -7,7 +7,7 @@ pipeline:
       - make check
       - make test
 
-  package-love-dev:
+  package-dev:
     when:
       event: push
       branch: master
@@ -15,21 +15,13 @@ pipeline:
     commands:
       - make love synthein_version=c${DRONE_COMMIT:8}
 
-  package-love-release:
+  package-release:
     when:
       event: tag
       branch: refs/tags/*
     image: xordspar0/love-build
     commands:
-      - make love synthein_version=${DRONE_TAG}
-
-  package-linux-appimage:
-    when:
-      event: never
-      branch: refs/tags/*
-    image: xordspar0/love-build
-    commands:
-      - make appimage synthein_version=${DRONE_TAG} love_version=0.10.2
+      - make ${PACKAGE_FORMAT} synthein_version=${DRONE_TAG} love_version=0.10.2
 
   package-linux-snap:
     when:
@@ -39,22 +31,6 @@ pipeline:
     commands:
       - apt-get update && apt-get -y install snapcraft
       - make snap synthein_version=${DRONE_TAG} love_version=0.10.2
-
-  package-mac:
-    when:
-      event: tag
-      branch: refs/tags/*
-    image: xordspar0/love-build
-    commands:
-      - make mac synthein_version=${DRONE_TAG} love_version=0.10.2
-
-  package-windows:
-    when:
-      event: tag
-      branch: refs/tags/*
-    image: xordspar0/love-build
-    commands:
-      - make windows synthein_version=${DRONE_TAG} love_version=0.10.2
 
   generate-dependency-graph:
     when:
@@ -85,3 +61,10 @@ pipeline:
       <b>{{ commit.branch }}</b> by <b>{{ commit.author }}</b>.
 
       {{ commit.message }}
+
+matrix:
+  PACKAGE_FORMAT:
+    - love
+    #- appimage # Doesn't work yet.
+    - mac
+    - windows

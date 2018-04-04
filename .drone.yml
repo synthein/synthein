@@ -22,7 +22,6 @@ pipeline:
     image: synthein/love-build
     secrets: [ BINTRAY_API_KEY ]
     commands:
-      - apt-get update && apt-get -y install graphviz
       - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
 
   package-love-dev:
@@ -46,7 +45,6 @@ pipeline:
   package-linux-snap:
     <<: *release-package-config
     commands:
-      - apt-get update && apt-get -y install snapcraft
       - make snap synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-mac:

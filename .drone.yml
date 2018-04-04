@@ -2,7 +2,7 @@ pipeline:
   test-syntax:
     when:
       event: push
-    image: xordspar0/love-build
+    image: synthein/love-build
     commands:
       - make check
       - make test
@@ -11,7 +11,7 @@ pipeline:
     when:
       event: push
       branch: master
-    image: xordspar0/love-build
+    image: synthein/love-build
     commands:
       - make love synthein_version=c${DRONE_COMMIT:8}
 
@@ -19,7 +19,7 @@ pipeline:
     when:
       event: tag
       branch: refs/tags/*
-    image: xordspar0/love-build
+    image: synthein/love-build
     commands:
       - make ${PACKAGE_FORMAT} synthein_version=${DRONE_TAG} love_version=0.10.2
 
@@ -27,7 +27,7 @@ pipeline:
     when:
       event: tag
       branch: refs/tags/*
-    image: xordspar0/love-build
+    image: synthein/love-build
     commands:
       - apt-get update && apt-get -y install snapcraft
       - make snap synthein_version=${DRONE_TAG} love_version=0.10.2
@@ -36,7 +36,7 @@ pipeline:
     when:
       event: push
       branch: master
-    image: xordspar0/love-build
+    image: synthein/love-build
     secrets: [ BINTRAY_API_KEY ]
     commands:
       - apt-get update && apt-get -y install graphviz

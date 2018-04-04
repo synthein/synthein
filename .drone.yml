@@ -41,23 +41,23 @@ pipeline:
   # package-linux-appimage:
   #   <<: *release-package-config
   #   commands:
-  #     - make appimage synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
+  #     - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-linux-snap:
     <<: *release-package-config
     commands:
       - apt-get update && apt-get -y install snapcraft
-      - make snap synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
+      - make snap synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-mac:
     <<: *release-package-config
     commands:
-      - make mac synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
+      - make mac synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-windows:
     <<: *release-package-config
     commands:
-      - make windows synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
+      - make windows synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   telegram:
     when:

@@ -11,6 +11,7 @@ pipeline:
     when:
       event: push
     image: synthein/love-build
+    pull: true
     commands:
       - make check
       - make test

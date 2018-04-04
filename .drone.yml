@@ -1,3 +1,11 @@
+release-package-config: &release-package-config
+  when:
+    event: tag
+    branch: refs/tags/*
+  image: synthein/love-build
+  environment:
+    - LOVE_VERSION=0.10.2
+
 pipeline:
   test-syntax:
     when:
@@ -6,31 +14,6 @@ pipeline:
     commands:
       - make check
       - make test
-
-  package-dev:
-    when:
-      event: push
-      branch: master
-    image: synthein/love-build
-    commands:
-      - make love synthein_version=${DRONE_COMMIT:8}
-
-  package-release:
-    when:
-      event: tag
-      branch: refs/tags/*
-    image: synthein/love-build
-    commands:
-      - make ${PACKAGE_FORMAT} synthein_version=${DRONE_TAG} love_version=0.10.2
-
-  package-linux-snap:
-    when:
-      event: tag
-      branch: refs/tags/*
-    image: synthein/love-build
-    commands:
-      - apt-get update && apt-get -y install snapcraft
-      - make snap synthein_version=${DRONE_TAG} love_version=0.10.2
 
   generate-dependency-graph:
     when:
@@ -41,8 +24,40 @@ pipeline:
     commands:
       - apt-get update && apt-get -y install graphviz
       - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
-      # Disabled because bintray won't allow us to update this file anymore.
-      #- "curl --fail -T out.png -uxordspar0:$${BINTRAY_API_KEY} 'https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png?publish=1&override=1'"
+
+  package-love-dev:
+    when:
+      event: push
+      branch: master
+    image: synthein/love-build
+    commands:
+      - make love synthein_version=${DRONE_COMMIT:8}
+
+  package-love-release:
+    <<: *release-package-config
+    commands:
+      - make love synthein_version=${DRONE_TAG}
+
+  # package-linux-appimage:
+  #   <<: *release-package-config
+  #   commands:
+  #     - make appimage synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
+
+  package-linux-snap:
+    <<: *release-package-config
+    commands:
+      - apt-get update && apt-get -y install snapcraft
+      - make snap synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
+
+  package-mac:
+    <<: *release-package-config
+    commands:
+      - make mac synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
+
+  package-windows:
+    <<: *release-package-config
+    commands:
+      - make windows synthein_version=${DRONE_TAG} love_version=${LOVE_VERSION}
 
   telegram:
     when:
@@ -61,10 +76,3 @@ pipeline:
       <b>{{ commit.branch }}</b> by <b>{{ commit.author }}</b>.
 
       {{ commit.message }}
-
-matrix:
-  PACKAGE_FORMAT:
-    - love
-    #- appimage # Doesn't work yet.
-    - mac
-    - windows

@@ -1,79 +1,71 @@
+release-package-config: &release-package-config
+  when:
+    event: tag
+    branch: refs/tags/*
+  image: synthein/love-build
+  environment:
+    - LOVE_VERSION=0.10.2
+
 pipeline:
   test-syntax:
-    image: xordspar0/love-build
+    when:
+      event: push
+    image: synthein/love-build
+    pull: true
     commands:
       - make check
       - make test
 
-  package-love-dev:
-    image: xordspar0/love-build
+  generate-dependency-graph:
     when:
       event: push
       branch: master
+    image: synthein/love-build
+    secrets: [ BINTRAY_API_KEY ]
     commands:
-      - make love synthein_version=c${DRONE_COMMIT:8}
+      - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
+
+  package-love-dev:
+    when:
+      event: push
+      branch: master
+    image: synthein/love-build
+    commands:
+      - make love synthein_version=${DRONE_COMMIT:8}
 
   package-love-release:
-    image: xordspar0/love-build
-    when:
-      event: tag
-      branch: refs/tags/*
+    <<: *release-package-config
     commands:
       - make love synthein_version=${DRONE_TAG}
 
-  package-linux-appimage:
-    image: xordspar0/love-build
-    when:
-      event: never
-      branch: refs/tags/*
-    commands:
-      - make appimage synthein_version=${DRONE_TAG} love_version=0.10.2
+  # package-linux-appimage:
+  #   <<: *release-package-config
+  #   commands:
+  #     - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-linux-snap:
-    image: xordspar0/love-build
-    when:
-      event: tag
-      branch: refs/tags/*
+    <<: *release-package-config
     commands:
-      - apt-get update && apt-get -y install snapcraft
-      - make snap synthein_version=${DRONE_TAG} love_version=0.10.2
+      - make snap synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-mac:
-    image: xordspar0/love-build
-    when:
-      event: tag
-      branch: refs/tags/*
+    <<: *release-package-config
     commands:
-      - make mac synthein_version=${DRONE_TAG} love_version=0.10.2
+      - make mac synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-windows:
-    image: xordspar0/love-build
-    when:
-      event: tag
-      branch: refs/tags/*
+    <<: *release-package-config
     commands:
-      - make windows synthein_version=${DRONE_TAG} love_version=0.10.2
-
-  generate-dependency-graph:
-    image: xordspar0/love-build
-    secrets: [ BINTRAY_API_KEY ]
-    when:
-      event: push
-      branch: master
-    commands:
-      - apt-get update && apt-get -y install graphviz
-      - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
-      # Disabled because bintray won't allow us to update this file anymore.
-      #- "curl --fail -T out.png -uxordspar0:$${BINTRAY_API_KEY} 'https://api.bintray.com/content/xordspar0/Synthein/Meta/master/dependency-graph.png?publish=1&override=1'"
+      - make windows synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   telegram:
-    image: appleboy/drone-telegram
-    pull: true
-    secrets: [ TELEGRAM_TOKEN ]
     when:
       event: push
       branch: master
       status: [failure, success, error]
+    image: appleboy/drone-telegram
+    pull: true
+    secrets: [ TELEGRAM_TOKEN ]
     to: -1001143861626
     format: html
     message: >

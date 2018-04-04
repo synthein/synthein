@@ -13,7 +13,7 @@ pipeline:
       branch: master
     image: synthein/love-build
     commands:
-      - make love synthein_version=c${DRONE_COMMIT:8}
+      - make love synthein_version=${DRONE_COMMIT:8}
 
   package-release:
     when:

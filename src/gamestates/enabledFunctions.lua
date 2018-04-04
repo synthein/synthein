@@ -1,4 +1,4 @@
-local functionKeys =
+local enabledFunctionNames =
 {
 	"resize",
 	"keypressed",
@@ -15,10 +15,12 @@ local functionKeys =
 	"draw"
 }
 
+local function emptyFunction() end
+
 local enabledFunctions = {}
 
-for _, v in ipairs(functionKeys) do
-	enabledFunctions[v] = true
+for _, v in ipairs(enabledFunctionNames) do
+	enabledFunctions[v] = emptyFunction
 end
 
 return enabledFunctions

@@ -3,8 +3,7 @@ local Menu = require("menu")
 
 local InitWorld = require("gamestates/initWorld")
 
-local LoadGameMenu = {}
-setmetatable(LoadGameMenu, GameState)
+local LoadGameMenu = GameState()
 
 local buttons = {}
 local files = love.filesystem.getDirectoryItems("saves")

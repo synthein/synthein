@@ -9,8 +9,7 @@ local Tserial = require("tserial")
 local GameState = require("gamestates/gameState")
 
 
-local InitWorld = {}
-setmetatable(InitWorld, GameState)
+local InitWorld = GameState()
 
 function InitWorld.load(scene, playerHostility, ifSave)
 	local sceneLines, message

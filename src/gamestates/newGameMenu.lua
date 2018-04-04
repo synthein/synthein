@@ -2,8 +2,7 @@ local GameState = require("gamestates/gameState")
 local InitWorld = require("gamestates/initWorld")
 local Menu = require("menu")
 
-local NewGameMenu = {}
-setmetatable(NewGameMenu, GameState)
+local NewGameMenu = GameState()
 
 local buttonNames = {"Single Player", "COOP", "Allied", "VS"}
 if love.graphics then NewGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames) end

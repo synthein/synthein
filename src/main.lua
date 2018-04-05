@@ -21,6 +21,7 @@ function love.load()
 			debugmode = true
 		end
 		if flag == "--test" then
+			require("tests")
 			love.event.quit()
 		end
 	end

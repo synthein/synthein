@@ -1,4 +1,4 @@
-local lunatest = require("lunatest")
+local lunatest = require("vendor/lunatest")
 
 for _, file in ipairs(love.filesystem.getDirectoryItems("tests")) do
   modname = file:match("^(test_.*)%.lua$")

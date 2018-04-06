@@ -4,7 +4,7 @@ local Player = require("player")
 local SceneParser = require("sceneParser")
 local World = require("world")
 local Gamesave = require("gamesave")
-local Tserial = require("tserial")
+local Tserial = require("vendor/tserial")
 
 local GameState = require("gamestates/gameState")
 

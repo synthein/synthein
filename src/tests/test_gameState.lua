@@ -1,4 +1,4 @@
-local test = require("lunatest")
+local test = require("vendor/lunatest")
 local GameState = require("gamestates/gameState")
 
 local t = {}

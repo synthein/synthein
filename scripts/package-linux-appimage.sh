@@ -27,17 +27,20 @@ fi
 
 mkdir "${build_dir}/synthein-appimage"
 cd "${build_dir}/synthein-appimage"
-install -D ../VERSION usr/share/doc/synthein/VERSION
+install -D ../SYNTHEIN_VERSION usr/share/doc/synthein/VERSION
 install -D /usr/lib/x86_64-linux-gnu/liblove.so.0 usr/lib/liblove.so.0
 install -D /usr/lib/x86_64-linux-gnu/liblove.so.0.0.0 usr/lib/liblove.so.0.0.0
 install -D /usr/bin/love usr/bin/love
-install -D ../synthein-linux.bin usr/bin/synthein
 install -d usr/share/doc/love
 install -t usr/share/doc/love /usr/share/doc/love/copyright /usr/share/doc/love/readme.md
+install -D -m0755 ../synthein-linux.bin usr/bin/synthein
+install -D ${root_dir}/package/desktop/synthein.desktop synthein.desktop
+install -D ${root_dir}/package/desktop/synthein.png synthein.png
 
 cd "${build_dir}"
 curl -L -O "https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
 chmod a+x appimagetool-x86_64.AppImage
-./appimagetool-x86_64.AppImage ./synthein-appimage/ "${build_file}"
+./appimagetool-x86_64.AppImage --appimage-extract
+./squashfs-root/AppRun ./synthein-appimage/ "${build_file}"
 
 echo "Built ${build_file}."

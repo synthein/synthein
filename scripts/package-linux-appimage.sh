@@ -1,11 +1,12 @@
 #!/bin/sh
 set -e
 
-root_dir="$(pwd)"
-build_dir="${root_dir}/build"
-build_file="${build_dir}/synthein-${SYNTHEIN_VERSION}.AppImage"
+root_dir=$(pwd)
+build_dir=${root_dir}/build
+build_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.AppImage
+love_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.love
 
-if [ ! -f "${build_dir}/synthein-${SYNTHEIN_VERSION}.love" ]; then
+if [ ! -f "$love_file" ]; then
 	echo "Need to build the .love file first."
 	exit 1
 fi
@@ -35,9 +36,10 @@ fi
 mkdir "${build_dir}/synthein-appimage"
 cd "${build_dir}/synthein-appimage"
 
-install -D -m0755 ${root_dir}/package/desktop/synthein.sh AppRun
-install -D ${root_dir}/package/desktop/synthein.desktop synthein.desktop
-install -D ${root_dir}/package/desktop/synthein.png synthein.png
+install -D -m0755 "${root_dir}/package/desktop/synthein.sh" AppRun
+install -D "$love_file" synthein.love
+install -D "${root_dir}/package/desktop/synthein.desktop" synthein.desktop
+install -D "${root_dir}/package/desktop/synthein.png" synthein.png
 ln -s synthein.png .DirIcon
 install -D /usr/bin/love usr/bin/love
 install -D /usr/lib/x86_64-linux-gnu/liblove.so.0 usr/lib/liblove.so.0

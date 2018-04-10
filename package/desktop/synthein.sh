@@ -1,2 +1,2 @@
 #!/bin/sh
-exec love /usr/share/games/synthein/synthein.love "$@"
+exec love synthein.love "$@"

@@ -26,7 +26,8 @@ check:
 	find src -name '*.lua' -exec luac -p {} +
 
 clean:
-	rm -rf build/
+	-rm -rf build/
+	-cd package/snapcraft; snapcraft clean || true
 
 dep:
 	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display

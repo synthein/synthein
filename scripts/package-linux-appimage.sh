@@ -70,6 +70,10 @@ main () {
 	./appimagetool-x86_64.AppImage --appimage-extract 2> /dev/null
 	./squashfs-root/AppRun "${build_dir}/synthein-appimage/" "${build_file}"
 
+	# Clean up.
+	rm -r "${cache_dir}/squashfs-root"
+	rm -r "${build_dir}/synthein-appimage"
+
 	echo "Built ${build_file}."
 }
 

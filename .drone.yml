@@ -38,10 +38,10 @@ pipeline:
     commands:
       - make love synthein_version=${DRONE_TAG}
 
-  # package-linux-appimage:
-  #   <<: *release-package-config
-  #   commands:
-  #     - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
+  package-linux-appimage:
+    <<: *release-package-config
+    commands:
+      - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-linux-snap:
     <<: *release-package-config

@@ -4,6 +4,7 @@ set -e
 main () {
 	root_dir=$(pwd)
 	build_dir=${root_dir}/build
+	cache_dir=${build_dir}/cache
 	build_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.AppImage
 	love_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.love
 
@@ -11,30 +12,24 @@ main () {
 		echo "Need to build the .love file first."
 		exit 1
 	fi
+	if [ ! -d "${cache_dir}" ]; then
+		mkdir "${cache_dir}"
+	fi
 
 	echo "Getting Linux LÖVE binaries."
-	if [ ! -d "${build_dir}/cache" ]; then
-		mkdir "${build_dir}/cache"
-	fi
-	cd "${build_dir}/cache"
+	cd "${cache_dir}"
 
 	love_deb="love_${LOVE_VERSION}ppa1_amd64.deb"
-	if [ ! -f "$love_deb" ]; then
-		curl -L -O "https://bitbucket.org/rude/love/downloads/love_${LOVE_VERSION}ppa1_amd64.deb"
-	fi
+	dlcache "https://bitbucket.org/rude/love/downloads/${love_deb}"
 
 	liblove_deb="liblove0_${LOVE_VERSION}ppa1_amd64.deb"
-	if [ ! -f "$liblove_deb" ]; then
-		curl -L -O "https://bitbucket.org/rude/love/downloads/liblove0_${LOVE_VERSION}ppa1_amd64.deb"
-	fi
+	dlcache "https://bitbucket.org/rude/love/downloads/${liblove_deb}"
 
 	dpkg --install "$love_deb" "$liblove_deb" || apt-get -yf install
 
 	echo "Building AppImage package."
-	cd "${build_dir}/cache"
-	if [ ! -f "${build_dir}/cache/AppRun-x86_64" ]; then
-		curl -L -O "https://github.com/probonopd/AppImageKit/releases/download/continuous/AppRun-x86_64"
-	fi
+	cd "${cache_dir}"
+	dlcache "https://github.com/probonopd/AppImageKit/releases/download/continuous/AppRun-x86_64"
 
 	if [ -d "${build_dir}/synthein-appimage" ]; then
 		rm -r "${build_dir}/synthein-appimage"
@@ -43,7 +38,7 @@ main () {
 	cd "${build_dir}/synthein-appimage"
 
 	# Install Synthein.
-	install -D -m0755 "${build_dir}/cache/AppRun-x86_64" AppRun
+	install -D -m0755 "${cache_dir}/AppRun-x86_64" AppRun
 	install -D -m0755 "${root_dir}/package/desktop/synthein.appimage.sh" usr/bin/synthein
 	install -D "$love_file" usr/share/synthein/synthein.love
 	install -D "${root_dir}/package/desktop/synthein.desktop" usr/share/applications/synthein.desktop
@@ -68,16 +63,20 @@ main () {
 		libsndio
 
 	# Package as an AppImage.
-	cd "${build_dir}/cache"
-	if [ ! -f appimagetool-x86_64.AppImage ]; then
-		curl -L -O "https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
-	fi
+	cd "${cache_dir}"
+	dlcache "https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
 	chmod a+x appimagetool-x86_64.AppImage
 
 	./appimagetool-x86_64.AppImage --appimage-extract 2> /dev/null
 	./squashfs-root/AppRun "${build_dir}/synthein-appimage/" "${build_file}"
 
 	echo "Built ${build_file}."
+}
+
+dlcache () {
+	if [ ! -f "$(basename $1)" ]; then
+		curl -L -O "$1"
+	fi
 }
 
 install_libraries () {

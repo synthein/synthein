@@ -1,2 +1,2 @@
 #!/bin/sh
-exec love synthein.love "$@"
+exec love /usr/share/synthein/synthein.love "$@"

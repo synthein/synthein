@@ -23,7 +23,7 @@ end
 
 function NewGameMenu.keypressed(key)
 	if key == "escape" then
-		GameState.stackPop()
+		NewGameMenu.stackQueue:pop()
 	end
 
 	local button = NewGameMenu.menu:keypressed(key)

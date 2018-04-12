@@ -29,7 +29,7 @@ end
 
 function LoadGameMenu.keypressed(key)
 	if key == "escape" then
-		GameState.stackPop()
+		LoadGameMenu.stackQueue:pop()
 	end
 
 	local loadGameChoice = LoadGameMenu.menu:keypressed(key)

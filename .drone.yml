@@ -16,15 +16,6 @@ pipeline:
       - make check
       - make test
 
-  generate-dependency-graph:
-    when:
-      event: push
-      branch: master
-    image: synthein/love-build
-    secrets: [ BINTRAY_API_KEY ]
-    commands:
-      - scripts/dependency-graph.lua src/main.lua --dot | dot -T png > out.png
-
   package-love-dev:
     when:
       event: push
@@ -58,6 +49,13 @@ pipeline:
     commands:
       - make windows synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
+  upload-builds:
+    when:
+      event: tag
+    image: plugins/github-release
+    secrets: [ github_token ]
+    files: build/synthein-${DRONE_TAG}*
+
   telegram:
     when:
       event: push
@@ -65,7 +63,7 @@ pipeline:
       status: [failure, success, error]
     image: appleboy/drone-telegram
     pull: true
-    secrets: [ TELEGRAM_TOKEN ]
+    secrets: [ telegram_token ]
     to: -1001143861626
     format: html
     message: >

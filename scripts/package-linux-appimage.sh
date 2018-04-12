@@ -58,6 +58,7 @@ main () {
 		libSDL2-2.0 \
 		libluajit-5.1 \
 		libmodplug \
+		libmpg123 \
 		libopenal \
 		libphysfs \
 		libsndio

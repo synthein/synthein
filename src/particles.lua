@@ -1,15 +1,8 @@
-local Particles = {}
-Particles.__index = Particles
+local Particles = class(require("world/worldObjects"))
 
-function Particles.create(worldInfo, location, data)
-	local self = {}
-	setmetatable(self, Particles)
-
+function Particles:__create(worldInfo, location, data)
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
-	local x, y, _, vx, vy = unpack(location)
-	self.body = love.physics.newBody(self.physics, x, y, "dynamic")
-	self.body:setLinearVelocity(vx, vy)
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
@@ -18,10 +11,7 @@ function Particles.create(worldInfo, location, data)
 	self.ox = 20
 	self.oy = 20
 	self.time = 0.3
-	self.isDestroyed = false
 	self.data = data
-
-	return self
 end
 
 function Particles:postCreate() --(references)
@@ -32,16 +22,7 @@ function Particles:getSaveData() --(references)
 	return {self.time}
 end
 
-function Particles:destroy()
-	self.body:destroy()
-	self.isDestroyed = true
-end
-
 function Particles:collision() --(fixture)
-end
-
-function Particles:getLocation()
-	return self.body:getPosition()
 end
 
 function Particles:update(dt)

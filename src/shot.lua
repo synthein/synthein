@@ -1,12 +1,8 @@
 local Util = require("util")
 
-local Shot = {}
-Shot.__index = Shot
+local Shot = class(require("world/worldObjects"))
 
-function Shot.create(worldInfo, location, sourcePart)
-	local self = {}
-	setmetatable(self, Shot)
-
+function Shot:__create(worldInfo, location, sourcePart)
 	local imageName = "shot"
 	self.image = love.graphics.newImage("res/images/"..imageName..".png")
 	self.width = self.image:getWidth()
@@ -31,11 +27,9 @@ function Shot.create(worldInfo, location, sourcePart)
 	self.fixture:setSensor(true)
 	self.fixture:setUserData(self)
 	self.time = 0
-	self.isDestroyed = false
 	self.firstContact = true
 
 	self.sourcePart = sourcePart
-	return self
 end
 
 function Shot:postCreate(references)
@@ -43,10 +37,6 @@ function Shot:postCreate(references)
 	self.time = time
 	structure = references[structure]
 	self.sourcePart = structure.gridTable:index(x, y)
-end
-
-function Shot:getLocation()
-	return self.body:getX(), self.body:getY(), self.angle
 end
 
 function Shot:getSaveData(references)
@@ -65,12 +55,6 @@ function Shot:collision(fixture)
 		self.firstContact = false --this is needed because of bullet body physics
 	end
 end
-
-function Shot:destroy()
-	self.body:destroy()
-	self.isDestroyed = true
-end
-
 
 function Shot:update(dt)
 	self.time = self.time + dt

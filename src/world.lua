@@ -12,7 +12,7 @@ World.objectTypes = {
 
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
-function World:create(playerHostility)
+function World:__create(playerHostility)
 
 	self.physics = love.physics.newWorld()
 	self.physics:setCallbacks(World.beginContact, World.endContact,
@@ -230,7 +230,7 @@ function World:update(dt)
 	for _, object in ipairs(self.events.create) do
 		local key = object[1]
 		local value = World.objectTypes[key]
-		local newObject = value.create(self.info, object[2], object[3])
+		local newObject = value(self.info, object[2], object[3])
 		table.insert(self.objects[key], newObject)
 	end
 	self.events.create = {}

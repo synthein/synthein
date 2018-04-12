@@ -1,7 +1,6 @@
-release-package-config: &release-package-config
+package-config-release: &package-config-release
   when:
     event: tag
-    branch: refs/tags/*
   image: synthein/love-build
   environment:
     - LOVE_VERSION=0.10.2
@@ -25,27 +24,27 @@ pipeline:
       - make love synthein_version=${DRONE_COMMIT:8}
 
   package-love-release:
-    <<: *release-package-config
+    <<: *package-config-release
     commands:
       - make love synthein_version=${DRONE_TAG}
 
   package-linux-appimage:
-    <<: *release-package-config
+    <<: *package-config-release
     commands:
       - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-linux-snap:
-    <<: *release-package-config
+    <<: *package-config-release
     commands:
       - make snap synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-mac:
-    <<: *release-package-config
+    <<: *package-config-release
     commands:
       - make mac synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-windows:
-    <<: *release-package-config
+    <<: *package-config-release
     commands:
       - make windows synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 

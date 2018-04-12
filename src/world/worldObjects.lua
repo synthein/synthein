@@ -27,4 +27,10 @@ function WorldObjects:getLocation()
 	return x, y, a, vx, vy, w
 end
 
+function WorldObjects:draw()
+	local x, y, a = self:getLocation()
+	local data = self.drawData
+	love.graphics.draw(data[1], x, y, a, data[2], data[3], data[4], data[5])
+end
+
 return WorldObjects

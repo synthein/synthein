@@ -4,9 +4,11 @@ local Shot = class(require("world/worldObjects"))
 
 function Shot:__create(worldInfo, location, sourcePart)
 	local imageName = "shot"
-	self.image = love.graphics.newImage("res/images/"..imageName..".png")
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
+	local image = love.graphics.newImage("res/images/"..imageName..".png")
+	local width = image:getWidth()
+	local height = image:getHeight()
+
+	self.drawData = {image, .1/width, -.5/height, width/2, height/2}
 
 	local shotVel = {Util.vectorComponents(25, location[3] + math.pi/2)}
 	local partX, partY = unpack(sourcePart.location)
@@ -63,13 +65,6 @@ function Shot:update(dt)
 	end
 
 	return {}
-end
-
-function Shot:draw()
-	love.graphics.draw(
-		self.image,
-		self.body:getX(), self.body:getY(), self.body:getAngle(),
-		.1/self.width, -.5/self.height, self.width/2, self.height/2)
 end
 
 return Shot

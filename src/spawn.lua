@@ -24,7 +24,7 @@ function Spawn.spawnObject(world, key, location, data, shipInfo, shipType)
 	end
 
 	local value = World.objectTypes[key]
-	local object = value.create(world.info, location, data)
+	local object = value(world.info, location, data)
 	world:addObject(object, key)
 	return object, player
 end

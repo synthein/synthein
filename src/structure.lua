@@ -2,19 +2,14 @@ local GridTable = require("gridTable")
 local Settings = require("settings")
 local StructureMath = require("structureMath")
 
-local Structure = {}
-Structure.__index = Structure
+local Structure = class(require("world/worldObjects"))
 
-function Structure.create(worldInfo, location, shipTable)
-	local self = {}
-	setmetatable(self, Structure)
-
+function Structure:__create(worldInfo, location, shipTable)
 	self.worldInfo = worldInfo
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
 	self.maxDiameter = 1
 	self.size = 1
-	self.isDestroyed = false
 
 	if not shipTable.parts then
 		self.gridTable = GridTable.create()
@@ -27,43 +22,29 @@ function Structure.create(worldInfo, location, shipTable)
 		self.gridTable = shipTable.parts
 	end
 
-	local x = location[1]
-	local y = location[2]
 	if shipTable.corePart then
 		if shipTable.corePart.type == "control" then
-			self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 			self.body:setAngularDamping(1)
 			self.body:setLinearDamping(.1)
 			self.type = "ship"
 		elseif shipTable.corePart.type == "anchor" then
-			self.body = love.physics.newBody(self.physics, x, y, "static")
+			self.body:setType("static")
 			self.type = "anchor"
 		end
 		self.corePart = shipTable.corePart
 		self.corePart.worldInfo = worldInfo
 	else
-		self.body = love.physics.newBody(self.physics, x, y, "dynamic")
 		self.body:setAngularDamping(.1)
 		self.body:setLinearDamping(0.01)
 		self.type = "generic"
 	end
-	if location[3] then
-		self.body:setAngle(location[3])
-	end
-	if location[4] and location[5] then
-		self.body:setLinearVelocity(location[4], location[5])
-	end
-	if location[6] then
-		self.body:setAngularVelocity(location[6])
-	end
+
 	self.body:setUserData(self)
 
 	local function callback(part, structure)
 		structure:addFixture(part)
 	end
 	self.gridTable:loop(callback, self)
-
-	return self
 end
 
 function Structure:postCreate(references)
@@ -72,20 +53,9 @@ function Structure:postCreate(references)
 	end
 end
 
--- The table set to nill.
-
-function Structure:destroy()
-	self.body:destroy()
-	self.isDestroyed = true
-end
-
 -------------------------
 -- Setters and Getters --
 -------------------------
-function Structure:getLocation()
-	return self.body:getX(), self.body:getY(), self.body:getAngle()
-end
-
 function Structure:getTeam()
 	if self.corePart then
 		return self.corePart:getTeam()

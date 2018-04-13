@@ -1,6 +1,6 @@
-local Particles = require("particles")
-local Shot = require("shot")
-local Structure = require("structure")
+local Particles = require("world/particles")
+local Shot = require("world/shot")
+local Structure = require("world/structure")
 
 local World = class()
 

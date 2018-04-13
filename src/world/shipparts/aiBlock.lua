@@ -1,6 +1,6 @@
-local Part = require("shipparts/part")
-local Engine = require("shipparts/engine")
-local AI = require("shipparts/ai")
+local Part = require("world/shipparts/part")
+local Engine = require("world/shipparts/engine")
+local AI = require("world/shipparts/ai")
 
 local AIBlock = {}
 AIBlock.__index = AIBlock

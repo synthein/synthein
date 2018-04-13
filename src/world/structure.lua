@@ -1,6 +1,6 @@
 local GridTable = require("gridTable")
 local Settings = require("settings")
-local StructureMath = require("structureMath")
+local StructureMath = require("world/structureMath")
 
 local Structure = class(require("world/worldObjects"))
 

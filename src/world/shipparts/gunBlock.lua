@@ -1,8 +1,8 @@
 -- Parent Table
-local Part = require("shipparts/part")
+local Part = require("world/shipparts/part")
 
 -- Component
-local Gun = require("shipparts/gun")
+local Gun = require("world/shipparts/gun")
 
 local GunBlock = {}
 GunBlock.__index = GunBlock

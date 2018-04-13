@@ -1,9 +1,7 @@
-local Part = require("shipparts/part")
-local StructureMath = require("structureMath")
+local StructureMath = require("world/structureMath")
 
 local Gun = {}
 Gun.__index = Gun
-setmetatable(Gun, Part)
 
 function Gun.create()
 	local self = {}

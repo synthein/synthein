@@ -1,3 +1,11 @@
+package-config-dev: &package-config-dev
+  when:
+    event: push
+    branch: master
+  image: synthein/love-build
+  environment:
+    - LOVE_VERSION=0.10.2
+
 package-config-release: &package-config-release
   when:
     event: tag
@@ -16,39 +24,67 @@ pipeline:
       - make test
 
   package-love-dev:
+    <<: *package-config-dev
+    commands:
+      - make love synthein_version=${DRONE_COMMIT:8}
+
+  package-linux-appimage-dev:
+    <<: *package-config-dev
+    commands:
+      - make appimage synthein_version=${DRONE_COMMIT:8} love_version=$${LOVE_VERSION}
+
+  # package-linux-snap-dev:
+  #   <<: *package-config-dev
+  #   commands:
+  #     - make snap synthein_version=${DRONE_COMMIT:8} love_version=$${LOVE_VERSION}
+
+  package-mac-dev:
+    <<: *package-config-dev
+    commands:
+      - make mac synthein_version=${DRONE_COMMIT:8} love_version=$${LOVE_VERSION}
+
+  package-windows-dev:
+    <<: *package-config-dev
+    commands:
+      - make windows synthein_version=${DRONE_COMMIT:8} love_version=$${LOVE_VERSION}
+
+  upload-builds-dev:
     when:
       event: push
       branch: master
-    image: synthein/love-build
-    commands:
-      - make love synthein_version=${DRONE_COMMIT:8}
+    image: plugins/s3-sync:1
+    bucket: drone-unstable-builds
+    secrets: [ aws_access_key_id, aws_secret_access_key ]
+    region: us-west-1
+    source: build/synthein-${DRONE_TAG}*
+    target: /
 
   package-love-release:
     <<: *package-config-release
     commands:
       - make love synthein_version=${DRONE_TAG}
 
-  package-linux-appimage:
+  package-linux-appimage-release:
     <<: *package-config-release
     commands:
       - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
-  # package-linux-snap:
+  # package-linux-snap-release:
   #   <<: *package-config-release
   #   commands:
   #     - make snap synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
-  package-mac:
+  package-mac-release:
     <<: *package-config-release
     commands:
       - make mac synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
-  package-windows:
+  package-windows-release:
     <<: *package-config-release
     commands:
       - make windows synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
-  upload-builds:
+  upload-builds-release:
     when:
       event: tag
     image: plugins/github-release

@@ -5,7 +5,7 @@ package-config-dev: &package-config-dev
   image: synthein/love-build
   environment:
     - LOVE_VERSION=0.10.2
-    - UNSTABLE_BUILD_NUMBER=0-${DRONE_BUILD}
+    - UNSTABLE_BUILD_NUMBER=0-${DRONE_BUILD_NUMBER}
 
 package-config-release: &package-config-release
   when:
@@ -57,7 +57,7 @@ pipeline:
     bucket: synthein-unstable-builds
     secrets: [ aws_access_key_id, aws_secret_access_key ]
     region: us-west-2
-    source: build/synthein-${DRONE_TAG}*
+    source: build/synthein-0-${DRONE_BUILD_NUMBER}*
     target: /
 
   package-love-release:

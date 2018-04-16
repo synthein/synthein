@@ -58,6 +58,7 @@ pipeline:
     secrets: [ aws_access_key_id, aws_secret_access_key ]
     region: us-west-2
     source: build/synthein-0-${DRONE_BUILD_NUMBER}*
+    strip_prefix: build/
     target: /
 
   package-love-release:

@@ -5,7 +5,7 @@ package-config-dev: &package-config-dev
   image: synthein/love-build
   environment:
     - LOVE_VERSION=0.10.2
-    - UNSTABLE_BUILD_NUMBER=0:${DRONE_BUILD}
+    - UNSTABLE_BUILD_NUMBER=0-${DRONE_BUILD}
 
 package-config-release: &package-config-release
   when:

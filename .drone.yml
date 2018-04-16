@@ -15,7 +15,7 @@ package-config-release: &package-config-release
     - LOVE_VERSION=0.10.2
 
 pipeline:
-  test-syntax:
+  test:
     when:
       event: push
     image: synthein/love-build

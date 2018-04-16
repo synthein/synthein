@@ -53,7 +53,7 @@ pipeline:
     when:
       event: push
       branch: master
-    image: plugins/s3-sync:1
+    image: plugins/s3
     bucket: synthein-unstable-builds
     secrets: [ aws_access_key_id, aws_secret_access_key ]
     region: us-west-2

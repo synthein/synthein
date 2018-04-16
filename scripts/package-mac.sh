@@ -21,7 +21,7 @@ main () {
 	echo "Building MacOS package."
 	app_dir="${build_dir}/synthein.app"
 
-	cp -aR "${cache_dir}/love.app" "$app_dir"
+	cp -R "${cache_dir}/love.app" "$app_dir"
 	cd "$app_dir"
 
 	cp "$love_file" "Contents/Resources/"

@@ -1,4 +1,4 @@
-local Spawn = require("spawn")
+local Spawn = require("world/spawn")
 
 local Debug = {}
 

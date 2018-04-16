@@ -1,4 +1,4 @@
-local Part = require("shipparts/part")
+local Part = require("world/shipparts/part")
 
 local Anchor = {}
 Anchor.__index = Anchor

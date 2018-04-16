@@ -2,7 +2,7 @@ local Controls = require("controls")
 local Screen = require("screen")
 local Selection = require("selection")
 local Menu = require("menu")
-local PartRegistry = require("shipparts/partRegistry")
+local PartRegistry = require("world/shipparts/partRegistry")
 
 local Player = {}
 Player.__index = Player

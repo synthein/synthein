@@ -2,7 +2,7 @@ local Controls = require("controls")
 local InGame = require("gamestates/inGame")
 local Player = require("player")
 local SceneParser = require("sceneParser")
-local World = require("world")
+local World = require("world/world")
 local Gamesave = require("gamesave")
 local Tserial = require("vendor/tserial")
 

@@ -13,14 +13,15 @@ AIBlock.partChar = 'a'
 PlayerBlock.partChar = 'p'
 Anchor.partChar = 'n'
 --]]
+local directory = "world/shipparts/"
 
 local partsList = {
-b = require("shipparts/block"),
-e = require("shipparts/engineBlock"),
-g = require("shipparts/gunBlock"),
-a = require("shipparts/aiBlock"),
-p = require("shipparts/playerBlock"),
-n = require("shipparts/anchor")
+b = require(directory .. "block"),
+e = require(directory .. "engineBlock"),
+g = require(directory .. "gunBlock"),
+a = require(directory .. "aiBlock"),
+p = require(directory .. "playerBlock"),
+n = require(directory .. "anchor")
 }
 
 local PartRegistry = {}

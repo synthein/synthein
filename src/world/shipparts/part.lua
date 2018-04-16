@@ -45,18 +45,14 @@ function Part:getWorldLocation()
 	if not self.fixture:isDestroyed() then
 		local body = self.fixture:getBody()
 		if self.location and body then
+			local partX, partY = unpack(self.location)
+			local x, y = body:getWorldPoints(partX, partY)
 			local angle = (self.location[3] - 1) * math.pi/2 + body:getAngle()
-			local x, y = unpack(self.location)
-			x, y = body:getWorldPoints(x, y)
-			self.worldLocation = {x, y, angle}
+			local vx, vy = body:getLinearVelocityFromLocalPoint(partX, partY)
+			local w = body:getAngularVelocity()
+			return x, y, angle, vx, vy, w
 		end
 	end
-
-	local a, b, c
-	if self.worldLocation then
-		a, b, c = unpack(self.worldLocation)
-	end
-	return a, b, c
 end
 
 function Part:getPartSide(locationX, locationY)

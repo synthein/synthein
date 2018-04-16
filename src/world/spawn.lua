@@ -1,11 +1,11 @@
 -- Spawn some ships or other objects based on a table containing all of the
 -- data required to produce them. This module is designed to be called in
 -- SceneParser and Saves.
-local PartRegistry = require("shipparts/partRegistry")
+local PartRegistry = require("world/shipparts/partRegistry")
 local Util = require("util")
-local Structure = require("structure")
+local Structure = require("world/structure")
 local GridTable = require("gridTable")
-local World = require("world")
+local World = require("world/world")
 
 local Spawn = {}
 
@@ -24,7 +24,7 @@ function Spawn.spawnObject(world, key, location, data, shipInfo, shipType)
 	end
 
 	local value = World.objectTypes[key]
-	local object = value.create(world.info, location, data)
+	local object = value(world.info, location, data)
 	world:addObject(object, key)
 	return object, player
 end

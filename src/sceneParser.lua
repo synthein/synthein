@@ -1,5 +1,5 @@
 -- SceneParser serializes and deserializes scenes and ships as strings.
-local Spawn = require("spawn")
+local Spawn = require("world/spawn")
 local Util = require("util")
 local Tserial = require("vendor/tserial")
 

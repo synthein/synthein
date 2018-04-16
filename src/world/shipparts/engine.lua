@@ -1,10 +1,8 @@
-local Part = require("shipparts/part")
-local StructureMath = require("structureMath")
+local StructureMath = require("world/structureMath")
 local Util = require("util")
 
 local Engine = {}
 Engine.__index = Engine
-setmetatable(Engine, Part)
 
 function Engine.create(engineType, thrust, torque)
 	local self = {}

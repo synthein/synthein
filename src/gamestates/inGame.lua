@@ -214,7 +214,7 @@ function InGame.update(dt)
 						location[3] = 2 * math.pi * math.random()
 
 						local inputs = {playerTeam = 1, playerShip = player.ship}
-						local ships = SceneParser.loadScene("scene" .. scene, world, location, nil, inputs)
+						local ships = SceneParser.loadScene("scene" .. scene, world, location, inputs)
 						for _, ship in ipairs(ships) do
 							world:addObject(ship)
 						end

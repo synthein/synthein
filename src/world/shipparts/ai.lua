@@ -57,8 +57,8 @@ function AI:getOrders(worldInfo, leader, body)
 				   teamHostility:test(self.team, object:getTeam()) then
 					local eX, eY = object:getWorldLocation()
 					if eX and eY then
-						local dx = eX - location[1]
-						local dy = eY - location[2]
+						local dx = eX - aiX
+						local dy = eY - aiY
 						local mSq = (dx * dx) + (dy * dy)
 						if not targetMSq or targetMSq > mSq then
 							target = {eX, eY, mSq}
@@ -140,4 +140,3 @@ function AI:runMenu(i)
 end
 
 return AI
-

@@ -86,10 +86,12 @@ function getDeps(filename, dir, depsTable)
 end
 
 function renderText(dependencies)
-	for k, v in pairs(dependencies) do
-		if #v >= 1 then
-			print(string.format('%s has %d dependencies:', k, #v))
-			for i, dep in ipairs(v) do
+	sortedKeys = sortKeys(dependencies)
+	for _, module in ipairs(sortedKeys) do
+		deps = dependencies[module]
+		if #deps >= 1 then
+			print(string.format('%s has %d dependencies:', module, #deps))
+			for i, dep in ipairs(deps) do
 				print('\t' .. dep)
 			end
 		end
@@ -101,15 +103,28 @@ function renderDot(dependencies)
 	print('\trankdir="LR";')
 	print('\tnode [shape=box];')
 
-	for parent, deps in pairs(dependencies) do
+	sortedKeys = sortKeys(dependencies)
+	for _, module in ipairs(sortedKeys) do
+		deps = dependencies[module]
 		if #deps >= 1 then
 			for i, dep in ipairs(deps) do
-				print(string.format('\t"%s" -> "%s";', parent, dep))
+				print(string.format('\t"%s" -> "%s";', module, dep))
 			end
 		end
 	end
 
 	print('}')
+end
+
+function sortKeys(t)
+	keys = {}
+
+	for k in pairs(t) do
+		table.insert(keys, k)
+	end
+
+	table.sort(keys)
+	return keys
 end
 
 main(arg)

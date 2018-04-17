@@ -35,6 +35,7 @@ function Player.create(world, controls, structure)
 	self.partY = nil
 	self.cursorX = 0
 	self.cursorY = 0
+	self.debugmode = false
 
 	self.compass = love.graphics.newImage("res/images/compass.png")
 	self.cursor = love.graphics.newImage("res/images/pointer.png")
@@ -72,6 +73,8 @@ function Player:handleInput()
 end
 
 function Player:buttonpressed(source, button)
+	if key == "f12" then self.debugmode = not self.debugmode end
+
 	local menuButton = Controls.test("menu", self.controls, source, button)
 	local order = Controls.test("pressed", self.controls, source, button)
 

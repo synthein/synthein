@@ -8,7 +8,7 @@ local state
 function love.load()
 	state = StackManager.create(MainMenu, "stackQueue")
 
-	local function getStateFunction(t, key)
+	local function getStateFunction(_, key)
 		if enabledFunctions[key] then
 			return state[key]
 		end
@@ -16,10 +16,7 @@ function love.load()
 
 	setmetatable(love, {__index = getStateFunction})
 
-	for i, flag in ipairs(arg) do
-		if flag == "--debug" then
-			debugmode = true
-		end
+	for _, flag in ipairs(arg) do
 		if flag == "--test" then
 			require("tests")
 			love.event.quit()
@@ -29,7 +26,6 @@ end
 
 function love.keypressed(key)
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
-	if key == "f12" then debugmode = not debugmode end
 
 	state.keypressed(key)
 end

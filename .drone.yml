@@ -53,8 +53,9 @@ pipeline:
       event: push
       branch: master
     image: plugins/s3
-    bucket: synthein-unstable-builds
     secrets: [ aws_access_key_id, aws_secret_access_key ]
+    bucket: synthein-unstable-builds
+    acl: public-read
     region: us-west-2
     source: build/synthein-unstable*
     strip_prefix: build/

@@ -33,7 +33,7 @@ dep:
 	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display
 
 luacheck:
-	find src -name '*.lua' -not -path 'src/vendor/*' -exec luacheck --std=luajit+love {} +
+	find src -name '*.lua' -not -path 'src/vendor/*' -exec luacheck {} +
 
 test:
 	love src --test

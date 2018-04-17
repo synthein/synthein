@@ -72,8 +72,14 @@ function Menu:update(dt)
 
 		-- Scroll toward the selected button if it is off the screen.
 		if self.selectedButton then
-			local buttonTopY = self.y + (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1) - self.scrollY
-			local buttonBottomY = self.y + (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1) + self.buttonHeight - self.scrollY
+			local buttonTopY =
+				self.y
+				+ (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1)
+				- self.scrollY
+			local buttonBottomY =
+				self.y
+				+ (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1)
+				+ self.buttonHeight - self.scrollY
 
 			if buttonTopY < self.y then
 				self.scrollVelocity = -self.scrollSpeed
@@ -113,7 +119,8 @@ function Menu:draw()
 		love.graphics.rectangle(
 			"fill",
 			x + self.buttonMargin,
-			y + self.buttonMargin + self.buttonHeight * (i - 1) + self.buttonSpacing * (i - 1) - self.scrollY,
+			y + self.buttonMargin + self.buttonHeight * (i - 1)
+				+ self.buttonSpacing * (i - 1) - self.scrollY,
 			self.buttonWidth, self.buttonHeight
 		)
 		love.graphics.setColor(255, 255, 255)
@@ -122,7 +129,10 @@ function Menu:draw()
 		love.graphics.print(
 			self.buttons[i],
 			x + self.buttonMargin + 10,
-			y + self.buttonMargin + self.buttonHeight * (i - 1) + self.buttonSpacing * (i - 1) + (self.buttonHeight - self.textHeight)/2 - self.scrollY,
+			y + self.buttonMargin + self.buttonHeight * (i - 1)
+				+ self.buttonSpacing * (i - 1)
+				+ (self.buttonHeight - self.textHeight)/2
+				- self.scrollY,
 			0, 1, 1, 0, 0, 0, 0
 		)
 		love.graphics.setFont(previousFont)

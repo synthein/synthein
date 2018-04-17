@@ -1,11 +1,10 @@
+local LocationTable = require("locationTable")
 local WorldObjects = class()
 
 function WorldObjects:__create(worldInfo, location, data)
-	local l, physics = location, worldInfo.physics
-	self.body = love.physics.newBody(physics, l[1], l[2], "dynamic")
-	if l[3] then self.body:setAngle(l[3]) end
-	if l[4] and l[5] then self.body:setLinearVelocity(l[4], l[5]) end
-	if l[6] then self.body:setAngularVelocity(l[6]) end
+	local physics = worldInfo.physics
+	location = LocationTable(unpack(location))
+	self.body = location:createBody(physics, "dynamic")
 
 	self.isDestroyed = false
 end

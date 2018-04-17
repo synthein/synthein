@@ -10,6 +10,7 @@ local GameState = require("gamestates/gameState")
 local InGame = GameState()
 
 local paused = false
+local debugmode = false
 local eventTime = 0
 local second = 0
 
@@ -47,6 +48,8 @@ function InGame.textinput(key)
 end
 
 function InGame.keypressed(key)
+	if key == "f12" then debugmode = not debugmode end
+
 	if typingSaveName then
 		if key == "backspace" then
 			-- The string is utf-8 encoded, so the last character of the string
@@ -110,7 +113,7 @@ function InGame.mousepressed(x, y, button)
 		end
 	end
 
-	if debugmode == true then
+	if debugmode then
 		Debug.mousepressed(x, y, button)
 	end
 end
@@ -120,7 +123,7 @@ function InGame.mousereleased(x, y, button)
 		player:buttonreleased(love.mouse, button)
 	end
 
-	if debugmode == true then
+	if debugmode then
 		Debug.mousereleased(x, y, button)
 	end
 end

@@ -73,7 +73,7 @@ function Player:handleInput()
 end
 
 function Player:buttonpressed(source, button)
-	if key == "f12" then self.debugmode = not self.debugmode end
+	if button == "f12" then self.debugmode = not self.debugmode end
 
 	local menuButton = Controls.test("menu", self.controls, source, button)
 	local order = Controls.test("pressed", self.controls, source, button)
@@ -96,27 +96,27 @@ function Player:buttonpressed(source, button)
 			self.menu = nil
 		elseif menuButton == "confirm" then
 			local buttonInt = self.menu:getButtonAt(self.cursorX, self.cursorY)
-			local button = self.menuButtonNames[buttonInt]
+			local buttonAction = self.menuButtonNames[buttonInt]
 
 			local cameraX, cameraY = self.camera:getPosition()
 			local part, location
-			if button == "Block" then
+			if buttonAction == "Block" then
 				-- Spawn a block
 				location = {cameraX, cameraY + 5}
 				part = PartRegistry.createPart('b')
-			elseif button == "Engine" then
+			elseif buttonAction == "Engine" then
 				-- Spawn an engine
 				location = {cameraX + 5, cameraY + 5}
 				part = PartRegistry.createPart('e')
-			elseif button == "Gun" then
+			elseif buttonAction == "Gun" then
 				-- Spawn a gun
 				location = {cameraX - 5, cameraY + 5}
 				part = PartRegistry.createPart('g')
-			elseif button == "AI" then
+			elseif buttonAction == "AI" then
 				--Spawn an AI
 				location = {cameraX - 10, cameraY + 10}
 				part = PartRegistry.createPart('a', {self.ship:getTeam()})
-			elseif button == "Enemy" then
+			elseif buttonAction == "Enemy" then
 				--Spawn an Enemy
 				location = {cameraX + 10, cameraY + 10}
 				part = PartRegistry.createPart('a', {-3})
@@ -149,7 +149,7 @@ function Player:buttonpressed(source, button)
 				self.selected:pressed(cursorX, cursorY, order)
 
 			elseif order == "playerMenu" then
-				if debugmode then
+				if self.debugmode then
 
 					local _, _, width, _ = self.camera:getScissor()
 					self.menu = Menu.create(width/2, 100, 5,
@@ -194,7 +194,7 @@ function Player:drawWorldObjects()
 
 	self.world.physics:queryBoundingBox(a, b, c, d, callback)
 
-	for drawlayer, object in ipairs(callbackData) do
+	for _, object in ipairs(callbackData) do
 		object:draw()
 	end
 end

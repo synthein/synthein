@@ -6,7 +6,7 @@ env = SYNTHEIN_VERSION=$(synthein_version) LOVE_VERSION=$(love_version)
 # Building commands
 love: build/synthein-$(synthein_version).love
 
-build/synthein-$(synthein_version).love: src
+build/synthein-$(synthein_version).love: $(shell find ./src/ -type f)
 	$(env) scripts/package-love.sh
 
 appimage: love

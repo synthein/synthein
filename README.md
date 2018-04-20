@@ -1,6 +1,7 @@
 # Synthein [![CI Status](https://drone.webgears.k.vu/api/badges/synthein/synthein/status.svg?branch=master)](https://drone.webgears.k.vu/synthein/synthein) [![Chat Channel](https://img.shields.io/badge/telegram-chat-lightgrey.svg)](https://t.me/synthein)
 
-Synthein (working title) is a game about blowing up space ships and using their parts to make your space ship bigger and better.
+Synthein (working title) is a game about blowing up space ships and using their
+parts to make your space ship bigger and better.
 
 ## Features
 
@@ -17,21 +18,16 @@ Synthein (working title) is a game about blowing up space ships and using their 
 
 ![screenshot](http://i.imgur.com/b2QnY5A.png)
 
-## Running
+## Installing
 
-Synthein is developed using the LÖVE framework. To run the game:
+Download the latest release [here](https://github.com/synthein/synthein/releases/latest).
 
- 1. Install LÖVE
+If you're brave, you can also try out the latest unstable build:
 
-    Download and install LÖVE from [love2d.org](love2d.org).
-
- 2. Run the game
-
-    On **UNIX-like** systems, run love from the command line with the directory of this game as an argument, e.g. `love synthein-master`.
-
-    On **Windows**, drag the game directory onto `love.exe`.
-
-For more information, see the [LÖVE wiki guide](https://www.love2d.org/wiki/Getting_Started#Running_Games) on running LÖVE games.
+* [For Linux](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable.AppImage)
+* [For macOS](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable-mac.zip)
+* [For Windows](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable-windows.zip)
+* [For Everything else](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable.love) (More information about .love files is available [here](https://love2d.org/wiki/L%C3%96VE_Game_File).)
 
 ## How to Play
 
@@ -51,25 +47,22 @@ To add a block to your ship or an AI ally's ship:
  2. Click on one of the direction indicators to choose the side to attach to your ship.
  3. Click on the block on your ship or an ally's ship that you want to attach this block to.
  4. Click on the indicator for the side that you want to attach the block to.
- 
+
 ### Debug Mode
 
-Press F12 to enter or leave debug mode. You can tell if you are in debug mode by looking at the top left corner of the screen: in debug mode, the screen shows some information in the top left corner.
+Press F12 to toggle debug mode.
 
-* The first row of debug information is the x and y coordinates of your ship.
-* Row 2 is the x and y coordinates of the mouse cursor.
-* Row 3 tells you how many structures (ships, blocks, etc.) there are in the world.
-* Row 4 tells you how many parts are in your ship.
-* Row 5 says whether or not you are in the middle of putting a block onto a ship.
-
-During debug node, you can also spawn in a few different kinds of ship parts.
-
-* U: Spawn a block.
-* I: Spawn an engine.
-* O: Spawn a gun.
-* 1: Spawn an allied AI.
-* 2: Spawn an enemy AI.
+During debug node, you can see more information about your ship and the game
+world. You can also spawn in a few different kinds of ships and ship parts.
+Press "I" to open a menu that lets you choose something to spawn.
 
 ## License
 
-The code and assets of Synthein are distributed under the terms of the GPL v3, included in the LICENSE file.
+Synthein is copyright (c) Jordan Christiansen and Drake Halver.
+
+The code and assets of Synthein are distributed under the terms of the GPL v3,
+included in the LICENSE file.
+
+Synthein uses several third-party modules. The copyright information for these
+modules is included with the modules themselves, which can be found in the
+`src/vendor` directory.

@@ -19,7 +19,7 @@ function CircleMenu.indexToAngle(index, division, startAngle)
 	-- -0.5			sets index 1 to the noon position
 	-- / division	changes 0 to 2division into 0 to 2
 	-- -1			causes the center of index 1 to be straight up
-	-- * 2 			changes 0 to division into 0 to 2division 
+	-- * 2 			changes 0 to division into 0 to 2division
 	return startAngle - math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
@@ -76,7 +76,7 @@ function CircleMenu:draw(x, y, angle, size, strength, lables)
 	local font = love.graphics.newFont(size * 50)
 	love.graphics.setFont(font)
 
-	-- Print lables 
+	-- Print lables
 	if lables then
 		for i = 1, division do
 			local angleToText = CircleMenu.indexToAngle(i - .5, division, angle)

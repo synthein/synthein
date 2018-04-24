@@ -170,10 +170,6 @@ function InGame.update(dt)
 	end
 
 	if not (paused or menuOpen) then
-
-
-		-- Update the game world.
-		world.physics:update(dt)
 		world:update(dt)
 
 		eventTime = eventTime + dt

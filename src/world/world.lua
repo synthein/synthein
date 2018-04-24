@@ -184,6 +184,8 @@ function World:getObjects(key)
 end
 
 function World:update(dt)
+	self.physics:update(dt)
+
 	local nextBoarders = {0, 0, 0, 0}
 
 	for key, objectTable in pairs(self.objects) do

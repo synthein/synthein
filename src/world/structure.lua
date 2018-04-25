@@ -313,7 +313,7 @@ function Structure:disconnectPart(part)
 		local partList = structureList[i]
 		local basePart = partList[1]
 		local baseVector = basePart.location
-		local location = {basePart:getWorldLocation()}
+		local location = basePart:getWorldLocation()
 
 		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 

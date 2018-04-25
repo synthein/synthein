@@ -5,6 +5,7 @@ local SceneParser = require("sceneParser")
 local World = require("world/world")
 local Gamesave = require("gamesave")
 local Tserial = require("vendor/tserial")
+local LocationTable = require("locationTable")
 
 local GameState = require("gamestates/gameState")
 
@@ -35,7 +36,7 @@ function InitWorld.load(scene, playerHostility, ifSave)
 	local world = World(playerHostility)
 	love.physics.setMeter(1) -- there are 20 pixels per meter
 
-	local playerShips = SceneParser.loadScene(sceneLines, world, {0, 0})
+	local playerShips = SceneParser.loadScene(sceneLines, world, LocationTable(0,0))
 	local players = {}
 	for _, ship in ipairs(playerShips) do
 		if #players == 0 then

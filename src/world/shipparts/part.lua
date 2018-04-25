@@ -1,5 +1,6 @@
 local Settings = require("settings")
 local Util = require("util")
+local LocationTable = require("locationTable")
 
 local Part = {}
 Part.__index = Part
@@ -43,20 +44,12 @@ end
 
 function Part:getWorldLocation()
 	if not self.fixture:isDestroyed() then
-		local body = self.fixture:getBody()
-		if self.location and body then
-			local partX, partY = unpack(self.location)
-			local x, y = body:getWorldPoints(partX, partY)
-			local angle = (self.location[3] - 1) * math.pi/2 + body:getAngle()
-			local vx, vy = body:getLinearVelocityFromLocalPoint(partX, partY)
-			local w = body:getAngularVelocity()
-			return x, y, angle, vx, vy, w
-		end
+		return (LocationTable(self.fixture, self.location))
 	end
 end
 
 function Part:getPartSide(locationX, locationY)
-	local partX, partY, partAngle = self:getWorldLocation()
+	local partX, partY, partAngle = self:getWorldLocation():getXYA()
 	local angleToCursor = Util.vectorAngle(locationX - partX,
 										   locationY - partY)
 	local angleDifference = angleToCursor - partAngle
@@ -70,11 +63,7 @@ function Part:damage(damage)
 		local body = self.fixture:getBody()
 		local structure = body:getUserData()
 		local events = structure.events
-		local location = {self:getWorldLocation()}
-		local vx, vy
-		vx, vy = body:getLinearVelocityFromLocalPoint(unpack(self.location))
-		location[4] = vx
-		location[5] = vy
+		local location = self:getWorldLocation()
 		table.insert(events.create, {"particles", location})
 		self.isDestroyed = true
 		structure:disconnectPart(self)
@@ -101,7 +90,7 @@ function Part:update() --(dt, partsInfo)
 end
 
 function Part:draw()
-	local x, y, angle = self:getWorldLocation()
+	local x, y, angle = self:getWorldLocation():getXYA()
 	if x and y and angle then
 		love.graphics.draw(self.image, x, y, angle, 1/self.width, -1/self.height, self.width/2, self.height/2)
 	end

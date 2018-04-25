@@ -192,7 +192,7 @@ function World:update(dt)
 		for i = #objectTable,1,-1 do
 			local object = objectTable[i]
 			if object.isDestroyed == false then
-				local objectX, objectY = object:getLocation()
+				local objectX, objectY = object:getLocation():getXY()
 				if key == "structures" and object.corePart and
 						object.corePart:getTeam() > 0 then
 					if objectX < nextBoarders[1] then

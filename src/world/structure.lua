@@ -272,16 +272,21 @@ end
 -- Part was disconnected or destroyed remove part and handle outcome.
 function Structure:disconnectPart(part)
 	if #self.gridTable:loop() == 1 and not part.isDestroyed then
+		-- if structure will bedestoryed
+		if part.isDestroyed then
+			self:removePart(part)
+		end
 		return
 	end
 
-	self:removePart(part)
-	if self.isDestroyed and part.isDestroyed then
-		return
-	end
+	--self:removePart(part)
+	local x, y = unpack(part.location)
+	self.gridTable:index(x, y, nil, true)
 
 	local savedPart
-	if not part.isDestroyed then
+	if part.isDestroyed then
+		self:removePart(part)
+	else
 		savedPart = part
 	end
 
@@ -321,9 +326,9 @@ function Structure:disconnectPart(part)
 		for _, eachPart in ipairs(partList) do
 			local partVector = {unpack(eachPart.location)}
 			local netVector = StructureMath.sumVectors(baseVector, partVector)
-			if eachPart ~= savedPart then
+			--if eachPart ~= savedPart then
 				self:removePart(eachPart)
-			end
+			--end
 			eachPart:setLocation(netVector)
 			structure:index(netVector[1], netVector[2], eachPart)
 

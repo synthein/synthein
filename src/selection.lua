@@ -80,7 +80,7 @@ function Selection:released(cursorX, cursorY)
 	if self.structure and self.part then
 		local partSide = self.part:getPartSide(cursorX, cursorY)
 		local withinPart = self.part:withinPart(cursorX, cursorY)
-		local x, y = self.part:getWorldLocation(self.partIndex)
+		local x, y = self.part:getWorldLocation(self.partIndex):getXY()
 		if not withinPart then
 			if self.build then
 				if self.build:setSide(partSide) then
@@ -111,7 +111,7 @@ end
 function Selection:draw(cursorX, cursorY)
 	if self.structure and self.part then
 		local partSide = self.part:getPartSide(cursorX, cursorY)
-		local x, y, angle = self.part:getWorldLocation()
+		local x, y, angle = self.part:getWorldLocation():getXYA()
 		local strength, lables
 		if self.build then
 			strength = Building.getStrengthTable(self.part, partSide)

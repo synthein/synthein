@@ -1,4 +1,5 @@
 local Util = require("util")
+local Timer = require("timer")
 
 local Shot = class(require("world/worldObjects"))
 
@@ -17,8 +18,8 @@ function Shot:__create(worldInfo, location, sourcePart)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setSensor(true)
 	self.fixture:setUserData(self)
-	
-	self.time = 0
+
+	self.timer = Timer(5)
 	self.firstContact = true
 	self.sourcePart = sourcePart
 end
@@ -48,8 +49,7 @@ function Shot:collision(fixture)
 end
 
 function Shot:update(dt)
-	self.time = self.time + dt
-	if self.time > 5 then
+	if self.timer:ready(dt) then
 		self:destroy()
 	end
 

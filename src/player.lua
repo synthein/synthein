@@ -3,6 +3,7 @@ local Screen = require("screen")
 local Selection = require("selection")
 local Menu = require("menu")
 local PartRegistry = require("world/shipparts/partRegistry")
+local LocationTable = require("locationTable")
 
 local Player = {}
 Player.__index = Player
@@ -123,6 +124,7 @@ function Player:buttonpressed(source, button)
 			end
 
 			if part and location then
+				location = LocationTable(unpack(location))
 				table.insert(self.world.info.events.create,
 							 {"structures", location, part})
 			end

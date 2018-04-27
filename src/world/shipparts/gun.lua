@@ -1,4 +1,5 @@
 local StructureMath = require("world/structureMath")
+local Timer = require("timer")
 
 local Gun = {}
 Gun.__index = Gun
@@ -7,19 +8,16 @@ function Gun.create()
 	local self = {}
 	setmetatable(self, Gun)
 
-	self.recharge = false
-	self.rechargeTime = 0
+	self.charged = true
+	self.rechargeTimer = Timer(0.5)
 
 	return self
 end
 
 function Gun:update(dt, shoot, part)
-	if self.recharge then
-		-- Recharge timer
-		self.rechargeTime = self.rechargeTime + dt
-		if self.rechargeTime > 0.5 then
-			self.rechargeTime = 0
-			self.recharge = false
+	if not self.charged then
+		if self.rechargeTimer:ready(dt) then
+			self.charged = true
 		end
 	else
 		if shoot then
@@ -30,8 +28,7 @@ function Gun:update(dt, shoot, part)
 			local clear = not structure.gridTable:index(x, y)
 
 			if clear then
-				-- Start timer
-				self.recharge = true
+				self.charged = false
 				-- Spawn Shot
 				local shot = {"shots", {part:getWorldLocation()}, part}
 				table.insert(structure.events.create, shot)

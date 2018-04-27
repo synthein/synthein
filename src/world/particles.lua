@@ -1,3 +1,5 @@
+local Timer = require("timer")
+
 local Particles = class(require("world/worldObjects"))
 
 function Particles:__create(worldInfo, location, data)
@@ -5,7 +7,7 @@ function Particles:__create(worldInfo, location, data)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
 	self.fixture:setSensor(true)
-	self.time = 0.3
+	self.timer = Timer(0.3)
 	self.data = data
 
 	local image = love.graphics.newImage("res/images/explosion.png")
@@ -24,8 +26,7 @@ function Particles:collision() --(fixture)
 end
 
 function Particles:update(dt)
-	self.time = self.time - dt
-	if self.time <= 0 then
+	if self.timer:ready(dt) then
 		self.body:destroy()
 		self.isDestroyed = true
 	end

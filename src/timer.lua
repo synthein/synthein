@@ -6,10 +6,10 @@ function Timer:__create(limit)
 end
 
 function Timer:ready(dt)
-  self.currentTime = self.currentTime - dt
+  local time = self.currentTime - dt
+  self.currentTime = time
 
-  if self.currentTime < 0 then
-    print(self.currentTime)
+  if time <= 0 then
     self.currentTime = self.currentTime + self.limit
     return true
   else

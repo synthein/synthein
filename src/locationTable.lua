@@ -47,14 +47,6 @@ function LocationTable:__create(...)
 		if not t[i] then t[i] = 0 end
 		self[i] = t[i]
 	end
-
-	-- Debug
-	--[[
-	print(typeString)
-	for i = 1,6 do
-		print(t[i])
-	end
-	--]]
 end
 
 function LocationTable:__tostring()

@@ -3,6 +3,7 @@ local Screen = require("screen")
 local Selection = require("selection")
 local Menu = require("menu")
 local PartRegistry = require("world/shipparts/partRegistry")
+local LocationTable = require("locationTable")
 
 local Player = {}
 Player.__index = Player
@@ -123,6 +124,7 @@ function Player:buttonpressed(source, button)
 			end
 
 			if part and location then
+				location = LocationTable(unpack(location))
 				table.insert(self.world.info.events.create,
 							 {"structures", location, part})
 			end
@@ -210,8 +212,9 @@ function Player:drawExtras()
 	end
 
 	local point
-	if self.ship and self.ship.corePart and self.ship.corePart.leader then
-		point = {self.ship.corePart.leader:getLocation()}
+	local leader = self.ship.corePart.leader
+	if leader then
+		point = leader:getLocation()
 	else
 		point = {0,0}
 	end

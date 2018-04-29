@@ -1,3 +1,5 @@
+local LocationTable = require("locationTable")
+
 -- SceneParser serializes and deserializes scenes and ships as strings.
 local Spawn = require("world/spawn")
 local Util = require("util")
@@ -7,11 +9,13 @@ local SceneParser = {}
 
 local numStr = "[-%d.e]*"
 --local strStr = '".*"'
-local varStr = "[-%w. %*]*[,%]]"
+local varStr = "([-%w.%*]+),?%s*"
 local namStr = "(%a%w+)"
 
-local locStr = "(%([-%d., e]*%))"
-local lstStr = "(%[[-%w., %*]*%])"
+--local locStr = "(%([-%d., e]*%))"
+local locStr = "%((.-)%)"
+--local lstStr = "(%[[-%w., %*]*%])"
+local lstStr = "%[(.-)%]"
 local idStr = namStr .. "%s*="
 local objStr = locStr .. "%s*" .. lstStr .. "%s*(%w*)%s*({?)"
 
@@ -75,22 +79,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					ifShipString = true
 				end
 
-				local l = {}
-				for coord in string.gmatch(locationString, numStr) do
-					table.insert(l, tonumber(coord))
-				end
-				for i = 1,6 do
-					if not l[i] then l[i] = 0 end
-				end
-
-				if not location[3] then location[3] = 0 end
-
-				l[1], l[2] = Util.computeAbsCoords(l[1], l[2], location[3])
-				l[4], l[5] = Util.computeAbsCoords(l[4], l[5], location[3])
-
-				for i = 1,3 do
-					l[i] = l[i] + location[i]
-				end
+				l = location + LocationTable(locationString)
 
 				local data = {}
 				for var in string.gmatch(dataString, varStr) do

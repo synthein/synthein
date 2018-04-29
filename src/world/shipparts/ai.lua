@@ -54,7 +54,7 @@ function AI:getOrders(worldInfo, leader, body)
 				-- Look for core blocks.
 				if object.getTeam and
 				   teamHostility:test(self.team, object:getTeam()) then
-					local eX, eY = object:getWorldLocation()
+					local eX, eY = object:getWorldLocation():getXY()
 					if eX and eY then
 						local dx = eX - aiX
 						local dy = eY - aiY

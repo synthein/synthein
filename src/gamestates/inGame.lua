@@ -5,6 +5,7 @@ local Screen = require("screen")
 local Utf8 = require("utf8")
 local Util = require("util")
 local Menu = require("menu")
+local LocationTable = require("locationTable")
 
 local GameState = require("gamestates/gameState")
 local InGame = GameState()
@@ -212,6 +213,7 @@ function InGame.update(dt)
 						location[2] = location[2] + netV[2]
 						location[3] = 2 * math.pi * math.random()
 
+						location = LocationTable(unpack(location))
 						local inputs = {playerTeam = 1, playerShip = player.ship}
 						local ships = SceneParser.loadScene("scene" .. scene, world, location, inputs)
 						for _, ship in ipairs(ships) do

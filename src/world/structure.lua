@@ -11,28 +11,31 @@ function Structure:__create(worldInfo, location, shipTable)
 	self.maxDiameter = 1
 	self.size = 1
 
+	local corePart
 	if not shipTable.parts then
 		self.gridTable = GridTable.create()
 		self.gridTable:index(0, 0, shipTable)
 		shipTable:setLocation({0, 0, 1})
 		if shipTable.type ~= "generic" then
-			self.corePart = shipTable
+			corePart = shipTable
 		end
 	else
 		self.gridTable = shipTable.parts
+		corePart = shipTable.corePart
 	end
 
-	if shipTable.corePart then
-		if shipTable.corePart.type == "control" then
+	if corePart then
+		if corePart.type == "control" then
 			self.body:setAngularDamping(1)
 			self.body:setLinearDamping(.1)
 			self.type = "ship"
-		elseif shipTable.corePart.type == "anchor" then
+		elseif corePart.type == "anchor" then
 			self.body:setType("static")
 			self.type = "anchor"
 		end
-		self.corePart = shipTable.corePart
-		self.corePart.worldInfo = worldInfo
+
+		corePart.worldInfo = worldInfo
+		self.corePart = corePart
 	else
 		self.body:setAngularDamping(.1)
 		self.body:setLinearDamping(0.01)
@@ -272,16 +275,21 @@ end
 -- Part was disconnected or destroyed remove part and handle outcome.
 function Structure:disconnectPart(part)
 	if #self.gridTable:loop() == 1 and not part.isDestroyed then
+		-- if structure will bedestoryed
+		if part.isDestroyed then
+			self:removePart(part)
+		end
 		return
 	end
 
-	self:removePart(part)
-	if self.isDestroyed and part.isDestroyed then
-		return
-	end
+	--self:removePart(part)
+	local x, y = unpack(part.location)
+	self.gridTable:index(x, y, nil, true)
 
 	local savedPart
-	if not part.isDestroyed then
+	if part.isDestroyed then
+		self:removePart(part)
+	else
 		savedPart = part
 	end
 
@@ -313,7 +321,7 @@ function Structure:disconnectPart(part)
 		local partList = structureList[i]
 		local basePart = partList[1]
 		local baseVector = basePart.location
-		local location = {basePart:getWorldLocation()}
+		local location = basePart:getWorldLocation()
 
 		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 
@@ -321,9 +329,9 @@ function Structure:disconnectPart(part)
 		for _, eachPart in ipairs(partList) do
 			local partVector = {unpack(eachPart.location)}
 			local netVector = StructureMath.sumVectors(baseVector, partVector)
-			if eachPart ~= savedPart then
+			--if eachPart ~= savedPart then
 				self:removePart(eachPart)
-			end
+			--end
 			eachPart:setLocation(netVector)
 			structure:index(netVector[1], netVector[2], eachPart)
 

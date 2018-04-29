@@ -85,7 +85,7 @@ end
 
 function Building:draw()
 	if self.annexeePart and self.annexeePartSide then
-		local x, y, partAngle = self.annexeePart:getWorldLocation()
+		local x, y, partAngle = self.annexeePart:getWorldLocation():getXYA()
 		local angle = self.annexeePartSide * math.pi/2 + partAngle
 		local offsetX, offsetY = Util.vectorComponents(.5, angle)
 		self.camera:draw(self.pointerImage,

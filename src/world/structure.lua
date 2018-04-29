@@ -11,28 +11,31 @@ function Structure:__create(worldInfo, location, shipTable)
 	self.maxDiameter = 1
 	self.size = 1
 
+	local corePart
 	if not shipTable.parts then
 		self.gridTable = GridTable.create()
 		self.gridTable:index(0, 0, shipTable)
 		shipTable:setLocation({0, 0, 1})
 		if shipTable.type ~= "generic" then
-			self.corePart = shipTable
+			corePart = shipTable
 		end
 	else
 		self.gridTable = shipTable.parts
+		corePart = shipTable.corePart
 	end
 
-	if shipTable.corePart then
-		if shipTable.corePart.type == "control" then
+	if corePart then
+		if corePart.type == "control" then
 			self.body:setAngularDamping(1)
 			self.body:setLinearDamping(.1)
 			self.type = "ship"
-		elseif shipTable.corePart.type == "anchor" then
+		elseif corePart.type == "anchor" then
 			self.body:setType("static")
 			self.type = "anchor"
 		end
-		self.corePart = shipTable.corePart
-		self.corePart.worldInfo = worldInfo
+
+		corePart.worldInfo = worldInfo
+		self.corePart = corePart
 	else
 		self.body:setAngularDamping(.1)
 		self.body:setLinearDamping(0.01)

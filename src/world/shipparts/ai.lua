@@ -20,11 +20,10 @@ function AI:getOrders(worldInfo, leader, body)
 	local aiAngle = body:getAngle()
 	local aiXV, aiYV = body:getLinearVelocity()
 	local aiAngleVol = body:getAngularVelocity()
-
 	local target, leaderX, leaderY, leaderMSq
 	local leaderFollow = false
 	if leader and self.follow then
-		leaderX, leaderY = leader:getLocation()
+		leaderX, leaderY = leader:getLocation():getXY()
 		local dx = leaderX - aiX
 		local dy = leaderY - aiY
 		leaderMSq = (dx * dx) + (dy * dy)

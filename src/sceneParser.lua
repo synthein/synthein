@@ -9,7 +9,7 @@ local SceneParser = {}
 
 local numStr = "[-%d.e]*"
 --local strStr = '".*"'
-local varStr = "[-%w. %*]*[,%]]"
+local varStr = "([-%w.%*]+),?%s*"
 local namStr = "(%a%w+)"
 
 --local locStr = "(%([-%d., e]*%))"

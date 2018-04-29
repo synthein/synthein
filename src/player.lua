@@ -212,8 +212,9 @@ function Player:drawExtras()
 	end
 
 	local point
-	if self.ship and self.ship.corePart and self.ship.corePart.leader then
-		point = {self.ship.corePart.leader:getLocation()}
+	local leader = self.ship.corePart.leader
+	if leader then
+		point = leader:getLocation()
 	else
 		point = {0,0}
 	end

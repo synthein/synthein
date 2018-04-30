@@ -4,6 +4,7 @@ local LocationTable = require("locationTable")
 local Spawn = require("world/spawn")
 local Util = require("util")
 local Tserial = require("vendor/tserial")
+local StructureParser = require("world/structureParser")
 
 local SceneParser = {}
 
@@ -144,7 +145,7 @@ function SceneParser.saveScene(world)
 							Util.packData(data) .. "\n"
 			if key == "structures" then
 				string = string .. "{\n" ..
-									Spawn.shipPack(object, true)
+									StructureParser.shipPack(object, true)
 								.. "\n}\n"
 			end
 			sceneString = sceneString .. string

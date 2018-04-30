@@ -95,7 +95,7 @@ function Menu:draw()
 	local x = self.x - self.width / 2
 	local y = self.y
 
-	love.graphics.setColor(200, 200, 200)
+	love.graphics.setColor(0.8, 0.8, 0.8)
 	love.graphics.rectangle(
 		"fill",
 		x, y,
@@ -111,9 +111,9 @@ function Menu:draw()
 
 	for i, _ in ipairs(self.buttons) do
 		if i == self.selectedButton then
-			love.graphics.setColor(150, 150, 150)
+			love.graphics.setColor(0.6, 0.6, 0.6)
 		else
-			love.graphics.setColor(100, 100, 100)
+			love.graphics.setColor(0.4, 0.4, 0.4)
 		end
 
 		love.graphics.rectangle(
@@ -123,7 +123,7 @@ function Menu:draw()
 				+ self.buttonSpacing * (i - 1) - self.scrollY,
 			self.buttonWidth, self.buttonHeight
 		)
-		love.graphics.setColor(255, 255, 255)
+		love.graphics.setColor(1, 1, 1)
 		local previousFont = love.graphics.getFont()
 		love.graphics.setFont(self.font)
 		love.graphics.print(

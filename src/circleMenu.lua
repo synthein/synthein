@@ -51,10 +51,10 @@ function CircleMenu:draw(x, y, angle, size, strength, lables)
 		if color ~= 0 then
 			if color == 1 then
 				-- Set color to medium blue
-				love.graphics.setColor(32, 64, 144, 192)
+				love.graphics.setColor(0.125, 0.25, 0.5625, 0.75)
 			elseif color == 2 then
 				-- Set color to light blue
-				love.graphics.setColor(80, 128, 192, 192)
+				love.graphics.setColor(0.3125, 0.5, 0.75, 0.75)
 			end
 
 			-- Draw arc segment
@@ -69,7 +69,7 @@ function CircleMenu:draw(x, y, angle, size, strength, lables)
 	love.graphics.setStencilTest()
 
 	-- Set color to light blue
-	love.graphics.setColor(80, 128, 192, 192)
+	love.graphics.setColor(0.3125, 0.5, 0.75, 0.75)
 
 	-- Set font
 	local previousFont = love.graphics.getFont()
@@ -90,7 +90,7 @@ function CircleMenu:draw(x, y, angle, size, strength, lables)
 	end
 
 	-- Set color to whie
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setFont(previousFont)
 end
 

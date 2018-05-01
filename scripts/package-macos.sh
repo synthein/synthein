@@ -5,18 +5,21 @@ main () {
 	root_dir=$(pwd)
 	build_dir=${root_dir}/build
 	cache_dir=${build_dir}/cache
-	build_file=${build_dir}/synthein-${SYNTHEIN_VERSION}-mac.zip
+	build_file=${build_dir}/synthein-${SYNTHEIN_VERSION}-macos.zip
 	love_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.love
 
 	if [ ! -f "$love_file" ]; then
 		echo "Need to build the .love file first."
 		exit 1
 	fi
+	if [ ! -d "${cache_dir}" ]; then
+		mkdir "${cache_dir}"
+	fi
 
 	echo "Getting MacOS LÖVE binary."
 	cd "${cache_dir}"
-	dlcache "https://bitbucket.org/rude/love/downloads/love-${LOVE_VERSION}-macosx-x64.zip"
-	unzip "love-${LOVE_VERSION}-macosx-x64.zip"
+	dlcache "https://bitbucket.org/rude/love/downloads/love-${LOVE_VERSION}-macos.zip"
+	unzip "love-${LOVE_VERSION}-macos.zip"
 
 	echo "Building MacOS package."
 	app_dir="${build_dir}/synthein.app"

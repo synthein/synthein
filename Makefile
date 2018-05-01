@@ -23,7 +23,8 @@ windows: love
 
 # Maintenance commands
 check:
-	find src -name '*.lua' -exec luac -p {} +
+	find src -name '*.lua' -not -path 'src/vendor/*' | xargs wc -l | sort -r
+	find src -name '*.lua' -exec luac -p {} + && echo "No problems found"
 
 clean:
 	-rm -rf build/

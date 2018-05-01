@@ -3,10 +3,21 @@ set -e
 
 root_dir="$(pwd)"
 build_dir="${root_dir}/build"
+cache_dir=${build_dir}/cache
 
 if [ ! -f "${build_dir}/synthein-${SYNTHEIN_VERSION}.love" ]; then
 	echo "Need to build the .love file first."
 	exit 1
+fi
+if [ ! -d "${cache_dir}" ]; then
+	mkdir "${cache_dir}"
+fi
+
+echo "Getting Linux LÖVE binaries."
+cd "${cache_dir}"
+love_tar="love-${LOVE_VERSION}-linux-x86_64.tar.gz"
+if [ ! -f "$love_tar" ]; then
+	curl -L -O "https://bitbucket.org/rude/love/downloads/${love_tar}"
 fi
 
 echo "Building snap package."
@@ -29,3 +40,9 @@ sed <snapcraft.yaml.template \
 
 snapcraft clean
 snapcraft snap -o "${build_dir}/synthein_${SYNTHEIN_VERSION}.snap"
+
+dlcache () {
+	if [ ! -f "$(basename $1)" ]; then
+		curl -L -O "$1"
+	fi
+}

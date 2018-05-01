@@ -12,6 +12,9 @@ main () {
 		echo "Need to build the .love file first."
 		exit 1
 	fi
+	if [ ! -d "${cache_dir}" ]; then
+		mkdir "${cache_dir}"
+	fi
 
 	echo "Getting Windows LÖVE binary."
 	cd "$cache_dir"
@@ -25,14 +28,14 @@ main () {
 	fi
 	mkdir "$windows_build_dir"
 	cd "$windows_build_dir"
-	cat "${cache_dir}/love-${LOVE_VERSION}-win64/love.exe" "$love_file" > synthein.exe
-	cp "${cache_dir}/love-${LOVE_VERSION}-win64/"*.dll "${cache_dir}/love-${LOVE_VERSION}-win64/license.txt" ./
+	cat "${cache_dir}/love-${LOVE_VERSION}.0-win64/love.exe" "$love_file" > synthein.exe
+	cp "${cache_dir}/love-${LOVE_VERSION}.0-win64/"*.dll "${cache_dir}/love-${LOVE_VERSION}.0-win64/license.txt" ./
 
 	cd "$build_dir"
 	zip -r "$build_file" synthein-windows/
 
 	# Clean up.
-	rm -r "${cache_dir}/love-${LOVE_VERSION}-win64"
+	rm -r "${cache_dir}/love-${LOVE_VERSION}.0-win64"
 	rm -r "${build_dir}/synthein-windows"
 
 	echo "Built ${build_file}."

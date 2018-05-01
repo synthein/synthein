@@ -25,7 +25,7 @@ Download the latest release [here](https://github.com/synthein/synthein/releases
 If you're brave, you can also try out the latest unstable build:
 
 * [For Linux](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable.AppImage)
-* [For macOS](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable-mac.zip)
+* [For macOS](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable-macos.zip)
 * [For Windows](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable-windows.zip)
 * [For Everything else](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable.love) (More information about .love files is available [here](https://love2d.org/wiki/L%C3%96VE_Game_File).)
 

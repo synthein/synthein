@@ -42,7 +42,7 @@ function Debug.draw()
 
 			if player.ship then
 				shipX, shipY = player.ship.body:getX(), player.ship.body:getY()
-				shipParts = #player.ship.body:getFixtureList()
+				shipParts = #player.ship.body:getFixtures()
 			else
 				shipX, shipY = 0, 0
 				shipParts = 0

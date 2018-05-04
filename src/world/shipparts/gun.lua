@@ -1,13 +1,9 @@
 local StructureMath = require("world/structureMath")
 local Timer = require("timer")
 
-local Gun = {}
-Gun.__index = Gun
+local Gun = class()
 
-function Gun.create()
-	local self = {}
-	setmetatable(self, Gun)
-
+function Gun:__create()
 	self.charged = true
 	self.rechargeTimer = Timer(0.5)
 

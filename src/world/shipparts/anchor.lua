@@ -1,13 +1,6 @@
-local Part = require("world/shipparts/part")
+local Anchor = class(require("world/shipparts/part"))
 
-local Anchor = {}
-Anchor.__index = Anchor
-setmetatable(Anchor, Part)
-
-function Anchor.create()
-	local self = Part.create()
-	setmetatable(self, Anchor)
-
+function Anchor:__create()
 	self.image = love.graphics.newImage("res/images/anchor.png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()

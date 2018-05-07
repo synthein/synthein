@@ -1,5 +1,4 @@
 local Controls = require("controls")
-local Screen = require("screen")
 local Selection = require("selection")
 local Menu = require("menu")
 local PartRegistry = require("world/shipparts/partRegistry")
@@ -15,7 +14,7 @@ function Player.create(world, controls, structure)
 	self.world = world
 	self.controls = controls
 	self.ship = structure
-	self.camera = Screen.createCamera()
+	self.camera = world.screen:createCamera()
 	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
 	self.drawExtras = self.camera.wrap(Player.drawExtras, false)
 

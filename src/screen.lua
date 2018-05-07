@@ -13,10 +13,6 @@ function Screen:createCamera()
 	return newCamera
 end
 
-function Screen:clearCameras()
-	self.cameras = {}
-end
-
 function Screen:arrange(screenWidth, screenHeight)
 	local n = #self.cameras
 	local screenArea = screenWidth * screenHeight

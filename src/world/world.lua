@@ -1,5 +1,4 @@
 local Particles = require("world/particles")
-local Screen = require("screen")
 local Shot = require("world/shot")
 local Structure = require("world/structure")
 
@@ -18,8 +17,6 @@ function World:__create(playerHostility)
 	self.physics = love.physics.newWorld()
 	self.physics:setCallbacks(World.beginContact, World.endContact,
 							  World.preSolve, World.postSolve)
-
-	self.screen = Screen()
 
 	self.objects = {}
 	local generalHostility = {}

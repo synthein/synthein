@@ -28,9 +28,9 @@ end
 local typingSaveName = false
 local saveName = ""
 
-local world, players
+local world, players, screen
 function InGame.load(...)
-	world, players = ...
+	world, players, screen = ...
 
 	Debug.setWorld(world)
 	Debug.setPlayers(players)

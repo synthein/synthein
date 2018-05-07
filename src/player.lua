@@ -7,14 +7,14 @@ local LocationTable = require("locationTable")
 local Player = {}
 Player.__index = Player
 
-function Player.create(world, controls, structure)
+function Player.create(world, controls, structure, camera)
 	local self = {}
 	setmetatable(self, Player)
 
 	self.world = world
 	self.controls = controls
 	self.ship = structure
-	self.camera = world.screen:createCamera()
+	self.camera = camera
 	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
 	self.drawExtras = self.camera.wrap(Player.drawExtras, false)
 

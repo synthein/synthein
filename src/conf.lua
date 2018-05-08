@@ -1,6 +1,6 @@
 function love.conf(t)
 	t.identity = "synthein"              -- The name of the save directory (string)
-	t.version = "0.10.0"                 -- The LÖVE version this game was made for (string)
+	t.version = "11.1"                   -- The LÖVE version this game was made for (string)
 	t.console = true                     -- Attach a console (boolean, Windows only)
 
 	t.window.title = "Synthein"          -- The window title (string)

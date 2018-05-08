@@ -236,7 +236,7 @@ end
 --	strength[4] = strengthX
 --	self.camera:drawCircleMenu(centerX, centerY, angle, 10, strength)
 --
---	love.graphics.setColor(255, 255, 255)
+--	love.graphics.setColor(1, 1, 1)
 --end
 
 return Building

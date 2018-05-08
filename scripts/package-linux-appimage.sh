@@ -19,13 +19,12 @@ main () {
 	echo "Getting Linux LÖVE binaries."
 	cd "${cache_dir}"
 
-	love_deb="love_${LOVE_VERSION}ppa1_amd64.deb"
-	dlcache "https://bitbucket.org/rude/love/downloads/${love_deb}"
+	love_tar=love-${LOVE_VERSION}-linux-x86_64.tar.gz
+	dlcache "https://bitbucket.org/rude/love/downloads/${love_tar}"
 
-	liblove_deb="liblove0_${LOVE_VERSION}ppa1_amd64.deb"
-	dlcache "https://bitbucket.org/rude/love/downloads/${liblove_deb}"
-
-	dpkg --install "$love_deb" "$liblove_deb" || apt-get -yf install
+	extracted_love_tar=${cache_dir}/love-${LOVE_VERSION}-linux-x86_64
+	[ -d "$extracted_love_tar" ] && rm -r "$extracted_love_tar"
+	tar -xzf "$love_tar" && mv -T dest "$extracted_love_tar"
 
 	echo "Building AppImage package."
 	cd "${cache_dir}"
@@ -47,11 +46,10 @@ main () {
 	ln -s usr/share/pixmaps/synthein.png synthein.png
 
 	# Install LOVE.
-	install -D -m0755 /usr/bin/love usr/bin/love
-	install -D /usr/lib/x86_64-linux-gnu/liblove.so.0 usr/lib/liblove.so.0
-	install -D /usr/lib/x86_64-linux-gnu/liblove.so.0.0.0 usr/lib/liblove.so.0.0.0
-	install -d usr/share/doc/love
-	install -t usr/share/doc/love /usr/share/doc/love/copyright /usr/share/doc/love/readme.md
+	install -D -m0755 "${extracted_love_tar}/usr/bin/love" usr/bin/love
+	install -d usr/lib
+	cp -r "${extracted_love_tar}/usr/lib/"* usr/lib
+	install -D "${extracted_love_tar}/license.txt" usr/share/doc/love
 
 	# Install dependencies.
 	install_libraries \
@@ -72,6 +70,7 @@ main () {
 	./squashfs-root/AppRun "${build_dir}/synthein-appimage/" "${build_file}"
 
 	# Clean up.
+	rm -r "$extracted_love_tar"
 	rm -r "${cache_dir}/squashfs-root"
 	rm -r "${build_dir}/synthein-appimage"
 

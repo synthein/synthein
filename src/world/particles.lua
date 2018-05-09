@@ -2,7 +2,7 @@ local Timer = require("timer")
 
 local Particles = class(require("world/worldObjects"))
 
-function Particles:__create(worldInfo, location, data)
+function Particles:__create(worldInfo, location, data, appendix)
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)

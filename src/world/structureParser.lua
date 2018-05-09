@@ -4,7 +4,27 @@ local Util = require("util")
 
 local StructureParser = {}
 
+function StructureParser.loadShipFromFile(ship)
+	local contents, size
+	if ship then
+		local file = string.format("res/ships/" .. ship .. ".txt")
+		contents, size = love.filesystem.read(file)
+		return contents, size
+	end
+	return nil, nil
+end
+
 function StructureParser.shipUnpack(shipString, stringLength, shipData)
+
+
+	if string.match(appendix, "[*\n]") then
+		data, player = StructureParser.shipUnpack(shipString, stringLength, data)
+		shipString, stringLength = Spawn.loadShipFromFile(shipInfo)
+	else
+		shipString = shipInfo
+		stringLength = #shipString
+	end
+
 	local shipTable = {}
 	local player = false
 	shipTable.parts = GridTable.create()

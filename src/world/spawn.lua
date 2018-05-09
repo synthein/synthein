@@ -9,6 +9,7 @@ local Spawn = {}
 
 function Spawn.spawnObject(world, key, location, data, shipInfo, shipType)
 	local player = false
+	--[[
 	if key == "structures" then
 		local stringLength, shipString
 		if shipType then
@@ -20,21 +21,11 @@ function Spawn.spawnObject(world, key, location, data, shipInfo, shipType)
 
 		data, player = StructureParser.shipUnpack(shipString, stringLength, data)
 	end
-
+	--]]
 	local value = World.objectTypes[key]
 	local object = value(world.info, location, data)
 	world:addObject(object, key)
 	return object, player
-end
-
-function Spawn.loadShipFromFile(ship)
-	local contents, size
-	if ship then
-		local file = string.format("res/ships/" .. ship .. ".txt")
-		contents, size = love.filesystem.read(file)
-		return contents, size
-	end
-	return nil, nil
 end
 
 return Spawn

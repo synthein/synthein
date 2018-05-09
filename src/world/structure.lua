@@ -4,12 +4,17 @@ local StructureMath = require("world/structureMath")
 
 local Structure = class(require("world/worldObjects"))
 
-function Structure:__create(worldInfo, location, shipTable)
+function Structure:__create(worldInfo, location, data, appendix)
 	self.worldInfo = worldInfo
 	self.physics = worldInfo.physics
 	self.events = worldInfo.events
 	self.maxDiameter = 1
 	self.size = 1
+
+
+		local stringLength, shipString
+
+	local shipTable
 
 	local corePart
 	if not shipTable.parts then

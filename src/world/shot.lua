@@ -3,7 +3,7 @@ local Timer = require("timer")
 
 local Shot = class(require("world/worldObjects"))
 
-function Shot:__create(worldInfo, location, sourcePart)
+function Shot:__create(worldInfo, location, data, appendix)
 	local imageName = "shot"
 	local image = love.graphics.newImage("res/images/"..imageName..".png")
 	local width = image:getWidth()
@@ -21,7 +21,7 @@ function Shot:__create(worldInfo, location, sourcePart)
 
 	self.timer = Timer(5)
 	self.firstContact = true
-	self.sourcePart = sourcePart
+	self.sourcePart = data
 end
 
 function Shot:postCreate(references)

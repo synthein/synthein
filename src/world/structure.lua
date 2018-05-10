@@ -1,6 +1,7 @@
 local GridTable = require("gridTable")
 local Settings = require("settings")
 local StructureMath = require("world/structureMath")
+local StructureParser = require("world/structureParser")
 
 local Structure = class(require("world/worldObjects"))
 
@@ -11,10 +12,8 @@ function Structure:__create(worldInfo, location, data, appendix)
 	self.maxDiameter = 1
 	self.size = 1
 
-
-		local stringLength, shipString
-
-	local shipTable
+	local shipTable, player = StructureParser.shipUnpack(appendix, data)
+	self.isPlayer = player
 
 	local corePart
 	if not shipTable.parts then

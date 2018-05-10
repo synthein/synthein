@@ -14,15 +14,13 @@ function StructureParser.loadShipFromFile(ship)
 	return nil, nil
 end
 
-function StructureParser.shipUnpack(shipString, stringLength, shipData)
-
-
+function StructureParser.shipUnpack(appendix, shipData)
+	local shipString, stringLength
 	if string.match(appendix, "[*\n]") then
-		data, player = StructureParser.shipUnpack(shipString, stringLength, data)
-		shipString, stringLength = Spawn.loadShipFromFile(shipInfo)
+		shipString = appendix
+		stringLength = #appendix
 	else
-		shipString = shipInfo
-		stringLength = #shipString
+		shipString, stringLength = StructureParser.loadShipFromFile(appendix)
 	end
 
 	local shipTable = {}

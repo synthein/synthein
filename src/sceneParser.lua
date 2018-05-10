@@ -41,9 +41,9 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 	end
 
 	local function spawnObject(key, ship)
-		local shipID, location, data, shipInfo, appendex = unpack(ship)
+		local shipID, location, data, appendex = unpack(ship)
 		local object, player = Spawn.spawnObject(world, key, location,
-												 data, shipInfo, appendex)
+												 data, appendex)
 		table.insert(objects, object)
 		if player then
 			table.insert(playerShips, object)

@@ -1,13 +1,9 @@
 local StructureMath = require("world/structureMath")
 local Util = require("util")
 
-local Engine = {}
-Engine.__index = Engine
+local Engine = class()
 
-function Engine.create(engineType, thrust, torque)
-	local self = {}
-	setmetatable(self, Engine)
-
+function Engine:__create(engineType, thrust, torque)
 	self.thrust = thrust
 	if engineType == 1 then self.torque = torque end
 	self.engineType = engineType

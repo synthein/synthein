@@ -2,13 +2,9 @@ local Settings = require("settings")
 local Util = require("util")
 local LocationTable = require("locationTable")
 
-local Part = {}
-Part.__index = Part
+local Part = class()
 
-function Part.create()
-	local self = {}
-	setmetatable(self, Part)
-
+function Part:__create()
 	self.physicsShape = nil
 	self.connectableSides = {true, true, true, true}
 	self.thrust = 0

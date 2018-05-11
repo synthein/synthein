@@ -1,22 +1,14 @@
--- Parent Table
-local Part = require("world/shipparts/part")
-
 -- Component
 local Gun = require("world/shipparts/gun")
 
-local GunBlock = {}
-GunBlock.__index = GunBlock
-setmetatable(GunBlock, Part)
+local GunBlock = class(require("world/shipparts/part"))
 
-function GunBlock.create()
-	local self = Part.create()
-	setmetatable(self, GunBlock)
-
+function GunBlock:__create()
 	self.image = love.graphics.newImage("res/images/gun.png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.gun = Gun.create()
+	self.gun = Gun()
 
 	-- GunBlocks can only connect to things on their bottom side.
 	self.connectableSides[1] = false

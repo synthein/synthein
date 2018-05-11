@@ -1,12 +1,8 @@
 local Util = require("util")
 
-local AI = {}
-AI.__index = AI
+local AI = class()
 
-function AI.create(team)
-	local self = {}
-	setmetatable(self, AI)
-
+function AI:__create(team)
 	self.team = team
 	self.follow = true
 

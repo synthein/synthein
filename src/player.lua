@@ -1,5 +1,4 @@
 local Controls = require("controls")
-local Screen = require("screen")
 local Selection = require("selection")
 local Menu = require("menu")
 local PartRegistry = require("world/shipparts/partRegistry")
@@ -8,14 +7,14 @@ local LocationTable = require("locationTable")
 local Player = {}
 Player.__index = Player
 
-function Player.create(world, controls, structure)
+function Player.create(world, controls, structure, camera)
 	local self = {}
 	setmetatable(self, Player)
 
 	self.world = world
 	self.controls = controls
 	self.ship = structure
-	self.camera = Screen.createCamera()
+	self.camera = camera
 	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
 	self.drawExtras = self.camera.wrap(Player.drawExtras, false)
 

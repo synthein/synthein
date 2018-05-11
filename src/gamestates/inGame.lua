@@ -28,9 +28,9 @@ end
 local typingSaveName = false
 local saveName = ""
 
-local world, players
+local world, players, screen
 function InGame.load(...)
-	world, players = ...
+	world, players, screen = ...
 
 	Debug.setWorld(world)
 	Debug.setPlayers(players)
@@ -106,7 +106,6 @@ function InGame.mousepressed(x, y, button)
 				typingSaveName = true
 			elseif selection == "Main Menu" then
 				menuOpen = false
-				Screen.clearCameras()
 				InGame.stackQueue:pop()
 			elseif selection == "Quit" then
 				love.event.quit()

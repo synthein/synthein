@@ -1,17 +1,9 @@
--- Parent Table
-local Part = require("world/shipparts/part")
-
 -- Component
 local Engine = require("world/shipparts/engine")
 
-local EngineBlock = {}
-EngineBlock.__index = EngineBlock
-setmetatable(EngineBlock, Part)
+local EngineBlock = class(require("world/shipparts/part"))
 
-function EngineBlock.create()
-	local self = Part.create()
-	setmetatable(self, EngineBlock)
-
+function EngineBlock:__create()
 	self.imageInactive = love.graphics.newImage("res/images/engine.png")
 	self.imageActive = love.graphics.newImage("res/images/engineActive.png")
 	self.image = self.imageInactive
@@ -23,7 +15,7 @@ function EngineBlock.create()
 	self.connectableSides[3] = false
 	self.connectableSides[4] = false
 
-	self.engine = Engine.create(2, 15)
+	self.engine = Engine(2, 15)
 
 	return self
 end

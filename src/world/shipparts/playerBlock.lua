@@ -1,23 +1,17 @@
-local Part = require("world/shipparts/part")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
 
-local PlayerBlock = {}
-PlayerBlock.__index = PlayerBlock
-setmetatable(PlayerBlock, Part)
+local PlayerBlock = class(require("world/shipparts/part"))
 
-function PlayerBlock.create(team, leader)
-	local self = Part.create()
-	setmetatable(self, PlayerBlock)
-
+function PlayerBlock:__create(team, leader)
 	self.image = love.graphics.newImage("res/images/player.png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "control"
 
-	self.engine = Engine.create(1, 15, 5)
-	self.gun = Gun.create()
+	self.engine = Engine(1, 15, 5)
+	self.gun = Gun()
 	self.healTime = 10
 	self.orders = {}
 

@@ -1,23 +1,17 @@
-local Part = require("world/shipparts/part")
 local Engine = require("world/shipparts/engine")
 local AI = require("world/shipparts/ai")
 
-local AIBlock = {}
-AIBlock.__index = AIBlock
-setmetatable(AIBlock, Part)
+local AIBlock = class(require("world/shipparts/part"))
 
-function AIBlock.create(team, leader)
-	local self = Part.create()
-	setmetatable(self, AIBlock)
-
+function AIBlock:__create(team, leader)
 	self.image = love.graphics.newImage("res/images/ai.png")
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "control"
 
-	self.engine = Engine.create(1, 10, 10)
-	self.ai = AI.create(team)
+	self.engine = Engine(1, 10, 10)
+	self.ai = AI(team)
 	self.leader = leader
 
 	return self

@@ -26,7 +26,7 @@ function Gamesave.save(saveName, world)
 
 	local fileContents = SceneParser.saveScene(world)
 
-	if not love.filesystem.isDirectory(saveDir) then
+	if not love.filesystem.getInfo(saveDir) then
 		local ok = love.filesystem.createDirectory(saveDir)
 		if not ok then
 			return false, "failed to create save directory"

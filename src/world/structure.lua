@@ -12,8 +12,13 @@ function Structure:__create(worldInfo, location, data, appendix)
 	self.maxDiameter = 1
 	self.size = 1
 
-	local shipTable, player = StructureParser.shipUnpack(appendix, data)
-	self.isPlayer = player
+	local shipTable
+	if appendix then
+		shipTable, player = StructureParser.shipUnpack(appendix, data)
+		self.isPlayer = player
+	else
+		shipTable = data
+	end
 
 	local corePart
 	if not shipTable.parts then

@@ -15,11 +15,11 @@ function Particles:__create(worldInfo, location, data, appendix)
 end
 
 function Particles:postCreate() --(references)
-	self.time = self.data[1]
+	self.timer:time(self.data[1])
 end
 
 function Particles:getSaveData() --(references)
-	return {self.time}
+	return {self.timer:time()}
 end
 
 function Particles:collision() --(fixture)

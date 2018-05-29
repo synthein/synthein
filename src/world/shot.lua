@@ -37,8 +37,6 @@ function Shot:getSaveData(references)
 	local x, y = unpack(part.location)
 	local structure = part.fixture:getBody():getUserData()
 	structure = references[structure]
-	-- Debug
-	print(self.timer:time(), structure, x, y)
 	return {self.timer:time(), structure, x, y}
 end
 

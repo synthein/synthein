@@ -41,9 +41,9 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 	end
 
 	local function spawnObject(key, ship)
-		local shipID, location, data, appendex = unpack(ship)
+		local shipID, location, data, appendix = unpack(ship)
 		local object, player = Spawn.spawnObject(world, key, location,
-												 data, appendex)
+												 data, appendix)
 		table.insert(objects, object)
 		if player then
 			table.insert(playerShips, object)
@@ -73,7 +73,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					shipID = false
 				end
 
-				local locationString, dataString, appendex, bracket =
+				local locationString, dataString, appendix, bracket =
 					string.match(line, objStr)
 				if bracket == "{" then
 					ifShipString = true
@@ -99,10 +99,10 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				end
 
 				index = index + 1
-				if key == "structures" and appendex == "" then
+				if key == "structures" and appendix == "" then
 					ship = {shipID, l, data}
 				else
-					spawnObject(key, {shipID, l, data, appendex})
+					spawnObject(key, {shipID, l, data, appendix})
 				end
 
 			elseif string.match(line, "%s*%{") then

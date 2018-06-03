@@ -9,7 +9,7 @@ local saveDir = "saves/"
 function Gamesave.load(saveName)
 	local fileName = saveDir .. saveName .. ".txt"
 
-	if not love.filesystem.isFile(fileName) then
+	if not love.filesystem.getInfo(fileName, "file") then
 		return nil, string.format("File %s does not exist", fileName)
 	end
 

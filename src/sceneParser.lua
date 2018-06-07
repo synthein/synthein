@@ -4,6 +4,7 @@ local LocationTable = require("locationTable")
 local Spawn = require("world/spawn")
 local Util = require("util")
 local Tserial = require("vendor/tserial")
+local StructureParser = require("world/structureParser")
 
 local SceneParser = {}
 
@@ -40,9 +41,9 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 	end
 
 	local function spawnObject(key, ship)
-		local shipID, location, data, shipInfo, shipType = unpack(ship)
+		local shipID, location, data, appendix = unpack(ship)
 		local object, player = Spawn.spawnObject(world, key, location,
-												 data, shipInfo, shipType)
+												 data, appendix)
 		table.insert(objects, object)
 		if player then
 			table.insert(playerShips, object)
@@ -60,7 +61,6 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				end
 				ifShipString = false
 				ship[4] = shipString
-				ship[5] = false
 				spawnObject(key, ship)
 				shipString = ""
 			else
@@ -73,7 +73,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					shipID = false
 				end
 
-				local locationString, dataString, shipType, bracket =
+				local locationString, dataString, appendix, bracket =
 					string.match(line, objStr)
 				if bracket == "{" then
 					ifShipString = true
@@ -99,13 +99,10 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				end
 
 				index = index + 1
-				if key ~= "structures" then
-					spawnObject(key, {shipID, l, data})
-				elseif shipType == "" then
+				if key == "structures" and appendix == "" then
 					ship = {shipID, l, data}
 				else
-					ship = {shipID, l, data, shipType, true}
-					spawnObject(key, ship)
+					spawnObject(key, {shipID, l, data, appendix})
 				end
 
 			elseif string.match(line, "%s*%{") then
@@ -144,7 +141,7 @@ function SceneParser.saveScene(world)
 							Util.packData(data) .. "\n"
 			if key == "structures" then
 				string = string .. "{\n" ..
-									Spawn.shipPack(object, true)
+									StructureParser.shipPack(object, true)
 								.. "\n}\n"
 			end
 			sceneString = sceneString .. string

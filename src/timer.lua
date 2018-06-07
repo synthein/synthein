@@ -17,4 +17,12 @@ function Timer:ready(dt)
   end
 end
 
+function Timer:time(time)
+	if time then
+		self.currentTime = time
+	end
+
+	return self.currentTime
+end
+
 return Timer

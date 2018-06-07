@@ -2,7 +2,7 @@ local Timer = require("timer")
 
 local Particles = class(require("world/worldObjects"))
 
-function Particles:__create(worldInfo, location, data)
+function Particles:__create(worldInfo, location, data, appendix)
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
@@ -15,11 +15,11 @@ function Particles:__create(worldInfo, location, data)
 end
 
 function Particles:postCreate() --(references)
-	self.time = self.data[1]
+	self.timer:time(self.data[1])
 end
 
 function Particles:getSaveData() --(references)
-	return {self.time}
+	return {self.timer:time()}
 end
 
 function Particles:collision() --(fixture)

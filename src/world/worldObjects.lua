@@ -1,7 +1,7 @@
 local LocationTable = require("locationTable")
 local WorldObjects = class()
 
-function WorldObjects:__create(worldInfo, location, data)
+function WorldObjects:__create(worldInfo, location, data, appendix)
 	local physics = worldInfo.physics
 	self.body = location:createBody(physics, "dynamic")
 	self.isDestroyed = false

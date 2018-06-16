@@ -1,1 +1,1 @@
-(0, 0, 0)[-1]BasicShip3
+structure(0, 0, 0)[-1]BasicShip3

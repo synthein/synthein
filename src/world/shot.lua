@@ -32,6 +32,10 @@ function Shot:postCreate(references)
 	self.sourcePart = structure.gridTable:index(x, y)
 end
 
+function Shot:type()
+	return "shot"
+end
+
 function Shot:getSaveData(references)
 	local part = self.sourcePart
 	local x, y = unpack(part.location)

@@ -23,8 +23,9 @@ end
 
 function Selection:pressed(cursorX, cursorY, order)
 	local structure, part =
-		self.world:getObject(cursorX, cursorY, "structures")
-	if structure and part then
+		self.world:getObject(cursorX, cursorY)
+
+	if structure and structure:type() == "structure" and part then
 		if self.build then
 			if order == "build" then
 				if self.build.mode == 3 then
@@ -70,9 +71,11 @@ function Selection:pressed(cursorX, cursorY, order)
 		end
 
 	else
-		self.structure = nil
-		self.part = nil
-		self.build = nil
+		if order == "destroy" then
+			self.structure = nil
+			self.part = nil
+			self.build = nil
+		end
 	end
 end
 

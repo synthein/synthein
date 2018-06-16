@@ -26,7 +26,7 @@ function Gun:update(dt, shoot, part)
 			if clear then
 				self.charged = false
 				-- Spawn Shot
-				local shot = {"shots", part:getWorldLocation(), part}
+				local shot = {"shot", part:getWorldLocation(), part}
 				table.insert(structure.events.create, shot)
 			end
 		end

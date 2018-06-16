@@ -1,4 +1,4 @@
-(-10, 0,0)[-4]BasicShip1
-(-5, 0,0)[-4]BasicShip2
-(5, 0,0)[-4]BasicShip3
-(10, 0,0)[-4]BasicShip4
+structure(-10, 0,0)[-4]BasicShip1
+structure(-5, 0,0)[-4]BasicShip2
+structure(5, 0,0)[-4]BasicShip3
+structure(10, 0,0)[-4]BasicShip4

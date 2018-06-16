@@ -13,14 +13,14 @@ local numStr = "[-%d.e]*"
 local varStr = "([-%w.%*]+),?%s*"
 local namStr = "(%a%w+)"
 
+local typStr = namStr
 --local locStr = "(%([-%d., e]*%))"
 local locStr = "%((.-)%)"
 --local lstStr = "(%[[-%w., %*]*%])"
 local lstStr = "%[(.-)%]"
 local idStr = namStr .. "%s*="
-local objStr = locStr .. "%s*" .. lstStr .. "%s*(%w*)%s*({?)"
+local objStr = typStr .. "%s*" .. locStr .. "%s*" .. lstStr .. "%s*(%w*)%s*({?)"
 
-local keyStr = "%[(%l%a*)%]"
 --[[
 function SceneParser.loadShip(shipName)
 end
@@ -33,16 +33,15 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 	local playerShips = {}
 	local objects = {}
 	local references = {}
-	local key = "structures"
 
 	if type(sceneLines) == "string" then
 		local fileName = "res/scenes/" .. sceneLines .. ".txt"
 		sceneLines = love.filesystem.lines(fileName)
 	end
 
-	local function spawnObject(key, ship)
-		local shipID, location, data, appendix = unpack(ship)
-		local object, player = Spawn.spawnObject(world, key, location,
+	local function spawnObject(ship)
+		local shipID, type, location, data, appendix = unpack(ship)
+		local object, player = Spawn.spawnObject(world, type, location,
 												 data, appendix)
 		table.insert(objects, object)
 		if player then
@@ -60,8 +59,8 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				shipString = shipString .. ""
 				end
 				ifShipString = false
-				ship[4] = shipString
-				spawnObject(key, ship)
+				ship[5] = shipString
+				spawnObject(ship)
 				shipString = ""
 			else
 				shipString = shipString .. line .. '\n'
@@ -73,7 +72,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					shipID = false
 				end
 
-				local locationString, dataString, appendix, bracket =
+				local type, locationString, dataString, appendix, bracket =
 					string.match(line, objStr)
 				if bracket == "{" then
 					ifShipString = true
@@ -99,16 +98,14 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				end
 
 				index = index + 1
-				if key == "structures" and appendix == "" then
-					ship = {shipID, l, data}
+				if type == "structure" and appendix == "" then
+					ship = {shipID, type, l, data}
 				else
-					spawnObject(key, {shipID, l, data, appendix})
+					spawnObject({shipID, type, l, data, appendix})
 				end
 
 			elseif string.match(line, "%s*%{") then
 				ifShipString = true
-			elseif string.match(line, keyStr) then
-				key = string.match(line, keyStr)
 			end
 		end
 	end
@@ -126,26 +123,19 @@ function SceneParser.saveScene(world)
 		"\n[scene]\n"
 
 
-	for key, table in pairs(world.objects) do
-		for index, object in ipairs(table) do
-			references[object] = key .. tostring(index)
-		end
+	for _, object in ipairs(world.objects) do
+		references[object] = object:type() .. tostring(index)
 	end
 
-	for key, table in pairs(world.objects) do
-		sceneString = sceneString .. "[" .. key .. "]\n"
-		for _, object in ipairs(table) do
-			local data = object:getSaveData(references)
-			local string = references[object] .. " = " ..
-							Util.packLocation(object) ..
-							Util.packData(data) .. "\n"
-			if key == "structures" then
-				string = string .. "{\n" ..
-									StructureParser.shipPack(object, true)
-								.. "\n}\n"
-			end
-			sceneString = sceneString .. string
-		end
+	for _, object in ipairs(world.objects) do
+		local data, appendix = object:getSaveData(references)
+		local string = ""
+			.. references[object] .. " = " .. object:type()
+			.. "(" .. tostring(object:getLocation()) .. ")"
+			.. Util.packData(data) .. "\n"
+			.. (appendix and "{\n" .. appendix .. "\n}\n" or "")
+
+		sceneString = sceneString .. string
 	end
 
 	return sceneString

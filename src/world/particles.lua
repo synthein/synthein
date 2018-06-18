@@ -18,6 +18,10 @@ function Particles:postCreate() --(references)
 	self.timer:time(self.data[1])
 end
 
+function Particles:type()
+	return "particles"
+end
+
 function Particles:getSaveData() --(references)
 	return {self.timer:time()}
 end

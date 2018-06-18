@@ -5,8 +5,8 @@ local Structure = require("world/structure")
 local World = class()
 
 World.objectTypes = {
-	structures	= Structure,
-	shots   	= Shot,
+	structure	= Structure,
+	shot   	= Shot,
 	particles	= Particles
 }
 
@@ -45,10 +45,6 @@ function World:__create(playerHostility)
 
 	self.info = {events = self.events, physics = self.physics,
 					teamHostility = teamHostility}
-
-	for key, _ in pairs(World.objectTypes) do
-		self.objects[key] = {}
-	end
 
 	self.boarders = nil
 end
@@ -105,82 +101,43 @@ function World.postSolve() --(a, b, coll, normalimpulse, tangentimpulse)
 end
 
 function World:addObject(object, objectKey)
-	if objectKey == nil then
-		for key, value in pairs(World.objectTypes) do
-			if value == object.__index then
-				objectKey = key
-				break
-			end
-		end
-	end
-	if objectKey == nil then
-		return
-	end
-	table.insert(self.objects[objectKey], object)
+	table.insert(self.objects, object)
 end
---[[
-function World:getChunk(location)
-	local x = location[1]
-	local y = location[2]
-	local chunk = self.chunks:index(x, y)
-	if not chunk then
-		chunk = Chunk.create({x, y})
-		self.chunks:index(x, y, chunk)
-	end
-	return chunk
-end
---]]
+
 World.callbackData = {objects = {}}
 
-function World.fixtureCallback(fixture)
-	local body = fixture:getBody()
-	local object = {body:getUserData(), fixture:getUserData()}
-	table.insert(World.callbackData.objects, object)
-	return true
-end
+
 
 --Get the structure and part under at the location.
 --Also return the side of the part that is closed if there is a part.
-function World:getObject(locationX, locationY) --, key)
-	World.callbackData.objects = {}
+function World:getObject(locationX, locationY)
+	local objects = {}
+
+	function callback(fixture)
+		local body = fixture:getBody()
+		local object = {body:getUserData(), fixture:getUserData()}
+		table.insert(objects, object)
+		return true
+	end
+
 	local a = locationX
 	local b = locationY
-	self.physics:queryBoundingBox(a, b, a, b,
-								  World.fixtureCallback)
+	self.physics:queryBoundingBox(a, b, a, b,callback)
 
-	for _, object in ipairs(World.callbackData.objects) do
+	for _, object in ipairs(objects) do
 		if object[1] then
-			return object[1], object[2], object[2]:getPartSide(locationX, locationY)
+			if object[1]:type() == "structure" then
+				object[3] = object[2]:getPartSide(locationX, locationY)
+			end
+			return unpack(object)
 		end
 	end
---[[
-	if key then
-		for i, object in ipairs(self.objects[key]) do
-			there, returnValues = object:testLocation(locationX, locationY)
-			if there then
-				return object, returnValues
-			end
-		end
-	else
-		for key, value in pair do
-			for i, object in ipairs(self.objects[key]) do
-				there, returnValues = object:testLocation(locationX, locationY)
-				if there then
-					return object, returnValues
-				end
-			end
-		end
-	end
---]]
+
 	return nil
 end
 
-function World:getObjects(key)
-	if key then
-		return self.objects[key]
-	else
-		return self.objects
-	end
+function World:getObjects()
+	return self.objects
 end
 
 function World:update(dt)
@@ -188,38 +145,36 @@ function World:update(dt)
 
 	local nextBoarders = {0, 0, 0, 0}
 
-	for key, objectTable in pairs(self.objects) do
-		for i = #objectTable,1,-1 do
-			local object = objectTable[i]
-			if object.isDestroyed == false then
-				local objectX, objectY = object:getLocation():getXY()
-				if key == "structures" and object.corePart and
-						object.corePart:getTeam() > 0 then
-					if objectX < nextBoarders[1] then
-						nextBoarders[1] = objectX
-					elseif objectX > nextBoarders[3]then
-						nextBoarders[3] = objectX
-					end
-					if objectY < nextBoarders[2] then
-						nextBoarders[2] = objectY
-					elseif objectY > nextBoarders[4] then
-						nextBoarders[4] = objectY
-					end
+	for i, object in ipairs(self.objects) do
+		if object.isDestroyed == false then
+			local objectX, objectY = object:getLocation():getXY()
+
+			if object:type() == "structure" and object.corePart and
+					object.corePart:getTeam() > 0 then
+				if objectX < nextBoarders[1] then
+					nextBoarders[1] = objectX
+				elseif objectX > nextBoarders[3]then
+					nextBoarders[3] = objectX
 				end
-
-				object:update(dt)
-
-				if (self.boarders and (objectX < self.boarders[1] or
-									   objectY < self.boarders[2] or
-									   objectX > self.boarders[3] or
-									   objectY > self.boarders[4])) then
-					object:destroy()
+				if objectY < nextBoarders[2] then
+					nextBoarders[2] = objectY
+				elseif objectY > nextBoarders[4] then
+					nextBoarders[4] = objectY
 				end
 			end
 
-			if object.isDestroyed == true then
-				table.remove(self.objects[key], i)
+			object:update(dt)
+
+			if (self.boarders and (objectX < self.boarders[1] or
+								   objectY < self.boarders[2] or
+								   objectX > self.boarders[3] or
+								   objectY > self.boarders[4])) then
+				object:destroy()
 			end
+		end
+
+		if object.isDestroyed == true then
+			table.remove(self.objects, i)
 		end
 	end
 
@@ -230,10 +185,9 @@ function World:update(dt)
 	self.boarders[4] = self.boarders[4] + 10000
 
 	for _, object in ipairs(self.events.create) do
-		local key = object[1]
-		local value = World.objectTypes[key]
-		local newObject = value(self.info, object[2], object[3])
-		table.insert(self.objects[key], newObject)
+		local objectClass = World.objectTypes[object[1]]
+		local newObject = objectClass(self.info, object[2], object[3])
+		table.insert(self.objects, newObject)
 	end
 	self.events.create = {}
 end

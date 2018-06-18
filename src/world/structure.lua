@@ -37,10 +37,10 @@ function Structure:__create(worldInfo, location, data, appendix)
 		if corePart.type == "control" then
 			self.body:setAngularDamping(1)
 			self.body:setLinearDamping(.1)
-			self.type = "ship"
+			--self.type = "ship"
 		elseif corePart.type == "anchor" then
 			self.body:setType("static")
-			self.type = "anchor"
+			--self.type = "anchor"
 		end
 
 		corePart.worldInfo = worldInfo
@@ -48,7 +48,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 	else
 		self.body:setAngularDamping(.1)
 		self.body:setLinearDamping(0.01)
-		self.type = "generic"
+		--self.type = "generic"
 	end
 
 	self.body:setUserData(self)
@@ -63,6 +63,10 @@ function Structure:postCreate(references)
 	if self.corePart and self.corePart.postCreate then
 		self.corePart:postCreate(references)
 	end
+end
+
+function Structure:type()
+	return "structure"
 end
 
 -------------------------
@@ -82,7 +86,7 @@ function Structure:getSaveData(references)
 		leader = references[self.corePart.leader]
 	end
 
-	return {team, leader}
+	return {team, leader}, StructureParser.shipPack(self, true)
 end
 
 -------------------------------
@@ -346,7 +350,7 @@ function Structure:disconnectPart(part)
 
 		end
 
-		local newStructure = {"structures", location, {parts = structure}}
+		local newStructure = {"structure", location, {parts = structure}}
 		table.insert(self.events.create, newStructure)
 	end
 

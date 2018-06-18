@@ -5,8 +5,8 @@ local World = require("world/world")
 
 local Spawn = {}
 
-function Spawn.spawnObject(world, key, location, data, appendix)
-	local value = World.objectTypes[key]
+function Spawn.spawnObject(world, type, location, data, appendix)
+	local value = World.objectTypes[type]
 	local object = value(world.info, location, data, appendix)
 	world:addObject(object, key)
 	return object, object.isPlayer

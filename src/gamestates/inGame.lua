@@ -1,7 +1,6 @@
 local Debug = require("debugTools")
 local Gamesave = require("gamesave")
 local SceneParser = require("sceneParser")
-local Screen = require("screen")
 local Utf8 = require("utf8")
 local Util = require("util")
 local Menu = require("menu")
@@ -37,7 +36,7 @@ function InGame.load(...)
 end
 
 function InGame.resize(w, h)
-	Screen:arrange(w, h)
+	screen:arrange(w, h)
 end
 
 function InGame.textinput(key)

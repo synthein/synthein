@@ -177,7 +177,7 @@ function InGame.update(dt)
 		if second > 1 then
 
 			for _, player in ipairs(players) do
-				if players[1].ship then
+				if player.ship then
 					local timeVar = 1 - 50/(20 + eventTime)
 					if timeVar < 0 then timeVar = 0 end
 					local disVar = 1 - 50/(1 + Util.vectorMagnitude(
@@ -192,9 +192,9 @@ function InGame.update(dt)
 						eventTime = 0
 						local scene = math.ceil(love.math.random() * 10)
 						scene = tostring(scene)
-						local location = {players[1].ship.body:getX(),
-										  players[1].ship.body:getY()}
-						local vV = {players[1].ship.body:getLinearVelocity()}
+						local location = {player.ship.body:getX(),
+										  player.ship.body:getY()}
+						local vV = {player.ship.body:getLinearVelocity()}
 						local mag = Util.vectorMagnitude(unpack(vV))
 						local uV
 						if mag ~= 0 then

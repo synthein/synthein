@@ -68,13 +68,7 @@ function Debug.draw()
 	end
 end
 
-function Debug.update() --(dt)
-	if Debug.mouseJoint then
-		local mouseWorldX, mouseWorldY =
-			Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
-												   love.mouse.getY())
-		Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
-	end
+function Debug.update(dt)
 end
 
 function Debug.keyboard(key)
@@ -95,28 +89,10 @@ function Debug.keyboard(key)
 --	end
 end
 
-function Debug.mousepressed(_, _, button) --(mouseX, mouseY, button)
-	local mouseWorldX, mouseWorldY =
-		Debug.players[1].camera:getWorldCoords(love.mouse.getX(),
-		                                       love.mouse.getY())
-	if button == 3 then
-		local structure = Debug.world:getStructure(mouseWorldX, mouseWorldY)
-		if structure then
-			Debug.mouseJoint = love.physics.newMouseJoint(structure.body,
-														  mouseWorldX,
-														  mouseWorldY)
-			Debug.mouseJoint:setTarget(mouseWorldX, mouseWorldY)
-		end
-	end
+function Debug.mousepressed(mouseX, mouseY, button)
 end
 
-function Debug.mousereleased(_, _, button) --(x, y, button)
-	if button == 3 then
-		if Debug.mouseJoint then
-			Debug.mouseJoint:destroy()
-			Debug.mouseJoint = nil
-		end
-	end
+function Debug.mousereleased(x, y, button)
 end
 
 return Debug

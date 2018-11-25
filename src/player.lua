@@ -210,15 +210,26 @@ function Player:drawExtras()
 		self.menu:draw()
 	end
 
-	local point
-	local leader = self.ship.corePart.leader
-	if leader then
-		point = leader:getLocation()
-	else
-		point = {0,0}
-	end
 	local x, y = self.camera:getPosition()
 	local _, _, width, height = self.camera:getScissor()
+
+	local point = {0,0}
+	if self.ship then
+		local leader = (self.ship.corePart or {}).leader
+		if leader then
+			point = leader:getLocation()
+		end
+		if self.ship.isDestroyed then
+			self.ship = nil
+		end
+	else
+		local previousFont = love.graphics.getFont()
+		local font = love.graphics.newFont(20)
+		love.graphics.setFont(font)
+		love.graphics.print("Game Over", x + 10, y + height - 30, 0, 1, 1, 0, 0, 0, 0)
+		love.graphics.setFont(previousFont)
+	end
+
 	--draw the compass in the lower right hand coner 60 pixels from the edges
 	love.graphics.draw(
 			self.compass,

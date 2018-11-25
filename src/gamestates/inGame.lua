@@ -37,7 +37,7 @@ function InGame.load(...)
 end
 
 function InGame.resize(w, h)
-	Screen.arrange(w, h)
+	Screen:arrange(w, h)
 end
 
 function InGame.textinput(key)

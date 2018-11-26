@@ -151,10 +151,12 @@ function Player:buttonpressed(source, button)
 
 			elseif order == "playerMenu" then
 				if self.debugmode then
-
-					local _, _, width, _ = self.camera:getScissor()
-					self.menu = Menu.create(width/2, 100, 5,
-											self.menuButtonNames, self.camera)
+					self.menu = Menu.create(
+						100,
+						5,
+						self.menuButtonNames,
+						self.camera
+					)
 				end
 			elseif order == "zoomIn" then
 				self.camera:adjustZoom(1)

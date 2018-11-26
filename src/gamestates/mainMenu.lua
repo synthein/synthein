@@ -9,10 +9,8 @@ local buttons = {NewGameMenu, LoadGameMenu}
 local buttonNames = {"New Game", "Load Game"}
 if love.graphics then
 	MainMenu.font = love.graphics.newFont(36)
-	MainMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames)
-else
-	MainMenu.menu = Menu.create(0, 0, 5, buttonNames)
 end
+MainMenu.menu = Menu.create(250, 5, buttonNames)
 
 function MainMenu.update(dt)
 	MainMenu.menu:update(dt)

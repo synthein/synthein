@@ -23,6 +23,7 @@ function Shot:__create(worldInfo, location, data, appendix)
 	self.timer = Timer(5)
 	self.firstContact = true
 	self.sourcePart = data
+	self.startLocation = location
 end
 
 function Shot:postCreate(references)
@@ -30,6 +31,7 @@ function Shot:postCreate(references)
 	self.timer:time(time)
 	structure = references[structure]
 	self.sourcePart = structure.gridTable:index(x, y)
+	self.body:setLinearVelocity(self.startLocation[4], self.startLocation[5])
 end
 
 function Shot:type()

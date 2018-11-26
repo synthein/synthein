@@ -5,7 +5,7 @@ local Menu = require("menu")
 local NewGameMenu = GameState()
 
 local buttonNames = {"Single Player", "COOP", "Allied", "VS"}
-if love.graphics then NewGameMenu.menu = Menu.create(love.graphics.getWidth()/2, 250, 5, buttonNames) end
+NewGameMenu.menu = Menu.create(250, 5, buttonNames)
 
 function NewGameMenu.update(dt)
 	NewGameMenu.menu:update(dt)

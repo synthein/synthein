@@ -21,7 +21,7 @@ pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 local menu
 if love.graphics then
 	pauseMenu.font = love.graphics.newFont(18)
-	menu = Menu.create(love.graphics.getWidth() / 2, 225, 5, pauseMenu.buttons)
+	menu = Menu.create(225, 5, pauseMenu.buttons)
 end
 
 local typingSaveName = false

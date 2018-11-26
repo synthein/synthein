@@ -3,11 +3,11 @@ Menu.__index = Menu
 
 Menu.scrollSpeed = 150
 
-function Menu.create(x, y, size, buttons)
+-- Make a menu in the center of the screen from a list of buttons.
+function Menu.create(y, size, buttons)
 	local self = {}
 	setmetatable(self, Menu)
 
-	self.x = x
 	self.y = y
 	self.width = size * 100
 	self.buttonWidth = size * 90
@@ -26,8 +26,9 @@ function Menu.create(x, y, size, buttons)
 end
 
 function Menu:getButtonAt(x, y)
-	if x > self.x - self.width / 2 + self.buttonMargin
-	   and x < self.x + self.buttonMargin + self.buttonWidth
+	local menuCenter = love.graphics.getWidth() / 2
+	if x > menuCenter - self.buttonWidth / 2
+	   and x < menuCenter + self.buttonWidth / 2
 	   and y > self.y then
 		local yRef = y - self.y - self.buttonMargin + self.scrollY
 		local index = math.floor(yRef/(self.buttonHeight + self.buttonSpacing)) + 1
@@ -92,7 +93,7 @@ end
 
 function Menu:draw()
 	love.graphics.push("all")
-	local x = self.x - self.width / 2
+	local x = love.graphics.getWidth() / 2 - self.width / 2
 	local y = self.y
 
 	love.graphics.setColor(0.8, 0.8, 0.8)

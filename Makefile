@@ -1,5 +1,5 @@
 synthein_version = devel
-love_version = 11.1
+love_version = 11.2
 
 env = SYNTHEIN_VERSION=$(synthein_version) LOVE_VERSION=$(love_version)
 

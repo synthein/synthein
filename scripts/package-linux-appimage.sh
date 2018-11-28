@@ -19,10 +19,10 @@ main () {
 	echo "Getting Linux LÖVE binaries."
 	cd "${cache_dir}"
 
-	love_tar=love-${LOVE_VERSION}-linux-x86_64.tar.gz
+	love_tar=love-${LOVE_VERSION}-x86_64.tar.gz
 	dlcache "https://bitbucket.org/rude/love/downloads/${love_tar}"
 
-	extracted_love_tar=${cache_dir}/love-${LOVE_VERSION}-linux-x86_64
+	extracted_love_tar=${cache_dir}/love-${LOVE_VERSION}-x86_64
 	[ -d "$extracted_love_tar" ] && rm -r "$extracted_love_tar"
 	tar -xzf "$love_tar" && mv -T dest "$extracted_love_tar"
 
@@ -49,17 +49,8 @@ main () {
 	install -D -m0755 "${extracted_love_tar}/usr/bin/love" usr/bin/love
 	install -d usr/lib
 	cp -r "${extracted_love_tar}/usr/lib/"* usr/lib
-	install -D "${extracted_love_tar}/license.txt" usr/share/doc/love
-
-	# Install dependencies.
-	install_libraries \
-		libSDL2-2.0 \
-		libluajit-5.1 \
-		libmodplug \
-		libmpg123 \
-		libopenal \
-		libphysfs \
-		libsndio
+	# As of LOVE 11.2, there's no license file included in the tar release.
+	# install -D "${extracted_love_tar}/license.txt" usr/share/doc/love
 
 	# Package as an AppImage.
 	cd "${cache_dir}"
@@ -81,20 +72,6 @@ dlcache () {
 	if [ ! -f "$(basename $1)" ]; then
 		curl -L -O "$1"
 	fi
-}
-
-install_libraries () {
-	libraries=''
-	for libname in $@; do
-		lib=$(ldconfig -p | sed -En "/$libname/"'s/.* => (.*)/\1/p')
-		if [ -n "$lib" ]; then
-			libraries="$libraries $lib"
-		else
-			echo "Warning: Couldn't find library \"$libname\""
-		fi
-	done
-	install -d usr/lib
-	install -t usr/lib/ $libraries
 }
 
 main

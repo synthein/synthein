@@ -15,7 +15,7 @@ fi
 
 echo "Getting Linux LÖVE binaries."
 cd "${cache_dir}"
-love_tar="love-${LOVE_VERSION}-linux-x86_64.tar.gz"
+love_tar="love-${LOVE_VERSION}-x86_64.tar.gz"
 if [ ! -f "$love_tar" ]; then
 	curl -L -O "https://bitbucket.org/rude/love/downloads/${love_tar}"
 fi

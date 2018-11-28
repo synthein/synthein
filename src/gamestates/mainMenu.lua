@@ -43,7 +43,7 @@ function MainMenu.mousepressed(x, y, mouseButton)
 		local button = MainMenu.menu:pressed(x, y)
 		for i, name in ipairs(buttonNames) do
 			if button == name then
-				MainMenu.stackQueue:push(buttons[i])
+				MainMenu.stackQueue:push(buttons[i]).load()
 			end
 		end
 	end

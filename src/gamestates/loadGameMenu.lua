@@ -6,12 +6,17 @@ local InitWorld = require("gamestates/initWorld")
 local LoadGameMenu = GameState()
 
 local buttons = {}
-local files = love.filesystem.getDirectoryItems("saves")
-for _, fileName in pairs(files) do
-	local buttonName = string.gsub(fileName, ".txt", "")
-	table.insert(buttons, buttonName)
-end
+local files = {}
 LoadGameMenu.menu = Menu.create(250, 5, buttons)
+
+function LoadGameMenu.load()
+	buttons = {}
+	files = love.filesystem.getDirectoryItems("saves")
+	for _, fileName in pairs(files) do
+		local buttonName = string.gsub(fileName, ".txt", "")
+		table.insert(buttons, buttonName)
+	end
+end
 
 function LoadGameMenu.update(dt)
 	LoadGameMenu.menu.buttons = {}

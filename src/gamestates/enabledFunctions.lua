@@ -1,5 +1,6 @@
 local enabledFunctionNames =
 {
+	"load",
 	"resize",
 	"keypressed",
 	"keyreleased",

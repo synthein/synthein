@@ -46,7 +46,7 @@ function Camera:getScreenCoords(worldX, worldY, a, b)
 	return x, y, a, b
 end
 
-function Camera:getWorldBoarder()
+function Camera:getWorldBorder()
 	return self.x - self.scissorWidth /(2 * self.zoom),
 		   self.y - self.scissorHeight/(2 * self.zoom),
 		   self.x + self.scissorWidth /(2 * self.zoom),

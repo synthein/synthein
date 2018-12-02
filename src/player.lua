@@ -187,7 +187,7 @@ function Player:draw()
 end
 
 function Player:drawWorldObjects()
-	local a, b, c, d = self.camera:getWorldBoarder()
+	local a, b, c, d = self.camera:getWorldBorder()
 	local callbackData = {}
 
 	local function callback(fixture)

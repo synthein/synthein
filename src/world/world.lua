@@ -143,7 +143,7 @@ end
 function World:update(dt)
 	self.physics:update(dt)
 
-	local nextBoarders = {0, 0, 0, 0}
+	local nextBorders = {0, 0, 0, 0}
 
 	for i, object in ipairs(self.objects) do
 		if object.isDestroyed == false then
@@ -151,15 +151,15 @@ function World:update(dt)
 
 			if object:type() == "structure" and object.corePart and
 					object.corePart:getTeam() > 0 then
-				if objectX < nextBoarders[1] then
-					nextBoarders[1] = objectX
-				elseif objectX > nextBoarders[3]then
-					nextBoarders[3] = objectX
+				if objectX < nextBorders[1] then
+					nextBorders[1] = objectX
+				elseif objectX > nextBorders[3]then
+					nextBorders[3] = objectX
 				end
-				if objectY < nextBoarders[2] then
-					nextBoarders[2] = objectY
-				elseif objectY > nextBoarders[4] then
-					nextBoarders[4] = objectY
+				if objectY < nextBorders[2] then
+					nextBorders[2] = objectY
+				elseif objectY > nextBorders[4] then
+					nextBorders[4] = objectY
 				end
 			end
 
@@ -178,7 +178,7 @@ function World:update(dt)
 		end
 	end
 
-	self.boarders = nextBoarders
+	self.boarders = nextBorders
 	self.boarders[1] = self.boarders[1] - 10000
 	self.boarders[2] = self.boarders[2] - 10000
 	self.boarders[3] = self.boarders[3] + 10000

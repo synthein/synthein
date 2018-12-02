@@ -213,7 +213,7 @@ function Player:drawExtras()
 	end
 
 	local cameraX, cameraY = self.camera:getPosition()
-	local screenX, screenY, screenWidth, screenHeight = self.camera:getScissor()
+	local _, _, screenWidth, screenHeight = self.camera:getScissor()
 
 	local point = {0,0}
 	if self.ship then
@@ -228,7 +228,7 @@ function Player:drawExtras()
 		local previousFont = love.graphics.getFont()
 		local font = love.graphics.newFont(20)
 		love.graphics.setFont(font)
-		love.graphics.print("Game Over", screenX + 10, screenY + screenHeight - 30, 0, 1, 1, 0, 0, 0, 0)
+		love.graphics.print("Game Over", 10, screenHeight - 30, 0, 1, 1, 0, 0, 0, 0)
 		love.graphics.setFont(previousFont)
 	end
 
@@ -240,6 +240,15 @@ function Player:drawExtras()
 			math.atan2(cameraX - point[1], cameraY - point[2]) + math.pi,
 			1, 1, 25, 25)
 	love.graphics.draw(self.cursor, self.cursorX - 2, self.cursorY - 2)
+
+	-- Draw a box around the entire region.
+	love.graphics.rectangle(
+		"line",
+		0,
+		0,
+		screenWidth,
+		screenHeight
+	)
 end
 
 return Player

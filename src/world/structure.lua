@@ -14,6 +14,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 	local shipTable
 	if appendix then
+		local player
 		shipTable, player = StructureParser.shipUnpack(appendix, data)
 		self.isPlayer = player
 	else

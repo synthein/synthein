@@ -77,7 +77,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					ifShipString = true
 				end
 
-				l = location + LocationTable(locationString)
+				local l = location + LocationTable(locationString)
 
 				local data = {}
 				for var in string.gmatch(dataString, varStr) do

@@ -4,7 +4,6 @@ local LocationTable = require("locationTable")
 local Spawn = require("world/spawn")
 local Util = require("util")
 local Tserial = require("vendor/tserial")
-local StructureParser = require("world/structureParser")
 
 local SceneParser = {}
 
@@ -78,7 +77,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					ifShipString = true
 				end
 
-				l = location + LocationTable(locationString)
+				local l = location + LocationTable(locationString)
 
 				local data = {}
 				for var in string.gmatch(dataString, varStr) do

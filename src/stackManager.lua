@@ -35,7 +35,7 @@ function StackManager:createQueue(intialState)
 	options.objectTypeString = "a stack"
 	options.returnInformation = createStateCallList
 	options.update = function(reference, removedState, updateInformation)
-		state = reference:peek()
+		local state = reference:peek()
 		-- Set stackQueue for the new state and delete it for the old state.
 		state[self.indexValue] = self.queue.list
 		if removedState then
@@ -57,7 +57,7 @@ function StackManager:createCurrentStateReference()
 		-- Function that collects the requested function from the current state
 		-- and manages the queue after function is called.
 		return function(...)
-			returnValue = self.stack:peek()[key](...)
+			local returnValue = self.stack:peek()[key](...)
 			self:processQueue()
 			return returnValue
 		end

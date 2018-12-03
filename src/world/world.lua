@@ -113,7 +113,7 @@ World.callbackData = {objects = {}}
 function World:getObject(locationX, locationY)
 	local objects = {}
 
-	function callback(fixture)
+	local callback = function(fixture)
 		local body = fixture:getBody()
 		local object = {body:getUserData(), fixture:getUserData()}
 		table.insert(objects, object)
@@ -122,7 +122,7 @@ function World:getObject(locationX, locationY)
 
 	local a = locationX
 	local b = locationY
-	self.physics:queryBoundingBox(a, b, a, b,callback)
+	self.physics:queryBoundingBox(a, b, a, b, callback)
 
 	for _, object in ipairs(objects) do
 		if object[1] then

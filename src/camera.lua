@@ -110,7 +110,7 @@ function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
 end
 
 function Camera:enable(inWorld)
-	love.graphics.setScissor(Camera:getScissor())
+	love.graphics.setScissor(self:getScissor())
 	love.graphics.translate(self.scissorX, self.scissorY)
 	if inWorld then
 		love.graphics.translate(self.scissorWidth/2, self.scissorHeight/2)

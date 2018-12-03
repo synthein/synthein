@@ -1,4 +1,3 @@
-local test = require("vendor/lunatest")
 local InGame = require("gamestates/inGame")
 local Screen = require("screen")
 

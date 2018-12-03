@@ -1,4 +1,3 @@
-local Settings = require("settings")
 local Util = require("util")
 local LocationTable = require("locationTable")
 

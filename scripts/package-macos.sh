@@ -24,13 +24,9 @@ main () {
 	echo "Building MacOS package."
 	app_dir="${build_dir}/synthein.app"
 
-	cp -R "${cache_dir}/love.app" "$app_dir"
-	cd "$app_dir"
-
-	cp "$love_file" "Contents/Resources/"
-	sed -i -e 's/<string>org.love2d.love<\/string>/<string>net.synthein.synthein<\/string>/' Contents/Info.plist
-	sed -i -e 's/<string>LÖVE<\/string>/<string>Synthein<\/string>/' Contents/Info.plist
-	sed -i -e '98,126d' Contents/Info.plist
+	cp -aR "${cache_dir}/love.app/" "$app_dir"
+	cp "$love_file" "${app_dir}/Contents/Resources/"
+	cp "${root_dir}/package/Info.plist" "${app_dir}/Contents/"
 
 	cd "$build_dir"
 	zip -r "$build_file" synthein.app

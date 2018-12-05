@@ -103,7 +103,7 @@ pipeline:
     secrets: [ telegram_token ]
     to: -1001143861626
     format: html
-    message: >
+    message: |
       <a href="{{ build.link }}">Build {{ build.status }}</a>
 
       <a href="https://github.com/synthein/synthein">{{ repo.owner }}/{{ repo.name }}</a>
@@ -120,11 +120,7 @@ pipeline:
     secrets: [ telegram_token ]
     to: -1001143861626
     format: html
-    message: >
-      <b>
-        Synthein version
-        <a href="https://github.com/synthein/synthein/releases/tag/{{build.tag}}">{{build.tag}}</a>
-        release
-      </b>
+    message: |
+      <b>Synthein version <a href="https://github.com/synthein/synthein/releases/tag/{{build.tag}}">{{build.tag}}</a> release</b>
 
       <a href="{{build.link}}">Build {{build.status}}</a>

@@ -29,7 +29,7 @@ main () {
 	cp "${root_dir}/package/Info.plist" "${app_dir}/Contents/"
 
 	cd "$build_dir"
-	zip -r "$build_file" synthein.app
+	zip -ry "$build_file" synthein.app
 
 	# Clean up.
 	rm -r "${cache_dir}/love.app"

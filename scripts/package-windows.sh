@@ -29,7 +29,10 @@ main () {
 	mkdir "$windows_build_dir"
 	cd "$windows_build_dir"
 	cat "${cache_dir}/love-${LOVE_VERSION}.0-win64/love.exe" "$love_file" > synthein.exe
-	cp "${cache_dir}/love-${LOVE_VERSION}.0-win64/"*.dll "${cache_dir}/love-${LOVE_VERSION}.0-win64/license.txt" ./
+	cp "${cache_dir}/love-${LOVE_VERSION}.0-win64/"*.dll ./
+	cp "${root_dir}/README.md" README.md
+	cp "${root_dir}/LICENSE" license.txt
+	cp "${cache_dir}/love-${LOVE_VERSION}.0-win64/license.txt" license-3rd-party.txt
 
 	cd "$build_dir"
 	zip -r "$build_file" synthein-windows/

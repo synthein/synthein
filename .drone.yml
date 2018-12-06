@@ -32,11 +32,6 @@ pipeline:
     commands:
       - make appimage synthein_version=unstable love_version=$${LOVE_VERSION}
 
-  package-linux-snap-dev:
-    <<: *package-config-dev
-    commands:
-      - make snap synthein_version=unstable love_version=$${LOVE_VERSION}
-
   package-macos-dev:
     <<: *package-config-dev
     commands:
@@ -69,11 +64,6 @@ pipeline:
     <<: *package-config-release
     commands:
       - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
-
-  package-linux-snap-release:
-    <<: *package-config-release
-    commands:
-      - make snap synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-macos-release:
     <<: *package-config-release

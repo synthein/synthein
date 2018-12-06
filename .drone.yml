@@ -1,7 +1,6 @@
 package-config-dev: &package-config-dev
   when:
     event: push
-    branch: master
   image: synthein/love-build:11.2
   environment:
     - LOVE_VERSION=11.2

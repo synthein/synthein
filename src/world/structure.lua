@@ -57,14 +57,9 @@ function Structure:__create(worldInfo, location, data, appendix)
 	self.body:setUserData(self)
 	self.shield = Shield(self.body)
 
-<<<<<<< HEAD
 	local function callback(part, structure, x , y)
 		structure:addPart(part, x, y, part.location[3])
-=======
-	local function callback(part, structure)
-		structure:addFixture(part)
 		if part.isShield then self.shield:addPart(unpack(part.location)) end
->>>>>>> Add a foundation for the shield fixture.
 	end
 	self.gridTable:loop(callback, self)
 
@@ -130,15 +125,10 @@ end
 -- orientation is the orientation of the part according to the structure.
 function Structure:addPart(part, x, y, orientation)
 	part:setLocation({x, y, orientation})
-<<<<<<< HEAD
 	part:addFixtures(self.body)
 	--self:calculateSize(x, y)
 	self:recalculateSize()
-=======
-	self:addFixture(part)
-
 	if part.isShield then self.shield:addPart(x, y) end
->>>>>>> Add a foundation for the shield fixture.
 
 	self.gridTable:index(x, y, part)
 end

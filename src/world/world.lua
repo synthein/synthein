@@ -1,6 +1,7 @@
 local Particles = require("world/particles")
 local Shot = require("world/shot")
 local Structure = require("world/structure")
+local PhysicsReferences = require("world/physicsReferences")
 
 local World = class()
 
@@ -51,6 +52,43 @@ end
 
 function World.beginContact(a, b, coll)
 	--print("beginContact")
+	local aCategory = a:getFilterData()
+	local bCategory = b:getFilterData()
+
+	local partCategory = PhysicsReferences.getCategory("general")
+	local sqV, aL, bL
+	if aCategory == partCategory and bCategory == partCategory then
+
+		local x, y = coll:getPositions()
+		local bodyA = a:getBody()
+		local bodyB = b:getBody()
+		local aVX, aVY, bVX, bVY
+
+		if x and y then
+			aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
+			bVX, bVY = bodyB:getLinearVelocityFromWorldPoint(x, y)
+			local dVX = aVX - bVX
+			local dVY = aVY - bVY
+			sqV = (dVX * dVX) + (dVY * dVY)
+		else
+			sqV = 0
+		end
+		aL = {aVX, aVY}
+		bL = {bVX, bVY}
+	end
+
+	local objectA = a:getUserData()
+	local objectB = b:getUserData()
+
+	if aCategory <= bCategory then
+		objectA:collision(b, sqV, aL)
+	end
+
+	if bCategory <= aCategory then
+		objectB:collision(a, sqV, bL)
+	end
+
+	--[[
 	local aSensor = a:isSensor()
 	local bSensor = b:isSensor()
 	local objectA, objectB
@@ -80,6 +118,7 @@ function World.beginContact(a, b, coll)
 	elseif bSensor and not aSensor then
 		objectB:collision(a)
 	end
+	--]]
 end
 
 

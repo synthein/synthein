@@ -45,10 +45,6 @@ function PlayerBlock:shot()
 end
 
 function PlayerBlock:update(dt, partsInfo)
-	local shoot = false
-	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
-	local newobject = self.gun:update(dt, shoot, self)
-
 	self.engine:update(self, partsInfo.engines)
 
 	self.healTime = self.healTime - dt

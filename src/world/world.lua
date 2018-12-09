@@ -186,6 +186,8 @@ function World:update(dt)
 
 	for _, object in ipairs(self.events.create) do
 		local objectClass = World.objectTypes[object[1]]
+-- Debug
+print(object[1], object[2], object[3])
 		local newObject = objectClass(self.info, object[2], object[3])
 		table.insert(self.objects, newObject)
 	end

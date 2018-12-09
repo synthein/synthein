@@ -53,8 +53,10 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 	self.body:setUserData(self)
 
+	self.guns = {}
 	local function callback(part, structure)
 		structure:addFixture(part)
+		if part.gun then table.insert(self.guns, {part.gun, part.location}) end
 	end
 	self.gridTable:loop(callback, self)
 end
@@ -110,6 +112,7 @@ function Structure:addPart(part, x, y, orientation)
 	self:recalculateSize()
 
 	self.gridTable:index(x, y, part)
+	table.insert(self.guns, part.gun)
 end
 
 -- If there are no more parts in the structure,
@@ -364,7 +367,7 @@ end
 
 -- Restructure input from player or output from ai
 -- make the information easy for parts to handle.
-function Structure:command(orders)
+function Structure:command(dt)
 	local orders
 	if self.corePart then
 		orders = self.corePart:getOrders()
@@ -401,7 +404,11 @@ function Structure:command(orders)
 		engines[2] = 1
 	end
 
-	local commands = {engines = engines, guns = {shoot = shoot}}
+	local commands = {engines = engines}
+
+	for _, gun in ipairs(self.guns) do
+		gun[1]:update(dt, shoot, self, gun[2])
+	end
 
 	return commands
 end
@@ -409,7 +416,7 @@ end
 -- Handle commands
 -- Update each part
 function Structure:update(dt)
-	local partsInfo = self:command()
+	local partsInfo = self:command(dt)
 
 	-- Call update on each part
     self.gridTable:loop("update", {dt, partsInfo}, true)

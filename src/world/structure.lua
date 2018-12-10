@@ -2,6 +2,7 @@ local GridTable = require("gridTable")
 local Settings = require("settings")
 local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
+local LocationTable = require("locationTable")
 
 local Structure = class(require("world/worldObjects"))
 
@@ -91,6 +92,18 @@ function Structure:getSaveData(references)
 	return {team, leader}, StructureParser.shipPack(self, true)
 end
 
+function Structure:getWorldLocation(l)
+	local body = self.body
+	local partX, partY, angle = unpack(l)
+
+	local x, y = body:getWorldPoints(partX, partY)
+	angle = (angle - 1) * math.pi/2 + body:getAngle()
+	local vx, vy = body:getLinearVelocityFromLocalPoint(partX, partY)
+	local w = body:getAngularVelocity()
+
+	return LocationTable(x, y, angle, vx, vy, w)
+end
+
 -------------------------------
 -- Adding and Removing Parts --
 -------------------------------
@@ -112,7 +125,7 @@ function Structure:addPart(part, x, y, orientation)
 	self:recalculateSize()
 
 	self.gridTable:index(x, y, part)
-	table.insert(self.guns, part.gun)
+	if part.gun then table.insert(self.guns, {part.gun, part.location}) end
 end
 
 -- If there are no more parts in the structure,
@@ -407,7 +420,17 @@ function Structure:command(dt)
 	local commands = {engines = engines}
 
 	for _, gun in ipairs(self.guns) do
-		gun[1]:update(dt, shoot, self, gun[2])
+		local partX, partY, angle = unpack(gun[2])
+
+		local x, y = unpack(StructureMath.addUnitVector(l, angle))
+		local clear = not self.gridTable:index(x, y)
+
+		if gun[1]:update(dt, shoot, clear) then
+			local location = self:getWorldLocation(gun[2])
+			local part = self.gridTable:index(partX, partY)
+
+			table.insert(self.events.create, {"shot", location, part})
+		end
 	end
 
 	return commands

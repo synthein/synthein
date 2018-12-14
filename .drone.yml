@@ -1,23 +1,22 @@
 package-config-dev: &package-config-dev
   when:
     event: push
-    branch: master
-  image: synthein/love-build:0.10.2
+  image: synthein/love-build:11.2
   environment:
-    - LOVE_VERSION=11.1
+    - LOVE_VERSION=11.2
 
 package-config-release: &package-config-release
   when:
     event: tag
-  image: synthein/love-build:0.10.2
+  image: synthein/love-build:11.2
   environment:
-    - LOVE_VERSION=11.1
+    - LOVE_VERSION=11.2
 
 pipeline:
   test:
     when:
       event: push
-    image: synthein/love-build:0.10.2
+    image: synthein/love-build:11.2
     pull: true
     commands:
       - make check
@@ -32,11 +31,6 @@ pipeline:
     <<: *package-config-dev
     commands:
       - make appimage synthein_version=unstable love_version=$${LOVE_VERSION}
-
-  package-linux-snap-dev:
-    <<: *package-config-dev
-    commands:
-      - make snap synthein_version=unstable love_version=$${LOVE_VERSION}
 
   package-macos-dev:
     <<: *package-config-dev
@@ -70,11 +64,6 @@ pipeline:
     <<: *package-config-release
     commands:
       - make appimage synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
-
-  package-linux-snap-release:
-    <<: *package-config-release
-    commands:
-      - make snap synthein_version=${DRONE_TAG} love_version=$${LOVE_VERSION}
 
   package-macos-release:
     <<: *package-config-release

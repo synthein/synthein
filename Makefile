@@ -1,5 +1,5 @@
 synthein_version = devel
-love_version = 11.1
+love_version = 11.2
 
 env = SYNTHEIN_VERSION=$(synthein_version) LOVE_VERSION=$(love_version)
 
@@ -15,9 +15,6 @@ appimage: love
 macos: love
 	$(env) scripts/package-macos.sh
 
-snap: love
-	$(env) scripts/package-linux-snap.sh
-
 windows: love
 	$(env) scripts/package-windows.sh
 
@@ -28,7 +25,6 @@ check:
 
 clean:
 	-rm -rf build/
-	-cd package/snapcraft; snapcraft clean || true
 
 dep:
 	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display
@@ -39,4 +35,4 @@ luacheck:
 test:
 	love src --test
 
-.PHONY: appimage check clean dep love luacheck macos snap test windows
+.PHONY: appimage check clean dep love luacheck macos test windows

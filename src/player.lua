@@ -123,9 +123,11 @@ function Player:buttonpressed(source, button)
 			end
 
 			if part and location then
+				-- TODO: Move this pattern to a function and write a unit test
+				-- for it.
 				location = LocationTable(unpack(location))
 				table.insert(self.world.info.events.create,
-							 {"structures", location, part})
+							 {"structure", location, part})
 			end
 			self.menu = nil
 		end

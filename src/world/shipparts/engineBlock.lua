@@ -22,7 +22,7 @@ end
 
 function EngineBlock:update(_, partsInfo) --(dt, partsInfo)
 	-- Update engine and set correct image.
-	if self.engine:update(self, partsInfo.engines) then
+	if self.engine.isActive then
 		self.image = self.imageActive
 	else
 		self.image = self.imageInactive

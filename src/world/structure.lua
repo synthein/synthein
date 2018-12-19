@@ -3,6 +3,8 @@ local Settings = require("settings")
 local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
 local LocationTable = require("locationTable")
+local Engine = require("world/shipparts/engine")
+local Gun = require("world/shipparts/gun")
 
 local Structure = class(require("world/worldObjects"))
 
@@ -55,9 +57,11 @@ function Structure:__create(worldInfo, location, data, appendix)
 	self.body:setUserData(self)
 
 	self.guns = {}
-	local function callback(part, structure)
+	self.engines = {}
+	local function callback(part, structure, x , y)
 		structure:addFixture(part)
-		if part.gun then table.insert(self.guns, {part.gun, part.location}) end
+		if part.gun then self.guns[part.gun] = {part.location} end
+		if part.engine then self.engines[part.engine] = {part.location} end
 	end
 	self.gridTable:loop(callback, self)
 end
@@ -125,7 +129,8 @@ function Structure:addPart(part, x, y, orientation)
 	self:recalculateSize()
 
 	self.gridTable:index(x, y, part)
-	if part.gun then table.insert(self.guns, {part.gun, part.location}) end
+	if part.gun then self.guns[part.gun] = {part.location} end
+	if part.engine then self.engines[part.engine] = {part.location} end
 end
 
 -- If there are no more parts in the structure,
@@ -138,6 +143,8 @@ function Structure:removePart(part)
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 	part.fixture:destroy()
+	if part.gun then self.guns[part.gun] = nil end
+	if part.engine then self.engines[part.engine] = nil end
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then
@@ -388,49 +395,39 @@ function Structure:command(dt)
 		return {}
 	end
 
-	local perpendicular = 0
-	local parallel = 0
-	local rotate = 0
-	local shoot = false
+	local engineOrders = {}
+	local gunOrders = {}
 
 	for _, order in ipairs(orders) do
-		if order == "forward" then parallel = parallel + 1 end
-		if order == "back" then parallel = parallel - 1 end
-		if order == "strafeLeft" then perpendicular = perpendicular - 1 end
-		if order == "strafeRight" then perpendicular = perpendicular + 1 end
-		if order == "right" then rotate = rotate - 1 end
-		if order == "left" then rotate = rotate + 1 end
-		if order == "shoot" then shoot = true end
+		if order == "forward" then table.insert(engineOrders, order) end
+		if order == "back" then table.insert(engineOrders, order) end
+		if order == "strafeLeft" then table.insert(engineOrders, order) end
+		if order == "strafeRight" then table.insert(engineOrders, order) end
+		if order == "right" then table.insert(engineOrders, order) end
+		if order == "left" then table.insert(engineOrders, order) end
+		if order == "shoot" then table.insert(gunOrders, order) end
 	end
 
-	local engines = {0, 0, 0, 0, parallel, perpendicular, rotate}
+	gunControls = Gun.process(gunOrders)
 
-	if parallel > 0 then
-		engines[1] = 1
-	elseif parallel < 0 then
-		engines[3] = 1
-	end
-
-	if perpendicular > 0 then
-		engines[4] = 1
-	elseif perpendicular < 0 then
-		engines[2] = 1
-	end
-
-	local commands = {engines = engines}
-
-	for _, gun in ipairs(self.guns) do
-		local partX, partY, angle = unpack(gun[2])
+	for gun, t in pairs(self.guns) do
+		local partX, partY, angle = unpack(t[1])
 
 		local x, y = unpack(StructureMath.addUnitVector(l, angle))
 		local clear = not self.gridTable:index(x, y)
 
-		if gun[1]:update(dt, shoot, clear) then
-			local location = self:getWorldLocation(gun[2])
+		if gun:update(dt, shoot, clear) then
+			local location = self:getWorldLocation(t[1])
 			local part = self.gridTable:index(partX, partY)
 
 			table.insert(self.events.create, {"shot", location, part})
 		end
+	end
+
+	engineControls = Engine.process(engineOrders)
+
+	for engine, t in pairs(self.engines) do
+		engine:update(self.body, t[1], engineControls)
 	end
 
 	return commands

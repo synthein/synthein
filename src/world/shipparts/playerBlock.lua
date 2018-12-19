@@ -45,8 +45,6 @@ function PlayerBlock:shot()
 end
 
 function PlayerBlock:update(dt, partsInfo)
-	self.engine:update(self, partsInfo.engines)
-
 	self.healTime = self.healTime - dt
 	if self.healTime <= 0 then
 		self.healTime = self.healTime + 10

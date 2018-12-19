@@ -9,6 +9,14 @@ function Gun:__create()
 	return self
 end
 
+function Gun.process(orders)
+	shoot = false
+	for _, order in ipairs(orders) do
+		if order == "shoot" then shoot = true end
+	end
+	return shoot
+end
+
 function Gun:update(dt, shoot, clear)
 	if not self.charged then
 		if self.rechargeTimer:ready(dt) then

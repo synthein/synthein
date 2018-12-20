@@ -58,10 +58,12 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 	self.guns = {}
 	self.engines = {}
+	self.heal = {}
 	local function callback(part, structure, x , y)
 		structure:addFixture(part)
 		if part.gun then self.guns[part.gun] = {part.location} end
 		if part.engine then self.engines[part.engine] = {part.location} end
+		if part.heal then self.heal[part.heal] = {part} end
 	end
 	self.gridTable:loop(callback, self)
 end
@@ -131,6 +133,7 @@ function Structure:addPart(part, x, y, orientation)
 	self.gridTable:index(x, y, part)
 	if part.gun then self.guns[part.gun] = {part.location} end
 	if part.engine then self.engines[part.engine] = {part.location} end
+	if part.heal then self.heal[part.heal] = {part} end
 end
 
 -- If there are no more parts in the structure,
@@ -145,6 +148,7 @@ function Structure:removePart(part)
 	part.fixture:destroy()
 	if part.gun then self.guns[part.gun] = nil end
 	if part.engine then self.engines[part.engine] = nil end
+	if part.heal then self.heal[part.heal] = nil end
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then
@@ -428,6 +432,10 @@ function Structure:command(dt)
 
 	for engine, t in pairs(self.engines) do
 		engine:update(self.body, t[1], engineControls)
+	end
+
+	for heal, t in pairs(self.heal) do
+		heal:update(dt, t[1])
 	end
 
 	return commands

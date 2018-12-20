@@ -18,7 +18,4 @@ function GunBlock:__create()
 	return self
 end
 
-function GunBlock:update(dt, partsInfo)
-end
-
 return GunBlock

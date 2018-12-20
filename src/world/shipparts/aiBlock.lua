@@ -40,7 +40,4 @@ function AIBlock:runMenu(i)
 	return self.ai:runMenu(i)
 end
 
-function AIBlock:update(_, partsInfo) --(dt, partsInfo)
-end
-
 return AIBlock

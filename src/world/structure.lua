@@ -445,9 +445,6 @@ end
 -- Update each part
 function Structure:update(dt)
 	local partsInfo = self:command(dt)
-
-	-- Call update on each part
-    self.gridTable:loop("update", {dt, partsInfo}, true)
 end
 
 return Structure

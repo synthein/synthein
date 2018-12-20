@@ -45,7 +45,4 @@ function PlayerBlock:shot()
 	self.rechargeStart = 0
 end
 
-function PlayerBlock:update(dt, partsInfo)
-end
-
 return PlayerBlock

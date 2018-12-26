@@ -81,9 +81,6 @@ function Part:collision(fixture, sqVelocity, pointVelocity)
 	end
 end
 
-function Part:update() --(dt, partsInfo)
-end
-
 function Part:draw()
 	local x, y, angle = self:getWorldLocation():getXYA()
 	if x and y and angle then

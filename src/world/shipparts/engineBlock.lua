@@ -20,12 +20,16 @@ function EngineBlock:__create()
 	return self
 end
 
-function EngineBlock:update(_, partsInfo) --(dt, partsInfo)
-	-- Update engine and set correct image.
-	if self.engine:update(self, partsInfo.engines) then
-		self.image = self.imageActive
-	else
-		self.image = self.imageInactive
+function EngineBlock:draw()
+	local x, y, angle = self:getWorldLocation():getXYA()
+	if x and y and angle then
+		local image
+		if self.engine.isActive then
+			image = self.imageActive
+		else
+			image = self.imageInactive
+		end
+		love.graphics.draw(image, x, y, angle, 1/self.width, -1/self.height, self.width/2, self.height/2)
 	end
 end
 

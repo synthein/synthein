@@ -1,4 +1,3 @@
-local StructureMath = require("world/structureMath")
 local Timer = require("timer")
 
 local Gun = class()
@@ -10,24 +9,27 @@ function Gun:__create()
 	return self
 end
 
-function Gun:update(dt, shoot, part)
+function Gun.process(orders)
+	shoot = false
+	for _, order in ipairs(orders) do
+		if order == "shoot" then shoot = true end
+	end
+	return shoot
+end
+
+function Gun:update(dt, shoot, clear)
 	if not self.charged then
 		if self.rechargeTimer:ready(dt) then
 			self.charged = true
 		end
 	else
 		if shoot then
-			local structure = part.fixture:getBody():getUserData()
 			-- Check if there is a part one block infront of the gun.
-			local l = part.location
-			local x, y = unpack(StructureMath.addUnitVector(l, l[3]))
-			local clear = not structure.gridTable:index(x, y)
 
 			if clear then
 				self.charged = false
 				-- Spawn Shot
-				local shot = {"shot", part:getWorldLocation(), part}
-				table.insert(structure.events.create, shot)
+				return true
 			end
 		end
 	end

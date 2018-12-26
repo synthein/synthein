@@ -1,5 +1,6 @@
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
+local Heal = require("world/shipparts/heal")
 
 local PlayerBlock = class(require("world/shipparts/part"))
 
@@ -12,7 +13,7 @@ function PlayerBlock:__create(team, leader)
 
 	self.engine = Engine(1, 15, 5)
 	self.gun = Gun()
-	self.healTime = 10
+	self.heal = Heal()
 	self.orders = {}
 
 	self.isPlayer = true
@@ -42,24 +43,6 @@ end
 function PlayerBlock:shot()
 	self.recharge = true
 	self.rechargeStart = 0
-end
-
-function PlayerBlock:update(dt, partsInfo)
-	local shoot = false
-	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
-	local newobject = self.gun:update(dt, shoot, self)
-
-	self.engine:update(self, partsInfo.engines)
-
-	self.healTime = self.healTime - dt
-	if self.healTime <= 0 then
-		self.healTime = self.healTime + 10
-		if self.health < 10 then
-			self.health = self.health + 1
-		end
-	end
-
-	return newobject
 end
 
 return PlayerBlock

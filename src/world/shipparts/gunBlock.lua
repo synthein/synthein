@@ -18,11 +18,4 @@ function GunBlock:__create()
 	return self
 end
 
-function GunBlock:update(dt, partsInfo)
-	local shoot = false
-	if partsInfo.guns and partsInfo.guns.shoot then shoot = true end
-	-- Update engine and return value in case there is a new shot.
-	return self.gun:update(dt, shoot, self)
-end
-
 return GunBlock

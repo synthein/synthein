@@ -41,14 +41,8 @@ function Part:__create()
 
 	local health = self.health
 	function self.userData:damage(fixture, damage)
-		if health:damage(damage) then
-			local body = fixture:getBody()
-			local structure = body:getUserData()
-			local events = structure.events
-			local location = LocationTable(fixture, self.location)
-			table.insert(events.create, {"particles", location})
-			structure:disconnectPart(self.location)
-		end
+		local location = LocationTable(fixture, self.location)
+		health:damage(damage, location)
 	end
 end
 

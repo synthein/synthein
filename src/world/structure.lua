@@ -60,6 +60,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 	self.guns = {}
 	self.engines = {}
 	self.heal = {}
+	self.health = {}
 	local function callback(part, structure, x , y)
 		structure:addPart(part, x, y, part.location[3])
 	end
@@ -144,6 +145,7 @@ function Structure:addPart(part, x, y, orientation)
 	if part.gun then self.guns[part.gun] = {part.location} end
 	if part.engine then self.engines[part.engine] = {part.location} end
 	if part.heal then self.heal[part.heal] = {part.health} end
+	if part.health then self.health[part.health] = {part.location} end
 end
 
 -- If there are no more parts in the structure,
@@ -159,6 +161,7 @@ function Structure:removePart(part)
 	if part.gun then self.guns[part.gun] = nil end
 	if part.engine then self.engines[part.engine] = nil end
 	if part.heal then self.heal[part.heal] = nil end
+	if part.health then self.health[part.health] = nil end
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then
@@ -323,10 +326,9 @@ function Structure:recalculateSize()
 end
 
 -- Part was disconnected or destroyed remove part and handle outcome.
-function Structure:disconnectPart(location)
+function Structure:disconnectPart(location, isDestroyed)
 	local part = self.gridTable:index(location[1], location[2])
-	local isDestroyed = part.health:getIsDestroyed()
-	if #self.gridTable:loop() == 1 and not isDestroyed() then
+	if #self.gridTable:loop() == 1 and not isDestroyed then
 		-- if structure will bedestoryed
 		if part.isDestroyed then
 			self:removePart(part)
@@ -339,7 +341,7 @@ function Structure:disconnectPart(location)
 	self.gridTable:index(x, y, nil, true)
 
 	local savedPart
-	if isDestroyed() then
+	if isDestroyed then
 		self:removePart(part)
 	else
 		savedPart = part
@@ -449,6 +451,18 @@ function Structure:command(dt)
 
 	for heal, t in pairs(self.heal) do
 		heal:update(dt, t[1])
+	end
+
+	for health, t in pairs(self.health) do
+		local function disconnectCallback(isDestroyed)
+			self:disconnectPart(t[1], isDestroyed)
+		end
+
+		local function createCallback(t)
+			table.insert(self.events.create, t)
+		end
+
+		health:update(disconnectCallback, createCallback)
 	end
 
 	return commands

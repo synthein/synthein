@@ -34,9 +34,7 @@ function Part:__create()
 		if mult < -10 then mult = -10 end
 		mult = mult / 10
 		local xI, yI = unpack(pointVelocity)
-		if body:getUserData() and xI and yI then
-			body:applyLinearImpulse(xI * mult, yI * mult)
-		end
+		body:applyLinearImpulse(xI * mult, yI * mult)
 	end
 
 	local health = self.health

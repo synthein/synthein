@@ -408,7 +408,7 @@ end
 function Structure:command(dt)
 	local orders
 	if self.corePart then
-		orders = self.corePart:getOrders()
+		orders = self.corePart:getOrders(self.body)
 	else
 		return {}
 	end

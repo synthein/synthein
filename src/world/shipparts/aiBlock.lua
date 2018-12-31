@@ -13,8 +13,6 @@ function AIBlock:__create(team, leader)
 	self.engine = Engine(1, 10, 10)
 	self.ai = AI(team)
 	self.leader = leader
-
-	return self
 end
 
 function AIBlock:postCreate(references)

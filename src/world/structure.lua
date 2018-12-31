@@ -61,10 +61,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 	self.engines = {}
 	self.heal = {}
 	local function callback(part, structure, x , y)
-		structure:addFixture(part)
-		if part.gun then self.guns[part.gun] = {part.location} end
-		if part.engine then self.engines[part.engine] = {part.location} end
-		if part.heal then self.heal[part.heal] = {part} end
+		structure:addPart(part, x, y, part.location[3])
 	end
 	self.gridTable:loop(callback, self)
 end
@@ -111,13 +108,25 @@ function Structure:getWorldLocation(l)
 	return LocationTable(x, y, angle, vx, vy, w)
 end
 
+function Structure:findPart(cursorX, cursorY)
+	x, y = self.body:getLocalPoint(cursorX, cursorY)
+
+	local part = self.gridTable:index(
+		math.floor(x + .5),
+		math.floor(y + .5))
+
+	local partSide = part:getPartSide(cursorX, cursorY)
+	return part, partSide
+end
+
 -------------------------------
 -- Adding and Removing Parts --
 -------------------------------
 function Structure:addFixture(part)
-	local shape = love.physics.newRectangleShape(part.location[1],
-												 part.location[2],
-												 1, 1)
+	local shape = love.physics.newRectangleShape(
+		part.location[1],
+		part.location[2],
+		1, 1)
 	local fixture = love.physics.newFixture(self.body, shape)
 	part:setFixture(fixture)
 end
@@ -134,7 +143,7 @@ function Structure:addPart(part, x, y, orientation)
 	self.gridTable:index(x, y, part)
 	if part.gun then self.guns[part.gun] = {part.location} end
 	if part.engine then self.engines[part.engine] = {part.location} end
-	if part.heal then self.heal[part.heal] = {part} end
+	if part.heal then self.heal[part.heal] = {part.health} end
 end
 
 -- If there are no more parts in the structure,
@@ -314,8 +323,10 @@ function Structure:recalculateSize()
 end
 
 -- Part was disconnected or destroyed remove part and handle outcome.
-function Structure:disconnectPart(part)
-	if #self.gridTable:loop() == 1 and not part.isDestroyed then
+function Structure:disconnectPart(location)
+	local part = self.gridTable:index(location[1], location[2])
+	local isDestroyed = part.health:getIsDestroyed()
+	if #self.gridTable:loop() == 1 and not isDestroyed() then
 		-- if structure will bedestoryed
 		if part.isDestroyed then
 			self:removePart(part)
@@ -328,7 +339,7 @@ function Structure:disconnectPart(part)
 	self.gridTable:index(x, y, nil, true)
 
 	local savedPart
-	if part.isDestroyed then
+	if isDestroyed() then
 		self:removePart(part)
 	else
 		savedPart = part
@@ -416,7 +427,8 @@ function Structure:command(dt)
 	gunControls = Gun.process(gunOrders)
 
 	for gun, t in pairs(self.guns) do
-		local partX, partY, angle = unpack(t[1])
+		local l = t[1]
+		local partX, partY, angle = unpack(l)
 
 		local x, y = unpack(StructureMath.addUnitVector(l, angle))
 		local clear = not self.gridTable:index(x, y)

@@ -25,9 +25,8 @@ function AIBlock:getTeam()
 	return self.ai.team
 end
 
-function AIBlock:getOrders()
-	return self.ai:getOrders(self.worldInfo, self.leader,
-							 self.fixture:getBody())
+function AIBlock:getOrders(body)
+	return self.ai:getOrders(self.worldInfo, self.leader, body)
 end
 
 function AIBlock:getMenu()

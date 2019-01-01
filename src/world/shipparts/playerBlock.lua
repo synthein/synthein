@@ -13,7 +13,7 @@ function PlayerBlock:__create(team, leader)
 
 	self.engine = Engine(1, 15, 5)
 	self.gun = Gun()
-	self.heal = Heal()
+	self.heal = Heal(self.health)
 	self.orders = {}
 
 	self.isPlayer = true

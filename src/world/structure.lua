@@ -450,7 +450,7 @@ function Structure:command(dt)
 	end
 
 	for heal, t in pairs(self.heal) do
-		heal:update(dt, t[1])
+		heal:update(dt)
 	end
 
 	for health, t in pairs(self.health) do

@@ -47,9 +47,9 @@ function Shot:getSaveData(references)
 end
 
 function Shot:collision(fixture)
-	local object = fixture:getUserData()
-	if object ~= self.sourcePart and self.firstContact then
-		object:damage(1)
+	if fixture ~= self.sourcePart.fixture and self.firstContact then
+		local object = fixture:getUserData()
+		object:damage(fixture, 1)
 		self:destroy()
 		self.firstContact = false --this is needed because of bullet body physics
 	end

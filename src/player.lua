@@ -190,18 +190,15 @@ end
 
 function Player:drawWorldObjects()
 	local a, b, c, d = self.camera:getWorldBorder()
-	local callbackData = {}
 
 	local function callback(fixture)
-		table.insert(callbackData, fixture:getUserData())
+		local object = fixture:getUserData()
+		object:draw(fixture)
+
 		return true
 	end
 
 	self.world.physics:queryBoundingBox(a, b, c, d, callback)
-
-	for _, object in ipairs(callbackData) do
-		object:draw()
-	end
 end
 
 function Player:drawExtras()

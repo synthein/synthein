@@ -12,8 +12,10 @@ function Engine:__create(engineType, thrust, torque)
 	-- Type
 	-- 1: Found in playerBlock and aiBlock and is an all direction engine
 	-- 2: Found in engineBlock is a single direction engine.
+end
 
-	return self
+function Engine:getIsActive()
+	return function() return self.isActive end
 end
 
 function Engine.process(orders)

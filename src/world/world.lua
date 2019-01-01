@@ -73,8 +73,8 @@ function World.beginContact(a, b, coll)
 			sqV = 0
 		end
 
-		objectA:collision(b, sqV, {aVX, aVY})
-		objectB:collision(a, sqV, {aVX, aVY})
+		objectA:collision(a, b, sqV, {aVX, aVY})
+		objectB:collision(b, a, sqV, {aVX, aVY})
 	elseif aSensor and not bSensor then
 		objectA:collision(b)
 	elseif bSensor and not aSensor then
@@ -115,7 +115,7 @@ function World:getObject(locationX, locationY)
 
 	local callback = function(fixture)
 		local body = fixture:getBody()
-		local object = {body:getUserData(), fixture:getUserData()}
+		local object = {body:getUserData()}
 		table.insert(objects, object)
 		return true
 	end
@@ -126,9 +126,6 @@ function World:getObject(locationX, locationY)
 
 	for _, object in ipairs(objects) do
 		if object[1] then
-			if object[1]:type() == "structure" then
-				object[3] = object[2]:getPartSide(locationX, locationY)
-			end
 			return unpack(object)
 		end
 	end

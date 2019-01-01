@@ -22,8 +22,9 @@ function Selection.create(world, team, camera)
 end
 
 function Selection:pressed(cursorX, cursorY, order)
-	local structure, part =
-		self.world:getObject(cursorX, cursorY)
+	local structure = self.world:getObject(cursorX, cursorY)
+	local part, partSide
+	if structure then part, partSide = structure:findPart(cursorX, cursorY) end
 
 	if structure and structure:type() == "structure" and part then
 		if self.build then
@@ -65,7 +66,7 @@ function Selection:pressed(cursorX, cursorY, order)
 				local corePart = structure.corePart
 				local team = structure:getTeam()
 				if team == 0 or (team == self.team and part ~= corePart) then
-					structure:disconnectPart(part)
+					structure:disconnectPart(part.location)
 				end
 			end
 		end

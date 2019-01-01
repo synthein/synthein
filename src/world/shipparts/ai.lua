@@ -5,8 +5,6 @@ local AI = class()
 function AI:__create(team)
 	self.team = team
 	self.follow = true
-
-	return self
 end
 
 function AI:getOrders(worldInfo, leader, body)

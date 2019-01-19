@@ -18,10 +18,9 @@ function Health:damage(damage, location)
 	end
 end
 
-function Health:update(disconnectCallback, createCallback)
+function Health:update()
 	if self.isDestroyed then
-		disconnectCallback(true)
-		createCallback({"particles", self.location})
+		return {"particles", {0, 0, 1}}, true
 	end
 end
 

@@ -406,11 +406,9 @@ end
 -- Restructure input from player or output from ai
 -- make the information easy for parts to handle.
 function Structure:command(dt)
-	local orders
+	local orders = {}
 	if self.corePart then
 		orders = self.corePart:getOrders(self.body)
-	else
-		return {}
 	end
 
 	local engineOrders = {}
@@ -426,20 +424,24 @@ function Structure:command(dt)
 		if order == "shoot" then table.insert(gunOrders, order) end
 	end
 
+	local function create(object, location)
+		location = StructureMath.sumVectors(location, object[2])
+		object[2] = self:getWorldLocation(location)
+		table.insert(self.events.create, object)
+	end
+
 	gunControls = Gun.process(gunOrders)
 
 	for gun, t in pairs(self.guns) do
-		local l = t[1]
-		local partX, partY, angle = unpack(l)
+		local function getPart(location)
+			location[3] = 0
+			local x, y = unpack(StructureMath.sumVectors(t[1], location))
+			return self.gridTable:index(x, y)
+		end
 
-		local x, y = unpack(StructureMath.addUnitVector(l, angle))
-		local clear = not self.gridTable:index(x, y)
-
-		if gun:update(dt, shoot, clear) then
-			local location = self:getWorldLocation(t[1])
-			local part = self.gridTable:index(partX, partY)
-
-			table.insert(self.events.create, {"shot", location, part})
+		local newObject = gun:update(dt, shoot, getPart)
+		if newObject then
+			create(newObject, t[1])
 		end
 	end
 
@@ -454,15 +456,13 @@ function Structure:command(dt)
 	end
 
 	for health, t in pairs(self.health) do
-		local function disconnectCallback(isDestroyed)
-			self:disconnectPart(t[1], isDestroyed)
+		local newObject, disconnect = health:update()
+		if newObject then
+			create(newObject, t[1])
+			if disconnect then
+				self:disconnectPart(t[1], true)
+			end
 		end
-
-		local function createCallback(t)
-			table.insert(self.events.create, t)
-		end
-
-		health:update(disconnectCallback, createCallback)
 	end
 
 	return commands

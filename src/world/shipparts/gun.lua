@@ -17,7 +17,7 @@ function Gun.process(orders)
 	return shoot
 end
 
-function Gun:update(dt, shoot, clear)
+function Gun:update(dt, shoot, getPart)
 	if not self.charged then
 		if self.rechargeTimer:ready(dt) then
 			self.charged = true
@@ -26,10 +26,10 @@ function Gun:update(dt, shoot, clear)
 		if shoot then
 			-- Check if there is a part one block infront of the gun.
 
-			if clear then
+			if not getPart({0, 1}) then
 				self.charged = false
 				-- Spawn Shot
-				return true
+				return {"shot", {0, 0, 1}, getPart({0,0})}
 			end
 		end
 	end

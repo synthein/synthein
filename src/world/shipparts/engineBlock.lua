@@ -18,9 +18,10 @@ function EngineBlock:__create()
 	self.connectableSides[3] = false
 	self.connectableSides[4] = false
 
-	self.engine = Engine(2, 15)
+	local engine = Engine(2, 15)
+	self.modules["engine"] = engine
 
-	local isActive = self.engine:getIsActive()
+	local isActive = engine:getIsActive()
 
 	function self.userData:draw(fixture)
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()

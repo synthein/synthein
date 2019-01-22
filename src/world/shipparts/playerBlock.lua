@@ -11,9 +11,9 @@ function PlayerBlock:__create(team, leader)
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "control"
 
-	self.engine = Engine(1, 15, 5)
-	self.gun = Gun()
-	self.heal = Heal(self.health)
+	self.modules["engine"] = Engine(1, 15, 5)
+	self.modules["gun"] = Gun()
+	self.modules["heal"] = Heal(self.modules.health)
 	self.orders = {}
 
 	self.isPlayer = true

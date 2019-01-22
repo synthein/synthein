@@ -8,18 +8,18 @@ local StackManager = {}
 StackManager.__index = StackManager
 
 -- Creates a managed stack and returns a reference to the current state.
-function StackManager.create(initalState, indexValue)
+function StackManager.create(initialState, indexValue)
 	local self = {}
 	setmetatable(self, StackManager)
 
 	self.indexValue = indexValue
 	self.stack = Stack.create()
-	self:createQueue(initalState)
+	self:createQueue(initialState)
 
 	return self:createCurrentStateReference()
 end
 
-function StackManager:createQueue(intialState)
+function StackManager:createQueue(initialState)
 	local currentState = function()
 		return self.stack:peek()
 	end
@@ -47,7 +47,7 @@ function StackManager:createQueue(intialState)
 
 	self.queue = CallList.create(self.stack, options)
 
-	self.queue.list:push(intialState)
+	self.queue.list:push(initialState)
 	self:processQueue()
 end
 

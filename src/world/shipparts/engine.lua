@@ -49,7 +49,9 @@ function Engine.process(orders)
 	return controlTable
 end
 
-function Engine:update(body, location, controlTable)
+function Engine:update(inputs, location)
+	local body = inputs.body
+	local controlTable = inputs.controls.engine
 	local x, y, orientation = unpack(location)
 	local active, fx, fy
 
@@ -88,8 +90,6 @@ function Engine:update(body, location, controlTable)
 			body:applyTorque(controlTable[7] * self.torque)
 		end
 	end
-
-	return active
 end
 
 return Engine

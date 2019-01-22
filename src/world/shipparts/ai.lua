@@ -132,4 +132,7 @@ function AI:runMenu(i)
 	end
 end
 
+function AI:update()
+end
+
 return AI

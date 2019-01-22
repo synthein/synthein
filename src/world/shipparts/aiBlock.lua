@@ -10,8 +10,8 @@ function AIBlock:__create(team, leader)
 	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
 	self.type = "control"
 
-	self.engine = Engine(1, 10, 10)
-	self.ai = AI(team)
+	self.modules["engine"] = Engine(1, 10, 10)
+	self.modules["ai"] = AI(team)
 	self.leader = leader
 end
 
@@ -22,11 +22,11 @@ function AIBlock:postCreate(references)
 end
 
 function AIBlock:getTeam()
-	return self.ai.team
+	return self.modules.ai.team
 end
 
 function AIBlock:getOrders(body)
-	return self.ai:getOrders(self.worldInfo, self.leader, body)
+	return self.modules.ai:getOrders(self.worldInfo, self.leader, body)
 end
 
 function AIBlock:getMenu()

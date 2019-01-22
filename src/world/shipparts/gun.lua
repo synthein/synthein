@@ -17,19 +17,19 @@ function Gun.process(orders)
 	return shoot
 end
 
-function Gun:update(dt, shoot, getPart)
+function Gun:update(inputs, location)
 	if not self.charged then
-		if self.rechargeTimer:ready(dt) then
+		if self.rechargeTimer:ready(inputs.dt) then
 			self.charged = true
 		end
 	else
-		if shoot then
+		if inputs.controls.gun then
 			-- Check if there is a part one block infront of the gun.
-
-			if not getPart({0, 1}) then
+			local getPart = inputs.getPart
+			if not getPart(location, {0, 1}) then
 				self.charged = false
 				-- Spawn Shot
-				return {"shot", {0, 0, 1}, getPart({0,0})}
+				return {"shot", {0, 0, 1}, getPart(location, {0,0})}
 			end
 		end
 	end

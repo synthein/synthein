@@ -7,8 +7,8 @@ function Heal:__create(health)
 	self.health = health
 end
 
-function Heal:update(dt)
-	if self.timer:ready(dt) then
+function Heal:update(inputs)
+	if self.timer:ready(inputs.dt) then
 		self.health:repair(1)
 	end
 end

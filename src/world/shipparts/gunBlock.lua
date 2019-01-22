@@ -8,7 +8,7 @@ function GunBlock:__create()
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
-	self.gun = Gun()
+	self.modules["gun"] = Gun()
 
 	-- GunBlocks can only connect to things on their bottom side.
 	self.connectableSides[1] = false

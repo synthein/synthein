@@ -15,7 +15,7 @@ function Part:__create()
 	self.gun = false
 	self.type = "generic"
 
-	self.health = Health(10)
+	self.modules = {health = Health(10)}
 
 	self.userData = {}
 	function self.userData:draw(fixture)
@@ -37,7 +37,7 @@ function Part:__create()
 		body:applyLinearImpulse(xI * mult, yI * mult)
 	end
 
-	local health = self.health
+	local health = self.modules.health
 	function self.userData:damage(fixture, damage)
 		local location = LocationTable(fixture, self.location)
 		health:damage(damage, location)
@@ -50,6 +50,10 @@ end
 
 function Part:saveData()
 	return {self.health}
+end
+
+function Part:getModules()
+	return self.modules
 end
 
 function Part:setFixture(fixture)

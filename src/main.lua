@@ -5,6 +5,14 @@ local MainMenu = require("gamestates/mainMenu")
 
 local state
 
+local usage =
+[[usage: synthein [FLAGS]
+
+Available flags:
+    --test          Run the test suite.
+    --scene=NAME    Bypass all menus and jump straight into a scene
+    --help          Print this usage message.]]
+
 function love.load()
 	state = StackManager.create(MainMenu, "stackQueue")
 
@@ -19,6 +27,13 @@ function love.load()
 	for _, flag in ipairs(arg) do
 		if flag == "--test" then
 			require("tests")
+			love.event.quit()
+		elseif flag:match("^--scene=(%w+)") then
+			local InitWorld = require("gamestates/initWorld")
+			local scene = flag:match("^--scene=(%w+)")
+			MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
+		elseif flag == "--help" then
+			print(usage)
 			love.event.quit()
 		end
 	end

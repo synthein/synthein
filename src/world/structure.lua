@@ -57,10 +57,6 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 	self.body:setUserData(self)
 
-	self.guns = {}
-	self.engines = {}
-	self.heal = {}
-	self.health = {}
 	local function callback(part, structure, x , y)
 		structure:addPart(part, x, y, part.location[3])
 	end
@@ -142,10 +138,6 @@ function Structure:addPart(part, x, y, orientation)
 	self:recalculateSize()
 
 	self.gridTable:index(x, y, part)
-	if part.gun then self.guns[part.gun] = {part.location} end
-	if part.engine then self.engines[part.engine] = {part.location} end
-	if part.heal then self.heal[part.heal] = {part.health} end
-	if part.health then self.health[part.health] = {part.location} end
 end
 
 -- If there are no more parts in the structure,
@@ -158,10 +150,6 @@ function Structure:removePart(part)
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 	part.fixture:destroy()
-	if part.gun then self.guns[part.gun] = nil end
-	if part.engine then self.engines[part.engine] = nil end
-	if part.heal then self.heal[part.heal] = nil end
-	if part.health then self.health[part.health] = nil end
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then
@@ -424,43 +412,38 @@ function Structure:command(dt)
 		if order == "shoot" then table.insert(gunOrders, order) end
 	end
 
+	gunControls = Gun.process(gunOrders)
+	engineControls = Engine.process(engineOrders)
+
 	local function create(object, location)
 		location = StructureMath.sumVectors(location, object[2])
 		object[2] = self:getWorldLocation(location)
 		table.insert(self.events.create, object)
 	end
 
-	gunControls = Gun.process(gunOrders)
 
-	for gun, t in pairs(self.guns) do
-		local function getPart(location)
-			location[3] = 0
-			local x, y = unpack(StructureMath.sumVectors(t[1], location))
-			return self.gridTable:index(x, y)
-		end
-
-		local newObject = gun:update(dt, shoot, getPart)
-		if newObject then
-			create(newObject, t[1])
-		end
+	local function getPart(location, pointer)
+		pointer[3] = 0
+		local x, y = unpack(StructureMath.sumVectors(location, pointer))
+		return self.gridTable:index(x, y)
 	end
 
-	engineControls = Engine.process(engineOrders)
 
-	for engine, t in pairs(self.engines) do
-		engine:update(self.body, t[1], engineControls)
-	end
+	local moduleInputs = {
+		dt = dt,
+		body = self.body,
+		getPart = getPart,
+		controls = {gun = gunControls, engine = engineControls}}
 
-	for heal, t in pairs(self.heal) do
-		heal:update(dt)
-	end
-
-	for health, t in pairs(self.health) do
-		local newObject, disconnect = health:update()
-		if newObject then
-			create(newObject, t[1])
+	for _, part in ipairs(self.gridTable:loop()) do
+		for _, module in pairs(part:getModules()) do
+			local location = part.location
+			local newObject, disconnect = module:update(moduleInputs, location)
+			if newObject then
+				create(newObject, location)
+			end
 			if disconnect then
-				self:disconnectPart(t[1], true)
+				self:disconnectPart(location, true)
 			end
 		end
 	end

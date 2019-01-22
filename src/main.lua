@@ -24,18 +24,26 @@ function love.load()
 
 	setmetatable(love, {__index = getStateFunction})
 
-	for _, flag in ipairs(arg) do
-		if flag == "--test" then
+	local i = 1
+	while arg[i] do
+		if arg[i] == "--test" then
 			require("tests")
 			love.event.quit()
-		elseif flag:match("^--scene=(%w+)") then
+		elseif arg[i] == "--scene" then
 			local InitWorld = require("gamestates/initWorld")
-			local scene = flag:match("^--scene=(%w+)")
+			local scene = arg[i+1]
 			MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
-		elseif flag == "--help" then
+			i = i + 1
+		elseif arg[i]:match("^--scene=(%w+)") then
+			local InitWorld = require("gamestates/initWorld")
+			local scene = arg[i]:match("^--scene=(%w+)")
+			MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
+		elseif arg[i] == "--help" then
 			print(usage)
 			love.event.quit()
 		end
+
+		i = i + 1
 	end
 end
 

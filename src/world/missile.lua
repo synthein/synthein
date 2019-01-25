@@ -10,6 +10,7 @@ function Missile:__create(worldInfo, location, data, appendix)
 	local height = image:getHeight()
 	self.drawData = {image, 0.4/width, -0.8/height, width/2, height/2}
 
+	self.thrust = 10
 	self.body:setLinearVelocity(location[4], location[5])
 	self.body:setAngularVelocity(0)
 
@@ -55,6 +56,8 @@ function Missile:update(dt)
 	if self.timer:ready(dt) then
 		self:destroy()
 	end
+
+	self.body:applyForce(Util.vectorComponents(self.thrust, self.body:getAngle() + math.pi/2))
 
 	return {}
 end

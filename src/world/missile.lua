@@ -14,7 +14,7 @@ function Missile:__create(worldInfo, location, data, appendix)
 	self.body:setLinearVelocity(location[4], location[5])
 	self.body:setAngularVelocity(0)
 
-	self.physicsShape = love.physics.newRectangleShape(.2, .2)
+	self.physicsShape = love.physics.newRectangleShape(.4, .8)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setSensor(true)
 	self.fixture:setUserData(self)

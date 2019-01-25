@@ -46,7 +46,7 @@ end
 function Missile:collision(fixture)
 	if fixture ~= self.sourcePart.fixture and self.firstContact then
 		local object = fixture:getUserData()
-		object:damage(fixture, 1)
+		object:damage(fixture, 10)
 		self:destroy()
 		self.firstContact = false --this is needed because of bullet body physics
 	end

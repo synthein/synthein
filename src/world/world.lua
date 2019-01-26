@@ -46,7 +46,7 @@ function World:__create(playerHostility)
 	self.info = {events = self.events, physics = self.physics,
 					teamHostility = teamHostility}
 
-	self.boarders = nil
+	self.borders = nil
 end
 
 function World.beginContact(a, b, coll)
@@ -162,10 +162,10 @@ function World:update(dt)
 
 			object:update(dt)
 
-			if (self.boarders and (objectX < self.boarders[1] or
-								   objectY < self.boarders[2] or
-								   objectX > self.boarders[3] or
-								   objectY > self.boarders[4])) then
+			if (self.borders and (objectX < self.borders[1] or
+								   objectY < self.borders[2] or
+								   objectX > self.borders[3] or
+								   objectY > self.borders[4])) then
 				object:destroy()
 			end
 		end
@@ -175,11 +175,11 @@ function World:update(dt)
 		end
 	end
 
-	self.boarders = nextBorders
-	self.boarders[1] = self.boarders[1] - 10000
-	self.boarders[2] = self.boarders[2] - 10000
-	self.boarders[3] = self.boarders[3] + 10000
-	self.boarders[4] = self.boarders[4] + 10000
+	self.borders = nextBorders
+	self.borders[1] = self.borders[1] - 10000
+	self.borders[2] = self.borders[2] - 10000
+	self.borders[3] = self.borders[3] + 10000
+	self.borders[4] = self.borders[4] + 10000
 
 	for _, object in ipairs(self.events.create) do
 		local objectClass = World.objectTypes[object[1]]

@@ -14,10 +14,31 @@ function Missile:__create(worldInfo, location, data, appendix)
 	self.body:setLinearVelocity(location[4], location[5])
 	self.body:setAngularVelocity(0)
 
-	self.physicsShape = love.physics.newRectangleShape(.4, .8)
-	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
+	local physicsShape = love.physics.newRectangleShape(.4, .8)
+	self.fixture = love.physics.newFixture(self.body, physicsShape)
 	self.fixture:setSensor(true)
 	self.fixture:setUserData(self)
+
+	local visionArcRadius = 50
+	local visionArcAngle = (60/180)*(math.pi)
+	local x, y = Util.vectorComponents(visionArcRadius, (math.pi/2)-(visionArcAngle/2))
+	local visionArcShape = love.physics.newPolygonShape(
+		0, 0,
+		x, y,
+		-x, y
+	)
+
+	self.target = nil
+	self.visionArc = love.physics.newFixture(self.body, visionArcShape, 0)
+	self.visionArc:setUserData({
+		collision = function(_, targetFixture)
+			if not self.target then
+				self.target = targetFixture:getBody()
+			end
+		end,
+		draw = function() end,
+	})
+	self.visionArc:setSensor(true)
 
 	self.timer = Timer(15)
 	self.firstContact = true
@@ -57,9 +78,31 @@ function Missile:update(dt)
 		self:destroy()
 	end
 
+	if self.target then
+		local missileX, missileY = self.body:getPosition()
+		local targetX, targetY = self.target:getPosition()
+		local angle = Util.vectorAngle(targetX - missileX, targetY - missileY)
+		local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
+		local sign = Util.sign(angleToTarget)
+
+		self.body:applyTorque(sign)
+	end
+
 	self.body:applyForce(Util.vectorComponents(self.thrust, self.body:getAngle() + math.pi/2))
 
 	return {}
 end
+
+-- Debug
+function Missile:draw()
+	local x, y, angle = self:getLocation():getXYA()
+	local data = self.drawData
+	love.graphics.draw(data[1], x, y, angle, data[2], data[3], data[4], data[5])
+
+	love.graphics.setLineWidth(0.05)
+
+	love.graphics.polygon('line', self.body:getWorldPoints(self.visionArc:getShape():getPoints()))
+end
+-- End debug.
 
 return Missile

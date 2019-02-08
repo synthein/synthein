@@ -1,5 +1,5 @@
-player = structure(0,-1,0)[1]
+player = structure(0,0,0)[1]
 {
 p*
 }
-missile(0,9,3.14)[-1,300]
+missile(4,15,3.14)[-1,300]

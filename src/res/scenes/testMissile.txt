@@ -3,3 +3,5 @@ player = structure(0,0,0)[1]
 p*
 }
 missile(4,15,3.14)[-1,300]
+missile(-7,5,3.14)[-1,300]
+missile(-7,-2,0)[-1,300]

@@ -11,12 +11,12 @@ function Missile:__create(worldInfo, location, data, appendix)
 	self.drawData = {image, 0.4/width, -0.8/height, width/2, height/2}
 
 	self.thrust = 10
+	self.torque = 0.2
 	self.body:setLinearVelocity(location[4], location[5])
 	self.body:setAngularVelocity(0)
 
 	local physicsShape = love.physics.newRectangleShape(.4, .8)
 	self.fixture = love.physics.newFixture(self.body, physicsShape)
-	self.fixture:setSensor(true)
 	self.fixture:setUserData(self)
 
 	local visionArcRadius = 50
@@ -68,9 +68,17 @@ function Missile:collision(fixture)
 	if fixture ~= self.sourcePart.fixture and self.firstContact then
 		local object = fixture:getUserData()
 		object:damage(fixture, 10)
-		self:destroy()
+		self:explode()
 		self.firstContact = false --this is needed because of bullet body physics
 	end
+end
+
+function Missile:damage(fixture)
+	self:explode()
+end
+
+function Missile:explode()
+	self:destroy()
 end
 
 function Missile:update(dt)
@@ -85,24 +93,12 @@ function Missile:update(dt)
 		local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
 		local sign = Util.sign(angleToTarget)
 
-		self.body:applyTorque(sign)
+		self.body:applyTorque(sign * self.torque)
 	end
 
 	self.body:applyForce(Util.vectorComponents(self.thrust, self.body:getAngle() + math.pi/2))
 
 	return {}
 end
-
--- Debug
-function Missile:draw()
-	local x, y, angle = self:getLocation():getXYA()
-	local data = self.drawData
-	love.graphics.draw(data[1], x, y, angle, data[2], data[3], data[4], data[5])
-
-	love.graphics.setLineWidth(0.05)
-
-	love.graphics.polygon('line', self.body:getWorldPoints(self.visionArc:getShape():getPoints()))
-end
--- End debug.
 
 return Missile

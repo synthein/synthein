@@ -48,7 +48,7 @@ local maskList = {
 	camera = {"visual", "shield", "projectiles", "general"},
 	visual = {"cameras"},
 	shield = {"cameras", "projectiles"},
-	projectile = {"cameras", "shield", "projectiles", "general"},
+	projectiles = {"cameras", "shield", "projectiles", "general"},
 	general = {"cameras", "projectiles", "general"}
 }
 

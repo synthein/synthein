@@ -81,11 +81,11 @@ function World.beginContact(a, b, coll)
 	local objectB = b:getUserData()
 
 	if aCategory <= bCategory then
-		objectA:collision(b, sqV, aL)
+		objectA:collision(a, b, sqV, aL)
 	end
 
 	if bCategory <= aCategory then
-		objectB:collision(a, sqV, bL)
+		objectB:collision(b, a, sqV, bL)
 	end
 
 	--[[

@@ -125,6 +125,7 @@ function Structure:addFixture(part)
 		part.location[2],
 		1, 1)
 	local fixture = love.physics.newFixture(self.body, shape)
+	fixture:setRestitution(0.1)
 	part:setFixture(fixture)
 end
 

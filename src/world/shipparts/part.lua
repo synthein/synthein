@@ -35,7 +35,6 @@ function Part:__create()
 		if mult < -10 then mult = -10 end
 		mult = mult / 10
 		local xI, yI = unpack(pointVelocity)
-		body:applyLinearImpulse(xI * mult, yI * mult)
 	end
 
 	local health = self.modules.health

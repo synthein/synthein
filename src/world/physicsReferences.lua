@@ -1,12 +1,11 @@
 local PhysicsReferences = {}
 
---[[ Types
-cameras		players/what ships see
-visual		animations
-shields
-projectiles
-general		basic physics bodies
-]]--
+--- Types
+--cameras		players/what ships see
+--visual		animations
+--shields
+--projectiles
+--general		basic physics bodies
 
 -- Main reference tables
 local sensors

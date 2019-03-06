@@ -2,6 +2,7 @@ local Util = require("util")
 local Timer = require("timer")
 
 local Shot = class(require("world/worldObjects"))
+local PhysicsReferences = require("world/physicsReferences")
 
 function Shot:__create(worldInfo, location, data, appendix)
 	local imageName = "shot"
@@ -18,6 +19,8 @@ function Shot:__create(worldInfo, location, data, appendix)
 	self.physicsShape = love.physics.newRectangleShape(.2, .2)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setSensor(true)
+
+	PhysicsReferences.setFixtureType(self.fixture, "projectiles")
 	self.fixture:setUserData(self)
 
 	self.timer = Timer(5)
@@ -46,10 +49,10 @@ function Shot:getSaveData(references)
 	return {self.timer:time(), structure, x, y}
 end
 
-function Shot:collision(fixture)
-	if fixture ~= self.sourcePart.fixture and self.firstContact then
-		local object = fixture:getUserData()
-		object:damage(fixture, 1)
+function Shot:collision(fixture, otherFixture)
+	if otherFixture ~= self.sourcePart.fixture and self.firstContact then
+		local object = otherFixture:getUserData()
+		object:damage(otherFixture, 1)
 		self:destroy()
 		self.firstContact = false --this is needed because of bullet body physics
 	end

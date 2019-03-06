@@ -1,12 +1,13 @@
 local Timer = require("timer")
 
 local Particles = class(require("world/worldObjects"))
+local PhysicsReferences = require("world/physicsReferences")
 
 function Particles:__create(worldInfo, location, data, appendix)
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
-	self.fixture:setSensor(true)
+	PhysicsReferences.setFixtureType(self.fixture, "visual")
 	self.timer = Timer(0.3)
 	self.data = data
 

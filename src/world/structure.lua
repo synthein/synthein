@@ -382,9 +382,6 @@ function Structure:disconnectPart(location, isDestroyed)
 		local newStructure = {"structure", location, {parts = structure}}
 		table.insert(self.events.create, newStructure)
 	end
-
-
-	self:recalculateSize()
 end
 
 -------------------------

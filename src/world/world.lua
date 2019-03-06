@@ -1,6 +1,7 @@
 local Particles = require("world/particles")
 local Shot = require("world/shot")
 local Structure = require("world/structure")
+local PhysicsReferences = require("world/physicsReferences")
 
 local World = class()
 
@@ -49,19 +50,19 @@ function World:__create(playerHostility)
 	self.borders = nil
 end
 
-function World.beginContact(a, b, coll)
+function World.beginContact(fixtureA, fixtureB, coll)
 	--print("beginContact")
-	local aSensor = a:isSensor()
-	local bSensor = b:isSensor()
-	local objectA, objectB
-	objectA = a:getUserData()
-	objectB = b:getUserData()
+	local aCategory = fixtureA:getFilterData()
+	local bCategory = fixtureB:getFilterData()
 
-	if not aSensor and not bSensor then
+	local partCategory = PhysicsReferences.getCategory("general")
+	local sqV, aL, bL
+	if aCategory == partCategory and bCategory == partCategory then
+
 		local x, y = coll:getPositions()
-		local bodyA = a:getBody()
-		local bodyB = b:getBody()
-		local sqV, aVX, aVY, bVX, bVY
+		local bodyA = fixtureA:getBody()
+		local bodyB = fixtureB:getBody()
+		local aVX, aVY, bVX, bVY
 
 		if x and y then
 			aVX, aVY = bodyA:getLinearVelocityFromWorldPoint(x, y)
@@ -72,31 +73,37 @@ function World.beginContact(a, b, coll)
 		else
 			sqV = 0
 		end
+		aL = {aVX, aVY}
+		bL = {bVX, bVY}
+	end
 
-		objectA:collision(a, b, sqV, {aVX, aVY})
-		objectB:collision(b, a, sqV, {aVX, aVY})
-	elseif aSensor and not bSensor then
-		objectA:collision(b)
-	elseif bSensor and not aSensor then
-		objectB:collision(a)
+	local objectA = fixtureA:getUserData()
+	local objectB = fixtureB:getUserData()
+
+	if aCategory <= bCategory then
+		objectA:collision(fixtureA, fixtureB, sqV, aL)
+	end
+
+	if bCategory <= aCategory then
+		objectB:collision(fixtureB, fixtureA, sqV, bL)
 	end
 end
 
 
-function World.endContact() --(a, b, coll)
+function World.endContact() --(fixtureA, fixtureB, coll)
 	--print("endContact")
 end
 
-function World.preSolve(a, b, coll)
+function World.preSolve(fixtureA, fixtureB, coll)
 	--print("preSolve")
-	local objectA = a:getUserData()
-	local objectB = b:getUserData()
+	local objectA = fixtureA:getUserData()
+	local objectB = fixtureB:getUserData()
 	if objectA.isDestroyed or objectB.isDestroyed then
 		coll:setEnabled(false)
 	end
 end
 
-function World.postSolve() --(a, b, coll, normalimpulse, tangentimpulse)
+function World.postSolve() --(fixtureA, fixtureB, coll, normalimpulse, tangentimpulse)
 	--print("postSolve")
 end
 

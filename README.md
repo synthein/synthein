@@ -5,18 +5,20 @@ parts to make your space ship bigger and better.
 
 ## Features
 
-*  You can build onto your ship.
-*  Enemies spawn at random.
-*  AI allies can follow you and attack nearby enemies.
+*  Build your ship.
+*  Destroy enemies that spawn at random.
+*  Build AI allies can follow you and attack nearby enemies.
 
-### Planned Features [![Stories in Ready](https://badge.waffle.io/synthein/synthein.png?label=ready&title=Ready)](http://waffle.io/synthein/synthein)
+![screenshot](http://i.imgur.com/b2QnY5A.png)
+
+### Planned Features
 
 * AI allies that you can give orders to (follow, guard, patrol)
 * a customizable automated base
 * storable ship configurations
 * an open world with randomly generated things to encounter and explore
 
-![screenshot](http://i.imgur.com/b2QnY5A.png)
+Check out [our issues](https://github.com/synthein/synthein/issues) to see more of our plans.
 
 ## Installing
 

@@ -1,5 +1,6 @@
 local Engine = require("world/shipparts/engine")
 local AI = require("world/shipparts/ai")
+local Sensor = require("world/shipparts/sensor")
 
 local AIBlock = class(require("world/shipparts/part"))
 
@@ -11,6 +12,7 @@ function AIBlock:__create(team, leader)
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 10, 10)
+	self.modules["sensor"] = Sensor()
 	self.modules["ai"] = AI(team)
 	self.leader = leader
 end

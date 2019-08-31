@@ -15,7 +15,7 @@ local groups = {}
 
 -- Physical bodies are set to false
 sensors = {
-	cameras = true,
+	camera = true,
 	visual = true,
 	shield = true,
 	projectiles = true,
@@ -26,7 +26,7 @@ sensors = {
 --the collision function called on them. If the two fixtures of the same type
 --the collison function will be called on both.
 local catergoryOrder = {
-	"cameras", --players/what ships see
+	"camera", --players/what ships see
 	"visual", --animations
 	"shield",
 	"projectiles",
@@ -45,10 +45,10 @@ end
 
 local maskList = {
 	camera = {"visual", "shield", "projectiles", "general"},
-	visual = {"cameras"},
-	shield = {"cameras", "projectiles"},
-	projectiles = {"cameras", "shield", "projectiles", "general"},
-	general = {"cameras", "projectiles", "general"}
+	visual = {"camera"},
+	shield = {"camera", "projectiles"},
+	projectiles = {"camera", "shield", "projectiles", "general"},
+	general = {"camera", "projectiles", "general"}
 }
 
 for k, t in pairs(maskList) do
@@ -61,7 +61,7 @@ end
 
 --Groups determine if they collide with themselfs
 local collision = {"missiles", "general"}
-local noCollision = {"cameras", "visual", "shield", "projectiles"}
+local noCollision = {"camera", "visual", "shield", "projectiles"}
 
 for i, v in ipairs(collision) do
 	groups[v] = i

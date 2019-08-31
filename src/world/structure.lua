@@ -135,6 +135,7 @@ end
 function Structure:addPart(part, x, y, orientation)
 	part:setLocation({x, y, orientation})
 	self:addFixture(part)
+	part:addFixtures(self.body)
 	--self:calculateSize(x, y)
 	self:recalculateSize()
 
@@ -151,7 +152,9 @@ function Structure:removePart(part)
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 	part.fixture:destroy()
+	function Part:removeFixtures(body)
 
+	end
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then
 --			return

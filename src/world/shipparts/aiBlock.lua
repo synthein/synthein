@@ -12,7 +12,7 @@ function AIBlock:__create(team, leader)
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 10, 10)
-	self.modules["sensor"] = Sensor()
+	self.modules["sensor"] = Sensor(200)
 	self.modules["ai"] = AI(team)
 	self.leader = leader
 end
@@ -25,6 +25,14 @@ end
 
 function AIBlock:getTeam()
 	return self.modules.ai.team
+end
+
+function AIBlock:addFixtures(body)
+	self.modules.sensor:addFixtures(body, 0, 0)
+end
+
+function AIBlock:removeFixtures()
+
 end
 
 function AIBlock:getOrders(body)

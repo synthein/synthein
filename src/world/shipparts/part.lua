@@ -37,10 +37,10 @@ function Part:__create()
 		local xI, yI = unpack(pointVelocity)
 	end
 
-	local health = self.modules.health
+	local modules = self.modules
 	function self.userData:damage(fixture, damage)
 		local location = LocationTable(fixture, self.location)
-		health:damage(damage, location)
+		modules.health:damage(damage, location)
 	end
 end
 

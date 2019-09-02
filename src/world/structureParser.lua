@@ -105,7 +105,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 			if c == '\n' then
 				j = 0
 				k = k + 1
-			elseif c == 'b' or c == 'e' or c == 'g' or c == 'a' or c == 'p' or c == 'n' then
+			elseif PartRegistry.partsList[c] ~= nil then
 				local part = PartRegistry.createPart(c, shipData)
 				local orientation
 				if nc == '*' then

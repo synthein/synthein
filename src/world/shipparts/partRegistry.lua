@@ -15,19 +15,20 @@ Anchor.partChar = 'n'
 --]]
 local directory = "world/shipparts/"
 
-local partsList = {
+local PartRegistry = {}
+
+PartRegistry.partsList = {
 b = require(directory .. "block"),
 e = require(directory .. "engineBlock"),
 g = require(directory .. "gunBlock"),
 a = require(directory .. "aiBlock"),
 p = require(directory .. "playerBlock"),
-n = require(directory .. "anchor")
+n = require(directory .. "anchor"),
+m = require(directory .. "armorBlock")
 }
 
-local PartRegistry = {}
-
 function PartRegistry.setPartChars()
-	for k,v in pairs(partsList) do
+	for k,v in pairs(PartRegistry.partsList) do
 		v.partChar = k
 	end
 end
@@ -36,7 +37,7 @@ function PartRegistry.createPart(partChar,data)
 	if not data then
 		data = {}
 	end
-	return partsList[partChar](unpack(data))
+	return PartRegistry.partsList[partChar](unpack(data))
 end
 
 return PartRegistry

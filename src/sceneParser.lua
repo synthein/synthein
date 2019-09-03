@@ -83,10 +83,15 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 				for var in string.gmatch(dataString, varStr) do
 					if string.match(var, "%a") then
 						if string.match(var, '"[%w]+"') then
+							-- Pass string arguments to the structure parser
+							-- unchanged.
 						elseif string.match(var, "%*[%w]+") then
+							-- This is a variable that is not defined in this
+							-- scene file.
 							local inputKey = string.match(var, "[%w]+")
 							table.insert(data, inputs[inputKey])
 						else
+							-- This is a variable defined in this scene file.
 							table.insert(data, string.match(var, "[%w]+"))
 						end
 					elseif string.match(var, numStr) then

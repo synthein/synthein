@@ -8,13 +8,13 @@ local PhysicsReferences = {}
 --general		basic physics bodies
 
 -- Main reference tables
-local sensors
+local isSensor
 local categories = {}
 local masks = {}
 local groups = {}
 
 -- Physical bodies are set to false
-sensors = {
+isSensor = {
 	camera = true,
 	visual = true,
 	shield = true,
@@ -76,7 +76,10 @@ function PhysicsReferences.getCategory(type)
 end
 
 function PhysicsReferences.setFixtureType(fixture, type)
-	fixture:setSensor(sensors[type])
+	fixture:setSensor(isSensor[type])
+	if isSensor[type] then
+		fixture:setDensity(0)
+	end
 	fixture:setFilterData(categories[type], masks[type], groups[type])
 end
 

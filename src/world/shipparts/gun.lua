@@ -10,7 +10,7 @@ function Gun:__create()
 end
 
 function Gun.process(orders)
-	shoot = false
+	local shoot = false
 	for _, order in ipairs(orders) do
 		if order == "shoot" then shoot = true end
 	end

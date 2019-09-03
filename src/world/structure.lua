@@ -106,7 +106,7 @@ function Structure:getWorldLocation(l)
 end
 
 function Structure:findPart(cursorX, cursorY)
-	x, y = self.body:getLocalPoint(cursorX, cursorY)
+	local x, y = self.body:getLocalPoint(cursorX, cursorY)
 
 	local part = self.gridTable:index(
 		math.floor(x + .5),
@@ -410,8 +410,8 @@ function Structure:command(dt)
 		if order == "shoot" then table.insert(gunOrders, order) end
 	end
 
-	gunControls = Gun.process(gunOrders)
-	engineControls = Engine.process(engineOrders)
+	local gunControls = Gun.process(gunOrders)
+	local engineControls = Engine.process(engineOrders)
 
 	local function create(object, location)
 		location = StructureMath.sumVectors(location, object[2])

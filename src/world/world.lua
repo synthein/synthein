@@ -90,8 +90,21 @@ function World.beginContact(fixtureA, fixtureB, coll)
 end
 
 
-function World.endContact() --(fixtureA, fixtureB, coll)
+function World.endContact(fixtureA, fixtureB, coll)
 	--print("endContact")
+	local aCategory = fixtureA:getFilterData()
+	local bCategory = fixtureB:getFilterData()
+
+	local objectA = fixtureA:getUserData()
+	local objectB = fixtureB:getUserData()
+
+	if aCategory <= bCategory and objectA.endCollision then
+		objectA:endCollision(fixtureA, fixtureB)
+	end
+
+	if bCategory <= aCategory and objectB.endCollision  then
+		objectB:endCollision(fixtureB, fixtureA)
+	end
 end
 
 function World.preSolve(fixtureA, fixtureB, coll)

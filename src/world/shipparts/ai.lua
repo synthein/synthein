@@ -35,7 +35,7 @@ function AI:getOrders(worldInfo, leader, body, bodyList)
 			for body, table in pairs(bodyList) do
 				object = body:getUserData()
 				-- Look for core blocks.
-				if object.getTeam and
+				if object and object.getTeam and
 				   teamHostility:test(self.team, object:getTeam()) then
 					local eX, eY = body:getPosition()
 					if eX and eY then

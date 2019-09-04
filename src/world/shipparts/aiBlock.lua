@@ -32,11 +32,15 @@ function AIBlock:addFixtures(body)
 end
 
 function AIBlock:removeFixtures()
-
+	self.modules.sensor:removeFixtures()
 end
 
 function AIBlock:getOrders(body)
-	return self.modules.ai:getOrders(self.worldInfo, self.leader, body)
+	return self.modules.ai:getOrders(
+		self.worldInfo,
+		self.leader,
+		body,
+		self.modules.sensor:getBodyList())
 end
 
 function AIBlock:getMenu()

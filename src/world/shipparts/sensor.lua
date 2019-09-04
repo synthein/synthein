@@ -39,4 +39,8 @@ function Sensor:removeFixtures()
 	self.fixture:destroy()
 end
 
+function Sensor:getBodyList()
+	return self.bodyList
+end
+
 return Sensor

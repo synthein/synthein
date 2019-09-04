@@ -152,9 +152,8 @@ function Structure:removePart(part)
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 	part.fixture:destroy()
-	function Part:removeFixtures(body)
+	part:removeFixtures(body)
 
-	end
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then
 --			return

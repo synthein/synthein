@@ -134,9 +134,11 @@ function World:getObject(locationX, locationY)
 	local objects = {}
 
 	local callback = function(fixture)
-		local body = fixture:getBody()
-		local object = {body:getUserData()}
-		table.insert(objects, object)
+		if not fixture:isSensor() then
+			local body = fixture:getBody()
+			local object = {body:getUserData()}
+			table.insert(objects, object)
+		end
 		return true
 	end
 

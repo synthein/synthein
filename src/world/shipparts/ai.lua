@@ -7,7 +7,7 @@ function AI:__create(team)
 	self.follow = true
 end
 
-function AI:getOrders(worldInfo, leader, body)
+function AI:getOrders(worldInfo, leader, body, bodyList)
 	local physics = worldInfo.physics
 	local teamHostility = worldInfo.teamHostility
 	local aiX, aiY = body:getPosition()
@@ -29,26 +29,15 @@ function AI:getOrders(worldInfo, leader, body)
 		target = {leaderX, leaderY, leaderMSq}
 		shoot = false
 	else
-		local objects = {}
-		local function fixtureCallback(fixture)
-			local objectBody = fixture:getBody()
-			if not fixture:isSensor() and objectBody ~= body then
-				table.insert(objects, fixture:getUserData())
-			end
-			return true
-		end
-
-		physics:queryBoundingBox(aiX - 500, aiY - 500, aiX + 500, aiY + 500,
-								 fixtureCallback)
-
 		-- Search for any enemies.
-		if #objects > 0 then
+		if next(bodyList) ~= nil then
 			local targetMSq = nil
-			for _, object in ipairs(objects) do
+			for body, table in pairs(bodyList) do
+				object = body:getUserData()
 				-- Look for core blocks.
 				if object.getTeam and
 				   teamHostility:test(self.team, object:getTeam()) then
-					local eX, eY = object:getWorldLocation():getXY()
+					local eX, eY = body:getPosition()
 					if eX and eY then
 						local dx = eX - aiX
 						local dy = eY - aiY

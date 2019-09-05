@@ -80,6 +80,16 @@ function PhysicsReferences.getCategory(type)
 end
 
 function PhysicsReferences.setFixtureType(fixture, type)
+	if categories[type] == nil then
+		error(string.format("There is no such type %q", type), 2)
+	end
+	if masks[type] == nil then
+		error(string.format("No mask exists for type %q", type), 2)
+	end
+	if groups[type] == nil then
+		error(string.format("No group exists for type %q", type), 2)
+	end
+
 	fixture:setSensor(isSensor[type])
 	if isSensor[type] then
 		fixture:setDensity(0)

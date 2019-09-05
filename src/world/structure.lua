@@ -113,7 +113,7 @@ function Structure:findPart(cursorX, cursorY)
 		math.floor(y + .5))
 
 	if part then local partSide = part:getPartSide(cursorX, cursorY) end
-	return part, partSide
+	return part, part and part:getPartSide(cursorX, cursorY)
 end
 
 -------------------------------

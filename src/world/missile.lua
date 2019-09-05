@@ -87,6 +87,7 @@ end
 function Missile:update(dt)
 	if self.timer:ready(dt) then
 		self:destroy()
+		return
 	end
 
 	if self.target then
@@ -101,7 +102,7 @@ function Missile:update(dt)
 
 	self.body:applyForce(Util.vectorComponents(self.thrust, self.body:getAngle() + math.pi/2))
 
-	return {}
+	return
 end
 
 return Missile

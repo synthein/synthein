@@ -112,8 +112,7 @@ function Structure:findPart(cursorX, cursorY)
 		math.floor(x + .5),
 		math.floor(y + .5))
 
-	local partSide = part:getPartSide(cursorX, cursorY)
-	return part, partSide
+	return part, part and part:getPartSide(cursorX, cursorY)
 end
 
 -------------------------------
@@ -135,6 +134,7 @@ end
 function Structure:addPart(part, x, y, orientation)
 	part:setLocation({x, y, orientation})
 	self:addFixture(part)
+	part:addFixtures(self.body)
 	--self:calculateSize(x, y)
 	self:recalculateSize()
 
@@ -151,6 +151,7 @@ function Structure:removePart(part)
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 	part.fixture:destroy()
+	part:removeFixtures(body)
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then

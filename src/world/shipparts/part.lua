@@ -67,6 +67,14 @@ function Part:setFixture(fixture)
 	PhysicsReferences.setFixtureType(self.fixture, "general")
 end
 
+function Part:addFixtures(body)
+
+end
+
+function Part:removeFixtures()
+
+end
+
 function Part:setLocation(location)
 	self.location = location
 	self.userData.location = location

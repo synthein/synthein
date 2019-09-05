@@ -3,6 +3,8 @@ local Selection = require("selection")
 local Menu = require("menu")
 local PartRegistry = require("world/shipparts/partRegistry")
 local LocationTable = require("locationTable")
+local PhysicsReferences = require("world/physicsReferences")
+
 
 local Player = {}
 Player.__index = Player
@@ -192,8 +194,10 @@ function Player:drawWorldObjects()
 	local a, b, c, d = self.camera:getWorldBorder()
 
 	local function callback(fixture)
-		local object = fixture:getUserData()
-		object:draw(fixture)
+		if fixture:getCategory() ~= PhysicsReferences.getCategory("camera") then
+			local object = fixture:getUserData()
+			object:draw(fixture)
+		end
 
 		return true
 	end

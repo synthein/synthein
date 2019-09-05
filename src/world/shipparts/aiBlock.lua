@@ -1,5 +1,6 @@
 local Engine = require("world/shipparts/engine")
 local AI = require("world/shipparts/ai")
+local Sensor = require("world/shipparts/sensor")
 
 local AIBlock = class(require("world/shipparts/part"))
 
@@ -11,6 +12,7 @@ function AIBlock:__create(team, leader)
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 10, 10)
+	self.modules["sensor"] = Sensor(200)
 	self.modules["ai"] = AI(team)
 	self.leader = leader
 end
@@ -25,8 +27,20 @@ function AIBlock:getTeam()
 	return self.modules.ai.team
 end
 
+function AIBlock:addFixtures(body)
+	self.modules.sensor:addFixtures(body, 0, 0)
+end
+
+function AIBlock:removeFixtures()
+	self.modules.sensor:removeFixtures()
+end
+
 function AIBlock:getOrders(body)
-	return self.modules.ai:getOrders(self.worldInfo, self.leader, body)
+	return self.modules.ai:getOrders(
+		self.worldInfo,
+		self.leader,
+		body,
+		self.modules.sensor:getBodyList())
 end
 
 function AIBlock:getMenu()

@@ -32,7 +32,7 @@ function AI:getOrders(worldInfo, leader, body, bodyList)
 		-- Search for any enemies.
 		if next(bodyList) ~= nil then
 			local targetMSq = nil
-			for body, table in pairs(bodyList) do
+			for body, fixtures in pairs(bodyList) do
 				object = body:getUserData()
 				-- Look for core blocks.
 				if object and object.getTeam and

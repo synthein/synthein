@@ -1,10 +1,11 @@
 local PhysicsReferences = {}
 
 --- Types
---cameras		players/what ships see
+--camera		players/what ships see
 --visual		animations
 --shields
 --projectiles
+--missile
 --general		basic physics bodies
 
 -- Main reference tables
@@ -19,7 +20,8 @@ isSensor = {
 	visual = true,
 	shield = true,
 	projectiles = true,
-	general = false
+	missile = true,
+	general = false,
 }
 
 --If a collision occurs the fixture with the category that comes first will have
@@ -30,7 +32,8 @@ local catergoryOrder = {
 	"visual", --animations
 	"shield",
 	"projectiles",
-	"general" --basic physics bodies
+	"missile",
+	"general", --basic physics bodies
 }
 
 --Generate category values.
@@ -44,11 +47,12 @@ end
 --include the other.
 
 local maskList = {
-	camera = {"visual", "shield", "projectiles", "general"},
+	camera = {"visual", "shield", "projectiles", "missile", "general"},
 	visual = {"camera"},
 	shield = {"camera", "projectiles"},
-	projectiles = {"camera", "shield", "projectiles", "general"},
-	general = {"camera", "projectiles", "general"}
+	projectiles = {"camera", "shield", "projectiles", "missile", "general"},
+	missile = {"camera", "projectiles", "missile", "general"},
+	general = {"camera", "projectiles", "missile", "general"},
 }
 
 for k, t in pairs(maskList) do
@@ -60,7 +64,7 @@ for k, t in pairs(maskList) do
 end
 
 --Groups determine if they collide with themselfs
-local collision = {"missiles", "general"}
+local collision = {"missile", "general"}
 local noCollision = {"camera", "visual", "shield", "projectiles"}
 
 for i, v in ipairs(collision) do

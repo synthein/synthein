@@ -1,5 +1,6 @@
-local Util = require("util")
+local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("timer")
+local Util = require("util")
 
 local Missile = class(require("world/worldObjects"))
 
@@ -17,6 +18,7 @@ function Missile:__create(worldInfo, location, data, appendix)
 
 	local physicsShape = love.physics.newRectangleShape(.4, .8)
 	self.fixture = love.physics.newFixture(self.body, physicsShape)
+	PhysicsReferences.setFixtureType(self.fixture, "missile")
 	self.fixture:setUserData(self)
 
 	local visionArcRadius = 50
@@ -30,8 +32,9 @@ function Missile:__create(worldInfo, location, data, appendix)
 
 	self.target = nil
 	self.visionArc = love.physics.newFixture(self.body, visionArcShape, 0)
+	PhysicsReferences.setFixtureType(self.visionArc, "camera")
 	self.visionArc:setUserData({
-		collision = function(_, targetFixture)
+		collision = function(_, _, targetFixture)
 			if not self.target then
 				self.target = targetFixture:getBody()
 			end
@@ -64,10 +67,10 @@ function Missile:getSaveData(references)
 	return {self.timer:time(), structure, x, y}
 end
 
-function Missile:collision(fixture)
+function Missile:collision(fixture, otherFixture)
 	if fixture ~= self.sourcePart.fixture and self.firstContact then
-		local object = fixture:getUserData()
-		object:damage(fixture, 10)
+		local object = otherFixture:getUserData()
+		object:damage(otherFixture, 10)
 		self:explode()
 		self.firstContact = false --this is needed because of bullet body physics
 	end

@@ -79,6 +79,8 @@ function PhysicsReferences.setFixtureType(fixture, type)
 	fixture:setSensor(isSensor[type])
 	if isSensor[type] then
 		fixture:setDensity(0)
+	else
+		fixture:setRestitution(0.1)
 	end
 	fixture:setFilterData(categories[type], masks[type], groups[type])
 end

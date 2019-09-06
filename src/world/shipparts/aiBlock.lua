@@ -34,6 +34,7 @@ function AIBlock:addFixtures(body)
 end
 
 function AIBlock:removeFixtures()
+	Part.removeFixtures(self)
 	self.modules.sensor:removeFixtures()
 end
 

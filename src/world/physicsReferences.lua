@@ -93,4 +93,16 @@ function PhysicsReferences.setFixtureType(fixture, type)
 	fixture:setFilterData(categories[type], masks[type], groups[type])
 end
 
+-- We could replace this with lume.
+local function clone(t)
+	newTable = {}
+	for k, v in pairs(t) do newTable[k] = v end
+	return newTable
+end
+
+function PhysicsReferences.getCategories()
+	t = clone(categories)
+	return t
+end
+
 return PhysicsReferences

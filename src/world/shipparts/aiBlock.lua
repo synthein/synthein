@@ -2,7 +2,8 @@ local Engine = require("world/shipparts/engine")
 local AI = require("world/shipparts/ai")
 local Sensor = require("world/shipparts/sensor")
 
-local AIBlock = class(require("world/shipparts/part"))
+local Part = require("world/shipparts/part")
+local AIBlock = class(Part)
 
 function AIBlock:__create(team, leader)
 	self.image = love.graphics.newImage("res/images/ai.png")
@@ -28,10 +29,12 @@ function AIBlock:getTeam()
 end
 
 function AIBlock:addFixtures(body)
+	Part.addFixtures(self, body)
 	self.modules.sensor:addFixtures(body, 0, 0)
 end
 
 function AIBlock:removeFixtures()
+	Part.removeFixtures(self)
 	self.modules.sensor:removeFixtures()
 end
 

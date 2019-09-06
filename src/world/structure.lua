@@ -118,22 +118,11 @@ end
 -------------------------------
 -- Adding and Removing Parts --
 -------------------------------
-function Structure:addFixture(part)
-	local shape = love.physics.newRectangleShape(
-		part.location[1],
-		part.location[2],
-		1, 1)
-	local fixture = love.physics.newFixture(self.body, shape)
-	fixture:setRestitution(0.1)
-	part:setFixture(fixture)
-end
-
 -- Add one part to the structure.
 -- x, y are the coordinates in the structure.
 -- orientation is the orientation of the part according to the structure.
 function Structure:addPart(part, x, y, orientation)
 	part:setLocation({x, y, orientation})
-	self:addFixture(part)
 	part:addFixtures(self.body)
 	--self:calculateSize(x, y)
 	self:recalculateSize()
@@ -150,7 +139,6 @@ function Structure:removePart(part)
 
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
-	part.fixture:destroy()
 	part:removeFixtures(body)
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do

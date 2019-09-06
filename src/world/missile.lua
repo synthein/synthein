@@ -105,4 +105,16 @@ function Missile:update(dt)
 	return
 end
 
+-- Debug
+--function Missile:draw()
+--       local x, y, angle = self:getLocation():getXYA()
+--       local data = self.drawData
+--       love.graphics.draw(data[1], x, y, angle, data[2], data[3], data[4], data[5])
+--
+--       love.graphics.setLineWidth(0.05)
+--
+--       love.graphics.polygon('line', self.body:getWorldPoints(self.visionArc:getShape():getPoints()))
+--end
+-- End debug.
+
 return Missile

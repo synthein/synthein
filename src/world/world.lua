@@ -1,3 +1,4 @@
+local Missile = require("world/missile")
 local Particles = require("world/particles")
 local Shot = require("world/shot")
 local Structure = require("world/structure")
@@ -6,9 +7,10 @@ local PhysicsReferences = require("world/physicsReferences")
 local World = class()
 
 World.objectTypes = {
-	structure	= Structure,
-	shot   	= Shot,
-	particles	= Particles
+	structure = Structure,
+	shot      = Shot,
+	missile   = Missile,
+	particles = Particles
 }
 
 -- The world object contains all of the state information about the game world

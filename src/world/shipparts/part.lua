@@ -56,7 +56,13 @@ function Part:getModules()
 	return self.modules
 end
 
-function Part:setFixture(fixture)
+function Part:addFixtures(body)
+	local shape = love.physics.newRectangleShape(
+		self.location[1],
+		self.location[2],
+		1, 1)
+	local fixture = love.physics.newFixture(body, shape)
+
 	self.fixture = fixture
 
 	self.fixture:setUserData(self.userData)
@@ -67,12 +73,9 @@ function Part:setFixture(fixture)
 	PhysicsReferences.setFixtureType(self.fixture, "general")
 end
 
-function Part:addFixtures(body)
-
-end
-
 function Part:removeFixtures()
-
+	self.fixture:destroy()
+	self.fixture = nil
 end
 
 function Part:setLocation(location)

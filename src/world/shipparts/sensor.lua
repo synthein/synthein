@@ -37,6 +37,7 @@ end
 
 function Sensor:removeFixtures()
 	self.fixture:destroy()
+	self.fixture = nil
 end
 
 function Sensor:getBodyList()

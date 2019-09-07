@@ -59,7 +59,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 	local function callback(part, structure, x , y)
 		structure:addPart(part, x, y, part.location[3])
-		if part.isShield then self.shield:addPart(unpack(part.location)) end
+		if part.isShield then self.shield:addPart(part) end
 	end
 	self.gridTable:loop(callback, self)
 
@@ -127,8 +127,8 @@ function Structure:addPart(part, x, y, orientation)
 	part:setLocation({x, y, orientation})
 	part:addFixtures(self.body)
 	--self:calculateSize(x, y)
-	self:recalculateSize()
-	if part.isShield then self.shield:addPart(x, y) end
+	--self:recalculateSize()
+	if part.isShield then self.shield:addPart(part) end
 
 	self.gridTable:index(x, y, part)
 end
@@ -143,6 +143,7 @@ function Structure:removePart(part)
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 	part:removeFixtures(body)
+	if part.isShield then self.shield:removePart(part) end
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do
 --		if not fixture:isDestroyed() then
@@ -429,6 +430,7 @@ end
 -- Update each part
 function Structure:update(dt)
 	local partsInfo = self:command(dt)
+	self.shield:update(dt)
 end
 
 return Structure

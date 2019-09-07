@@ -10,7 +10,8 @@ local PhysicsReferences = {}
 
 -- Main reference tables
 local isSensor
-local categories = {}
+PhysicsReferences.categories = {}
+local categories = PhysicsReferences.categories
 local masks = {}
 local groups = {}
 
@@ -80,6 +81,10 @@ function PhysicsReferences.getCategory(type)
 end
 
 function PhysicsReferences.setFixtureType(fixture, type)
+	if categories[type] == nil then
+		error(string.format("There is no such type %q", type), 2)
+	end
+
 	fixture:setSensor(isSensor[type])
 	if isSensor[type] then
 		fixture:setDensity(0)

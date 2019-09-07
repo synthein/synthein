@@ -10,7 +10,8 @@ local PhysicsReferences = {}
 
 -- Main reference tables
 local isSensor
-local categories = {}
+PhysicsReferences.categories = {}
+local categories = PhysicsReferences.categories
 local masks = {}
 local groups = {}
 
@@ -91,18 +92,6 @@ function PhysicsReferences.setFixtureType(fixture, type)
 		fixture:setRestitution(0.1)
 	end
 	fixture:setFilterData(categories[type], masks[type], groups[type])
-end
-
--- We could replace this with lume.
-local function clone(t)
-	newTable = {}
-	for k, v in pairs(t) do newTable[k] = v end
-	return newTable
-end
-
-function PhysicsReferences.getCategories()
-	t = clone(categories)
-	return t
 end
 
 return PhysicsReferences

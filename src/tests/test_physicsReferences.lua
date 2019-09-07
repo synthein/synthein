@@ -11,7 +11,7 @@ local fixture = love.physics.newFixture(
 )
 
 function t.test_valid_fixtureType()
-  for fixtureType in pairs(PhysicsReferences.getCategories()) do
+  for fixtureType in pairs(PhysicsReferences.categories) do
     PhysicsReferences.setFixtureType(fixture, fixtureType)
   end
 end

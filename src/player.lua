@@ -191,18 +191,38 @@ function Player:draw()
 end
 
 function Player:drawWorldObjects()
+	local drawOrder = {
+		"projectiles",
+		"missile",
+		"general",
+		"shield"
+	}
+
+	local fixtureList = {}
+
+	for _, category in ipairs(drawOrder) do
+		fixtureList[PhysicsReferences.getCategory(category)] = {}
+	end
+
 	local a, b, c, d = self.camera:getWorldBorder()
 
 	local function callback(fixture)
-		if fixture:getCategory() ~= PhysicsReferences.getCategory("camera") then
-			local object = fixture:getUserData()
-			object:draw(fixture)
+		local category = fixture:getFilterData()
+		if fixtureList[category] then
+			table.insert(fixtureList[category], fixture)
 		end
-
 		return true
 	end
 
 	self.world.physics:queryBoundingBox(a, b, c, d, callback)
+
+	for _, category in ipairs(drawOrder) do
+		local categoryNumber = PhysicsReferences.getCategory(category)
+		for _, fixture in ipairs(fixtureList[categoryNumber]) do
+			local object = fixture:getUserData()
+			object:draw(fixture)
+		end
+	end
 end
 
 function Player:drawExtras()

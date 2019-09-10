@@ -61,7 +61,7 @@ end
 
 function Shield:draw()
 	local x, y = self.body:getWorldPoints(unpack(self.center))
-	local radius = 5 > self.health and self.health or 5
+	local radius = math.min(self.health, 5)
 
 	if radius < 1 then return end
 

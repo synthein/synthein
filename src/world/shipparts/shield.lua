@@ -66,7 +66,7 @@ function Shield:draw()
 	if radius < 1 then return end
 
 	local r, g, b, a = love.graphics.getColor()
-	love.graphics.setColor(1/8, 1/4, 9/16, 3/8)
+	love.graphics.setColor(31/256, 63/256, 143/256, 95/256)
 	love.graphics.circle("fill", x, y, radius)
 	love.graphics.setColor(r, g, b, a)
 end

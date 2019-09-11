@@ -45,7 +45,7 @@ end
 
 function Shield:test(fixture)
 	local x, y = self.body:getWorldPoints(unpack(self.center))
-	local radius = 5 > self.health and self.health or 5
+	local radius = math.min(self.health, 5)
 	local fixtureX, fixtureY = fixture:getBody():getPosition()
 	local dx = fixtureX - x
 	local dy = fixtureY - y
@@ -66,7 +66,7 @@ function Shield:draw()
 	if radius < 1 then return end
 
 	local r, g, b, a = love.graphics.getColor()
-	love.graphics.setColor(31/256, 63/256, 143/256, 95/256)
+	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
 	love.graphics.circle("fill", x, y, radius)
 	love.graphics.setColor(r, g, b, a)
 end

@@ -59,7 +59,6 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 	local function callback(part, structure, x , y)
 		structure:addPart(part, x, y, part.location[3])
-		if part.isShield then self.shield:addPart(part) end
 	end
 	self.gridTable:loop(callback, self)
 

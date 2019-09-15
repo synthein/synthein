@@ -15,24 +15,24 @@ end
 
 function Shield:createFixture()
 	if self.fixture then self.fixture:destroy() end
-	local count, x, y = 0, 0, 0
+	local partSum, x, y = 0, 0, 0
 	for part, location in pairs(self.partLocations) do
-		count = count + 1
+		partSum = partSum + 1
 		x = x + location[1]
 		y = y + location[2]
 	end
 
-	if count == 0 then
+	if partSum == 0 then
 		self.fixture = nil
 		return
 	end
 
-	x = x / count
-	y = y / count
+	x = x / partSum
+	y = y / partSum
 	self.center = {x, y}
-	self.radius = 5 * math.sqrt(count)
-	self.healRate = count
-	self.maxHealth = count * 10
+	self.radius = 5 * math.sqrt(partSum)
+	self.healRate = partSum
+	self.maxHealth = partSum * 10
 	local shape = love.physics.newCircleShape(x, y, self.radius + 1)
 	self.fixture = love.physics.newFixture(self.body, shape)
 	self.fixture:setUserData(self)

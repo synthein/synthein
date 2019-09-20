@@ -25,15 +25,13 @@ function Shot:__create(worldInfo, location, data, appendix)
 
 	self.timer = Timer(5)
 	self.firstContact = true
-	self.sourcePart = data
+	self.timePassed = false
 	self.startLocation = location
 end
 
 function Shot:postCreate(references)
-	local time, structure, x, y = unpack(self.sourcePart)
+	local time = unpack(self.sourcePart)
 	self.timer:time(time)
-	structure = references[structure]
-	self.sourcePart = structure.gridTable:index(x, y)
 	self.body:setLinearVelocity(self.startLocation[4], self.startLocation[5])
 end
 
@@ -42,15 +40,11 @@ function Shot:type()
 end
 
 function Shot:getSaveData(references)
-	local part = self.sourcePart
-	local x, y = unpack(part.location)
-	local structure = part.fixture:getBody():getUserData()
-	structure = references[structure]
-	return {self.timer:time(), structure, x, y}
+	return {self.timer:time()}
 end
 
 function Shot:collision(fixture, otherFixture)
-	if otherFixture ~= self.sourcePart.fixture and self.firstContact then
+	if self.timePassed and self.firstContact then
 		local object = otherFixture:getUserData()
 		object:damage(otherFixture, 1)
 		self:destroy()
@@ -59,6 +53,7 @@ function Shot:collision(fixture, otherFixture)
 end
 
 function Shot:update(dt)
+	self.timePassed = true
 	if self.timer:ready(dt) then
 		self:destroy()
 	end

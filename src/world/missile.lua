@@ -1,16 +1,11 @@
 local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("timer")
 local Util = require("util")
+local EntityUtils = require("world/entityUtils")
 
 local Missile = class(require("world/worldObjects"))
 
 function Missile:__create(worldInfo, location, data, appendix)
-	local imageName = "missile"
-	local image = love.graphics.newImage("res/images/"..imageName..".png")
-	local width = image:getWidth()
-	local height = image:getHeight()
-	self.drawData = {image, 0.4/width, -0.8/height, width/2, height/2}
-
 	self.thrust = 10
 	self.torque = 0.2
 	self.body:setLinearVelocity(location[4], location[5])
@@ -104,6 +99,11 @@ function Missile:update(dt)
 
 	return
 end
+
+local imageName = "missile"
+local image = love.graphics.newImage("res/images/"..imageName..".png")
+
+Missile.draw = EntityUtils.createDrawImageFunction(image, .4, .8)
 
 -- Debug
 --function Missile:draw()

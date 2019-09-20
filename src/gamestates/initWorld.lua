@@ -57,6 +57,9 @@ function InitWorld.load(scene, playerHostility, ifSave)
 		end
 	end
 
+	-- Reastablish collisions and
+	world.physics:update(0)
+
 	InitWorld.stackQueue:replace(InGame).load(world, players, screen)
 end
 

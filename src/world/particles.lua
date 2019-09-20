@@ -1,4 +1,5 @@
 local Timer = require("timer")
+local EntityUtils = require("world/entityUtils")
 
 local Particles = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")
@@ -10,9 +11,6 @@ function Particles:__create(worldInfo, location, data, appendix)
 	PhysicsReferences.setFixtureType(self.fixture, "visual")
 	self.timer = Timer(0.3)
 	self.data = data
-
-	local image = love.graphics.newImage("res/images/explosion.png")
-	self.drawData = {image, 1/20, -1/20, 20, 20}
 end
 
 function Particles:postCreate() --(references)
@@ -37,5 +35,10 @@ function Particles:update(dt)
 	end
 	return {}
 end
+
+local imageName = "explosion"
+local image = love.graphics.newImage("res/images/"..imageName..".png")
+
+Particles.draw = EntityUtils.createDrawImageFunction(image, 2, 2)
 
 return Particles

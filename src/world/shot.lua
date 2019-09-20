@@ -1,16 +1,11 @@
 local Util = require("util")
 local Timer = require("timer")
+local EntityUtils = require("world/entityUtils")
 
 local Shot = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")
 
 function Shot:__create(worldInfo, location, data, appendix)
-	local imageName = "shot"
-	local image = love.graphics.newImage("res/images/"..imageName..".png")
-	local width = image:getWidth()
-	local height = image:getHeight()
-	self.drawData = {image, .1/width, -.5/height, width/2, height/2}
-
 	local vx, vy = Util.vectorComponents(25, location[3] + math.pi/2)
 	self.body:setLinearVelocity(location[4] + vx, location[5] + vy)
 	self.body:setAngularVelocity(0)
@@ -65,5 +60,10 @@ function Shot:update(dt)
 
 	return {}
 end
+
+local imageName = "shot"
+local image = love.graphics.newImage("res/images/"..imageName..".png")
+
+Shot.draw = EntityUtils.createDrawImageFunction(image, .1, .5)
 
 return Shot

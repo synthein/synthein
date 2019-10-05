@@ -29,7 +29,7 @@ function Gun:update(inputs, location)
 			if not getPart(location, {0, 1}) then
 				self.charged = false
 				-- Spawn Shot
-				return {"shot", {0, 0, 1}, getPart(location, {0,0})}
+				return {"shot", {0, 0, 1}}
 			end
 		end
 	end

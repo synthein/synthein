@@ -1,7 +1,6 @@
 local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("timer")
 local Util = require("util")
-local EntityUtils = require("world/entityUtils")
 
 local Missile = class(require("world/worldObjects"))
 
@@ -103,7 +102,7 @@ end
 local imageName = "missile"
 local image = love.graphics.newImage("res/images/"..imageName..".png")
 
-Missile.draw = EntityUtils.createDrawImageFunction(image, .4, .8)
+Missile.draw = Missile.createDrawImageFunction(image, .4, .8)
 
 -- Debug
 --function Missile:draw()

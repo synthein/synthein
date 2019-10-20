@@ -86,10 +86,7 @@ function Shield:draw()
 end
 
 function Shield:update(dt)
-	if self.timer:ready(dt) then
-		self.health =math.min(self.health + self.healRate, self.maxHealth)
-	end
-
+	self.health =math.min(self.health + dt * self.healRate, self.maxHealth)
 	for fixture, value in pairs(self.collidedFixtures) do
 		if self:test(fixture) and not value then
 			fixture:getUserData():collision(fixture, self.fixture)

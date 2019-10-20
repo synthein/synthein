@@ -1,5 +1,4 @@
 local Timer = require("timer")
-local EntityUtils = require("world/entityUtils")
 
 local Particles = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")
@@ -39,6 +38,6 @@ end
 local imageName = "explosion"
 local image = love.graphics.newImage("res/images/"..imageName..".png")
 
-Particles.draw = EntityUtils.createDrawImageFunction(image, 2, 2)
+Particles.draw = Particles.createDrawImageFunction(image, 2, 2)
 
 return Particles

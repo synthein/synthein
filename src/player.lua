@@ -192,6 +192,7 @@ end
 
 function Player:drawWorldObjects()
 	local drawOrder = {
+		"visual",
 		"projectiles",
 		"missile",
 		"general",

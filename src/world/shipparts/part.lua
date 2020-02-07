@@ -18,10 +18,20 @@ function Part:__create()
 
 	self.modules = {health = Health(10)}
 
+	local modules = self.modules
+
 	self.userData = {}
-	function self.userData:draw(fixture)
+	function self.userData:draw(fixture, scaleByHealth)
+		if scaleByHealth then
+			c = modules.health:getScaledHealh()
+			love.graphics.setColor(1, c, c, 1)
+		else
+			love.graphics.setColor(1, 1, 1, 1)
+		end
+
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()
 		love.graphics.draw(self.image, x, y, angle, 1/self.width, -1/self.height, self.width/2, self.height/2)
+		love.graphics.setColor(1,1,1,1)
 	end
 
 	function self.userData:collision(fixture, otherFixture, sqVelocity, pointVelocity)
@@ -37,7 +47,6 @@ function Part:__create()
 		local xI, yI = unpack(pointVelocity)
 	end
 
-	local modules = self.modules
 	function self.userData:damage(fixture, damage)
 		local location = LocationTable(fixture, self.location)
 		modules.health:damage(damage, location)

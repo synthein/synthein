@@ -6,6 +6,10 @@ function Health:__create(startValue)
 	self.isDestroyed = false
 end
 
+function Health:getScaledHealh()
+	return self.health / self.maxHealth
+end
+
 function Health:repair(repair)
 	self.health = self.health + repair
 end

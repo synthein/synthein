@@ -22,8 +22,15 @@ function EngineBlock:__create()
 	self.modules["engine"] = engine
 
 	local isActive = engine:getIsActive()
+	local modules = self.modules
 
-	function self.userData:draw(fixture)
+	function self.userData:draw(fixture, scaleByHealth)
+		if scaleByHealth then
+			c = modules.health:getScaledHealh()
+			love.graphics.setColor(1, c, c, 1)
+		else
+			love.graphics.setColor(1, 1, 1, 1)
+		end
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()
 		local image = imageInactive
 		if isActive() then image = imageActive end
@@ -31,6 +38,7 @@ function EngineBlock:__create()
 			image,
 			x, y, angle,
 			1/self.width, -1/self.height, self.width/2, self.height/2)
+			love.graphics.setColor(1, 1, 1, 1)
 	end
 end
 

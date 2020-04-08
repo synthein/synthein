@@ -42,6 +42,8 @@ function Player.create(world, controls, structure, camera)
 	self.compass = love.graphics.newImage("res/images/compass.png")
 	self.cursor = love.graphics.newImage("res/images/pointer.png")
 
+	self.showHealth = false
+
 	return self
 end
 
@@ -76,6 +78,8 @@ end
 
 function Player:buttonpressed(source, button)
 	if button == "f12" then self.debugmode = not self.debugmode end
+
+	if button == "h" then self.showHealth = not self.showHealth end
 
 	local menuButton = Controls.test("menu", self.controls, source, button)
 	local order = Controls.test("pressed", self.controls, source, button)
@@ -221,7 +225,7 @@ function Player:drawWorldObjects()
 		local categoryNumber = PhysicsReferences.getCategory(category)
 		for _, fixture in ipairs(fixtureList[categoryNumber]) do
 			local object = fixture:getUserData()
-			object:draw(fixture)
+			object:draw(fixture, self.showHealth)
 		end
 	end
 end

@@ -25,7 +25,8 @@ a = require(directory .. "aiBlock"),
 p = require(directory .. "playerBlock"),
 n = require(directory .. "anchor"),
 m = require(directory .. "armorBlock"),
-s = require(directory .. "shieldBlock")
+s = require(directory .. "shieldBlock"),
+r = require(directory .. "repairBlock"),
 }
 
 function PartRegistry.setPartChars()

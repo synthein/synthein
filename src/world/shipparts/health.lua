@@ -6,12 +6,12 @@ function Health:__create(startValue)
 	self.isDestroyed = false
 end
 
-function Health:getScaledHealh()
+function Health:getScaledHealth()
 	return self.health / self.maxHealth
 end
 
 function Health:repair(repair)
-	self.health = self.health + repair
+	self.health = math.min(self.health + repair, self.maxHealth)
 end
 
 function Health:damage(damage, location)

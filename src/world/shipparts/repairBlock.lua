@@ -8,8 +8,9 @@ local Part = require("world/shipparts/part")
 local RepairBlock = class(Part)
 
 function RepairBlock:__create()
-    local image = love.graphics.newImage("res/images/repairBlock.png")
-	self.image = image
+    local imageInactive = love.graphics.newImage("res/images/repairBlock.png")
+    local imageActive = love.graphics.newImage("res/images/repairBlockActive.png")
+	self.image = imageInactive
 	self.width = self.image:getWidth()
 	self.height = self.image:getHeight()
 
@@ -32,9 +33,11 @@ function RepairBlock:__create()
 		else
 			love.graphics.setColor(1, 1, 1, 1)
 		end
-
+        local image
         if repair.active then
-            love.graphics.setColor(0,0,0, 1)
+            image = imageActive
+        else
+            image = imageInactive
         end
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()
 		love.graphics.draw(

@@ -1,4 +1,5 @@
 local Sensor = require("world/shipparts/sensor")
+local Repair = require("world/shipparts/repair")
 
 -- Utilities
 local LocationTable = require("locationTable")
@@ -20,17 +21,19 @@ function RepairBlock:__create()
 	local modules = self.modules
 
     local sensor = Sensor(2)
+    local repair = Repair(sensor:getBodyList())
     modules["sensor"] = sensor
+    modules["repair"] = repair
 
 	function self.userData:draw(fixture, scaleByHealth)
 		if scaleByHealth then
-			c = modules.health:getScaledHealh()
+			c = modules.health:getScaledHealth()
 			love.graphics.setColor(1, c, c, 1)
 		else
 			love.graphics.setColor(1, 1, 1, 1)
 		end
-        --print(#sensor:getBodyList())
-        if next(sensor.bodyList) then
+
+        if repair.active then
             love.graphics.setColor(0,0,0, 1)
         end
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()

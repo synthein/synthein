@@ -407,7 +407,8 @@ function Structure:command(dt)
 		dt = dt,
 		body = self.body,
 		getPart = getPart,
-		controls = {gun = gunControls, engine = engineControls}}
+		controls = {gun = gunControls, engine = engineControls},
+		teamHostility = self.worldInfo.teamHostility}
 
 	for _, part in ipairs(self.gridTable:loop()) do
 		for _, module in pairs(part:getModules()) do

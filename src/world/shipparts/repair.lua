@@ -34,7 +34,10 @@ function Repair:update(moduleInputs, location)
     if findNew then
         for body, fixtures in pairs(self.bodyList) do
             -- check hostility
-            if true then
+            local bodyObject = body:getUserData()
+            local teamHostility = moduleInputs.teamHostility
+
+            if bodyObject and bodyObject.getTeam and not teamHostility:test(self.team, bodyObject:getTeam()) then
                 for fixture, visable in pairs(fixtures) do
                     local object = fixture:getUserData()
                     if object.getScaledHealth then
@@ -58,6 +61,10 @@ function Repair:update(moduleInputs, location)
     else
         self.active = false
     end
+end
+
+function Repair:setTeam(team)
+    self.team = team
 end
 
 return Repair

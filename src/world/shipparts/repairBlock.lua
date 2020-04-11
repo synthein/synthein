@@ -52,6 +52,7 @@ function RepairBlock:addFixtures(body)
 	Part.addFixtures(self, body)
     local l = self.location
 	self.modules.sensor:addFixtures(body, l[1], l[2])
+    self.modules.repair:setTeam(body:getUserData():getTeam())
 end
 
 function RepairBlock:removeFixtures()

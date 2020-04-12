@@ -23,7 +23,7 @@ function Part:__create()
 	self.userData = {}
 	function self.userData:draw(fixture, scaleByHealth)
 		if scaleByHealth then
-			c = modules.health:getScaledHealh()
+			c = modules.health:getScaledHealth()
 			love.graphics.setColor(1, c, c, 1)
 		else
 			love.graphics.setColor(1, 1, 1, 1)
@@ -50,6 +50,14 @@ function Part:__create()
 	function self.userData:damage(fixture, damage)
 		local location = LocationTable(fixture, self.location)
 		modules.health:damage(damage, location)
+	end
+
+	function self.userData:repair(repair)
+		modules.health:repair(repair)
+	end
+
+	function self.userData:getScaledHealth()
+		return modules.health:getScaledHealth()
 	end
 end
 

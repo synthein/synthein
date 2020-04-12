@@ -26,7 +26,7 @@ function EngineBlock:__create()
 
 	function self.userData:draw(fixture, scaleByHealth)
 		if scaleByHealth then
-			c = modules.health:getScaledHealh()
+			c = modules.health:getScaledHealth()
 			love.graphics.setColor(1, c, c, 1)
 		else
 			love.graphics.setColor(1, 1, 1, 1)

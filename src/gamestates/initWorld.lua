@@ -38,7 +38,7 @@ function InitWorld.load(scene, playerHostility, ifSave)
 
 	local screen = Screen()
 
-	local playerShips = SceneParser.loadScene(sceneLines, world, LocationTable(0,0))
+	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, LocationTable(0,0))
 	local players = {}
 	for _, ship in ipairs(playerShips) do
 		if #players == 0 then
@@ -54,6 +54,16 @@ function InitWorld.load(scene, playerHostility, ifSave)
 					Player.create(world, Controls.defaults(joystick), ship, screen:createCamera())
 				)
 			end
+		end
+	end
+
+	while #playerHostility < maxTeam do
+		table.insert(playerHostility, {})
+	end
+
+	for i, t in ipairs(playerHostility) do
+		while #t < maxTeam do
+			table.insert(t, false)
 		end
 	end
 

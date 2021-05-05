@@ -62,7 +62,7 @@ function Part:__create()
 end
 
 function Part:loadData(data)
-	if data[1] then self.health = data[1] end
+	if data[1] then self.modules.health.health = data[1] end
 end
 
 function Part:saveData()

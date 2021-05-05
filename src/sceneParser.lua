@@ -32,6 +32,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 	local playerShips = {}
 	local objects = {}
 	local references = {}
+	local maxTeam = 0
 
 	if type(sceneLines) == "string" then
 		local fileName = "res/scenes/" .. sceneLines .. ".txt"
@@ -40,7 +41,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 
 	local function spawnObject(ship)
 		local shipID, type, location, data, appendix = unpack(ship)
-		local object, player = Spawn.spawnObject(world, type, location,
+		local object, player, team = Spawn.spawnObject(world, type, location,
 												 data, appendix)
 		table.insert(objects, object)
 		if player then
@@ -49,6 +50,8 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 		if shipID then
 			references[shipID] = object
 		end
+
+		maxTeam = math.max(maxTeam, team)
 	end
 
 	for line in sceneLines do
@@ -117,7 +120,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 	for _, object in ipairs(objects) do
 		object:postCreate(references)
 	end
-	return playerShips
+	return playerShips, maxTeam
 end
 
 function SceneParser.saveScene(world)

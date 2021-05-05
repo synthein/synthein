@@ -21,10 +21,11 @@ function Shot:__create(worldInfo, location, data, appendix)
 	self.firstContact = true
 	self.timePassed = false
 	self.startLocation = location
+	self.data = data
 end
 
 function Shot:postCreate(references)
-	local time = unpack(self.sourcePart)
+	local time = unpack(self.data)
 	self.timer:time(time)
 	self.body:setLinearVelocity(self.startLocation[4], self.startLocation[5])
 end

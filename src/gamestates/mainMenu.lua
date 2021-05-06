@@ -2,6 +2,7 @@ local GameState = require("gamestates/gameState")
 local LoadGameMenu = require("gamestates/loadGameMenu")
 local Menu = require("menu")
 local NewGameMenu = require("gamestates/newGameMenu")
+local SyntheinVersion = require("version")
 
 local MainMenu = GameState()
 
@@ -17,12 +18,21 @@ function MainMenu.update(dt)
 end
 
 function MainMenu.draw()
-	local screen_width = love.graphics.getWidth()
 	local previousFont = love.graphics.getFont()
 	love.graphics.setFont(MainMenu.font)
-	love.graphics.print("SYNTHEIN", (screen_width - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
+	love.graphics.print("SYNTHEIN", (love.graphics.getWidth() - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)
 	MainMenu.menu:draw()
 	love.graphics.setFont(previousFont)
+
+	local major, minor, revision = love.getVersion()
+	local versionString = string.format(
+		"Version %s. LÖVE version %d.%d.%d.",
+		SyntheinVersion, major, minor, revision
+	)
+	love.graphics.print(
+		versionString,
+		0, love.graphics.getHeight() - previousFont:getHeight()
+	)
 end
 
 function MainMenu.keypressed(key)

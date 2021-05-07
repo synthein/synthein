@@ -63,26 +63,6 @@ function Building:setSide(partSide)
 	end
 end
 
-function Building.getStrengthTable(part, partSide)
-	local connectableSides = part.connectableSides
-	local strength = {}
-	for i = 1, 4 do
-		if connectableSides[i] then
-			if i == partSide then
-				table.insert(strength, 2)
-			else
-				table.insert(strength, 1)
-			end
-		else
-			table.insert(strength, 0)
-		end
-	end
-	local strengthX = strength[2]
-	strength[2] = strength[4]
-	strength[4] = strengthX
-	return strength
-end
-
 local offsetTable = {{0, .5}, {-.5, 0}, {0, -.5}, {.5, 0}}
 
 function Building:draw()

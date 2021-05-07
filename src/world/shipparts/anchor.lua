@@ -2,7 +2,6 @@ local Anchor = class(require("world/shipparts/part"))
 
 function Anchor:__create()
 	self.image = "anchor"
-	self.width, self.height = 1, 1
 
 	self.type = "anchor"
 	self.team = 1

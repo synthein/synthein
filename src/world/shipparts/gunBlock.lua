@@ -5,7 +5,6 @@ local GunBlock = class(require("world/shipparts/part"))
 
 function GunBlock:__create()
 	self.image = "gun"
-	self.width, self.height = 1, 1
 
 	self.modules["gun"] = Gun()
 

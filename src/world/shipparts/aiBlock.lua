@@ -7,7 +7,6 @@ local AIBlock = class(Part)
 
 function AIBlock:__create(team, leader)
 	self.image = "ai" .. team
-	self.width, self.height = 1, 1
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 10, 10)

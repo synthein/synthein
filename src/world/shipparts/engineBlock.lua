@@ -11,7 +11,6 @@ function EngineBlock:__create()
 	local imageInactive = "engine"
 	local imageActive = "engineActive"
 	self.image = imageInactive
-	self.width, self.height = 1, 1
 
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[2] = false
@@ -34,11 +33,13 @@ function EngineBlock:__create()
 			love.graphics.setColor(1, 1, 1, 1)
 		end
 
+		local draw
+
 		if isActive() then
-			drawActive = drawActive or WorldObjects.createDrawImageFunction(imageActive, self.width, self.height)
+			drawActive = drawActive or WorldObjects.createDrawImageFunction(imageActive, 1, 1)
 			draw = drawActive
 		else
-			drawInactive = drawInactive or WorldObjects.createDrawImageFunction(imageInactive, self.width, self.height)
+			drawInactive = drawInactive or WorldObjects.createDrawImageFunction(imageInactive, 1, 1)
 			draw = drawInactive
 		end
 

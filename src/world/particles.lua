@@ -35,9 +35,6 @@ function Particles:update(dt)
 	return {}
 end
 
-local imageName = "explosion"
-local image = love.graphics.newImage("res/images/"..imageName..".png")
-
-Particles.draw = Particles.createDrawImageFunction(image, 2, 2)
+Particles.draw = Particles.createDrawImageFunction("explosion", 2, 2)
 
 return Particles

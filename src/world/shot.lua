@@ -56,9 +56,6 @@ function Shot:update(dt)
 	return {}
 end
 
-local imageName = "shot"
-local image = love.graphics.newImage("res/images/"..imageName..".png")
-
-Shot.draw = Shot.createDrawImageFunction(image, .1, .5)
+Shot.draw = Shot.createDrawImageFunction("shot", .1, .5)
 
 return Shot

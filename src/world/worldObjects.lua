@@ -1,4 +1,7 @@
 local LocationTable = require("locationTable")
+
+local lume = require("vendor/lume")
+
 local WorldObjects = class()
 
 function WorldObjects:__create(worldInfo, location, data, appendix)
@@ -19,25 +22,32 @@ function WorldObjects:getLocation()
 	return (LocationTable(self.body))
 end
 
-function WorldObjects.createDrawImageFunction(image, width, height)
-	local imageWidth  = image:getWidth()
-	local imageHeight = image:getHeight()
+function WorldObjects.createDrawImageFunction(imageName, width, height)
+	local imageData = {}
 
-	local drawWidth  =   width  / imageWidth
-	local drawHeight = - height / imageHeight
-	local offsetWidth  = imageWidth  / 2
-	local offsetHeight = imageHeight / 2
+	local setup = lume.once(function()
+		imageData.image = love.graphics.newImage("res/images/"..imageName..".png")
+		imageData.imageWidth  = imageData.image:getWidth()
+		imageData.imageHeight = imageData.image:getHeight()
+
+		imageData.drawWidth  =   width  / imageData.imageWidth
+		imageData.drawHeight = - height / imageData.imageHeight
+		imageData.offsetWidth  = imageData.imageWidth  / 2
+		imageData.offsetHeight = imageData.imageHeight / 2
+	end)
 
 	return function(self, fixture)
+		setup()
+
 		local body = fixture:getBody()
 		local x, y = body:getPosition()
 		local angle = body:getAngle()
 
 		love.graphics.draw(
-			image,
+			imageData.image,
 			x, y, angle,
-			drawWidth, drawHeight,
-			offsetWidth, offsetHeight)
+			imageData.drawWidth, imageData.drawHeight,
+			imageData.offsetWidth, imageData.offsetHeight)
 	end
 end
 

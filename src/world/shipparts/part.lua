@@ -5,6 +5,7 @@ local Health = require("world/shipparts/health")
 local Util = require("util")
 local LocationTable = require("locationTable")
 local PhysicsReferences = require("world/physicsReferences")
+local WorldObjects = require("world/worldObjects")
 
 local Part = class()
 
@@ -21,6 +22,7 @@ function Part:__create()
 	local modules = self.modules
 
 	self.userData = {}
+	local draw
 	function self.userData:draw(fixture, scaleByHealth)
 		if scaleByHealth then
 			c = modules.health:getScaledHealth()
@@ -29,8 +31,9 @@ function Part:__create()
 			love.graphics.setColor(1, 1, 1, 1)
 		end
 
-		local x, y, angle = LocationTable(fixture, self.location):getXYA()
-		love.graphics.draw(self.image, x, y, angle, 1/self.width, -1/self.height, self.width/2, self.height/2)
+		draw = draw or WorldObjects.createDrawImageFunction(self.image, 1, 1)
+		draw(self, fixture)
+
 		love.graphics.setColor(1,1,1,1)
 	end
 

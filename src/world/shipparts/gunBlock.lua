@@ -4,9 +4,8 @@ local Gun = require("world/shipparts/gun")
 local GunBlock = class(require("world/shipparts/part"))
 
 function GunBlock:__create()
-	self.image = love.graphics.newImage("res/images/gun.png")
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
+	self.image = "gun"
+	self.width, self.height = 1, 1
 
 	self.modules["gun"] = Gun()
 

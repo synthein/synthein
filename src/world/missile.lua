@@ -99,9 +99,6 @@ function Missile:update(dt)
 	return
 end
 
-local imageName = "missile"
-local image = love.graphics.newImage("res/images/"..imageName..".png")
-
-Missile.draw = Missile.createDrawImageFunction(image, .4, .8)
+Missile.draw = Missile.createDrawImageFunction("missile", .4, .8)
 
 return Missile

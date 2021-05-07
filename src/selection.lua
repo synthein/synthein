@@ -119,21 +119,16 @@ function Selection:draw(cursorX, cursorY)
 		local strength, lables
 		if self.build then
 			local connectableSides = self.part.connectableSides
-			strength = {}
-			for i = 1, 4 do
-				if connectableSides[i] then
-					if i == partSide then
-						table.insert(strength, 2)
-					else
-						table.insert(strength, 1)
-					end
-				else
-					table.insert(strength, 0)
-				end
-			end
-			local strengthX = strength[2]
-			strength[2] = strength[4]
-			strength[4] = strengthX
+			strength = {
+				connectableSides[1] and 1 or 0,
+				connectableSides[4] and 1 or 0,
+				connectableSides[3] and 1 or 0,
+				connectableSides[2] and 1 or 0
+			}
+			local indexReverse = {1, 4, 3, 2}
+			local i = indexReverse[partSide]
+
+			strength[i] = strength[i] * 2
 		else
 			angle = 0
 			strength, lables = self.part:getMenu()

@@ -19,8 +19,10 @@ fi
 
 echo "Getting MacOS LÖVE binary."
 cd "${cache_dir}"
-dlcache "https://bitbucket.org/rude/love/downloads/love-${LOVE_VERSION}-macos.zip"
-unzip "love-${LOVE_VERSION}-macos.zip"
+
+love_zip=love-${LOVE_VERSION}-macos.zip
+dlcache "https://github.com/love2d/love/releases/download/${LOVE_VERSION}/${love_zip}"
+unzip "${love_zip}"
 
 echo "Building MacOS package."
 app_dir="${build_dir}/synthein.app"

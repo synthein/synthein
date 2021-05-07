@@ -20,8 +20,8 @@ fi
 echo "Getting Linux LÖVE binaries."
 cd "${cache_dir}"
 
-love_tar=love-${LOVE_VERSION}-x86_64.tar.gz
-dlcache "https://bitbucket.org/rude/love/downloads/${love_tar}"
+love_tar=love-${LOVE_VERSION}-linux-x86_64.tar.gz
+dlcache "https://github.com/love2d/love/releases/download/${LOVE_VERSION}/${love_tar}"
 
 extracted_love_tar=${cache_dir}/love-${LOVE_VERSION}-x86_64
 [ -d "$extracted_love_tar" ] && rm -r "$extracted_love_tar"
@@ -50,8 +50,7 @@ ln -s usr/share/pixmaps/synthein.png synthein.png
 install -D -m0755 "${extracted_love_tar}/usr/bin/love" usr/bin/love
 install -d usr/lib
 cp -r "${extracted_love_tar}/usr/lib/"* usr/lib
-# As of LOVE 11.2, there's no license file included in the tar release.
-# install -D "${extracted_love_tar}/license.txt" usr/share/doc/love
+install -D "${extracted_love_tar}/license.txt" usr/share/doc/love
 
 # Package as an AppImage.
 cd "${cache_dir}"

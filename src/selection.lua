@@ -118,7 +118,22 @@ function Selection:draw(cursorX, cursorY)
 		local x, y, angle = self.part:getWorldLocation():getXYA()
 		local strength, lables
 		if self.build then
-			strength = Building.getStrengthTable(self.part, partSide)
+			local connectableSides = self.part.connectableSides
+			strength = {}
+			for i = 1, 4 do
+				if connectableSides[i] then
+					if i == partSide then
+						table.insert(strength, 2)
+					else
+						table.insert(strength, 1)
+					end
+				else
+					table.insert(strength, 0)
+				end
+			end
+			local strengthX = strength[2]
+			strength[2] = strength[4]
+			strength[4] = strengthX
 		else
 			angle = 0
 			strength, lables = self.part:getMenu()

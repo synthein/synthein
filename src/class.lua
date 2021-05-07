@@ -9,7 +9,7 @@ end
 local function index(t, key) return getmetatable(t)[key] end
 
 -- Create a new class
-function class(parent, ...)
+function class(parent)
 	-- Test to see if parent is likely a class
 	if parent and type((getmetatable(parent) or {}).__call) ~= "function" then
 		error("parent argument not a class")

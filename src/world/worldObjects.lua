@@ -27,13 +27,12 @@ function WorldObjects.createDrawImageFunction(imageName, width, height)
 
 	local setup = lume.once(function()
 		imageData.image = love.graphics.newImage("res/images/"..imageName..".png")
-		imageData.imageWidth  = imageData.image:getWidth()
-		imageData.imageHeight = imageData.image:getHeight()
+		local imageWidth, imageHeight = imageData.image:getDimensions()
 
-		imageData.drawWidth  =   width  / imageData.imageWidth
-		imageData.drawHeight = - height / imageData.imageHeight
-		imageData.offsetWidth  = imageData.imageWidth  / 2
-		imageData.offsetHeight = imageData.imageHeight / 2
+		imageData.drawWidth  =   width  / imageWidth
+		imageData.drawHeight = - height / imageHeight
+		imageData.offsetWidth  = imageWidth  / 2
+		imageData.offsetHeight = imageHeight / 2
 	end)
 
 	return function(self, fixture)

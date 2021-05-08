@@ -118,13 +118,12 @@ function Part.createDrawImageFunction()
 
 	local setup = lume.once(function(self)
 		imageData.image = love.graphics.newImage("res/images/"..self.image..".png")
-		imageData.imageWidth  = imageData.image:getWidth()
-		imageData.imageHeight = imageData.image:getHeight()
+		local imageWidth, imageHeight = imageData.image:getDimensions()
 
-		imageData.drawWidth  =   1 / imageData.imageWidth
-		imageData.drawHeight = - 1 / imageData.imageHeight
-		imageData.offsetWidth  = imageData.imageWidth  / 2
-		imageData.offsetHeight = imageData.imageHeight / 2
+		imageData.drawWidth  =   1 / imageWidth
+		imageData.drawHeight = - 1 / imageHeight
+		imageData.offsetWidth  = imageWidth  / 2
+		imageData.offsetHeight = imageHeight / 2
 	end)
 
 	return function(self, fixture, scaleByHealth)

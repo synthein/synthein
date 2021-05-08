@@ -5,7 +5,6 @@ local Health = require("world/shipparts/health")
 local Util = require("util")
 local LocationTable = require("locationTable")
 local PhysicsReferences = require("world/physicsReferences")
-local WorldObjects = require("world/worldObjects")
 
 local lume = require("vendor/lume")
 
@@ -22,8 +21,6 @@ function Part:__create()
 	self.modules = {health = Health(10)}
 
 	local modules = self.modules
-
-	local imageData = {}
 
 	self.userData = {}
 	self.userData.draw = Part.createDrawImageFunction()

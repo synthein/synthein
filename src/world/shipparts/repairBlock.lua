@@ -2,6 +2,7 @@ local Sensor = require("world/shipparts/sensor")
 local Repair = require("world/shipparts/repair")
 
 -- Utilities
+local Draw = require("world/draw")
 local LocationTable = require("locationTable")
 local WorldObjects = require("world/worldObjects")
 
@@ -33,13 +34,13 @@ function RepairBlock:__create()
 		if repair.active then
 			lume.once(function()
 				self.image = imageActive
-				drawActive = Part.createDrawImageFunction()
+				drawActive = Draw.createPartDrawImageFunction()
 			end)()
 			draw = drawActive
 		else
 			lume.once(function()
 				self.image = imageInactive
-				drawInactive = Part.createDrawImageFunction()
+				drawInactive = Draw.createPartDrawImageFunction()
 			end)()
 			draw = drawInactive
 		end

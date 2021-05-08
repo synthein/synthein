@@ -2,6 +2,7 @@
 local Engine = require("world/shipparts/engine")
 
 -- Utilities
+local Draw = require("world/draw")
 local LocationTable = require("locationTable")
 local WorldObjects = require("world/worldObjects")
 local Part = require("world/shipparts/part")
@@ -32,13 +33,13 @@ function EngineBlock:__create()
 		if isActive() then
 			lume.once(function()
 				self.image = imageActive
-				drawActive = Part.createDrawImageFunction()
+				drawActive = Draw.createPartDrawImageFunction()
 			end)()
 			draw = drawActive
 		else
 			lume.once(function()
 				self.image = imageInactive
-				drawInactive = Part.createDrawImageFunction()
+				drawInactive = Draw.createPartDrawImageFunction()
 			end)()
 			draw = drawInactive
 		end

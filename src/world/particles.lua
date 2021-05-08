@@ -1,4 +1,5 @@
 local Timer = require("timer")
+local Draw = require("world/draw")
 
 local Particles = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")
@@ -35,6 +36,6 @@ function Particles:update(dt)
 	return {}
 end
 
-Particles.draw = Particles.createDrawImageFunction("explosion", 2, 2)
+Particles.draw = Draw.createObjectDrawImageFunction("explosion", 2, 2)
 
 return Particles

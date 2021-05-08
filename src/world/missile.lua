@@ -1,3 +1,4 @@
+local Draw = require("world/draw")
 local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("timer")
 local Util = require("util")
@@ -99,6 +100,6 @@ function Missile:update(dt)
 	return
 end
 
-Missile.draw = Missile.createDrawImageFunction("missile", .4, .8)
+Missile.draw = Draw.createObjectDrawImageFunction("missile", .4, .8)
 
 return Missile

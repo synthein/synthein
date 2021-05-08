@@ -5,8 +5,7 @@ local Health = require("world/shipparts/health")
 local Util = require("util")
 local LocationTable = require("locationTable")
 local PhysicsReferences = require("world/physicsReferences")
-
-local lume = require("vendor/lume")
+local Draw = require("world/draw")
 
 local Part = class()
 
@@ -23,7 +22,7 @@ function Part:__create()
 	local modules = self.modules
 
 	self.userData = {}
-	self.userData.draw = Part.createDrawImageFunction()
+	self.userData.draw = Draw.createPartDrawImageFunction()
 
 	function self.userData:collision(fixture, otherFixture, sqVelocity, pointVelocity)
 		local object = otherFixture:getUserData()
@@ -108,40 +107,6 @@ function Part:getPartSide(locationX, locationY)
 	local angleDifference = angleToCursor - partAngle
 	local partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
 	return partSide
-end
-
-function Part.createDrawImageFunction()
-	local imageData = {}
-
-	local setup = lume.once(function(imageName, objectWidth, objectHeight)
-		imageData.image = love.graphics.newImage("res/images/"..imageName..".png")
-		local imageWidthPx, imageHeightPx = imageData.image:getDimensions()
-
-		imageData.drawWidth    =  objectWidth   / imageWidthPx
-		imageData.drawHeight   = -objectHeight  / imageHeightPx
-		imageData.offsetWidth  =  imageWidthPx  / 2
-		imageData.offsetHeight =  imageHeightPx / 2
-	end)
-
-	return function(self, fixture, scaleByHealth)
-		if scaleByHealth then
-			c = modules.health:getScaledHealth()
-			love.graphics.setColor(1, c, c, 1)
-		else
-			love.graphics.setColor(1, 1, 1, 1)
-		end
-
-		setup(self.image, 1, 1)
-
-		local x, y, angle = LocationTable(fixture, self.location):getXYA()
-
-		love.graphics.draw(
-			imageData.image,
-			x, y, angle,
-			imageData.drawWidth, imageData.drawHeight,
-			imageData.offsetWidth, imageData.offsetHeight
-		)
-	end
 end
 
 return Part

@@ -1,5 +1,6 @@
-local Util = require("util")
+local Draw = require("world/draw")
 local Timer = require("timer")
+local Util = require("util")
 
 local Shot = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")
@@ -56,6 +57,6 @@ function Shot:update(dt)
 	return {}
 end
 
-Shot.draw = Shot.createDrawImageFunction("shot", .1, .5)
+Shot.draw = Draw.createObjectDrawImageFunction("shot", .1, .5)
 
 return Shot

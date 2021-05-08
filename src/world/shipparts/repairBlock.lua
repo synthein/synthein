@@ -3,8 +3,6 @@ local Repair = require("world/shipparts/repair")
 
 -- Utilities
 local Draw = require("world/draw")
-local LocationTable = require("locationTable")
-local WorldObjects = require("world/worldObjects")
 
 local lume = require("vendor/lume")
 
@@ -12,10 +10,6 @@ local Part = require("world/shipparts/part")
 local RepairBlock = class(Part)
 
 function RepairBlock:__create()
-	local imageInactive = "repairBlock"
-	local imageActive = "repairBlockActive"
-	self.image = imageInactive
-
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[1] = false
 	self.connectableSides[2] = false
@@ -33,13 +27,13 @@ function RepairBlock:__create()
 		local draw
 		if repair.active then
 			lume.once(function()
-				self.image = imageActive
+				self.image = "repairBlockActive"
 				drawActive = Draw.createPartDrawImageFunction()
 			end)()
 			draw = drawActive
 		else
 			lume.once(function()
-				self.image = imageInactive
+				self.image = "repairBlock"
 				drawInactive = Draw.createPartDrawImageFunction()
 			end)()
 			draw = drawInactive

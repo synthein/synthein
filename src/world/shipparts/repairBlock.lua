@@ -5,6 +5,8 @@ local Repair = require("world/shipparts/repair")
 local LocationTable = require("locationTable")
 local WorldObjects = require("world/worldObjects")
 
+local lume = require("vendor/lume")
+
 local Part = require("world/shipparts/part")
 local RepairBlock = class(Part)
 
@@ -25,27 +27,24 @@ function RepairBlock:__create()
 	modules["sensor"] = sensor
 	modules["repair"] = repair
 
-	local drawInactive
-	local drawActive
+	local drawActive, drawInactive
 	function self.userData:draw(fixture, scaleByHealth)
-		if scaleByHealth then
-			c = modules.health:getScaledHealth()
-			love.graphics.setColor(1, c, c, 1)
-		else
-			love.graphics.setColor(1, 1, 1, 1)
-		end
-
+		local draw
 		if repair.active then
-			drawActive = drawActive or WorldObjects.createDrawImageFunction(imageActive, 1, 1)
+			lume.once(function()
+				self.image = imageActive
+				drawActive = Part.createDrawImageFunction()
+			end)()
 			draw = drawActive
 		else
-			drawInactive = drawInactive or WorldObjects.createDrawImageFunction(imageInactive, 1, 1)
+			lume.once(function()
+				self.image = imageInactive
+				drawInactive = Part.createDrawImageFunction()
+			end)()
 			draw = drawInactive
 		end
 
-		draw(self, fixture)
-
-		love.graphics.setColor(1, 1, 1, 1)
+		draw(self, fixture, scaleByHealth)
 	end
 end
 

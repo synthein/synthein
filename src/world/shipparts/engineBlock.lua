@@ -4,8 +4,11 @@ local Engine = require("world/shipparts/engine")
 -- Utilities
 local LocationTable = require("locationTable")
 local WorldObjects = require("world/worldObjects")
+local Part = require("world/shipparts/part")
 
-local EngineBlock = class(require("world/shipparts/part"))
+local lume = require("vendor/lume")
+
+local EngineBlock = class(Part)
 
 function EngineBlock:__create()
 	local imageInactive = "engine"
@@ -23,29 +26,24 @@ function EngineBlock:__create()
 	local isActive = engine:getIsActive()
 	local modules = self.modules
 
-	local drawInactive
-	local drawActive
+	local drawActive, drawInactive
 	function self.userData:draw(fixture, scaleByHealth)
-		if scaleByHealth then
-			c = modules.health:getScaledHealth()
-			love.graphics.setColor(1, c, c, 1)
-		else
-			love.graphics.setColor(1, 1, 1, 1)
-		end
-
 		local draw
-
 		if isActive() then
-			drawActive = drawActive or WorldObjects.createDrawImageFunction(imageActive, 1, 1)
+			lume.once(function()
+				self.image = imageActive
+				drawActive = Part.createDrawImageFunction()
+			end)()
 			draw = drawActive
 		else
-			drawInactive = drawInactive or WorldObjects.createDrawImageFunction(imageInactive, 1, 1)
+			lume.once(function()
+				self.image = imageInactive
+				drawInactive = Part.createDrawImageFunction()
+			end)()
 			draw = drawInactive
 		end
 
-		draw(self, fixture)
-
-		love.graphics.setColor(1, 1, 1, 1)
+		draw(self, fixture, scaleByHealth)
 	end
 end
 

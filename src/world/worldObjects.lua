@@ -22,21 +22,21 @@ function WorldObjects:getLocation()
 	return (LocationTable(self.body))
 end
 
-function WorldObjects.createDrawImageFunction(imageName, width, height)
+function WorldObjects.createDrawImageFunction(imageName, objectWidth, objectHeight)
 	local imageData = {}
 
-	local setup = lume.once(function()
+	local setup = lume.once(function(imageName, objectWidth, objectHeight)
 		imageData.image = love.graphics.newImage("res/images/"..imageName..".png")
-		local imageWidth, imageHeight = imageData.image:getDimensions()
+		local imageWidthPx, imageHeightPx = imageData.image:getDimensions()
 
-		imageData.drawWidth  =   width  / imageWidth
-		imageData.drawHeight = - height / imageHeight
-		imageData.offsetWidth  = imageWidth  / 2
-		imageData.offsetHeight = imageHeight / 2
+		imageData.drawWidth    =  objectWidth   / imageWidthPx
+		imageData.drawHeight   = -objectHeight  / imageHeightPx
+		imageData.offsetWidth  =  imageWidthPx  / 2
+		imageData.offsetHeight =  imageHeightPx / 2
 	end)
 
 	return function(self, fixture)
-		setup()
+		setup(imageName, objectWidth, objectHeight)
 
 		local body = fixture:getBody()
 		local x, y = body:getPosition()

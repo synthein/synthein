@@ -116,14 +116,14 @@ end
 function Part.createDrawImageFunction()
 	local imageData = {}
 
-	local setup = lume.once(function(self)
-		imageData.image = love.graphics.newImage("res/images/"..self.image..".png")
-		local imageWidth, imageHeight = imageData.image:getDimensions()
+	local setup = lume.once(function(imageName, objectWidth, objectHeight)
+		imageData.image = love.graphics.newImage("res/images/"..imageName..".png")
+		local imageWidthPx, imageHeightPx = imageData.image:getDimensions()
 
-		imageData.drawWidth  =   1 / imageWidth
-		imageData.drawHeight = - 1 / imageHeight
-		imageData.offsetWidth  = imageWidth  / 2
-		imageData.offsetHeight = imageHeight / 2
+		imageData.drawWidth    =  objectWidth   / imageWidthPx
+		imageData.drawHeight   = -objectHeight  / imageHeightPx
+		imageData.offsetWidth  =  imageWidthPx  / 2
+		imageData.offsetHeight =  imageHeightPx / 2
 	end)
 
 	return function(self, fixture, scaleByHealth)
@@ -134,7 +134,7 @@ function Part.createDrawImageFunction()
 			love.graphics.setColor(1, 1, 1, 1)
 		end
 
-		setup(self)
+		setup(self.image, 1, 1)
 
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()
 

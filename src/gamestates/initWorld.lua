@@ -7,7 +7,7 @@ local SceneParser = require("sceneParser")
 local Screen = require("screen")
 local World = require("world/world")
 
-local Tserial = require("vendor/tserial")
+local lume = require("vendor/lume")
 
 local GameState = require("gamestates/gameState")
 local InitWorld = GameState()
@@ -22,7 +22,7 @@ function InitWorld.load(scene, playerHostility, ifSave)
 		for line in sceneLines do
 			local match = string.match(line, "teamhostility = (.*)")
 			if match then
-				playerHostility = Tserial.unpack(match, true)
+				playerHostility = lume.deserialize(match, true)
 			elseif string.match(line, "%[scene%]") then
 				break
 			end

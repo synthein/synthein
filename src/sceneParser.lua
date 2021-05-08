@@ -3,7 +3,8 @@ local LocationTable = require("locationTable")
 -- SceneParser serializes and deserializes scenes and ships as strings.
 local Spawn = require("world/spawn")
 local Util = require("util")
-local Tserial = require("vendor/tserial")
+
+local lume = require("vendor/lume")
 
 local SceneParser = {}
 
@@ -126,7 +127,7 @@ end
 function SceneParser.saveScene(world)
 	local references = {}
 	local sceneString = "teamhostility = " ..
-		Tserial.pack(world.info.teamHostility.playerHostility, nil, false) ..
+		lume.serialize(world.info.teamHostility.playerHostility) ..
 		"\n[scene]\n"
 
 

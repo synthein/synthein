@@ -22,13 +22,11 @@ function WorldObjects:getLocation()
 	return (LocationTable(self.body))
 end
 
-local getImage = lume.memoize(function(imagePath) return love.graphics.newImage(imagePath) end)
-
 function WorldObjects.createDrawImageFunction(imageName, width, height)
 	local imageData = {}
 
 	local setup = lume.once(function()
-		imageData.image = getImage("res/images/"..imageName..".png")
+		imageData.image = love.graphics.newImage("res/images/"..imageName..".png")
 		imageData.imageWidth  = imageData.image:getWidth()
 		imageData.imageHeight = imageData.image:getHeight()
 

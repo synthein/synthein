@@ -113,13 +113,11 @@ function Part:getPartSide(locationX, locationY)
 	return partSide
 end
 
-local getImage = lume.memoize(function(imagePath) return love.graphics.newImage(imagePath) end)
-
 function Part.createDrawImageFunction()
 	local imageData = {}
 
 	local setup = lume.once(function(self)
-		imageData.image = getImage("res/images/"..self.image..".png")
+		imageData.image = love.graphics.newImage("res/images/"..self.image..".png")
 		imageData.imageWidth  = imageData.image:getWidth()
 		imageData.imageHeight = imageData.image:getHeight()
 

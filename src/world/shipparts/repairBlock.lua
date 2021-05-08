@@ -2,18 +2,14 @@ local Sensor = require("world/shipparts/sensor")
 local Repair = require("world/shipparts/repair")
 
 -- Utilities
-local LocationTable = require("locationTable")
+local Draw = require("world/draw")
+
+local lume = require("vendor/lume")
 
 local Part = require("world/shipparts/part")
 local RepairBlock = class(Part)
 
 function RepairBlock:__create()
-    local imageInactive = love.graphics.newImage("res/images/repairBlock.png")
-    local imageActive = love.graphics.newImage("res/images/repairBlockActive.png")
-	self.image = imageInactive
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
-
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[1] = false
 	self.connectableSides[2] = false
@@ -21,38 +17,37 @@ function RepairBlock:__create()
 
 	local modules = self.modules
 
-    local sensor = Sensor(2)
-    local repair = Repair(sensor:getBodyList())
-    modules["sensor"] = sensor
-    modules["repair"] = repair
+	local sensor = Sensor(2)
+	local repair = Repair(sensor:getBodyList())
+	modules["sensor"] = sensor
+	modules["repair"] = repair
 
+	local drawActive, drawInactive
 	function self.userData:draw(fixture, scaleByHealth)
-		if scaleByHealth then
-			c = modules.health:getScaledHealth()
-			love.graphics.setColor(1, c, c, 1)
+		local draw
+		if repair.active then
+			lume.once(function()
+				self.image = "repairBlockActive"
+				drawActive = Draw.createPartDrawImageFunction()
+			end)()
+			draw = drawActive
 		else
-			love.graphics.setColor(1, 1, 1, 1)
+			lume.once(function()
+				self.image = "repairBlock"
+				drawInactive = Draw.createPartDrawImageFunction()
+			end)()
+			draw = drawInactive
 		end
-        local image
-        if repair.active then
-            image = imageActive
-        else
-            image = imageInactive
-        end
-		local x, y, angle = LocationTable(fixture, self.location):getXYA()
-		love.graphics.draw(
-			image,
-			x, y, angle,
-			1/self.width, -1/self.height, self.width/2, self.height/2)
-		love.graphics.setColor(1, 1, 1, 1)
+
+		draw(self, fixture, scaleByHealth)
 	end
 end
 
 function RepairBlock:addFixtures(body)
 	Part.addFixtures(self, body)
-    local l = self.location
+	local l = self.location
 	self.modules.sensor:addFixtures(body, l[1], l[2])
-    self.modules.repair:setTeam(body:getUserData():getTeam())
+	self.modules.repair:setTeam(body:getUserData():getTeam())
 end
 
 function RepairBlock:removeFixtures()

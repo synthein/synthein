@@ -1,7 +1,5 @@
 local LocationTable = require("locationTable")
 
-local lume = require("vendor/lume")
-
 local WorldObjects = class()
 
 function WorldObjects:__create(worldInfo, location, data, appendix)

@@ -3,8 +3,6 @@ local Engine = require("world/shipparts/engine")
 
 -- Utilities
 local Draw = require("world/draw")
-local LocationTable = require("locationTable")
-local WorldObjects = require("world/worldObjects")
 local Part = require("world/shipparts/part")
 
 local lume = require("vendor/lume")
@@ -25,7 +23,6 @@ function EngineBlock:__create()
 	self.modules["engine"] = engine
 
 	local isActive = engine:getIsActive()
-
 	local drawActive, drawInactive
 	function self.userData:draw(fixture, scaleByHealth)
 		local draw

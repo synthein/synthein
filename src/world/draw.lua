@@ -41,7 +41,7 @@ function Draw.createPartDrawImageFunction()
 
 	return function(self, fixture, scaleByHealth)
 		if scaleByHealth then
-			c = self:getScaledHealth()
+			local c = self:getScaledHealth()
 			love.graphics.setColor(1, c, c, 1)
 		else
 			love.graphics.setColor(1, 1, 1, 1)

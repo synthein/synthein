@@ -35,13 +35,6 @@ function Util.sign(x)
    end
 end
 
-function Util.absVal(x)
-	if x < 0 then
-		x = -x
-	end
-	return x
-end
-
 function Util.packLocation(input)
 	local location = {}
 	if input.body then

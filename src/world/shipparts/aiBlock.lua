@@ -5,20 +5,8 @@ local Sensor = require("world/shipparts/sensor")
 local Part = require("world/shipparts/part")
 local AIBlock = class(Part)
 
-local images = {
-	[-4] = love.graphics.newImage("res/images/ai-4.png"),
-	[-3] = love.graphics.newImage("res/images/ai-3.png"),
-	[-2] = love.graphics.newImage("res/images/ai-2.png"),
-	[-1] = love.graphics.newImage("res/images/ai-1.png"),
-	[ 1] = love.graphics.newImage("res/images/ai1.png"),
-	[ 2] = love.graphics.newImage("res/images/ai2.png")
-}
-
 function AIBlock:__create(team, leader)
-	self.image = images[team]
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
-	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
+	self.image = "ai" .. team
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 10, 10)

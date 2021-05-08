@@ -5,10 +5,7 @@ local Heal = require("world/shipparts/heal")
 local PlayerBlock = class(require("world/shipparts/part"))
 
 function PlayerBlock:__create(team, leader)
-	self.image = love.graphics.newImage("res/images/player.png")
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
-	self.physicsShape = love.physics.newRectangleShape(self.width, self.height)
+	self.image = "player"
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 15, 5)

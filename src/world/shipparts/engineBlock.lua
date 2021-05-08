@@ -2,16 +2,17 @@
 local Engine = require("world/shipparts/engine")
 
 -- Utilities
-local LocationTable = require("locationTable")
+local Draw = require("world/draw")
+local Part = require("world/shipparts/part")
 
-local EngineBlock = class(require("world/shipparts/part"))
+local lume = require("vendor/lume")
+
+local EngineBlock = class(Part)
 
 function EngineBlock:__create()
-	local imageInactive = love.graphics.newImage("res/images/engine.png")
-	local imageActive = love.graphics.newImage("res/images/engineActive.png")
+	local imageInactive = "engine"
+	local imageActive = "engineActive"
 	self.image = imageInactive
-	self.width = self.image:getWidth()
-	self.height = self.image:getHeight()
 
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[2] = false
@@ -22,23 +23,24 @@ function EngineBlock:__create()
 	self.modules["engine"] = engine
 
 	local isActive = engine:getIsActive()
-	local modules = self.modules
-
+	local drawActive, drawInactive
 	function self.userData:draw(fixture, scaleByHealth)
-		if scaleByHealth then
-			c = modules.health:getScaledHealth()
-			love.graphics.setColor(1, c, c, 1)
+		local draw
+		if isActive() then
+			lume.once(function()
+				self.image = imageActive
+				drawActive = Draw.createPartDrawImageFunction()
+			end)()
+			draw = drawActive
 		else
-			love.graphics.setColor(1, 1, 1, 1)
+			lume.once(function()
+				self.image = imageInactive
+				drawInactive = Draw.createPartDrawImageFunction()
+			end)()
+			draw = drawInactive
 		end
-		local x, y, angle = LocationTable(fixture, self.location):getXYA()
-		local image = imageInactive
-		if isActive() then image = imageActive end
-		love.graphics.draw(
-			image,
-			x, y, angle,
-			1/self.width, -1/self.height, self.width/2, self.height/2)
-			love.graphics.setColor(1, 1, 1, 1)
+
+		draw(self, fixture, scaleByHealth)
 	end
 end
 

@@ -25,7 +25,6 @@ function EngineBlock:__create()
 	self.modules["engine"] = engine
 
 	local isActive = engine:getIsActive()
-	local modules = self.modules
 
 	local drawActive, drawInactive
 	function self.userData:draw(fixture, scaleByHealth)

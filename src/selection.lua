@@ -1,6 +1,6 @@
 local Building = require("building")
 local CircleMenu = require("circleMenu")
-local Util = require("util")
+local vector = require("vector")
 
 local Selection = {}
 Selection.__index = Selection
@@ -92,7 +92,7 @@ function Selection:released(cursorX, cursorY)
 				end
 			else
 				local strength = self.part:getMenu()
-				local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
+				local newAngle = vector.angle(cursorX - x, cursorY - y)
 				local index = self.angleToIndex(newAngle, #strength)
 				self.part:runMenu(index)
 			end
@@ -132,7 +132,7 @@ function Selection:draw(cursorX, cursorY)
 		else
 			angle = 0
 			strength, lables = self.part:getMenu()
-			local newAngle = Util.vectorAngle(cursorX - x, cursorY - y)
+			local newAngle = vector.angle(cursorX - x, cursorY - y)
 			local index = self.angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2

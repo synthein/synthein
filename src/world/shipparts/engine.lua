@@ -1,5 +1,5 @@
 local StructureMath = require("world/structureMath")
-local Util = require("util")
+local vector = require("vector")
 
 local Engine = class()
 
@@ -73,7 +73,7 @@ function Engine:update(inputs, location)
 	elseif self.engineType == 2 then
 		-- Determine if engine is pointing in a helpful direction.
 		local rotationTable = {x, y, -x, -y}
-		local rotation = Util.sign(rotationTable[orientation])
+		local rotation = vector.sign(rotationTable[orientation])
 		active = 0 < (controlTable[orientation] + controlTable[7] * rotation)
 		-- Determine local force direction
 		fx, fy = unpack(StructureMath.addUnitVector({0, 0}, orientation))

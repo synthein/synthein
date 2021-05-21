@@ -1,6 +1,5 @@
 local Stack = require("stack")
 local CallList = require("callList")
-local Util = require("util")
 
 -- The purpose for the stack manager it to prevent circular referencing when
 -- using stacks.
@@ -65,7 +64,7 @@ function StackManager:createCurrentStateReference()
 
 	-- Return a table that acts like the current state by calling the prior
 	-- function when indexed.
-	return Util.createDummyObject(f)
+	return setmetatable({}, {__index = f})
 end
 
 function StackManager:processQueue()

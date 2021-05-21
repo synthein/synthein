@@ -1,4 +1,4 @@
-local Util = require("util")
+local vector = require("vector")
 
 local CircleMenu = {}
 
@@ -33,7 +33,7 @@ function CircleMenu:draw(x, y, angle, size, strength, lables)
 		-- One line from the center to the edge for each segment of the arc
 		for i = 1, division do
 			local angleToPoint = CircleMenu.indexToAngle(i, division, angle)
-			local pointX, pointY = Util.vectorComponents(5 * size, angleToPoint)
+			local pointX, pointY = vector.components(5 * size, angleToPoint)
 			pointX = pointX + x
 			pointY = pointY + y
 			love.graphics.line(x, y, pointX, pointY)
@@ -80,7 +80,7 @@ function CircleMenu:draw(x, y, angle, size, strength, lables)
 	if lables then
 		for i = 1, division do
 			local angleToText = CircleMenu.indexToAngle(i - .5, division, angle)
-			local textX, textY = Util.vectorComponents(3 * size, angleToText)
+			local textX, textY = vector.components(3 * size, angleToText)
 			textX = textX + x
 			textY = textY + y
 			love.graphics.print(lables[i], textX, textY, 0,

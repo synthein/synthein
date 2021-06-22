@@ -1,10 +1,10 @@
 local Debug = require("debugTools")
 local Gamesave = require("gamesave")
-local SceneParser = require("sceneParser")
-local Utf8 = require("utf8")
-local Util = require("util")
-local Menu = require("menu")
 local LocationTable = require("locationTable")
+local Menu = require("menu")
+local SceneParser = require("sceneParser")
+local utf8 = require("utf8")
+local vector = require("vector")
 
 local GameState = require("gamestates/gameState")
 local InGame = GameState()
@@ -54,7 +54,7 @@ function InGame.keypressed(key)
 		if key == "backspace" then
 			-- The string is utf-8 encoded, so the last character of the string
 			-- could be multiple bytes.
-			local byteoffset = Utf8.offset(saveName, -1)
+			local byteoffset = utf8.offset(saveName, -1)
 			if byteoffset then
 				saveName = saveName:sub(1, byteoffset - 1)
 			end
@@ -179,10 +179,10 @@ function InGame.update(dt)
 				if player.ship then
 					local timeVar = 1 - 50/(20 + eventTime)
 					if timeVar < 0 then timeVar = 0 end
-					local disVar = 1 - 50/(1 + Util.vectorMagnitude(
+					local disVar = 1 - 50/(1 + vector.magnitude(
 								player.ship.body:getX(),player.ship.body:getY())/20)
 					if disVar < 0 then disVar = 0 end
-					local veloVar = 1 - 50/(1 + Util.vectorMagnitude(
+					local veloVar = 1 - 50/(1 + vector.magnitude(
 								player.ship.body:getLinearVelocity()))
 					if veloVar < 0 then veloVar = 0 end
 					local rand = love.math.random()
@@ -194,7 +194,7 @@ function InGame.update(dt)
 						local location = {player.ship.body:getX(),
 										  player.ship.body:getY()}
 						local vV = {player.ship.body:getLinearVelocity()}
-						local mag = Util.vectorMagnitude(unpack(vV))
+						local mag = vector.magnitude(unpack(vV))
 						local uV
 						if mag ~= 0 then
 							uV = {vV[1]/mag , vV[2]/ mag}

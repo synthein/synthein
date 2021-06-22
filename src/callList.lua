@@ -1,5 +1,3 @@
-local Util = require("util")
-
 local CallList = {}
 CallList.__index = CallList
 
@@ -32,7 +30,7 @@ function CallList.create(reference, options)
 		return CallList.addIndex(t, key, returnInformation)
 	end
 
-	self.list = Util.createDummyObject(addIndex)
+	self.list = setmetatable({}, {__index = addIndex})
 
 	return self
 end

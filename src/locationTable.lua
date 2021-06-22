@@ -1,4 +1,5 @@
-local Util = require("util")
+local vector = require("vector")
+
 local LocationTable = class()
 
 function LocationTable:__create(...)
@@ -61,8 +62,8 @@ end
 function LocationTable:__add(locationTable)
 	local l = LocationTable(locationTable:getAll())
 
-	l[1], l[2] = Util.computeAbsCoords(l[1], l[2], self[3])
-	l[4], l[5] = Util.computeAbsCoords(l[4], l[5], self[3])
+	l[1], l[2] = vector.rotate(l[1], l[2], self[3])
+	l[4], l[5] = vector.rotate(l[4], l[5], self[3])
 
 	for i = 1, 6 do
 		l[i] = l[i] + self[i]

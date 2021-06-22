@@ -1,6 +1,6 @@
 local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")
-local Util = require("util")
+local parse = require("parse")
 
 local StructureParser = {}
 
@@ -197,8 +197,8 @@ function StructureParser.shipPack(structure, saveThePartData)
 			string = string .. stringTable[ii][j][1]
 			if stringTable[ii][j][2]then
 				dataString = dataString ..
-							 Util.packLocation({j + xLow - 1, ii + yLow - 1}) ..
-							 Util.packData(stringTable[ii][j][2]) ..
+							 parse.packLocation({j + xLow - 1, ii + yLow - 1}) ..
+							 parse.packData(stringTable[ii][j][2]) ..
 							 --Tserial.pack(stringTable[i][j][2], nil, true) ..
 							 "\n"
 			end

@@ -2,7 +2,7 @@ local LocationTable = require("locationTable")
 
 -- SceneParser serializes and deserializes scenes and ships as strings.
 local Spawn = require("world/spawn")
-local Util = require("util")
+local parse = require("parse")
 
 local lume = require("vendor/lume")
 
@@ -140,7 +140,7 @@ function SceneParser.saveScene(world)
 		local string = ""
 			.. references[object] .. " = " .. object:type()
 			.. "(" .. tostring(object:getLocation()) .. ")"
-			.. Util.packData(data) .. "\n"
+			.. parse.packData(data) .. "\n"
 			.. (appendix and "{\n" .. appendix .. "\n}\n" or "")
 
 		sceneString = sceneString .. string

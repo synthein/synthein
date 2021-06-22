@@ -1,5 +1,3 @@
-local Util = require("util")
-
 local Building = {}
 Building.__index = Building
 

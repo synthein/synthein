@@ -2,7 +2,7 @@
 local Health = require("world/shipparts/health")
 
 -- Utilities
-local Util = require("util")
+local vector = require("vector")
 local LocationTable = require("locationTable")
 local PhysicsReferences = require("world/physicsReferences")
 local Draw = require("world/draw")
@@ -102,7 +102,7 @@ end
 
 function Part:getPartSide(locationX, locationY)
 	local partX, partY, partAngle = self:getWorldLocation():getXYA()
-	local angleToCursor = Util.vectorAngle(locationX - partX,
+	local angleToCursor = vector.angle(locationX - partX,
 										   locationY - partY)
 	local angleDifference = angleToCursor - partAngle
 	local partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)

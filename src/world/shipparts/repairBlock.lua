@@ -1,3 +1,4 @@
+local Hull = require("world/shipparts/hull")
 local Sensor = require("world/shipparts/sensor")
 local Repair = require("world/shipparts/repair")
 
@@ -10,6 +11,7 @@ local Part = require("world/shipparts/part")
 local RepairBlock = class(Part)
 
 function RepairBlock:__create()
+	self.modules["hull"] = Hull("repairBlock", 10)
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[1] = false
 	self.connectableSides[2] = false
@@ -23,24 +25,26 @@ function RepairBlock:__create()
 	modules["repair"] = repair
 
 	local drawActive, drawInactive
-	function self.userData:draw(fixture, scaleByHealth)
+	local userData = {}
+	function userData:draw(fixture, scaleByHealth)
 		local draw
 		if repair.active then
 			lume.once(function()
 				self.image = "repairBlockActive"
-				drawActive = Draw.createPartDrawImageFunction()
+				drawActive = Draw.createPartDrawImageFunction("repairBlockActive")
 			end)()
 			draw = drawActive
 		else
 			lume.once(function()
 				self.image = "repairBlock"
-				drawInactive = Draw.createPartDrawImageFunction()
+				drawInactive = Draw.createPartDrawImageFunction("repairBlock")
 			end)()
 			draw = drawInactive
 		end
 
 		draw(self, fixture, scaleByHealth)
 	end
+	self.modules["hull"].userData.draw = userData.draw
 end
 
 function RepairBlock:addFixtures(body)

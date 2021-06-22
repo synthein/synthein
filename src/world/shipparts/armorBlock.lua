@@ -1,12 +1,10 @@
 -- Components
-local Health = require("world/shipparts/health")
+local Hull = require("world/shipparts/hull")
 
 local ArmorBlock = class(require("world/shipparts/part"))
 
 function ArmorBlock:__create()
-	self.image = "armorBlock"
-
-	self.modules.health = Health(20)
+	self.modules["hull"] = Hull("armorBlock", 20)
 end
 
 return ArmorBlock

@@ -1,3 +1,4 @@
+local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
 local Heal = require("world/shipparts/heal")
@@ -5,12 +6,12 @@ local Heal = require("world/shipparts/heal")
 local PlayerBlock = class(require("world/shipparts/part"))
 
 function PlayerBlock:__create(team, leader)
-	self.image = "player"
+	self.modules["hull"] = Hull("player", 10)
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 15, 5)
 	self.modules["gun"] = Gun()
-	self.modules["heal"] = Heal(self.modules.health)
+	self.modules["heal"] = Heal(self.modules["hull"])
 	self.orders = {}
 
 	self.isPlayer = true

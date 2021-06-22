@@ -25,7 +25,6 @@ function Selection:pressed(cursorX, cursorY, order)
 	local structure = self.world:getObject(cursorX, cursorY)
 	local part, partSide
 	if structure then part, partSide = structure:findPart(cursorX, cursorY) end
-
 	if structure and structure:type() == "structure" and part then
 		if self.build then
 			if order == "build" then

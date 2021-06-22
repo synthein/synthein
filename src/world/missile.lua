@@ -1,7 +1,7 @@
 local Draw = require("world/draw")
 local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("timer")
-local Util = require("util")
+local vector = require("vector")
 
 local Missile = class(require("world/worldObjects"))
 
@@ -18,7 +18,7 @@ function Missile:__create(worldInfo, location, data, appendix)
 
 	local visionArcRadius = 50
 	local visionArcAngle = (60/180)*(math.pi)
-	local x, y = Util.vectorComponents(visionArcRadius, (math.pi/2)-(visionArcAngle/2))
+	local x, y = vector.components(visionArcRadius, (math.pi/2)-(visionArcAngle/2))
 	local visionArcShape = love.physics.newPolygonShape(
 		0, 0,
 		x, y,
@@ -88,14 +88,14 @@ function Missile:update(dt)
 	if self.target then
 		local missileX, missileY = self.body:getPosition()
 		local targetX, targetY = self.target:getPosition()
-		local angle = Util.vectorAngle(targetX - missileX, targetY - missileY)
+		local angle = vector.angle(targetX - missileX, targetY - missileY)
 		local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
-		local sign = Util.sign(angleToTarget)
+		local sign = vector.sign(angleToTarget)
 
 		self.body:applyTorque(sign * self.torque)
 	end
 
-	self.body:applyForce(Util.vectorComponents(self.thrust, self.body:getAngle() + math.pi/2))
+	self.body:applyForce(vector.components(self.thrust, self.body:getAngle() + math.pi/2))
 
 	return
 end

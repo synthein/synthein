@@ -1,4 +1,4 @@
-local Util = require("util")
+local vector = require("vector")
 
 local AI = class()
 
@@ -60,9 +60,9 @@ function AI:getOrders(worldInfo, leader, body, bodyList)
 	local orders = {}
 
 	-- Aim the ship.
-	local angle = Util.vectorAngle(targetX - aiX, targetY - aiY)
+	local angle = vector.angle(targetX - aiX, targetY - aiY)
 	local angleToTarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
-	local sign = Util.sign(angleToTarget)
+	local sign = vector.sign(angleToTarget)
 
 	if sign * angleToTarget > sign * aiAngleVol /10 then
 		if sign == 1 then

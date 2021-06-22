@@ -1,4 +1,5 @@
 -- Component
+local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 
 -- Utilities
@@ -10,6 +11,7 @@ local lume = require("vendor/lume")
 local EngineBlock = class(Part)
 
 function EngineBlock:__create()
+	self.modules["hull"] = Hull("engine", 10)
 	local imageInactive = "engine"
 	local imageActive = "engineActive"
 	self.image = imageInactive
@@ -24,24 +26,26 @@ function EngineBlock:__create()
 
 	local isActive = engine:getIsActive()
 	local drawActive, drawInactive
-	function self.userData:draw(fixture, scaleByHealth)
+	local userData = {}
+	function userData:draw(fixture, scaleByHealth)
 		local draw
 		if isActive() then
 			lume.once(function()
 				self.image = imageActive
-				drawActive = Draw.createPartDrawImageFunction()
+				drawActive = Draw.createPartDrawImageFunction("engineActive")
 			end)()
 			draw = drawActive
 		else
 			lume.once(function()
 				self.image = imageInactive
-				drawInactive = Draw.createPartDrawImageFunction()
+				drawInactive = Draw.createPartDrawImageFunction("engine")
 			end)()
 			draw = drawInactive
 		end
 
 		draw(self, fixture, scaleByHealth)
 	end
+	self.modules["hull"].userData.draw = userData.draw
 end
 
 return EngineBlock

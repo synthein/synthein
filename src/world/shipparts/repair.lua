@@ -16,7 +16,7 @@ function Repair:update(moduleInputs, location)
 
     if cb and cf and t and bl[cb] and bl[cb][cf] then
         if t:ready(moduleInputs.dt) then
-            cf:getUserData():repair(1)
+            cf:getUserData().repair(1)
             self.currentBody = nil
             self.currentFixture = nil
             self.currentHealth = nil

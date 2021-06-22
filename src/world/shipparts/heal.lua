@@ -2,14 +2,14 @@ local Timer = require("timer")
 
 local Heal = class()
 
-function Heal:__create(health)
+function Heal:__create(hull)
 	self.timer = Timer(10)
-	self.health = health
+	self.hull = hull
 end
 
 function Heal:update(inputs)
 	if self.timer:ready(inputs.dt) then
-		self.health:repair(1)
+		self.hull.userData.repair(1)
 	end
 end
 

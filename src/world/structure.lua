@@ -410,10 +410,11 @@ function Structure:command(dt)
 		controls = {gun = gunControls, engine = engineControls},
 		teamHostility = self.worldInfo.teamHostility}
 
-	for _, part in ipairs(self.gridTable:loop()) do
-		for _, module in pairs(part:getModules()) do
+	for i, part in ipairs(self.gridTable:loop()) do
+		for key, module in pairs(part:getModules()) do
 			local location = part.location
 			local newObject, disconnect = module:update(moduleInputs, location)
+
 			if newObject then
 				create(newObject, location)
 			end

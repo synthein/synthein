@@ -67,7 +67,7 @@ local offsetTable = {{0, .5}, {-.5, 0}, {0, -.5}, {.5, 0}}
 
 function Building:draw()
 	if self.annexeePart and self.annexeePartSide then
-		local body = self.annexeePart.fixture:getBody()
+		local body = self.annexeePart.modules["hull"].fixture:getBody()
 
 		local l = self.annexeePart.location
 

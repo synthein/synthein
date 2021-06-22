@@ -36,7 +36,7 @@ function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight
 	end
 end
 
-function Draw.createPartDrawImageFunction()
+function Draw.createPartDrawImageFunction(imageName)
 	local imageData = {}
 
 	return function(self, fixture, scaleByHealth)
@@ -47,7 +47,7 @@ function Draw.createPartDrawImageFunction()
 			love.graphics.setColor(1, 1, 1, 1)
 		end
 
-		imageData = setup(self.image, 1, 1)
+		imageData = setup(imageName, 1, 1)
 
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()
 

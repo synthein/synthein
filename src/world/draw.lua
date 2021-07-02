@@ -60,4 +60,23 @@ function Draw.createPartDrawImageFunction(imageName)
 	end
 end
 
+function Draw.createDrawBlockDrawFunction(imageName)
+	local image = love.graphics.newImage("res/images/"..imageName..".png")
+	local imageWidthPx, imageHeightPx = image:getDimensions()
+
+	local drawWidth    =  1 / imageWidthPx
+	local drawHeight   = -1 / imageHeightPx
+	local offsetWidth  =  imageWidthPx  / 2
+	local offsetHeight =  imageHeightPx / 2
+
+	return function(x, y, angle)
+			love.graphics.draw(
+				image,
+				x, y, angle,
+				drawWidth, drawHeight,
+				offsetWidth, offsetHeight
+			)
+		end
+end
+
 return Draw

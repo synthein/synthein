@@ -11,17 +11,17 @@ local lume = require("vendor/lume")
 local EngineBlock = class(Part)
 
 function EngineBlock:__create()
-	self.modules["hull"] = Hull("engine", 10)
-	local imageInactive = "engine"
-	local imageActive = "engineActive"
-	self.image = imageInactive
-
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[2] = false
 	self.connectableSides[3] = false
 	self.connectableSides[4] = false
 
+	local hull = Hull("engine", 10)
 	local engine = Engine(2, 15)
+
+
+
+	self.modules["hull"] = hull
 	self.modules["engine"] = engine
 
 	local isActive = engine:getIsActive()

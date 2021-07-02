@@ -10,9 +10,12 @@ function Hull:__create(imageName, maxHealth)--, connectableSides)
 	self.maxHealth = maxHealth
 	self.isDestroyed = false
 
+	
 
 	local userData = {}
-	userData.draw = Draw.createPartDrawImageFunction(imageName)
+	userData.draw =
+
+	baseDraw = Draw.createPartDrawImageFunction(imageName)
 
 	function userData:collision(fixture, otherFixture, sqVelocity, pointVelocity)
 		local object = otherFixture:getUserData()

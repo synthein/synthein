@@ -1,3 +1,6 @@
+local Draw = require("world/draw")
+local imagefunction = Draw.createDrawBlockDrawFunction("player")
+
 local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
@@ -6,7 +9,7 @@ local Heal = require("world/shipparts/heal")
 local PlayerBlock = class(require("world/shipparts/part"))
 
 function PlayerBlock:__create(team, leader)
-	self.modules["hull"] = Hull("player", 10)
+	self.modules["hull"] = Hull(imagefunction, 10)
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 15, 5)

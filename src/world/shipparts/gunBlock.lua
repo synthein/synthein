@@ -1,3 +1,6 @@
+local Draw = require("world/draw")
+local imageFunction = Draw.createDrawBlockDrawFunction("gun")
+
 -- Component
 local Hull = require("world/shipparts/hull")
 local Gun = require("world/shipparts/gun")
@@ -5,7 +8,7 @@ local Gun = require("world/shipparts/gun")
 local GunBlock = class(require("world/shipparts/part"))
 
 function GunBlock:__create()
-	self.modules["hull"] = Hull("gun", 10)
+	self.modules["hull"] = Hull(imageFunction, 10)
 
 	self.modules["gun"] = Gun()
 

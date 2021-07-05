@@ -1,17 +1,14 @@
--- Component
+-- Components
 local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 
--- Utilities
+-- Graphics
 local Draw = require("world/draw")
 local imageFunctionInactive = Draw.createDrawBlockDrawFunction("engine")
 local imageFunctionActive = Draw.createDrawBlockDrawFunction("engineActive")
 
-
+-- Class Setup
 local Part = require("world/shipparts/part")
-
-local lume = require("vendor/lume")
-
 local EngineBlock = class(Part)
 
 function EngineBlock:__create()

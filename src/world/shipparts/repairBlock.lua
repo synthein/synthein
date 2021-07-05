@@ -1,16 +1,14 @@
-local Draw = require("world/draw")
-local imageFunctionInactive = Draw.createDrawBlockDrawFunction("repairBlock")
-local imageFunctionActive = Draw.createDrawBlockDrawFunction("repairBlockActive")
-
+-- Components
 local Hull = require("world/shipparts/hull")
 local Sensor = require("world/shipparts/sensor")
 local Repair = require("world/shipparts/repair")
 
--- Utilities
+-- Graphics
 local Draw = require("world/draw")
+local imageFunctionInactive = Draw.createDrawBlockDrawFunction("repairBlock")
+local imageFunctionActive = Draw.createDrawBlockDrawFunction("repairBlockActive")
 
-local lume = require("vendor/lume")
-
+-- Class Setup
 local Part = require("world/shipparts/part")
 local RepairBlock = class(Part)
 

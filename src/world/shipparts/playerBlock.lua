@@ -1,12 +1,16 @@
-local Draw = require("world/draw")
-local imagefunction = Draw.createDrawBlockDrawFunction("player")
-
+-- Components
 local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
 local Heal = require("world/shipparts/heal")
 
-local PlayerBlock = class(require("world/shipparts/part"))
+-- Graphics
+local Draw = require("world/draw")
+local imagefunction = Draw.createDrawBlockDrawFunction("player")
+
+-- Class Setup
+local Part = require("world/shipparts/part")
+local PlayerBlock = class(Part)
 
 function PlayerBlock:__create(team, leader)
 	self.modules["hull"] = Hull(imagefunction, 10)

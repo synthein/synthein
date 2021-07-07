@@ -6,7 +6,7 @@ local Heal = require("world/shipparts/heal")
 
 -- Graphics
 local Draw = require("world/draw")
-local imagefunction = Draw.createDrawBlockDrawFunction("player")
+local imagefunction = Draw.createDrawBlockFunction("player")
 
 -- Class Setup
 local Part = require("world/shipparts/part")

@@ -60,7 +60,11 @@ function Draw.createPartDrawImageFunction(imageName)
 	end
 end
 
-function Draw.createDrawBlockDrawFunction(imageName)
+function Draw.createDrawBlockFunction(imageName)
+	if not love.graphics then
+		return function(x, y, angle) end
+	end
+
 	local image = love.graphics.newImage("res/images/"..imageName..".png")
 	local imageWidthPx, imageHeightPx = image:getDimensions()
 

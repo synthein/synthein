@@ -9,7 +9,7 @@ local Draw = require("world/draw")
 local aiTeams = {-4, -3, -2, -1, 1, 2}
 local imageFunctions = {}
 for i, team in ipairs(aiTeams) do
-	imageFunctions[team] = Draw.createDrawBlockDrawFunction("ai" .. team)
+	imageFunctions[team] = Draw.createDrawBlockFunction("ai" .. team)
 end
 
 -- Class Setup

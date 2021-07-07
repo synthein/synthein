@@ -4,7 +4,7 @@ local Gun = require("world/shipparts/gun")
 
 -- Graphics
 local Draw = require("world/draw")
-local imageFunction = Draw.createDrawBlockDrawFunction("gun")
+local imageFunction = Draw.createDrawBlockFunction("gun")
 
 -- Class Setup
 local Part = require("world/shipparts/part")

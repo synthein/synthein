@@ -4,8 +4,8 @@ local Engine = require("world/shipparts/engine")
 
 -- Graphics
 local Draw = require("world/draw")
-local imageFunctionInactive = Draw.createDrawBlockDrawFunction("engine")
-local imageFunctionActive = Draw.createDrawBlockDrawFunction("engineActive")
+local imageFunctionInactive = Draw.createDrawBlockFunction("engine")
+local imageFunctionActive = Draw.createDrawBlockFunction("engineActive")
 
 -- Class Setup
 local Part = require("world/shipparts/part")

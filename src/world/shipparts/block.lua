@@ -1,5 +1,5 @@
 local Draw = require("world/draw")
-local imageFunction = Draw.createDrawBlockDrawFunction("block")
+local imageFunction = Draw.createDrawBlockFunction("block")
 
 local Hull = require("world/shipparts/hull")
 

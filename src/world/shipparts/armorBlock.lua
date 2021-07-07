@@ -3,7 +3,7 @@ local Hull = require("world/shipparts/hull")
 
 -- Graphics
 local Draw = require("world/draw")
-local imageFunction = Draw.createDrawBlockDrawFunction("armorBlock")
+local imageFunction = Draw.createDrawBlockFunction("armorBlock")
 
 -- Class Setup
 local Part = require("world/shipparts/part")

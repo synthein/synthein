@@ -5,8 +5,8 @@ local Repair = require("world/shipparts/repair")
 
 -- Graphics
 local Draw = require("world/draw")
-local imageFunctionInactive = Draw.createDrawBlockDrawFunction("repairBlock")
-local imageFunctionActive = Draw.createDrawBlockDrawFunction("repairBlockActive")
+local imageFunctionInactive = Draw.createDrawBlockFunction("repairBlock")
+local imageFunctionActive = Draw.createDrawBlockFunction("repairBlockActive")
 
 -- Class Setup
 local Part = require("world/shipparts/part")

@@ -1,13 +1,23 @@
+-- Components
 local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 local AI = require("world/shipparts/ai")
 local Sensor = require("world/shipparts/sensor")
 
+-- Graphics
+local Draw = require("world/draw")
+local aiTeams = {-4, -3, -2, -1, 1, 2}
+local imageFunctions = {}
+for i, team in ipairs(aiTeams) do
+	imageFunctions[team] = Draw.createDrawBlockFunction("ai" .. team)
+end
+
+-- Class Setup
 local Part = require("world/shipparts/part")
 local AIBlock = class(Part)
 
 function AIBlock:__create(team, leader)
-	self.modules["hull"] = Hull("ai" .. team, 10)
+	self.modules["hull"] = Hull(imageFunctions[team], 10)
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 10, 10)

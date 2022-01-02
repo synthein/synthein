@@ -1,11 +1,17 @@
--- Component
+-- Components
 local Hull = require("world/shipparts/hull")
 local Gun = require("world/shipparts/gun")
 
-local GunBlock = class(require("world/shipparts/part"))
+-- Graphics
+local Draw = require("world/draw")
+local imageFunction = Draw.createDrawBlockFunction("gun")
+
+-- Class Setup
+local Part = require("world/shipparts/part")
+local GunBlock = class(Part)
 
 function GunBlock:__create()
-	self.modules["hull"] = Hull("gun", 10)
+	self.modules["hull"] = Hull(imageFunction, 10)
 
 	self.modules["gun"] = Gun()
 

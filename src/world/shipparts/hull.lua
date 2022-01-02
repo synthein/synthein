@@ -1,18 +1,29 @@
-local Draw = require("world/draw")
 local PhysicsReferences = require("world/physicsReferences")
-
+local Location = require("world/location")
 
 local Hull = class()
 
-function Hull:__create(imageName, maxHealth)--, connectableSides)
+function Hull:__create(imagefunction, maxHealth)--, connectableSides)
 
 	self.health = maxHealth
 	self.maxHealth = maxHealth
 	self.isDestroyed = false
 
-
 	local userData = {}
-	userData.draw = Draw.createPartDrawImageFunction(imageName)
+
+	userData.draw = function(userdata, fixture, scaleByHealth)
+		if scaleByHealth then
+			local c = userData:getScaledHealth()
+			love.graphics.setColor(1, c, c, 1)
+		else
+			love.graphics.setColor(1, 1, 1, 1)
+		end
+
+		local l = userData.location
+		local x, y, angle = Location.fixturePoint3(fixture, l[1], l[2])
+		angle = angle + (l[3] - 1) * math.pi / 2
+		imagefunction(x, y, angle)
+	end
 
 	function userData:collision(fixture, otherFixture, sqVelocity, pointVelocity)
 		local object = otherFixture:getUserData()

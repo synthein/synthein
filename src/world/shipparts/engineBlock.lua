@@ -1,51 +1,34 @@
--- Component
+-- Components
 local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 
--- Utilities
+-- Graphics
 local Draw = require("world/draw")
+local imageFunctionInactive = Draw.createDrawBlockFunction("engine")
+local imageFunctionActive = Draw.createDrawBlockFunction("engineActive")
+
+-- Class Setup
 local Part = require("world/shipparts/part")
-
-local lume = require("vendor/lume")
-
 local EngineBlock = class(Part)
 
 function EngineBlock:__create()
-	self.modules["hull"] = Hull("engine", 10)
-	local imageInactive = "engine"
-	local imageActive = "engineActive"
-	self.image = imageInactive
-
 	-- Engines can only connect to things on their top side.
 	self.connectableSides[2] = false
 	self.connectableSides[3] = false
 	self.connectableSides[4] = false
 
 	local engine = Engine(2, 15)
-	self.modules["engine"] = engine
-
-	local isActive = engine:getIsActive()
-	local drawActive, drawInactive
-	local userData = {}
-	function userData:draw(fixture, scaleByHealth)
-		local draw
-		if isActive() then
-			lume.once(function()
-				self.image = imageActive
-				drawActive = Draw.createPartDrawImageFunction("engineActive")
-			end)()
-			draw = drawActive
+	local imageFunction = function(...)
+		if engine.isActive then
+			imageFunctionActive(...)
 		else
-			lume.once(function()
-				self.image = imageInactive
-				drawInactive = Draw.createPartDrawImageFunction("engine")
-			end)()
-			draw = drawInactive
+			imageFunctionInactive(...)
 		end
-
-		draw(self, fixture, scaleByHealth)
 	end
-	self.modules["hull"].userData.draw = userData.draw
+
+	local hull = Hull(imageFunction, 10)
+	self.modules["hull"] = hull
+	self.modules["engine"] = engine
 end
 
 return EngineBlock

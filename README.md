@@ -60,7 +60,7 @@ Press "I" to open a menu that lets you choose something to spawn.
 
 ## License
 
-Copyright (c) 2014-2021 Jordan Christiansen and Drake Halver
+Copyright (c) 2014-2022 Jordan Christiansen and Drake Halver
 
 The code and assets of Synthein are distributed under the terms of the GPL v3,
 included in the LICENSE file.

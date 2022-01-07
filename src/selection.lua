@@ -50,7 +50,7 @@ function Selection:pressed(cursorX, cursorY, order)
 				if structure.corePart then
 					local corePart = structure.corePart
 					if corePart == part then
-						if corePart:getTeam() == self.team and corePart.ai then
+						if corePart:getTeam() == self.team and corePart.modules.ai then
 							self.structure = structure
 							self.part = part
 						end

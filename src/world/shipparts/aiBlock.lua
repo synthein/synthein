@@ -55,11 +55,11 @@ function AIBlock:getOrders(body)
 end
 
 function AIBlock:getMenu()
-	return self.ai:getMenu()
+	return self.modules.ai:getMenu()
 end
 
 function AIBlock:runMenu(i)
-	return self.ai:runMenu(i)
+	return self.modules.ai:runMenu(i)
 end
 
 return AIBlock

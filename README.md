@@ -1,19 +1,14 @@
-# Synthein [![CI Status](https://drone.webgears.k.vu/api/badges/synthein/synthein/status.svg?branch=master)](https://drone.webgears.k.vu/synthein/synthein) [![Chat Channel](https://img.shields.io/badge/telegram-chat-lightgrey.svg)](https://t.me/synthein)
-
-Synthein (working title) is a game about blowing up space ships and using their
-parts to make your space ship bigger and better.
-
-## Features
+# Synthein
 
 *  Build your ship.
 *  Destroy enemies that spawn at random.
 *  Build AI allies can follow you and attack nearby enemies.
 
-![screenshot](http://i.imgur.com/b2QnY5A.png)
+![screenshot](https://user-images.githubusercontent.com/2390950/148664456-b180ff4e-5237-42ce-8397-deed5472ecbe.png)
 
-### Planned Features
+## Planned Features
 
-* AI allies that you can give orders to (follow, guard, patrol)
+* AI allies that you can give orders to (follow, guard, patrol, custom programs)
 * a customizable automated base
 * storable ship configurations
 * an open world with randomly generated things to encounter and explore
@@ -24,12 +19,13 @@ Check out [our issues](https://github.com/synthein/synthein/issues) to see more 
 
 Download the latest release [here](https://github.com/synthein/synthein/releases/latest).
 
-If you're brave, you can also try out the latest unstable build:
+If you're brave, you can also [download LÖVE](https://love2d.org/) and run the latest dev version:
 
-* [For Linux](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable.AppImage)
-* [For macOS](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable-macos.zip)
-* [For Windows](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable-windows.zip)
-* [For Everything else](https://s3-us-west-2.amazonaws.com/synthein-unstable-builds/synthein-unstable.love) (More information about .love files is available [here](https://love2d.org/wiki/L%C3%96VE_Game_File).)
+```
+git clone https://github.com/synthein/synthein.git
+cd synthein
+love src
+```
 
 ## How to Play
 

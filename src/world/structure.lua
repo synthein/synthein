@@ -169,20 +169,8 @@ end
 -- orientation is the side of annexee to attach
 -- structurePart is the block to connect the structure to
 -- side is the side of structurePart to add the annexee to
-function Structure:annex(annexee, annexeePart, annexeePartSide,
-				structurePart, structurePartSide)
-	local structureOffsetX = structurePart.location[1]
-	local structureOffsetY = structurePart.location[2]
-
-	local annexeeX = annexeePart.location[1]
-	local annexeeY = annexeePart.location[2]
-
-	local annexeeSide = StructureMath.toDirection(annexeePartSide + annexeePart.location[3])
-	local structureSide = StructureMath.toDirection(structurePartSide + structurePart.location[3])
-
-	local annexeeBaseVector = {annexeeX, annexeeY, annexeeSide}
-	local structureVector = {structureOffsetX, structureOffsetY, structureSide}
-
+function Structure:annex(annexee, annexeeBaseVector, structureVector)
+	local structureSide = structureVector[3]
 	structureVector = StructureMath.addUnitVector(structureVector, structureSide)
 	local baseVector = StructureMath.subtractVectors(structureVector, annexeeBaseVector)
 

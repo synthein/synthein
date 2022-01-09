@@ -1,3 +1,5 @@
+local StructureMath = require("world/structureMath")
+
 local Building = {}
 Building.__index = Building
 
@@ -12,10 +14,8 @@ function Building.create(world, camera)
 
 	self.structure = nil
 	self.structurePartIndex = nil
-	self.structurePartSide = nil
 	self.annexee = nil
 	self.annexeePartIndex = nil
-	self.annexeePartSide = nil
 	self.mode = 1
 
 	return self
@@ -25,6 +25,13 @@ function Building:setAnnexee(structure, part)
 	self.annexee = structure
 	self.annexeePart = part
 	self.mode = 2
+
+	local annexeeX = part.location[1]
+	local annexeeY = part.location[2]
+	local annexeeSide = part.location[3]
+
+	self.annexeeBaseVector = {annexeeX, annexeeY, annexeeSide}
+	self.body = self.annexeePart.modules["hull"].fixture:getBody()
 end
 
 function Building:setStructure(structure, part)
@@ -34,6 +41,13 @@ function Building:setStructure(structure, part)
 	self.structure = structure
 	self.structurePart = part
 	self.mode = 4
+
+	local structureOffsetX = part.location[1]
+	local structureOffsetY = part.location[2]
+	local structureSide = part.location[3]
+
+	self.structureVector = {structureOffsetX, structureOffsetY, structureSide}
+
 	return false
 end
 
@@ -41,6 +55,9 @@ function Building:setSide(partSide)
 	if self.mode == 2 then
 		if self.annexeePart.connectableSides[partSide] then
 			self.annexeePartSide = partSide
+			self.annexeeBaseVector[3] =
+				StructureMath.toDirection(partSide + self.annexeeBaseVector[3])
+
 			self.mode = 3
 			return false
 		else
@@ -48,31 +65,26 @@ function Building:setSide(partSide)
 		end
 	elseif self.mode == 4 then
 		if self.structurePart.connectableSides[partSide] then
-			self.structurePartSide = partSide
-			if self.annexee and self.annexeePart and self.annexeePartSide
-				and self.structure and self.structurePart
-				and self.structurePartSide then
-				self.structure:annex(self.annexee, self.annexeePart,
-							self.annexeePartSide,
-							self.structurePart, self.structurePartSide)
+			self.structureVector[3] =
+				StructureMath.toDirection(partSide + self.structureVector[3])
+			if self.annexee and self.annexeeBaseVector and
+				self.structure and self.structureVector then
+				self.structure:annex(
+					self.annexee,
+					self.annexeeBaseVector,
+					self.structureVector)
 			end
 		end
 		return true
 	end
 end
 
-local offsetTable = {{0, .5}, {-.5, 0}, {0, -.5}, {.5, 0}}
-
 function Building:draw()
-	if self.annexeePart and self.annexeePartSide then
-		local body = self.annexeePart.modules["hull"].fixture:getBody()
-
-		local l = self.annexeePart.location
-
-		local side = (self.annexeePartSide + l[3] - 2) % 4 + 1
-		local offsetX, offsetY = unpack(offsetTable[side])
-
-		local x, y = body:getWorldPoint(l[1] + offsetX, l[2] + offsetY)
+	local body = self.body
+	local vec = self.annexeeBaseVector
+	if body and vec and self.mode > 2 then
+		local l = StructureMath.addDirectionVector(vec, vec[3], .5)
+		local x, y = body:getWorldPoint(l[1], l[2])
 		local angle = body:getAngle()
 
 		self.camera:draw(

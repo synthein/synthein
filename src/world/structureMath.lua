@@ -14,6 +14,12 @@ function StructureMath.addUnitVector(vector, direction)
 			vector[3]}
 end
 
+function StructureMath.addDirectionVector(vector, direction, scale)
+	return {vector[1] + StructureMath.unitVectors[direction][1] * scale,
+			vector[2] + StructureMath.unitVectors[direction][2] * scale,
+			vector[3]}
+end
+
 function StructureMath.rotateVector(vector, rotation)
 	if StructureMath.swap[rotation] then
 		vector = {vector[2], vector[1]}

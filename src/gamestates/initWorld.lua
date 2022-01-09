@@ -40,13 +40,13 @@ function InitWorld.load(scene, playerHostility, ifSave)
 
 	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, LocationTable(0,0))
 	local players = {}
-	for _, ship in ipairs(playerShips) do
-		if #players == 0 then
+	for i, ship in ipairs(playerShips) do
+		if i == 1 then
 			table.insert(
 				players,
 				Player.create(world, Controls.defaults(), ship, screen:createCamera())
 			)
-		elseif #players > 0 then
+		else
 			local joystick = love.joystick.getJoysticks()[#players]
 			if joystick then
 				table.insert(
@@ -55,6 +55,10 @@ function InitWorld.load(scene, playerHostility, ifSave)
 				)
 			end
 		end
+	end
+
+	if #players == 0 then
+	  table.insert(players, Player.create(world, Controls.defaults(), nil, screen:createCamera()))
 	end
 
 	while #playerHostility < maxTeam do

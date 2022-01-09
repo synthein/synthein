@@ -21,8 +21,10 @@ function Player.create(world, controls, structure, camera)
 	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
 	self.drawExtras = self.camera.wrap(Player.drawExtras, false)
 
-	self.selected = Selection.create(world, self.ship.corePart:getTeam(),
-									self.camera)
+	if self.ship then
+		self.selected = Selection.create(world, self.ship.corePart:getTeam(), self.camera)
+	end
+
 	self.menu = nil
 	self.menuOpen = false
 	self.closeMenu = false

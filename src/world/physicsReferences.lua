@@ -21,7 +21,7 @@ isSensor = {
 	visual = true,
 	shield = true,
 	projectiles = true,
-	missile = true,
+	missile = false,
 	general = false,
 }
 

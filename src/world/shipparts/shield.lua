@@ -1,5 +1,4 @@
 local PhysicsReferences = require("world/physicsReferences")
-local Timer = require("timer")
 
 local Shield = class()
 
@@ -7,7 +6,6 @@ function Shield:__create(body)
 	self.partLocations = {}
 	self.body = body
 	self.collidedFixtures = {}
-	self.timer = Timer(5)
 	self.health = 0
 	self.healRate = 0
 	self.maxHealth = 0

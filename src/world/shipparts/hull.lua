@@ -25,22 +25,17 @@ function Hull:__create(imagefunction, maxHealth)--, connectableSides)
 		imagefunction(x, y, angle)
 	end
 
-	function userData:collision(fixture, otherFixture, sqVelocity, pointVelocity)
+	function userData.collision(fixture, otherFixture, sqVelocity, pointVelocity)
 		local object = otherFixture:getUserData()
 		local _, _, mass, _ = otherFixture:getMassData()
 		local damage = math.floor(sqVelocity * mass / 40)
 		object:damage(otherFixture, damage)
-		local body = fixture:getBody()
-		local mult = -damage
-
-		if mult < -10 then mult = -10 end
-		mult = mult / 10
-		local xI, yI = unpack(pointVelocity)
 	end
 
 	function userData.damage(userData, fixture, damage)
 		local body = fixture:getBody()
-		local l = self.userData.location
+		local l = userData.location
+		local location
 		if body and l then
 			local partX, partY, angle = unpack(l)
 			local x, y = body:getWorldPoints(partX, partY)

@@ -6,6 +6,8 @@ local vector = require("vector")
 local Missile = class(require("world/worldObjects"))
 
 function Missile:__create(worldInfo, location, data, appendix)
+	self.events = worldInfo.events
+
 	self.thrust = 10
 	self.torque = 0.2
 	self.body:setLinearVelocity(location[4], location[5])
@@ -66,7 +68,7 @@ function Missile:collision(fixture, otherFixture)
 	if fixture ~= self.sourcePart.fixture and self.firstContact then
 		local object = otherFixture:getUserData()
 		object:damage(otherFixture, 10)
-		self:explode()
+		self.exploding = 1
 		self.firstContact = false --this is needed because of bullet body physics
 	end
 end
@@ -76,7 +78,15 @@ function Missile:damage(fixture)
 end
 
 function Missile:explode()
-	self:destroy()
+	local explosionShape = love.physics.newCircleShape(2)
+	local explosionFixture = love.physics.newFixture(self.body, explosionShape)
+	explosionFixture:setUserData({
+		collision = function(self, fixture, otherFixture)
+			local object = otherFixture:getUserData()
+			object:damage(otherFixture, 5)
+		end,
+	})
+	PhysicsReferences.setFixtureType(explosionFixture, "sensor")
 end
 
 function Missile:update(dt)
@@ -85,7 +95,13 @@ function Missile:update(dt)
 		return
 	end
 
-	if self.target then
+	if self.exploding == 1 then
+		self:explode()
+		self.exploding = self.exploding + 1
+	elseif self.exploding == 2 then
+		self:destroy()
+		return
+	elseif self.target then
 		local missileX, missileY = self.body:getPosition()
 		local targetX, targetY = self.target:getPosition()
 		local angle = vector.angle(targetX - missileX, targetY - missileY)

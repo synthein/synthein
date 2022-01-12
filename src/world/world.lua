@@ -79,11 +79,11 @@ function World.beginContact(fixtureA, fixtureB, coll)
 	local objectB = fixtureB:getUserData()
 
 	if aCategory <= bCategory then
-		objectA:collision(fixtureA, fixtureB, sqV, aL)
+		objectA.collision(fixtureA, fixtureB, sqV, aL)
 	end
 
 	if bCategory <= aCategory then
-		objectB:collision(fixtureB, fixtureA, sqV, bL)
+		objectB.collision(fixtureB, fixtureA, sqV, bL)
 	end
 end
 
@@ -97,11 +97,11 @@ function World.endContact(fixtureA, fixtureB, coll)
 	local objectB = fixtureB:getUserData()
 
 	if aCategory <= bCategory and objectA.endCollision then
-		objectA:endCollision(fixtureA, fixtureB)
+		objectA.endCollision(fixtureA, fixtureB)
 	end
 
 	if bCategory <= aCategory and objectB.endCollision  then
-		objectB:endCollision(fixtureB, fixtureA)
+		objectB.endCollision(fixtureB, fixtureA)
 	end
 end
 

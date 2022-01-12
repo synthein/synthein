@@ -7,13 +7,13 @@ function AI:__create(team)
 	self.follow = true
 end
 
-function AI:getOrders(worldInfo, leader, body, bodyList)
+function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	local physics = worldInfo.physics
 	local teamHostility = worldInfo.teamHostility
-	local aiX, aiY = body:getPosition()
-	local aiAngle = body:getAngle()
-	local aiXV, aiYV = body:getLinearVelocity()
-	local aiAngleVol = body:getAngularVelocity()
+	local aiX, aiY = aiBody:getPosition()
+	local aiAngle = aiBody:getAngle()
+	local aiXV, aiYV = aiBody:getLinearVelocity()
+	local aiAngleVol = aiBody:getAngularVelocity()
 	local target, leaderX, leaderY, leaderMSq
 	local leaderFollow = false
 	if leader and self.follow then
@@ -33,7 +33,7 @@ function AI:getOrders(worldInfo, leader, body, bodyList)
 		if next(bodyList) ~= nil then
 			local targetMSq = nil
 			for body, fixtures in pairs(bodyList) do
-				object = body:getUserData()
+				local object = body:getUserData()
 				-- Look for core blocks.
 				if object and object.getTeam and
 				   teamHostility:test(self.team, object:getTeam()) then

@@ -16,7 +16,20 @@ function Missile:__create(worldInfo, location, data, appendix)
 	local physicsShape = love.physics.newRectangleShape(.4, .8)
 	self.fixture = love.physics.newFixture(self.body, physicsShape)
 	PhysicsReferences.setFixtureType(self.fixture, "missile")
-	self.fixture:setUserData(self)
+
+	local firstContact = true
+	self.fixture:setUserData({
+		collision = function(fixture, otherFixture)
+			if fixture ~= self.sourcePart.fixture and firstContact then
+				local object = otherFixture:getUserData()
+				object:damage(otherFixture, 10)
+				self.exploding = 1
+				firstContact = false --this is needed because of bullet body physics
+			end
+		end,
+		draw = Draw.createObjectDrawImageFunction("missile", .4, .8),
+		damage = function() self.exploding = 1 end,
+	})
 
 	local visionArcRadius = 50
 	local visionArcAngle = (60/180)*(math.pi)
@@ -31,9 +44,9 @@ function Missile:__create(worldInfo, location, data, appendix)
 	self.visionArc = love.physics.newFixture(self.body, visionArcShape, 0)
 	PhysicsReferences.setFixtureType(self.visionArc, "camera")
 	self.visionArc:setUserData({
-		collision = function(_, _, targetFixture)
+		collision = function(fixture, otherFixture)
 			if not self.target then
-				self.target = targetFixture:getBody()
+				self.target = otherFixture:getBody()
 			end
 		end,
 		draw = function() end,
@@ -41,7 +54,6 @@ function Missile:__create(worldInfo, location, data, appendix)
 	self.visionArc:setSensor(true)
 
 	self.timer = Timer(15)
-	self.firstContact = true
 	self.sourcePart = data
 	self.startLocation = location
 end
@@ -64,29 +76,16 @@ function Missile:getSaveData(references)
 	return {self.timer:time(), structure, x, y}
 end
 
-function Missile:collision(fixture, otherFixture)
-	if fixture ~= self.sourcePart.fixture and self.firstContact then
-		local object = otherFixture:getUserData()
-		object:damage(otherFixture, 10)
-		self.exploding = 1
-		self.firstContact = false --this is needed because of bullet body physics
-	end
-end
-
-function Missile:damage(fixture)
-	self:explode()
-end
-
 function Missile:explode()
 	local explosionShape = love.physics.newCircleShape(2)
 	local explosionFixture = love.physics.newFixture(self.body, explosionShape)
+	PhysicsReferences.setFixtureType(explosionFixture, "sensor")
 	explosionFixture:setUserData({
-		collision = function(self, fixture, otherFixture)
+		collision = function(fixture, otherFixture)
 			local object = otherFixture:getUserData()
 			object:damage(otherFixture, 5)
 		end,
 	})
-	PhysicsReferences.setFixtureType(explosionFixture, "sensor")
 end
 
 function Missile:update(dt)
@@ -115,7 +114,5 @@ function Missile:update(dt)
 
 	return
 end
-
-Missile.draw = Draw.createObjectDrawImageFunction("missile", .4, .8)
 
 return Missile

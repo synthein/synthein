@@ -1,16 +1,12 @@
-local Missile = require("world/missile")
-local Particles = require("world/particles")
-local Shot = require("world/shot")
-local Structure = require("world/structure")
 local PhysicsReferences = require("world/physicsReferences")
 
 local World = class()
 
 World.objectTypes = {
-	structure = Structure,
-	shot      = Shot,
-	missile   = Missile,
-	particles = Particles
+	structure = require("world/structure"),
+	shot      = require("world/shot"),
+	missile   = require("world/missile"),
+	particles = require("world/particles"),
 }
 
 -- The world object contains all of the state information about the game world
@@ -207,6 +203,10 @@ function World:update(dt)
 
 	for _, object in ipairs(self.events.create) do
 		local objectClass = World.objectTypes[object[1]]
+		if objectClass == nil then
+			error("There is no such object class \"" .. object[1] .. "\"")
+		end
+
 		local newObject = objectClass(self.info, object[2], object[3])
 		table.insert(self.objects, newObject)
 	end

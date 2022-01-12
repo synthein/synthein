@@ -18,6 +18,7 @@ local groups = {}
 -- Physical bodies are set to false
 isSensor = {
 	camera = true,
+	sensor = true,
 	visual = true,
 	shield = true,
 	projectiles = true,
@@ -31,6 +32,7 @@ isSensor = {
 local catergoryOrder = {
 	"camera", --players/what ships see
 	"visual", --animations
+	"sensor", --non-physical regions in the world
 	"shield",
 	"projectiles",
 	"missile",
@@ -48,12 +50,13 @@ end
 --include the other.
 
 local maskList = {
-	camera = {"visual", "shield", "projectiles", "missile", "general"},
+	camera = {"visual", "sensor", "shield", "projectiles", "missile", "general"},
 	visual = {"camera"},
-	shield = {"camera", "projectiles"},
-	projectiles = {"camera", "shield", "projectiles", "missile", "general"},
-	missile = {"camera", "projectiles", "missile", "general"},
-	general = {"camera", "projectiles", "missile", "general"},
+	sensor = {"camera", "shield", "projectiles", "missile", "general"},
+	shield = {"camera", "sensor", "shield", "projectiles"},
+	projectiles = {"camera", "sensor", "shield", "projectiles", "missile", "general"},
+	missile = {"camera", "sensor", "projectiles", "missile", "general"},
+	general = {"camera", "sensor", "projectiles", "missile", "general"},
 }
 
 for k, t in pairs(maskList) do
@@ -66,7 +69,7 @@ end
 
 --Groups determine if they collide with themselfs
 local collision = {"missile", "general"}
-local noCollision = {"camera", "visual", "shield", "projectiles"}
+local noCollision = {"camera", "sensor", "visual", "shield", "projectiles"}
 
 for i, v in ipairs(collision) do
 	groups[v] = i

@@ -17,7 +17,17 @@ function Shot:__create(worldInfo, location, data, appendix)
 	self.fixture:setSensor(true)
 
 	PhysicsReferences.setFixtureType(self.fixture, "projectiles")
-	self.fixture:setUserData(self)
+	self.fixture:setUserData({
+		collision = function(fixture, otherFixture)
+			if self.timePassed and self.firstContact then
+				local object = otherFixture:getUserData()
+				object:damage(otherFixture, 1)
+				self:destroy()
+				self.firstContact = false --this is needed because of bullet body physics
+			end
+		end,
+		draw = Draw.createObjectDrawImageFunction("shot", .1, .5),
+	})
 
 	self.timer = Timer(5)
 	self.firstContact = true
@@ -40,15 +50,6 @@ function Shot:getSaveData(references)
 	return {self.timer:time()}
 end
 
-function Shot:collision(fixture, otherFixture)
-	if self.timePassed and self.firstContact then
-		local object = otherFixture:getUserData()
-		object:damage(otherFixture, 1)
-		self:destroy()
-		self.firstContact = false --this is needed because of bullet body physics
-	end
-end
-
 function Shot:update(dt)
 	self.timePassed = true
 	if self.timer:ready(dt) then
@@ -57,7 +58,5 @@ function Shot:update(dt)
 
 	return {}
 end
-
-Shot.draw = Draw.createObjectDrawImageFunction("shot", .1, .5)
 
 return Shot

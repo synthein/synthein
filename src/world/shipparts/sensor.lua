@@ -19,16 +19,16 @@ function Sensor:addFixtures(body, x, y)
 
 	local bodyList = self.bodyList
 	local userData = {
-		collision = function(object, fixtureA, fixtureB, sqV, aL)
-			local body = fixtureB:getBody()
-			if not bodyList[body] then bodyList[body] = {} end
-			bodyList[body][fixtureB] = true
+		collision = function(fixtureA, fixtureB, sqV, aL)
+			local bodyB = fixtureB:getBody()
+			if not bodyList[bodyB] then bodyList[bodyB] = {} end
+			bodyList[bodyB][fixtureB] = true
 		end,
 
-		endCollision = function(object, fixtureA, fixtureB, sqV, aL)
-			local body = fixtureB:getBody()
-			bodyList[body][fixtureB] = nil
-			if next(bodyList[body]) == nil then bodyList[body] = nil end
+		endCollision = function(fixtureA, fixtureB, sqV, aL)
+			local bodyB = fixtureB:getBody()
+			bodyList[bodyB][fixtureB] = nil
+			if next(bodyList[bodyB]) == nil then bodyList[bodyB] = nil end
 		end
 	}
 

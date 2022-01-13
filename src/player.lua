@@ -242,7 +242,6 @@ function Player:drawExtras()
 		self.menu:draw()
 	end
 
-	local cameraX, cameraY = self.camera:getPosition()
 	local _, _, screenWidth, screenHeight = self.camera:getScissor()
 
 	local point = {0,0}
@@ -277,7 +276,7 @@ function Player:drawExtras()
 		compassY,
 		compassSize
 	)
-	needleX, needleY = lume.vector(
+	local needleX, needleY = lume.vector(
 		math.atan2(x - point[1], y - point[2]) + math.pi/2,
 		compassSize
 	)

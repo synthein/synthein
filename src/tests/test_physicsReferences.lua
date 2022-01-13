@@ -1,5 +1,4 @@
 local PhysicsReferences = require("world/physicsReferences")
-local WorldObjects = require("world/worldObjects")
 local test = require("vendor/lunatest")
 
 local t = {}
@@ -17,7 +16,7 @@ function t.test_valid_fixtureType()
 end
 
 function t.test_invalid_fixtureType()
-  non_real_type = "unicorn"
+  local non_real_type = "unicorn"
 
   test.assert_error(function()
 	PhysicsReferences.setFixtureType(fixture, non_real_type)

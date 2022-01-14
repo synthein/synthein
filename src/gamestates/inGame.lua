@@ -1,4 +1,4 @@
-local Debug = require("debugTools")
+local Debug = require("debugmode")
 local Gamesave = require("gamesave")
 local LocationTable = require("locationTable")
 local Menu = require("menu")
@@ -10,7 +10,6 @@ local GameState = require("gamestates/gameState")
 local InGame = GameState()
 
 local paused = false
-local debugmode = false
 local eventTime = 0
 local second = 0
 
@@ -27,12 +26,11 @@ end
 local typingSaveName = false
 local saveName = ""
 
-local world, players, screen
+local world, players, screen, debugmode
 function InGame.load(...)
 	world, players, screen = ...
 
-	Debug.setWorld(world)
-	Debug.setPlayers(players)
+	debugmode = Debug.create(world, players)
 end
 
 function InGame.resize(w, h)
@@ -48,7 +46,7 @@ function InGame.textinput(key)
 end
 
 function InGame.keypressed(key)
-	if key == "f12" then debugmode = not debugmode end
+	if key == "f12" then debugmode.on = not debugmode.on end
 
 	if typingSaveName then
 		if key == "backspace" then
@@ -74,8 +72,8 @@ function InGame.keypressed(key)
 		end
 	end
 
-	if debugmode then
-		Debug.keyboard(key)
+	if debugmode.on then
+		debugmode:keyboard(key)
 	end
 
 	return InGame
@@ -112,8 +110,8 @@ function InGame.mousepressed(x, y, button)
 		end
 	end
 
-	if debugmode then
-		Debug.mousepressed(x, y, button)
+	if debugmode.on then
+		debugmode:mousepressed(x, y, button)
 	end
 end
 
@@ -122,8 +120,8 @@ function InGame.mousereleased(x, y, button)
 		player:buttonreleased(love.mouse, button)
 	end
 
-	if debugmode then
-		Debug.mousereleased(x, y, button)
+	if debugmode.on then
+		debugmode:mousereleased(x, y, button)
 	end
 end
 
@@ -187,7 +185,7 @@ function InGame.update(dt)
 					if veloVar < 0 then veloVar = 0 end
 					local rand = love.math.random()
 					if rand < timeVar * disVar * veloVar or
-							(debugmode and Debug.getSpawn()) then
+							(debugmode.on and debugmode:getSpawn()) then
 						eventTime = 0
 						local scene = math.ceil(love.math.random() * 10)
 						scene = tostring(scene)
@@ -234,7 +232,7 @@ function InGame.update(dt)
 		saveName = ""
 	end
 
-	if debugmode then Debug.update(dt) end
+	if debugmode.on then debugmode:update(dt) end
 end
 
 function InGame.draw()
@@ -257,7 +255,7 @@ function InGame.draw()
 	end
 
 	-- Print debug info.
-	if debugmode then Debug.draw() end
+	if debugmode.on then debugmode:draw() end
 end
 
 return InGame

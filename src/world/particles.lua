@@ -25,7 +25,7 @@ function Particles:getSaveData() --(references)
 	return {self.timer:time()}
 end
 
-function Particles:collision() --(fixture)
+function Particles.collision() --(fixture)
 end
 
 function Particles:update(dt)

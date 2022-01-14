@@ -33,8 +33,22 @@ function Shield:createFixture()
 	self.maxHealth = partSum * 10
 	local shape = love.physics.newCircleShape(x, y, self.radius + 1)
 	self.fixture = love.physics.newFixture(self.body, shape)
-	self.fixture:setUserData(self)
 	PhysicsReferences.setFixtureType(self.fixture, "shield")
+	self.fixture:setUserData({
+		collision = function(_, fixture)
+			self.collidedFixtures[fixture] = self:test(fixture)
+		end,
+		endCollision = function(_, fixture)
+			self.collidedFixtures[fixture] = nil
+		end,
+		damage = function(_, _, d)
+			self.health = self.health - d
+			if self.health < 0 then
+				self.health = 0
+			end
+		end,
+		draw = function() self:draw() end,
+	})
 end
 
 function Shield:addPart(part)
@@ -47,14 +61,6 @@ function Shield:removePart(part)
 	self:createFixture()
 end
 
-function Shield:collision(_, fixture)
-	self.collidedFixtures[fixture] = self:test(fixture)
-end
-
-function Shield:endCollision(_, fixture)
-	self.collidedFixtures[fixture] = nil
-end
-
 function Shield:test(fixture)
 	local x, y = self.body:getWorldPoints(unpack(self.center))
 	local radius = math.min(self.health, self.radius)
@@ -62,13 +68,6 @@ function Shield:test(fixture)
 	local dx = fixtureX - x
 	local dy = fixtureY - y
 	return (dx * dx) + (dy * dy) < radius * radius
-end
-
-function Shield:damage(_, d)
-	self.health = self.health - d
-	if self.health < 0 then
-		self.health = 0
-	end
 end
 
 function Shield:draw()
@@ -87,7 +86,7 @@ function Shield:update(dt)
 	self.health =math.min(self.health + dt * self.healRate, self.maxHealth)
 	for fixture, value in pairs(self.collidedFixtures) do
 		if self:test(fixture) and not value then
-			fixture:getUserData():collision(fixture, self.fixture)
+			fixture:getUserData().collision(fixture, self.fixture)
 		end
 	end
 end

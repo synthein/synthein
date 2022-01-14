@@ -53,29 +53,20 @@ end
 
 function Building:setSide(partSide)
 	if self.mode == 2 then
-		if self.annexeePart.connectableSides[partSide] then
-			self.annexeePartSide = partSide
-			self.annexeeBaseVector[3] =
-				StructureMath.toDirection(partSide + self.annexeeBaseVector[3])
-
-			self.mode = 3
-			return false
-		else
-			return true
-		end
+		self.annexeeBaseVector[3] =
+			StructureMath.toDirection(partSide + self.annexeeBaseVector[3])
+		self.mode = 3
 	elseif self.mode == 4 then
-		if self.structurePart.connectableSides[partSide] then
-			self.structureVector[3] =
-				StructureMath.toDirection(partSide + self.structureVector[3])
-			if self.annexee and self.annexeeBaseVector and
-				self.structure and self.structureVector then
-				self.structure:annex(
-					self.annexee,
-					self.annexeeBaseVector,
-					self.structureVector)
-			end
+		self.structureVector[3] =
+			StructureMath.toDirection(partSide + self.structureVector[3])
+		if self.annexee and self.annexeeBaseVector and
+			self.structure and self.structureVector then
+			self.structure:annex(
+				self.annexee,
+				self.annexeeBaseVector,
+				self.structureVector)
 		end
-		return true
+		self.mode = 5
 	end
 end
 

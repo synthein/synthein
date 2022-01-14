@@ -1,7 +1,6 @@
 -- Utilities
 local vector = require("vector")
 local LocationTable = require("locationTable")
-local Draw = require("world/draw")
 
 local Part = class()
 

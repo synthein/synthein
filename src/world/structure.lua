@@ -1,5 +1,4 @@
 local GridTable = require("gridTable")
-local Settings = require("settings")
 local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
 local LocationTable = require("locationTable")

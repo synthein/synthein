@@ -5,8 +5,6 @@ local Hull = require("world/shipparts/hull")
 local Draw = require("world/draw")
 local imageFunction = Draw.createDrawBlockFunction("anchor")
 
--- Class Setup
-local Part = require("world/shipparts/part")
 local Anchor = class(require("world/shipparts/part"))
 
 function Anchor:__create()

@@ -36,7 +36,6 @@ function Debug.draw()
 			-- Gather debug data
 			local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
 			local mouseWorldX, mouseWorldY = player.camera:getWorldCoords(mouseX, mouseY)
-			local buildStatus = player.build and "yes" or "no"
 			local shipParts
 			local shipX, shipY
 
@@ -56,12 +55,11 @@ function Debug.draw()
 				mouseX + 10, mouseY + 10
 			)
 			player.camera:print(
-				string.format("Ship position: (%.3f, %.3f)\n" ..
-				              "Number of ship parts: %d\n" ..
-							  "Build mode: %s\n",
-							  shipX, shipY,
-				              shipParts,
-							  buildStatus
+				string.format(
+					"Ship position: (%.3f, %.3f)\n" ..
+					"Number of ship parts: %d\n",
+					shipX, shipY,
+					shipParts
 				)
 			)
 		end

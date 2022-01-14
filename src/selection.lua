@@ -86,7 +86,12 @@ function Selection:released(cursorX, cursorY)
 		local x, y = self.part:getWorldLocation(self.partIndex):getXY()
 		if not withinPart then
 			if self.build then
-				if self.build:setSide(partSide) then
+				if self.part.connectableSides[partSide] then
+					self.build:setSide(partSide)
+					if self.build.mode == 5 then
+						self.build = nil
+					end
+				else
 					self.build = nil
 				end
 			else

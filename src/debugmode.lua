@@ -2,36 +2,26 @@ local Spawn = require("world/spawn")
 
 local Debug = {}
 
--- This should be called when the game is initialized so that the debug tools
--- have access to the game world (It needs to look through the objects in the,
--- manipulate them, add new ones, etc.).
-function Debug.setWorld(world)
-	Debug.world = world
+function Debug.create(world, players)
+	local self = setmetatable({}, {__index = Debug})
+	self.world = world
+	self.players = players
+	self.on = false
+	self.spawn = false
+	return self
 end
 
--- Similarly, give the debug tools access to the player so it can print debug
--- into about it.
-function Debug.setPlayers(players)
-	Debug.players = players
-end
-
-Debug.spawn = false
-function Debug.getSpawn()
+function Debug:getSpawn()
 	local value = Debug.spawn
-	Debug.spawn = false
+	self.spawn = false
 	return value
 end
 
-
--- Print debug info.
-function Debug.draw()
-	if not Debug.world then
-		return
-	end
+function Debug:draw()
 	love.graphics.print(
 		string.format("%3d", love.timer.getFPS()),
 		love.graphics.getWidth() - 20, 0)
-	for _, player in ipairs(Debug.players) do
+	for _, player in ipairs(self.players) do
 		if player and player.camera then
 			-- Gather debug data
 			local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
@@ -66,31 +56,31 @@ function Debug.draw()
 	end
 end
 
-function Debug.update(dt)
+function Debug:update(dt)
 end
 
-function Debug.keyboard(key)
+function Debug:keyboard(key)
 	--local world = Debug.world
 	--local physics = world.physics
 --	for i, player in ipairs(Debug.players) do
 
 		if key == "n" then
-			Debug.spawn = true
+			self.spawn = true
 
 		elseif love.keyboard.isDown("lctrl", "rctrl") then
 			-- Export the player's ship.
 			if key == "s" then
-				local string = Spawn.shipPack(Debug.player.ship, true)
+				local string = Spawn.shipPack(self.player.ship, true)
 				love.filesystem.write("playerShip.txt", string)
 			end
 		end
 --	end
 end
 
-function Debug.mousepressed(mouseX, mouseY, button)
+function Debug:mousepressed(mouseX, mouseY, button)
 end
 
-function Debug.mousereleased(x, y, button)
+function Debug:mousereleased(x, y, button)
 end
 
 return Debug

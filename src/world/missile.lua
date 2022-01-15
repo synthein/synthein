@@ -42,7 +42,7 @@ function Missile:__create(worldInfo, location, data, appendix)
 
 	self.target = nil
 	self.visionArc = love.physics.newFixture(self.body, visionArcShape, 0)
-	PhysicsReferences.setFixtureType(self.visionArc, "camera")
+	PhysicsReferences.setFixtureType(self.visionArc, "sensor")
 	self.visionArc:setUserData({
 		collision = function(fixture, otherFixture)
 			if not self.target then

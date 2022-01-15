@@ -64,7 +64,7 @@ function InGame.keypressed(key)
 		end
 	else
 		for _, player in ipairs(players) do
-			player:buttonpressed(love.keyboard, key)
+			player:buttonpressed(love.keyboard, key, debugmode.on)
 		end
 
 		if key == "p" or key == "pause" then
@@ -239,7 +239,7 @@ function InGame.draw()
 	local screen_width = love.graphics.getWidth()
 
 	for _, player in ipairs(players) do
-		player:draw()
+		player:draw(debugmode.on)
 	end
 	love.graphics.origin()
 

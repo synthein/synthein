@@ -15,7 +15,7 @@ end
 function Sensor:addFixtures(body, x, y)
 	local shape = love.physics.newCircleShape(x, y, self.size)
 	self.fixture = love.physics.newFixture(body, shape)
-	PhysicsReferences.setFixtureType(self.fixture, "camera")
+	PhysicsReferences.setFixtureType(self.fixture, "sensor")
 
 	local bodyList = self.bodyList
 	local userData = {

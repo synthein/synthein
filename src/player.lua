@@ -4,6 +4,7 @@ local Menu = require("menu")
 local PartRegistry = require("world/shipparts/partRegistry")
 local LocationTable = require("locationTable")
 local PhysicsReferences = require("world/physicsReferences")
+local Settings = require("settings")
 
 local lume = require("vendor/lume")
 
@@ -19,7 +20,7 @@ function Player.create(world, controls, structure, camera)
 	self.ship = structure
 	self.camera = camera
 	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
-	self.drawExtras = self.camera.wrap(Player.drawExtras, false)
+	self.drawHUD = self.camera.wrap(Player.drawHUD, false)
 
 	if self.ship then
 		self.selected = Selection.create(world, self.ship.corePart:getTeam(), self.camera)
@@ -40,7 +41,6 @@ function Player.create(world, controls, structure, camera)
 	self.partY = nil
 	self.cursorX = 0
 	self.cursorY = 0
-	self.debugmode = false
 
 	self.cursor = love.graphics.newImage("res/images/pointer.png")
 
@@ -78,9 +78,7 @@ function Player:handleInput()
 	end
 end
 
-function Player:buttonpressed(source, button)
-	if button == "f12" then self.debugmode = not self.debugmode end
-
+function Player:buttonpressed(source, button, debugmode)
 	if button == "h" then self.showHealth = not self.showHealth end
 
 	local menuButton = Controls.test("menu", self.controls, source, button)
@@ -160,7 +158,7 @@ function Player:buttonpressed(source, button)
 				self.selected:pressed(cursorX, cursorY, order)
 
 			elseif order == "playerMenu" then
-				if self.debugmode then
+				if debugmode then
 					self.menu = Menu.create(
 						100,
 						5,
@@ -186,17 +184,40 @@ function Player:buttonreleased(source, button)
 	end
 end
 
-function Player:draw()
+function Player:draw(debugmode)
 	if self.ship then
 		self.camera:setX(self.ship.body:getX())
 		self.camera:setY(self.ship.body:getY())
 	end
 
-	self:drawWorldObjects()
-	self:drawExtras()
+	self:drawWorldObjects(debugmode)
+	self:drawHUD()
 end
 
-function Player:drawWorldObjects()
+local function drawPolygon(...) love.graphics.polygon("line", ...) end
+
+local function debugDraw(fixture)
+	love.graphics.push("all")
+	love.graphics.setColor(0.5, 0.5, 0.5, 0.5)
+	love.graphics.setLineWidth(2/Settings.PARTSIZE)
+
+	local shape = fixture:getShape()
+	local type = shape:getType()
+
+	if type == "circle" then
+		local x, y = shape:getPoint()
+		x, y = fixture:getBody():getWorldPoint(x, y)
+		love.graphics.circle("line", x, y, shape:getRadius())
+	elseif type == "polygon" then
+		drawPolygon(fixture:getBody():getWorldPoints(shape:getPoints()))
+	else
+		error("Unhandled shape type \"" .. type .. "\"")
+	end
+
+	love.graphics.pop()
+end
+
+function Player:drawWorldObjects(debugmode)
 	local drawOrder = {
 		"visual",
 		"projectiles",
@@ -204,6 +225,9 @@ function Player:drawWorldObjects()
 		"general",
 		"shield"
 	}
+	if debugmode then
+		table.insert(drawOrder, "sensor")
+	end
 
 	local fixtureList = {}
 
@@ -227,12 +251,15 @@ function Player:drawWorldObjects()
 		local categoryNumber = PhysicsReferences.getCategory(category)
 		for _, fixture in ipairs(fixtureList[categoryNumber]) do
 			local object = fixture:getUserData()
-			object:draw(fixture, self.showHealth)
+			if object.draw then object:draw(fixture, self.showHealth) end
+			if debugmode then
+				debugDraw(fixture)
+			end
 		end
 	end
 end
 
-function Player:drawExtras()
+function Player:drawHUD()
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if self.selected then
 		self.selected:draw(cursorX, cursorY)

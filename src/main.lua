@@ -34,9 +34,9 @@ function love.load()
 			local scene = arg[i+1]
 			MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
 			i = i + 1
-		elseif arg[i]:match("^--scene=(%w+)") then
+		elseif arg[i]:match("^--scene=(%g+)") then
 			local InitWorld = require("gamestates/initWorld")
-			local scene = arg[i]:match("^--scene=(%w+)")
+			local scene = arg[i]:match("^--scene=(%g+)")
 			MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
 		elseif arg[i] == "--help" then
 			print(usage)

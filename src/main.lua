@@ -9,9 +9,9 @@ local usage =
 [[usage: synthein [FLAGS]
 
 Available flags:
-    --test          Run the test suite.
-    --scene=NAME    Bypass all menus and jump straight into a scene
-    --help          Print this usage message.]]
+	--test          Run the test suite.
+	--scene=NAME    Bypass all menus and jump straight into a scene
+	--help          Print this usage message.]]
 
 function love.load()
 	state = StackManager.create(MainMenu, "stackQueue")
@@ -29,15 +29,23 @@ function love.load()
 		if arg[i] == "--test" then
 			require("tests")
 			love.event.quit()
-		elseif arg[i] == "--scene" then
-			local InitWorld = require("gamestates/initWorld")
-			local scene = arg[i+1]
-			MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
-			i = i + 1
-		elseif arg[i]:match("^--scene=(%g+)") then
-			local InitWorld = require("gamestates/initWorld")
-			local scene = arg[i]:match("^--scene=(%g+)")
-			MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
+		elseif arg[i]:match("^--scene") then
+			local scene = nil
+			if arg[i] == "--scene" then
+				scene = arg[i+1]
+				i = i + 1
+			else
+				scene = arg[i]:match("^--scene=(%g+)")
+			end
+
+			if scene then
+				local InitWorld = require("gamestates/initWorld")
+				MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
+			else
+				error(
+					"--scene must have an argument. You provided these arguments: "
+					.. table.concat(arg, " "))
+			end
 		elseif arg[i] == "--help" then
 			print(usage)
 			love.event.quit()

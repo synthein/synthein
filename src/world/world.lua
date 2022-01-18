@@ -53,7 +53,7 @@ function World.beginContact(fixtureA, fixtureB, coll)
 	local aCategory = fixtureA:getFilterData()
 	local bCategory = fixtureB:getFilterData()
 
-	local partCategory = PhysicsReferences.getCategory("general")
+	local partCategory = PhysicsReferences.categories.general
 	local sqV, aL, bL
 	if aCategory == partCategory and bCategory == partCategory then
 

@@ -231,8 +231,8 @@ function Player:drawWorldObjects(debugmode)
 
 	local fixtureList = {}
 
-	for _, category in ipairs(drawOrder) do
-		fixtureList[PhysicsReferences.getCategory(category)] = {}
+	for _, c in ipairs(drawOrder) do
+		fixtureList[PhysicsReferences.categories[c]] = {}
 	end
 
 	local a, b, c, d = self.camera:getWorldBorder()
@@ -248,7 +248,7 @@ function Player:drawWorldObjects(debugmode)
 	self.world.physics:queryBoundingBox(a, b, c, d, callback)
 
 	for _, category in ipairs(drawOrder) do
-		local categoryNumber = PhysicsReferences.getCategory(category)
+		local categoryNumber = PhysicsReferences.categories[category]
 		for _, fixture in ipairs(fixtureList[categoryNumber]) do
 			local object = fixture:getUserData()
 			if object.draw then object:draw(fixture, self.showHealth) end

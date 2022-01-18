@@ -79,10 +79,6 @@ for i, v in ipairs(noCollision) do
 	groups[v] = -i
 end
 
-function PhysicsReferences.getCategory(type)
-	return categories[type]
-end
-
 function PhysicsReferences.setFixtureType(fixture, type)
 	if categories[type] == nil then
 		error(string.format("There is no such type %q", type), 2)

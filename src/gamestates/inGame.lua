@@ -1,4 +1,5 @@
 local Debug = require("debugmode")
+local console = require("console")
 local Gamesave = require("gamesave")
 local LocationTable = require("locationTable")
 local Menu = require("menu")
@@ -31,6 +32,10 @@ function InGame.load(...)
 	world, players, screen = ...
 
 	debugmode = Debug.create(world, players)
+	console.init({
+		players = players,
+		world = world,
+	})
 end
 
 function InGame.resize(w, h)
@@ -148,6 +153,8 @@ function InGame.wheelmoved(_, y) --(x, y)
 end
 
 function InGame.update(dt)
+	console.repl()
+
 	local openMenu, closeMenu = false, false
 	-- Send input to the players.
 	for _, player in ipairs(players) do

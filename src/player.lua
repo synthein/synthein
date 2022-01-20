@@ -194,8 +194,6 @@ function Player:draw(debugmode)
 	self:drawHUD()
 end
 
-local function drawPolygon(...) love.graphics.polygon("line", ...) end
-
 local function debugDraw(fixture)
 	love.graphics.push("all")
 	love.graphics.setColor(0.5, 0.5, 0.5, 0.5)
@@ -209,7 +207,7 @@ local function debugDraw(fixture)
 		x, y = fixture:getBody():getWorldPoint(x, y)
 		love.graphics.circle("line", x, y, shape:getRadius())
 	elseif type == "polygon" then
-		drawPolygon(fixture:getBody():getWorldPoints(shape:getPoints()))
+		love.graphics.polygon("line", fixture:getBody():getWorldPoints(shape:getPoints()))
 	else
 		error("Unhandled shape type \"" .. type .. "\"")
 	end

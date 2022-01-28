@@ -6,8 +6,6 @@ local vector = require("vector")
 local Missile = class(require("world/worldObjects"))
 
 function Missile:__create(worldInfo, location, data, appendix)
-	self.events = worldInfo.events
-
 	self.thrust = 10
 	self.torque = 0.2
 	self.body:setLinearVelocity(location[4], location[5])

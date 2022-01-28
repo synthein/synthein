@@ -1,5 +1,6 @@
 local PhysicsReferences = require("world/physicsReferences")
 local Location = require("world/location")
+local Particles = require("world/particles")
 
 local Hull = class()
 
@@ -83,7 +84,7 @@ end
 
 function Hull:update()
 	if self.isDestroyed then
-		return {"particles", {0, 0, 1}}, true
+		return {Particles, {0, 0, 1}}, true
 	end
 end
 

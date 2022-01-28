@@ -1,3 +1,4 @@
+local Shot = require("world/shot")
 local Timer = require("timer")
 
 local Gun = class()
@@ -29,7 +30,7 @@ function Gun:update(inputs, location)
 			if not getPart(location, {0, 1}) then
 				self.charged = false
 				-- Spawn Shot
-				return {"shot", {0, 0, 1}}
+				return {Shot, {0, 0, 1}}
 			end
 		end
 	end

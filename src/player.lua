@@ -5,6 +5,7 @@ local PartRegistry = require("world/shipparts/partRegistry")
 local LocationTable = require("locationTable")
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
+local Structure = require("world/structure")
 
 local lume = require("vendor/lume")
 
@@ -129,11 +130,9 @@ function Player:buttonpressed(source, button, debugmode)
 			end
 
 			if part and location then
-				-- TODO: Move this pattern to a function and write a unit test
-				-- for it.
-				location = LocationTable(unpack(location))
-				table.insert(self.world.info.events.create,
-							 {"structure", location, part})
+				self.world:createObject(function(worldInfo)
+					return (Structure(worldInfo, LocationTable(unpack(location)), part))
+				end)
 			end
 			self.menu = nil
 		end

@@ -25,7 +25,8 @@ function World:__create(playerHostility)
 	generalHostility[-3] = true  --Empire
 	generalHostility[-4] = true  --Federation
 
-	self.events = {create = {}}
+	local events = {create = {}}
+	self.events = events
 	local teamHostility = {playerHostility = playerHostility,
 						   general = generalHostility}
 	function teamHostility:test(team, otherTeam)
@@ -42,8 +43,20 @@ function World:__create(playerHostility)
 		end
 	end
 
-	self.info = {events = self.events, physics = self.physics,
-					teamHostility = teamHostility}
+
+	self.info = {
+		-- create gives users a way to create new objects in the world.
+		-- createObjects takes one argument, a closure that should return new object.
+		-- This closure will have access to worldInfo as its argument.
+		create = function(fn)
+			if type(fn) ~= "function" then
+				error("invalid event (function expected, got " .. type(fn) .. ")")
+			end
+			table.insert(events.create, fn)
+		end,
+		physics = self.physics,
+		teamHostility = teamHostility,
+	}
 
 	self.borders = nil
 end
@@ -201,14 +214,8 @@ function World:update(dt)
 	self.borders[3] = self.borders[3] + 10000
 	self.borders[4] = self.borders[4] + 10000
 
-	for _, object in ipairs(self.events.create) do
-		local objectClass = World.objectTypes[object[1]]
-		if objectClass == nil then
-			error("There is no such object class \"" .. object[1] .. "\"")
-		end
-
-		local newObject = objectClass(self.info, object[2], object[3])
-		table.insert(self.objects, newObject)
+	for _, fn in ipairs(self.events.create) do
+		table.insert(self.objects, fn(self.info))
 	end
 	self.events.create = {}
 end

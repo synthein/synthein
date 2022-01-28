@@ -1,3 +1,4 @@
+
 local GridTable = require("gridTable")
 local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
@@ -11,7 +12,7 @@ local Structure = class(require("world/worldObjects"))
 function Structure:__create(worldInfo, location, data, appendix)
 	self.worldInfo = worldInfo
 	self.physics = worldInfo.physics
-	self.events = worldInfo.events
+	self.createObject = worldInfo.create
 
 	local shipTable
 	if appendix then
@@ -340,11 +341,11 @@ function Structure:disconnectPart(location, isDestroyed)
 			--end
 			eachPart:setLocation(netVector)
 			structure:index(netVector[1], netVector[2], eachPart)
-
 		end
 
-		local newStructure = {"structure", location, {parts = structure}}
-		table.insert(self.events.create, newStructure)
+		self.createObject(function(worldInfo)
+			return (Structure(worldInfo, location, {parts = structure}))
+		end)
 	end
 end
 
@@ -376,10 +377,14 @@ function Structure:command(dt)
 	local gunControls = Gun.process(gunOrders)
 	local engineControls = Engine.process(engineOrders)
 
-	local function create(object, location)
-		location = StructureMath.sumVectors(location, object[2])
-		object[2] = self:getWorldLocation(location)
-		table.insert(self.events.create, object)
+	local function create(object, partLocation)
+		local objectClass, location, data = unpack(object)
+		location = StructureMath.sumVectors(partLocation, location)
+		location = self:getWorldLocation(location)
+
+		self.createObject(function(worldInfo)
+			return (objectClass(worldInfo, location, data))
+		end)
 	end
 
 

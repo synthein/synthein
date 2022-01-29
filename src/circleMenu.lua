@@ -2,15 +2,6 @@ local vector = require("vector")
 
 local CircleMenu = {}
 
-function CircleMenu.create(camera)
-	local self = {}
-
-	self.camera = camera
-	self.draw = self.camera.wrap(CircleMenu.draw, true)
-
-	return self
-end
-
 function CircleMenu.indexToAngle(index, division, startAngle)
 	-- This system is layed out like a clock face
 	-- startAngle	for if the menu rotates with the object
@@ -23,7 +14,7 @@ function CircleMenu.indexToAngle(index, division, startAngle)
 	return startAngle - math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
-function CircleMenu:draw(x, y, angle, size, strength, lables)
+function CircleMenu.draw(x, y, angle, size, strength, lables)
 	local division = #strength
 
 	-- Function that defines the lines seperating the arc segments

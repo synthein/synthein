@@ -255,13 +255,17 @@ function Player:drawWorldObjects(debugmode)
 			end
 		end
 	end
+
+	if self.selected then
+		self.selected:draw(
+			self.camera:getWorldCoords(
+				self.cursorX,
+				self.cursorY))
+	end
 end
 
 function Player:drawHUD()
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
-	if self.selected then
-		self.selected:draw(cursorX, cursorY)
-	end
 
 	if self.menu then
 		self.menu:draw()
@@ -311,8 +315,8 @@ function Player:drawHUD()
 		compassY - needleY * 0.1,
 		compassX + needleY * 0.1,
 		compassY - needleX * 0.1,
-    compassX + needleX,
-    compassY + needleY,
+		compassX + needleX,
+		compassY + needleY,
 		compassX - needleY * 0.1,
 		compassY + needleX * 0.1
 	)

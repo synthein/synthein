@@ -2,12 +2,13 @@ local PhysicsReferences = require("world/physicsReferences")
 
 local World = class()
 
-World.objectTypes = {
+local objectTypes = {
 	structure = require("world/structure"),
 	shot      = require("world/shot"),
 	missile   = require("world/missile"),
 	particles = require("world/particles"),
 }
+World.objectTypes = objectTypes
 
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
@@ -25,7 +26,8 @@ function World:__create(playerHostility)
 	generalHostility[-3] = true  --Empire
 	generalHostility[-4] = true  --Federation
 
-	self.events = {create = {}}
+	local events = {create = {}}
+	self.events = events
 	local teamHostility = {playerHostility = playerHostility,
 						   general = generalHostility}
 	function teamHostility:test(team, otherTeam)
@@ -42,8 +44,21 @@ function World:__create(playerHostility)
 		end
 	end
 
-	self.info = {events = self.events, physics = self.physics,
-					teamHostility = teamHostility}
+	self.info = {
+		-- create gives users a way to create new objects in the world.
+		-- The first argument is a string representing the type of object to create.
+		-- The remaining arguments are passed to the create function for the new
+		-- object.
+		create = function(type, ...)
+			local object = objectTypes[type]
+			if not object then
+				error("There is no such object class \"" .. type .. "\"")
+			end
+			table.insert(events.create, {debug.getinfo(2, "nSl"), object, ...})
+		end,
+		physics = self.physics,
+		teamHostility = teamHostility,
+	}
 
 	self.borders = nil
 end
@@ -201,14 +216,15 @@ function World:update(dt)
 	self.borders[3] = self.borders[3] + 10000
 	self.borders[4] = self.borders[4] + 10000
 
-	for _, object in ipairs(self.events.create) do
-		local objectClass = World.objectTypes[object[1]]
-		if objectClass == nil then
-			error("There is no such object class \"" .. object[1] .. "\"")
+	for _, event in ipairs(self.events.create) do
+		local debuginfo, objectClass = unpack(event)
+		local ok, result = pcall(objectClass, self.info, select(3, unpack(event)))
+		if not ok then
+			print(string.format("ERROR: Creating an object in the world failed. Event generated at %s:%s in function '%s'. %s",
+				debuginfo.source, debuginfo.currentline, debuginfo.name, result))
+		else
+			table.insert(self.objects, result)
 		end
-
-		local newObject = objectClass(self.info, object[2], object[3])
-		table.insert(self.objects, newObject)
 	end
 	self.events.create = {}
 end

@@ -11,7 +11,7 @@ local Structure = class(require("world/worldObjects"))
 function Structure:__create(worldInfo, location, data, appendix)
 	self.worldInfo = worldInfo
 	self.physics = worldInfo.physics
-	self.events = worldInfo.events
+	self.createObject = worldInfo.create
 
 	local shipTable
 	if appendix then
@@ -343,8 +343,7 @@ function Structure:disconnectPart(location, isDestroyed)
 
 		end
 
-		local newStructure = {"structure", location, {parts = structure}}
-		table.insert(self.events.create, newStructure)
+		self.createObject("structure", location, {parts = structure})
 	end
 end
 
@@ -379,7 +378,7 @@ function Structure:command(dt)
 	local function create(object, location)
 		location = StructureMath.sumVectors(location, object[2])
 		object[2] = self:getWorldLocation(location)
-		table.insert(self.events.create, object)
+		self.createObject(unpack(object))
 	end
 
 

@@ -14,7 +14,7 @@ function CircleMenu.indexToAngle(index, division, startAngle)
 	return startAngle - math.pi * (-0.5 + ((index) * 2 - 1) / division)
 end
 
-function CircleMenu.draw(x, y, angle, size, strength, lables)
+function CircleMenu.draw(x, y, angle, size, strength, labels)
 	local division = #strength
 
 	-- Function that defines the lines seperating the arc segments
@@ -67,16 +67,16 @@ function CircleMenu.draw(x, y, angle, size, strength, lables)
 	local font = love.graphics.newFont(size * 50)
 	love.graphics.setFont(font)
 
-	-- Print lables
-	if lables then
+	-- Print labels
+	if labels then
 		for i = 1, division do
 			local angleToText = CircleMenu.indexToAngle(i - .5, division, angle)
 			local textX, textY = vector.components(3 * size, angleToText)
 			textX = textX + x
 			textY = textY + y
-			love.graphics.print(lables[i], textX, textY, 0,
+			love.graphics.print(labels[i], textX, textY, 0,
 								1/100, -1/100,
-								size * 12.5 * #lables[i], size * 25)
+								size * 12.5 * #labels[i], size * 25)
 		end
 	end
 

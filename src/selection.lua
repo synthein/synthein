@@ -5,14 +5,12 @@ local vector = require("vector")
 local Selection = {}
 Selection.__index = Selection
 
-function Selection.create(world, team, camera)
+function Selection.create(world, team)
 	local self = {}
 	setmetatable(self, Selection)
 
 	self.world = world
 	self.team = team
-	self.camera = camera
-	self.circleMenu = CircleMenu.create(self.camera)
 
 	self.build = nil
 	self.sturcture = nil
@@ -56,7 +54,7 @@ function Selection:pressed(cursorX, cursorY, order)
 						end
 					end
 				else
-					self.build = Building.create(self.world, self.camera)
+					self.build = Building.create()
 					self.build:setAnnexee(structure, part)
 					self.structure = structure
 					self.part = part
@@ -143,7 +141,7 @@ function Selection:draw(cursorX, cursorY)
 			end
 		end
 		if strength then
-			self.circleMenu:draw(x, y, angle, 1, strength, lables)
+			CircleMenu.draw(x, y, angle, 1, strength, lables)
 		end
 	end
 	if self.build then

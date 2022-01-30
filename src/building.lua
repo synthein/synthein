@@ -2,15 +2,13 @@ local StructureMath = require("world/structureMath")
 
 local Building = {}
 Building.__index = Building
+local pointerImage = love.graphics.newImage("res/images/pointer.png")
+local pointerWidth = pointerImage:getWidth()
+local pointerWidth = pointerImage:getWidth()
 
-function Building.create(world, camera)
+function Building.create()
 	local self = {}
 	setmetatable(self, Building)
-
-	self.pointerImage = love.graphics.newImage("res/images/pointer.png")
-	self.pointerWidth = self.pointerImage:getWidth()
-	self.world = world
-	self.camera = camera
 
 	self.structure = nil
 	self.structurePartIndex = nil
@@ -78,11 +76,11 @@ function Building:draw()
 		local x, y = body:getWorldPoint(l[1], l[2])
 		local angle = body:getAngle()
 
-		self.camera:draw(
-			self.pointerImage,
+		love.graphics.draw(
+			pointerImage,
 			x, y, angle,
 			1/20, 1/20,
-			self.pointerWidth/2, self.pointerWidth/2)
+			pointerWidth/2, pointerWidth/2)
 	end
 end
 

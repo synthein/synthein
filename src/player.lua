@@ -256,6 +256,21 @@ function Player:drawWorldObjects(debugmode)
 		end
 	end
 
+
+	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
+	--love.graphics.setColor(1, 1, 1, .25)
+	local points = self.camera:getAllPoints()
+	for _, row in ipairs(points) do
+		for i, point in ipairs(row) do
+			row[i] = false
+			for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
+				row[i] = row[i] or shieldFixture:getUserData().testPoint(unpack(point))
+			end
+			--love.graphics.points(unpack(point))
+		end
+	end
+	self.shieldPoints = points
+
 	if self.selected then
 		self.selected:draw(
 			self.camera:getWorldCoords(
@@ -264,7 +279,17 @@ function Player:drawWorldObjects(debugmode)
 	end
 end
 
+local alpha = {}
+alpha[true] = 0.25
+alpha[false] = 0
 function Player:drawHUD()
+	for py, row in ipairs(self.shieldPoints) do
+		for px, value in ipairs(row) do
+			love.graphics.setColor(1, 1, 1, alpha[value])
+			love.graphics.points(px, py)
+		end
+	end
+
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 
 	if self.menu then

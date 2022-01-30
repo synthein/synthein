@@ -53,6 +53,20 @@ function Camera:getWorldBorder()
 		   self.y + self.scissorHeight/(2 * self.zoom)
 end
 
+-- Make sure the correct transforms are active
+function Camera:getAllPoints()
+	local pointTable = {}
+	for y = 0, self.scissorHeight - 1 do
+		local row = {}
+		for x = 0, self.scissorWidth - 1 do
+			table.insert(row, {love.graphics.inverseTransformPoint(x, y)})
+		end
+		table.insert(pointTable, row)
+	end
+
+	return pointTable
+end
+
 function Camera:adjustZoom(step)
 
 	self.zoomInt = self.zoomInt + step

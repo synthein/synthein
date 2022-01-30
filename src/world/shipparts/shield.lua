@@ -47,6 +47,7 @@ function Shield:createFixture()
 				self.health = 0
 			end
 		end,
+		testPoint = function(...) return self:testPoint(...) end, --this is a place holder till I find something better
 		draw = function() self:draw() end,
 	})
 end
@@ -67,6 +68,14 @@ function Shield:test(fixture)
 	local fixtureX, fixtureY = fixture:getBody():getPosition()
 	local dx = fixtureX - x
 	local dy = fixtureY - y
+	return (dx * dx) + (dy * dy) < radius * radius
+end
+
+function Shield:testPoint(px, py)
+	local x, y = self.body:getWorldPoints(unpack(self.center))
+	local radius = math.min(self.health, self.radius)
+	local dx = px - x
+	local dy = py - y
 	return (dx * dx) + (dy * dy) < radius * radius
 end
 

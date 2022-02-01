@@ -56,12 +56,14 @@ end
 -- Make sure the correct transforms are active
 function Camera:getAllPoints()
 	local pointTable = {}
+	local table_insert = table.insert
+	local inverseTransform = love.graphics.inverseTransformPoint
 	for y = 0, self.scissorHeight - 1 do
 		local row = {}
 		for x = 0, self.scissorWidth - 1 do
-			table.insert(row, {love.graphics.inverseTransformPoint(x, y)})
+			table_insert(row, {inverseTransform(x, y)})
 		end
-		table.insert(pointTable, row)
+		table_insert(pointTable, row)
 	end
 
 	return pointTable

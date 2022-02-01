@@ -261,11 +261,15 @@ function Player:drawWorldObjects(debugmode)
 	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
 	--love.graphics.setColor(1, 1, 1, .25)
 	local points = self.camera:getAllPoints()
+	local testPointFunctions = {}
+	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
+		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint)
+	end
 	for _, row in ipairs(points) do
 		for i, point in ipairs(row) do
 			row[i] = false
-			for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
-				row[i] = row[i] or shieldFixture:getUserData().testPoint(unpack(point))
+			for _, testPoint in ipairs(testPointFunctions) do
+				row[i] = row[i] or testPoint(unpack(point))
 			end
 			--love.graphics.points(unpack(point))
 		end

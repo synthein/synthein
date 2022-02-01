@@ -284,10 +284,12 @@ local alpha = {}
 alpha[true] = 0.25
 alpha[false] = 0
 function Player:drawHUD()
+	local setColor = love.graphics.setColor
+	local drawPoint = love.graphics.points
 	for py, row in ipairs(self.shieldPoints) do
 		for px, value in ipairs(row) do
-			love.graphics.setColor(1, 1, 1, alpha[value])
-			love.graphics.points(px, py)
+			setColor(1, 1, 1, alpha[value])
+			drawPoint(px, py)
 		end
 	end
 

@@ -267,10 +267,11 @@ function Player:drawWorldObjects(debugmode)
 	end
 	for _, row in ipairs(points) do
 		for i, point in ipairs(row) do
-			row[i] = false
+			local test = false
 			for _, testPoint in ipairs(testPointFunctions) do
-				row[i] = row[i] or testPoint(unpack(point))
+				test = test or testPoint(unpack(point))
 			end
+			row[i] = test
 			--love.graphics.points(unpack(point))
 		end
 	end

@@ -34,6 +34,10 @@ function Shield:createFixture()
 	local shape = love.physics.newCircleShape(x, y, self.radius + 1)
 	self.fixture = love.physics.newFixture(self.body, shape)
 	PhysicsReferences.setFixtureType(self.fixture, "shield")
+	local body = self.body
+	local cx, cy = unpack(self.center)
+	local radius = self.radius
+	local minf = math.min
 	self.fixture:setUserData({
 		collision = function(_, fixture)
 			self.collidedFixtures[fixture] = self:test(fixture)
@@ -47,7 +51,13 @@ function Shield:createFixture()
 				self.health = 0
 			end
 		end,
-		testPoint = function(...) return self:testPoint(...) end, --this is a place holder till I find something better
+		testPoint = function(px, py)
+			local x, y = body:getWorldPoints(cx, cy)
+			local radius = minf(self.health, radius)
+			local dx = px - x
+			local dy = py - y
+			return (dx * dx) + (dy * dy) < radius * radius
+		end,
 		draw = function() self:draw() end,
 	})
 end
@@ -68,14 +78,6 @@ function Shield:test(fixture)
 	local fixtureX, fixtureY = fixture:getBody():getPosition()
 	local dx = fixtureX - x
 	local dy = fixtureY - y
-	return (dx * dx) + (dy * dy) < radius * radius
-end
-
-function Shield:testPoint(px, py)
-	local x, y = self.body:getWorldPoints(unpack(self.center))
-	local radius = math.min(self.health, self.radius)
-	local dx = px - x
-	local dy = py - y
 	return (dx * dx) + (dy * dy) < radius * radius
 end
 

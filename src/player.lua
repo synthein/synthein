@@ -185,7 +185,7 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:draw(debugmode)
-	print(love.timer.getFPS())
+	print(1.0 / love.timer.getDelta())
 	if self.ship then
 		self.camera:setX(self.ship.body:getX())
 		self.camera:setY(self.ship.body:getY())

@@ -291,14 +291,29 @@ local alpha = {}
 alpha[true] = 0.25
 alpha[false] = 0
 function Player:drawHUD()
-	local setColor = love.graphics.setColor
-	local drawPoint = love.graphics.points
+	love.graphics.setColor(1, 1, 1, 0.25)
+	local drawPoints = love.graphics.points
+	local points = {}
+	local l = 1
 	for py, row in ipairs(self.shieldPoints) do
 		for px, value in ipairs(row) do
-			setColor(1, 1, 1, alpha[value])--value and 0.25 or 0)
-			drawPoint(px, py)
+			if value then
+				points[l] = px
+				points[l+1] = py
+				l = l + 2
+				if l > 100 then
+					drawPoints(unpack(points))
+					points = {}
+					l = 1
+				end
+			end
 		end
 	end
+	if l > 1 then
+		drawPoints(unpack(points))
+	end
+
+	love.graphics.setColor(1, 1, 1, 1)
 
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 

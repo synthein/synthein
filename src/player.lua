@@ -263,7 +263,7 @@ function Player:drawWorldObjects(debugmode)
 	local points = self.camera:getAllPoints()
 	local testPointFunctions = {}
 	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
-		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint)
+		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
 	end
 	for _, row in ipairs(points) do
 		for i, point in ipairs(row) do
@@ -295,7 +295,7 @@ function Player:drawHUD()
 	local drawPoint = love.graphics.points
 	for py, row in ipairs(self.shieldPoints) do
 		for px, value in ipairs(row) do
-			setColor(1, 1, 1, alpha[value])
+			setColor(1, 1, 1, alpha[value])--value and 0.25 or 0)
 			drawPoint(px, py)
 		end
 	end

@@ -51,12 +51,15 @@ function Shield:createFixture()
 				self.health = 0
 			end
 		end,
-		testPoint = function(px, py)
+		testPoint = function()
 			local x, y = body:getWorldPoints(cx, cy)
 			local radius = minf(self.health, radius)
-			local dx = px - x
-			local dy = py - y
-			return (dx * dx) + (dy * dy) < radius * radius
+			local rsq = radius * radius
+			return function(px, py)
+				local dx = px - x
+				local dy = py - y
+				return (dx * dx) + (dy * dy) < rsq
+			end
 		end,
 		draw = function() self:draw() end,
 	})

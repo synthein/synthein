@@ -275,7 +275,7 @@ function Player:drawWorldObjects(debugmode)
 end
 
 function Player:drawHUD()
-	love.graphics.setColor(1, 1, 1, 0.25)
+	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
 	local drawPoints = love.graphics.points
 	for _, list in ipairs(self.shieldPoints) do
 		drawPoints(unpack(list))

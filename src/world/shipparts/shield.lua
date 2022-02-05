@@ -61,7 +61,7 @@ function Shield:createFixture()
 				return (dx * dx) + (dy * dy) < rsq
 			end
 		end,
-		draw = function() self:draw() end,
+		draw = function() end,
 	})
 end
 
@@ -84,6 +84,7 @@ function Shield:test(fixture)
 	return (dx * dx) + (dy * dy) < radius * radius
 end
 
+--Potentially obsolete
 function Shield:draw()
 	local x, y = self.body:getWorldPoints(unpack(self.center))
 	local radius = math.min(math.sqrt(5 * self.health), self.radius)

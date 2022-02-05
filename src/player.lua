@@ -259,25 +259,12 @@ function Player:drawWorldObjects(debugmode)
 
 
 	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
-	--love.graphics.setColor(1, 1, 1, .25)
-	local points = self.camera:getAllPoints()
+
 	local testPointFunctions = {}
 	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
 		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
 	end
-	for _, row in ipairs(points) do
-		for i, point in ipairs(row) do
-			local test = false
-			local x = point[1]
-			local y = point[2]
-			for _, testPoint in ipairs(testPointFunctions) do
-				test = test or testPoint(x, y)
-			end
-			row[i] = test
-			--love.graphics.points(unpack(point))
-		end
-	end
-	self.shieldPoints = points
+	self.shieldPoints = self.camera:testPoints(testPointFunctions)
 
 	if self.selected then
 		self.selected:draw(
@@ -287,32 +274,12 @@ function Player:drawWorldObjects(debugmode)
 	end
 end
 
-local alpha = {}
-alpha[true] = 0.25
-alpha[false] = 0
 function Player:drawHUD()
 	love.graphics.setColor(1, 1, 1, 0.25)
 	local drawPoints = love.graphics.points
-	local points = {}
-	local l = 1
-	for py, row in ipairs(self.shieldPoints) do
-		for px, value in ipairs(row) do
-			if value then
-				points[l] = px
-				points[l+1] = py
-				l = l + 2
-				if l > 100 then
-					drawPoints(unpack(points))
-					points = {}
-					l = 1
-				end
-			end
-		end
+	for _, list in ipairs(self.shieldPoints) do
+		drawPoints(unpack(list))
 	end
-	if l > 1 then
-		drawPoints(unpack(points))
-	end
-
 	love.graphics.setColor(1, 1, 1, 1)
 
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)

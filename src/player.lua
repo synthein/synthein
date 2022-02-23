@@ -260,6 +260,36 @@ function Player:drawWorldObjects(debugmode)
 	end
 end
 
+function drawCompass(width, height, angle)
+	-- Draw the compass in the lower right hand corner.
+	local compassSize = 20
+	local compassPadding = 10
+	local compassX = width - compassSize - compassPadding
+	local compassY = height - compassSize - compassPadding
+
+	love.graphics.circle(
+		"line",
+		compassX,
+		compassY,
+		compassSize
+	)
+	local needleX, needleY = lume.vector(
+		angle,
+		compassSize
+	)
+	love.graphics.polygon(
+		"fill",
+		compassX - needleX * 0.1,
+		compassY - needleY * 0.1,
+		compassX + needleY * 0.1,
+		compassY - needleX * 0.1,
+		compassX + needleX,
+		compassY + needleY,
+		compassX - needleY * 0.1,
+		compassY + needleX * 0.1
+	)
+end
+
 function Player:drawHUD()
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 
@@ -288,34 +318,9 @@ function Player:drawHUD()
 
 	local x, y = self.camera:getPosition()
 	local _, _, width, height = self.camera:getScissor()
+	local compassAngle = math.atan2(x - point[1], y - point[2]) + math.pi/2
 
-	-- Draw the compass in the lower right hand corner.
-	local compassSize = 20
-	local compassPadding = 10
-	local compassX = width - compassSize - compassPadding
-	local compassY = height - compassSize - compassPadding
-
-	love.graphics.circle(
-		"line",
-		compassX,
-		compassY,
-		compassSize
-	)
-	local needleX, needleY = lume.vector(
-		math.atan2(x - point[1], y - point[2]) + math.pi/2,
-		compassSize
-	)
-	love.graphics.polygon(
-		"fill",
-		compassX - needleX * 0.1,
-		compassY - needleY * 0.1,
-		compassX + needleY * 0.1,
-		compassY - needleX * 0.1,
-		compassX + needleX,
-		compassY + needleY,
-		compassX - needleY * 0.1,
-		compassY + needleX * 0.1
-	)
+	drawCompass(width, height, compassAngle)
 
 	-- Draw the cursor.
 	love.graphics.draw(self.cursor, self.cursorX - 2, self.cursorY - 2)

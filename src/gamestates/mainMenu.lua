@@ -2,12 +2,13 @@ local GameState = require("gamestates/gameState")
 local LoadGameMenu = require("gamestates/loadGameMenu")
 local Menu = require("menu")
 local NewGameMenu = require("gamestates/newGameMenu")
+local ShipEditor = require("gamestates/shipEditor")
 local SyntheinVersion = require("version")
 
 local MainMenu = GameState()
 
-local buttons = {NewGameMenu, LoadGameMenu}
-local buttonNames = {"New Game", "Load Game"}
+local buttons = {NewGameMenu, LoadGameMenu, ShipEditor}
+local buttonNames = {"New Game", "Load Game", "Ship Editor"}
 if love.graphics then
 	MainMenu.font = love.graphics.newFont(36)
 end

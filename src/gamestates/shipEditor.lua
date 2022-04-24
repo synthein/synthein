@@ -22,6 +22,8 @@ gridTable:index(-1,  0, "b")
 local focusX = 0
 local focusY = 0
 
+local selectedPart = "s"
+
 function ShipEditor.update(dt)
 	ShipEditor.menu:update(dt)
 end
@@ -32,17 +34,26 @@ function ShipEditor.draw()
 	local function f(k, inputs, x, y)
 		love.graphics.draw(
 			PartRegistry.partsList[k].image,
-			centerX + (x - focusX) * 20,
-			centerY + (-y - focusY) * 20,
+			centerX + (-x - focusX) * 20,
+			centerY + (y - focusY) * 20,
 			0, 1, 1, 10, 10, 0, 0)
 	end
-
 	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
 	love.graphics.print(
 		"wsad: Move around\n" ..
 		"qe: Rotate Part\n" ..
+		"space: Add Part\n" ..
+		"r: Remove Part\n" ..
 		"f: Part Menu\n",
 		5, 5)
+
+
+	love.graphics.draw(
+		PartRegistry.partsList[selectedPart].image,
+		centerX * 2 - 30,
+		centerY * 2 - 30,
+		0, 1, 1, 10, 10, 0, 0)
+
 	love.graphics.setColor(1,1,1)
 	love.graphics.rectangle("line", centerX-10, centerY-10, 20, 20)
 	if menuOpen == "State" then
@@ -80,6 +91,14 @@ function ShipEditor.keypressed(key)
 		focusY = focusY + 1
 	elseif key == "d" then
 		focusX = focusX + 1
+	elseif key == "space" then
+		if focusX ~= 0 or focusY ~= 0 then
+			gridTable:index(-focusX,  focusY, selectedPart)
+		end
+	elseif key == "r" then
+		if focusX ~= 0 or focusY ~= 0 then
+			gridTable:index(-focusX,  focusY, false, true)
+		end
 	end
 end
 

@@ -1,113 +1,63 @@
 local PartRegistry = require("world/shipparts/partRegistry")
 
-local ShipEditor = {}
-ShipEditor.__index = ShipEditor
+local PartSelector = {}
+PartSelector.__index = PartSelector
 
-ShipEditor.scrollSpeed = 150
+PartSelector.scrollSpeed = 150
 
--- Make a ShipEditor in the center of the screen from a list of buttons.
-function ShipEditor.create(y)
+local size = 30
+local columns = 4
+local rows = 4
+local width = size * columns
+local height = size * rows
+local border = 3
+local maxParts = #PartRegistry.noncoreParts
+
+-- Make a PartSelector in the center of the screen from a list of buttons.
+function PartSelector.create(y)
 	local self = {}
-	setmetatable(self, ShipEditor)
+	setmetatable(self, PartSelector)
 
-	local size = 30
-	self.size = size
 	self.y = y
-	self.width = size * 8
-	self.height = size * 4
-	self.spacing = 10
-	self.textHeight = size * 8
-	self.scrollY = 0
-	self.scrollVelocity = 0
 	self.selectedButton = 5
---	if love.graphics then self.font = love.graphics.newFont(size * 7) end
---	if love.graphics then self.visibleHeight = love.graphics.getHeight() - self.y - self.buttonMargin end
 
 	return self
 end
 
-function ShipEditor:getButtonAt(x, y)
-	local ShipEditorCenter = love.graphics.getWidth() / 2
-	if x > ShipEditorCenter - self.buttonWidth / 2
-	   and x < ShipEditorCenter + self.buttonWidth / 2
-	   and y > self.y then
-		local yRef = y - self.y - self.buttonMargin + self.scrollY
-		local index = math.floor(yRef/(self.buttonHeight + self.buttonSpacing)) + 1
-		local remainder = yRef % (self.buttonHeight + self.buttonSpacing)
-		if index > 0 and index <= #self.buttons and
-		   remainder < self.buttonHeight then
-			return index
-		end
-	end
-	return nil
-end
+function PartSelector:getButtonAt(x, y)
+	local partSelectorCenter = love.graphics.getWidth() / 2
+	if x > partSelectorCenter - width / 2 and
+		x < partSelectorCenter + width / 2 and
+		y > self.y and
+		y < self.y + height then
+		menuX = x - partSelectorCenter + width / 2
+		menuY = y - self.y
+		menuX = math.floor(menuX / size)
+		menuY = math.floor(menuY / size)
 
-function ShipEditor:getHeight()
---	return self.buttonMargin * 2
---	       + #self.buttons * self.buttonHeight
---	       + (#self.buttons - 1) * self.buttonSpacing
-end
-
-function ShipEditor:update(dt)
-	self.scrollY = self.scrollY + self.scrollVelocity * dt
-	self.scrollVelocity = self.scrollVelocity * 0.98
-
-	local ShipEditorHeight = self:getHeight()
-	if self.visibleHeight and ShipEditorHeight > self.visibleHeight then
-		-- Reset scroll position and velocity if we hit the top or bottom of
-		-- the ShipEditor.
-		-- Top of the ShipEditor:
-		if self.scrollY < 0 then
-			self.scrollY = 0
-			if self.scrollVelocity < 0 then
-				self.scrollVelocity = 0
-			end
-		end
-
-		-- Bottom of the ShipEditor:
-		if self.scrollY > ShipEditorHeight - self.visibleHeight then
-			self.scrollY = ShipEditorHeight - self.visibleHeight
-			if self.scrollVelocity > ShipEditorHeight then
-				self.scrollVelocity = 0
-			end
-		end
-
-		-- Scroll toward the selected button if it is off the screen.
-		if self.selectedButton then
-			local buttonTopY =
-				self.y
-				+ (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1)
-				- self.scrollY
-			local buttonBottomY =
-				self.y
-				+ (self.buttonHeight + self.buttonSpacing) * (self.selectedButton - 1)
-				+ self.buttonHeight - self.scrollY
-
-			if buttonTopY < self.y then
-				self.scrollVelocity = -self.scrollSpeed
-			elseif buttonBottomY > self.y + self.visibleHeight then
-				self.scrollVelocity = self.scrollSpeed
-			end
-		end
+		return menuY * columns + menuX + 1
 	end
 end
 
-function ShipEditor:draw()
+function PartSelector:update(dt)
+end
+
+function PartSelector:draw()
 	love.graphics.push("all")
-	local x = love.graphics.getWidth() / 2 - self.width / 2
+	local x = love.graphics.getWidth() / 2 - width / 2
 	local y = self.y
 
 	love.graphics.setColor(0.8, 0.8, 0.8)
 	love.graphics.rectangle(
 		"fill",
-		x-3, y-3,
-		self.width + 6, self.height + 6)
+		x-border, y-border,
+		width + border*2, height + border*2)
 
 	local stencilFunction = function()
 		love.graphics.rectangle(
 			"fill",
-			x-3, y-3,
-			self.width + 6, self.height + 6)
+			x-border, y-border,
+			width + border*2, height + border*2)
 	end
 
 	love.graphics.stencil(stencilFunction, "replace", 1)
@@ -115,8 +65,8 @@ function ShipEditor:draw()
 
 	for i, k in ipairs(PartRegistry.noncoreParts) do
 		im = i-1
-		imageX = im % 8
-		imageY = (im - imageX) / 8
+		imageX = im % columns
+		imageY = (im - imageX) / columns
 		imageX = imageX * 30 + x
 		imageY = imageY * 30 + y
 
@@ -130,49 +80,43 @@ function ShipEditor:draw()
 	love.graphics.pop()
 end
 
-function ShipEditor:resize(_, h) --(w, h)
-	self.visibleHeight = h - self.y
-end
-
-function ShipEditor:keypressed(key)
-	if key == "up" then
+function PartSelector:keypressed(key)
+	if key == "up" or key == "w" then
+		if self.selectedButton > columns then
+			self.selectedButton = self.selectedButton - columns
+		end
+	elseif key == "down" or key == "s"  then
+		if self.selectedButton < maxParts + 1 - columns then
+			self.selectedButton = self.selectedButton + columns
+		end
+	elseif key == "left" or key == "a"  then
 		if self.selectedButton > 1 then
 			self.selectedButton = self.selectedButton - 1
 		end
-	elseif key == "down" then
-		if self.selectedButton < #self.buttons then
+	elseif key == "right" or key == "d"  then
+		if self.selectedButton < maxParts then
 			self.selectedButton = self.selectedButton + 1
 		end
-	elseif key == "return" then
-		return self.buttons[self.selectedButton]
+	elseif key == "return" or key == "space"  then
+		return PartRegistry.noncoreParts[self.selectedButton]
 	end
 end
 
-function ShipEditor:mousemoved(x, y)
+function PartSelector:mousemoved(x, y)
 	local index = self:getButtonAt(x, y)
-	if index == nil then
-		return
-	end
-	self.selectedButton = index
-end
-
-function ShipEditor:wheelmoved(_, y) --(x, y)
-	self.selectedButton = nil
-	if self:getHeight() > self.visibleHeight then
-		if y < 0 then
-			self.scrollVelocity = self.scrollSpeed
-		elseif y > 0 then
-			self.scrollVelocity = -self.scrollSpeed
-		end
+	if index then
+		self.selectedButton = index
 	end
 end
 
-function ShipEditor:pressed(x, y)
+function PartSelector:wheelmoved(_, y) --(x, y)
+end
+
+function PartSelector:pressed(x, y)
 	local index = self:getButtonAt(x, y)
-	if index == nil then
-		return nil
+	if index then
+		return PartRegistry.noncoreParts[index]
 	end
-	return self.buttons[index]
 end
 
-return ShipEditor
+return PartSelector

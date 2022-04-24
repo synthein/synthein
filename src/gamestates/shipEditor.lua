@@ -22,7 +22,7 @@ gridTable:index(-1,  0, "b")
 local focusX = 0
 local focusY = 0
 
-local selectedPart = "s"
+local selectedPart = "b"
 
 function ShipEditor.update(dt)
 	ShipEditor.menu:update(dt)
@@ -75,7 +75,15 @@ function ShipEditor.keypressed(key)
 			end
 		end
 
-		local button = ShipEditor.menu:keypressed(key)
+		if menuOpen == "State" then
+			local button = ShipEditor.menu:keypressed(key)
+		elseif menuOpen == "Parts" then
+			local button = ShipEditor.partSelector:keypressed(key)
+			if button then
+				menuOpen = false
+				selectedPart = button
+			end
+		end
 		return
 	end
 
@@ -116,22 +124,39 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 		end
 
 	elseif menuOpen == "Parts" then
-
+		local part = ShipEditor.partSelector:pressed(x, y)
+		if part then
+			menuOpen = false
+			selectedPart = part
+		end
 	else
 
 	end
 end
 
 function ShipEditor.resize(w, h)
-	ShipEditor.menu:resize(w, h)
+	if menuOpen == "State" then
+		ShipEditor.menu:resize(w, h)
+	elseif menuOpen == "Parts" then
+	else
+	end
 end
 
 function ShipEditor.mousemoved(x, y)
-	ShipEditor.menu:mousemoved(x, y)
+	if menuOpen == "State" then
+		ShipEditor.menu:mousemoved(x, y)
+	elseif menuOpen == "Parts" then
+		ShipEditor.partSelector:mousemoved(x, y)
+	else
+	end
 end
 
 function ShipEditor.wheelmoved(x, y)
-	ShipEditor.menu:wheelmoved(x, y)
+	if menuOpen == "State" then
+		ShipEditor.menu:wheelmoved(x, y)
+	elseif menuOpen == "Parts" then
+	else
+	end
 end
 
 return ShipEditor

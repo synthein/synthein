@@ -92,20 +92,6 @@ function ShipEditor:update(dt)
 	end
 end
 
-local partsTableAll = {}
-local partsTable = {}
-local coreParts = {}
-coreParts.a = true
-coreParts.p = true
-coreParts.n = true
-
-for k, v in pairs(PartRegistry.partsList) do
-	table.insert(partsTableAll, k)
-	if not coreParts[k] then
-		table.insert(partsTable, k)
-	end
-end
-
 function ShipEditor:draw()
 	love.graphics.push("all")
 	local x = love.graphics.getWidth() / 2 - self.width / 2
@@ -127,7 +113,7 @@ function ShipEditor:draw()
 	love.graphics.stencil(stencilFunction, "replace", 1)
     love.graphics.setStencilTest("greater", 0)
 
-	for i, k in ipairs(partsTable) do
+	for i, k in ipairs(PartRegistry.noncoreParts) do
 		im = i-1
 		imageX = im % 8
 		imageY = (im - imageX) / 8
@@ -138,7 +124,7 @@ function ShipEditor:draw()
 		if i == self.selectedButton then
 			love.graphics.rectangle("fill", imageX + 3, imageY + 3, 24, 24)
 		end
-		love.graphics.draw(PartRegistry.partsList[partsTable[i]].image, imageX + 5, imageY + 5)
+		love.graphics.draw(PartRegistry.partsList[PartRegistry.noncoreParts[i]].image, imageX + 5, imageY + 5)
 	end
 
 	love.graphics.pop()

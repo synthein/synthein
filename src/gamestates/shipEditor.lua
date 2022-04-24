@@ -5,59 +5,72 @@ local GameState = require("gamestates/gameState")
 local ShipEditor = GameState()
 
 local buttonNames = {"Main Menu", "Quit"}
-ShipEditor.menu = Menu.create(350, 5, buttonNames)
-ShipEditor.partSelector = PartSelector.create(50, 5, {"Test"})
+ShipEditor.menu = Menu.create(250, 5, buttonNames)
+ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
+
+local menuOpen = false
 
 function ShipEditor.update(dt)
 	ShipEditor.menu:update(dt)
 end
 
 function ShipEditor.draw()
-	ShipEditor.menu:draw()
-	ShipEditor.partSelector:draw()
-	love.graphics.print("wsad: Move around\n" ..
-						"qe: Rotate Part\n",
-						5, 5)
+	love.graphics.print(
+		"wsad: Move around\n" ..
+		"qe: Rotate Part\n" ..
+		"f: Part Menu\n",
+		5, 5)
+	love.graphics.setColor(1,1,1)
+	love.graphics.rectangle("line", love.graphics.getWidth()/2-10, love.graphics.getHeight()/2-10, 20, 20)
+	if menuOpen == "State" then
+		ShipEditor.menu:draw()
+	elseif menuOpen == "Parts" then
+		ShipEditor.partSelector:draw()
+	end
 end
 
 function ShipEditor.keypressed(key)
-	if key == "escape" then
-		ShipEditor.stackQueue:pop()
+	if menuOpen then
+		if key == "escape" then
+			menuOpen = false
+		end
+
+		if menuOpen == "Parts" then
+			if key == "f" then
+				menuOpen = false
+			end
+		end
+
+		local button = ShipEditor.menu:keypressed(key)
+		return
 	end
 
-	local button = ShipEditor.menu:keypressed(key)
-	ShipEditor.testButton(button)
+	if key == "escape" then
+		menuOpen = "State"
+		return
+	elseif key == "f" then
+		menuOpen = "Parts"
+		return
+	end
 end
 
 function ShipEditor.mousepressed(x, y, mouseButton)
-	local button = ShipEditor.menu:pressed(x, y)
-	if mouseButton == 1 then
-		ShipEditor.testButton(button)
-	end
-end
+	if menuOpen == "State" then
+		if mouseButton == 1 then
+			local button = ShipEditor.menu:pressed(x, y)
 
-function ShipEditor.testButton(button)
-	local scene, playerHostility
-	local start = true
-	if button == "Single Player" then
-		scene = "startScene"
-		playerHostility = {{false}}
-	elseif button == "COOP" then
-		scene = "startSceneCOOP"
-		playerHostility = {{false, false}, {false, false}}
-	elseif button == "Allied" then
-		scene = "startSceneTwoPlayer"
-		playerHostility = {{false, false}, {false, false}}
-	elseif button == "VS" then
-		scene = "startSceneTwoPlayer"
-		playerHostility = {{false, true}, {true, false}}
+			if button == "Main Menu" then
+				menuOpen = false
+				ShipEditor.stackQueue:pop()
+			elseif button == "Quit" then
+				love.event.quit()
+			end
+		end
+
+	elseif menuOpen == "Parts" then
+
 	else
-		start = false
-	end
 
-	if start then
-		local callList = ShipEditor.stackQueue:replace(InitWorld)
-		callList.load(scene, playerHostility, false)
 	end
 end
 

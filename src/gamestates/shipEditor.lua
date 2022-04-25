@@ -13,11 +13,11 @@ ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
 local gridTable = GridTable.create()
-gridTable:index( 0,  0, "p")
-gridTable:index( 0,  1, "b")
-gridTable:index( 1,  0, "b")
-gridTable:index( 0, -1, "b")
-gridTable:index(-1,  0, "b")
+gridTable:index( 0,  0, {"p", 1})
+gridTable:index( 0,  1, {"b", 1})
+gridTable:index( 1,  0, {"b", 1})
+gridTable:index( 0, -1, {"b", 1})
+gridTable:index(-1,  0, {"b", 1})
 
 local focusX = 0
 local focusY = 0
@@ -33,10 +33,11 @@ function ShipEditor.draw()
 	local centerY = love.graphics.getHeight()/2
 	local function f(k, inputs, x, y)
 		love.graphics.draw(
-			PartRegistry.partsList[k].image,
+			PartRegistry.partsList[k[1]].image,
 			centerX + (-x - focusX) * 20,
 			centerY + (y - focusY) * 20,
-			0, 1, 1, 10, 10, 0, 0)
+			(k[2] - 1) * math.pi / 2,
+			1, 1, 10, 10, 0, 0)
 	end
 	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
 	love.graphics.print(
@@ -46,7 +47,6 @@ function ShipEditor.draw()
 		"r: Remove Part\n" ..
 		"f: Part Menu\n",
 		5, 5)
-
 
 	love.graphics.draw(
 		PartRegistry.partsList[selectedPart].image,
@@ -99,9 +99,27 @@ function ShipEditor.keypressed(key)
 		focusY = focusY + 1
 	elseif key == "d" then
 		focusX = focusX + 1
+	elseif key == "q" then
+		if focusX ~= 0 or focusY ~= 0 then
+			local t = gridTable:index(-focusX,  focusY)
+			if t then
+				t[2] = (t[2] + 2) % 4 + 1
+			end
+		end
+	elseif key == "e" then
+		if focusX ~= 0 or focusY ~= 0 then
+			local t = gridTable:index(-focusX,  focusY)
+			if t then
+				t[2] = t[2] % 4 + 1
+			end
+		end
+	elseif key == "r" then
+		if focusX ~= 0 or focusY ~= 0 then
+			local t = gridTable:index(-focusX,  focusY, false, true)
+		end
 	elseif key == "space" then
 		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(-focusX,  focusY, selectedPart)
+			gridTable:index(-focusX,  focusY, {selectedPart, 1})
 		end
 	elseif key == "r" then
 		if focusX ~= 0 or focusY ~= 0 then

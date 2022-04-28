@@ -252,6 +252,15 @@ function Player:drawWorldObjects(debugmode)
 		end
 	end
 
+
+	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
+
+	local testPointFunctions = {}
+	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
+		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
+	end
+	self.shieldPoints = self.camera:testPoints(testPointFunctions)
+
 	if self.selected then
 		self.selected:draw(
 			self.camera:getWorldCoords(
@@ -291,6 +300,13 @@ function drawCompass(width, height, angle)
 end
 
 function Player:drawHUD()
+	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
+	local drawPoints = love.graphics.points
+	for _, list in ipairs(self.shieldPoints) do
+		drawPoints(unpack(list))
+	end
+	love.graphics.setColor(1, 1, 1, 1)
+
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 
 	if self.menu then

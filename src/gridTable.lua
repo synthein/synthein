@@ -2,15 +2,20 @@ local GridTable = class()
 GridTable.__index = GridTable
 local Structure = class()
 
+function signTable()
+	local t = {}
+	for i = -1,1 do
+		t[i] = {false}
+	end
+	return t
+end
+
+
 function GridTable:__create()
 	self.core = {}
 	local core = self.core
 	for i = -1,1 do
-		local newtable = {}
-		for j = -1,1 do
-			newtable[j] = {false}
-		end
-		core[i] = {newtable}
+		core[i] = {signTable()}
 	end
 end
 
@@ -31,11 +36,7 @@ function GridTable:index(x, y, set, clear)
 	if not bTable then
 		if set then
 			for _ = (#aTable + 1), yMagIndex do
-				local t = {}
-				for i = -1,1 do
-					t[i] = {false}
-				end
-				table.insert(aTable, t)
+				table.insert(aTable, signTable())
 			end
 			bTable = aTable[yMagIndex]
 		else

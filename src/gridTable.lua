@@ -31,7 +31,11 @@ function GridTable:index(x, y, set, clear)
 	if not bTable then
 		if set then
 			for _ = (#aTable + 1), yMagIndex do
-				table.insert(aTable, {{false},{false},{false}})
+				local t = {}
+				for i = -1,1 do
+					t[i] = {false}
+				end
+				table.insert(aTable, t)
 			end
 			bTable = aTable[yMagIndex]
 		else
@@ -73,7 +77,7 @@ function GridTable:loop(f, inputs, addSelf)
 	local outputs = {}
 	for ySignIndex = -1,1 do
 		local aTable = self.core[ySignIndex]
-		local ySign = ySignIndex - 2
+		local ySign = ySignIndex
 
 		for yMagIndex = 1,#aTable do
 			local bTable = aTable[yMagIndex]
@@ -81,7 +85,7 @@ function GridTable:loop(f, inputs, addSelf)
 
 			for xSignIndex = -1,1 do
 				local cTable = bTable[xSignIndex]
-				local xSign = xSignIndex -2
+				local xSign = xSignIndex
 
 				for xMagIndex = 1,#cTable do
 					local object = cTable[xMagIndex]

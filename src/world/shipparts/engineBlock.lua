@@ -2,14 +2,16 @@
 local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 
--- Graphics
-local Draw = require("world/draw")
-local imageFunctionInactive = Draw.createDrawBlockFunction("engine")
-local imageFunctionActive = Draw.createDrawBlockFunction("engineActive")
-
 -- Class Setup
 local Part = require("world/shipparts/part")
 local EngineBlock = class(Part)
+
+-- Graphics
+local Draw = require("world/draw")
+EngineBlock.image = Draw.loadImage("engine")
+EngineBlock.imageActive = Draw.loadImage("engineActive")
+local imageFunctionInactive = Draw.createDrawBlockFunction(EngineBlock.image)
+local imageFunctionActive = Draw.createDrawBlockFunction(EngineBlock.imageActive)
 
 function EngineBlock:__create()
 	-- Engines can only connect to things on their top side.

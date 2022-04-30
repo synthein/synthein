@@ -12,6 +12,23 @@ s = require("world/shipparts/shieldBlock"),
 r = require("world/shipparts/repairBlock"),
 }
 
+PartRegistry.allParts = {}
+PartRegistry.coreParts = {}
+PartRegistry.noncoreParts = {}
+local coreParts = {}
+coreParts.a = true
+coreParts.p = true
+coreParts.n = true
+
+for k, v in pairs(PartRegistry.partsList) do
+	table.insert(PartRegistry.allParts, k)
+	if coreParts[k] then
+		table.insert(PartRegistry.coreParts, k)
+	else
+		table.insert(PartRegistry.noncoreParts, k)
+	end
+end
+
 function PartRegistry.setPartChars()
 	for k,v in pairs(PartRegistry.partsList) do
 		v.partChar = k

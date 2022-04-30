@@ -2,13 +2,14 @@
 local Hull = require("world/shipparts/hull")
 local Gun = require("world/shipparts/gun")
 
--- Graphics
-local Draw = require("world/draw")
-local imageFunction = Draw.createDrawBlockFunction("gun")
-
 -- Class Setup
 local Part = require("world/shipparts/part")
 local GunBlock = class(Part)
+
+-- Graphics
+local Draw = require("world/draw")
+GunBlock.image = Draw.loadImage("gun")
+local imageFunction = Draw.createDrawBlockFunction(GunBlock.image)
 
 function GunBlock:__create()
 	self.modules["hull"] = Hull(imageFunction, 10)

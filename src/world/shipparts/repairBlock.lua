@@ -3,14 +3,16 @@ local Hull = require("world/shipparts/hull")
 local Sensor = require("world/shipparts/sensor")
 local Repair = require("world/shipparts/repair")
 
--- Graphics
-local Draw = require("world/draw")
-local imageFunctionInactive = Draw.createDrawBlockFunction("repairBlock")
-local imageFunctionActive = Draw.createDrawBlockFunction("repairBlockActive")
-
 -- Class Setup
 local Part = require("world/shipparts/part")
 local RepairBlock = class(Part)
+
+-- Graphics
+local Draw = require("world/draw")
+RepairBlock.image = Draw.loadImage("repairBlock")
+RepairBlock.imageActive = Draw.loadImage("repairBlockActive")
+local imageFunctionInactive = Draw.createDrawBlockFunction(RepairBlock.image)
+local imageFunctionActive = Draw.createDrawBlockFunction(RepairBlock.imageActive)
 
 function RepairBlock:__create()
 	local sensor = Sensor(2)

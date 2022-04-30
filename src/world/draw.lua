@@ -4,10 +4,14 @@ local lume = require("vendor/lume")
 
 local Draw = {}
 
-local setup = lume.memoize(function(imageName, objectWidth, objectHeight)
+function Draw.loadImage(imageName)
+	return love.graphics.newImage("res/images/"..imageName..".png")
+end
+
+local setup = lume.memoize(function(image, objectWidth, objectHeight)
 	local imageData = {}
 
-	imageData.image = love.graphics.newImage("res/images/"..imageName..".png")
+	imageData.image = image
 	local imageWidthPx, imageHeightPx = imageData.image:getDimensions()
 
 	imageData.drawWidth    =  objectWidth   / imageWidthPx
@@ -22,7 +26,7 @@ function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight
 	local imageData = {}
 
 	return function(self, fixture)
-		imageData = setup(imageName, objectWidth, objectHeight)
+		imageData = setup(Draw.loadImage(imageName), objectWidth, objectHeight)
 
 		local body = fixture:getBody()
 		local x, y = body:getPosition()
@@ -47,7 +51,7 @@ function Draw.createPartDrawImageFunction(imageName)
 			love.graphics.setColor(1, 1, 1, 1)
 		end
 
-		imageData = setup(imageName, 1, 1)
+		imageData = setup(Draw.loadImage(imageName), 1, 1)
 
 		local x, y, angle = LocationTable(fixture, self.location):getXYA()
 
@@ -60,12 +64,11 @@ function Draw.createPartDrawImageFunction(imageName)
 	end
 end
 
-function Draw.createDrawBlockFunction(imageName)
+function Draw.createDrawBlockFunction(image)
 	if not love.graphics then
 		return function(x, y, angle) end
 	end
 
-	local image = love.graphics.newImage("res/images/"..imageName..".png")
 	local imageWidthPx, imageHeightPx = image:getDimensions()
 
 	local drawWidth    =  1 / imageWidthPx

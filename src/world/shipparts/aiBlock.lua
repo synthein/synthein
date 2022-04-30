@@ -9,12 +9,14 @@ local Draw = require("world/draw")
 local aiTeams = {-4, -3, -2, -1, 1, 2}
 local imageFunctions = {}
 for i, team in ipairs(aiTeams) do
-	imageFunctions[team] = Draw.createDrawBlockFunction("ai" .. team)
+	imageFunctions[team] = Draw.createDrawBlockFunction(Draw.loadImage("ai" .. team))
 end
 
 -- Class Setup
 local Part = require("world/shipparts/part")
 local AIBlock = class(Part)
+
+AIBlock.image = Draw.loadImage("ai" .. 1)
 
 function AIBlock:__create(team, leader)
 	self.modules["hull"] = Hull(imageFunctions[team], 10)

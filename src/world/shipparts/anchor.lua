@@ -1,11 +1,12 @@
 -- Components
 local Hull = require("world/shipparts/hull")
 
+local Anchor = class(require("world/shipparts/part"))
+
 -- Graphics
 local Draw = require("world/draw")
-local imageFunction = Draw.createDrawBlockFunction("anchor")
-
-local Anchor = class(require("world/shipparts/part"))
+Anchor.image = Draw.loadImage("anchor")
+local imageFunction = Draw.createDrawBlockFunction(Anchor.image)
 
 function Anchor:__create()
 	self.modules["hull"] = Hull(imageFunction, 10)

@@ -1,5 +1,13 @@
 local parse = {}
 
+function parse.parseNumbers(string)
+	local t = {}
+	for coord in string.gmatch(string, "[-0-9.]+") do
+		table.insert(t, tonumber(coord))
+	end
+	return t
+end
+
 function parse.packLocation(input)
 	local location = {}
 	if input.body then

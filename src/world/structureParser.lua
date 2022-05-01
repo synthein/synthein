@@ -101,9 +101,10 @@ function StructureParser.shipUnpack(appendix, shipData)
 				k = k + 1
 			elseif PartRegistry.partsList[c] ~= nil then
 				local part = PartRegistry.createPart(c, shipData)
+				if data then part:loadData(data) end
 				local orientation
 				if nc == '*' then
-					if c == 'a' or c == 'p' or c == 'n'then
+					if part.getTeam then
 						shipTable.corePart = part
 						if c == 'p' then
 							player = true
@@ -113,10 +114,9 @@ function StructureParser.shipUnpack(appendix, shipData)
 				elseif nc == '1' or nc == '2' or nc == '3' or nc == '4' then
 					orientation = tonumber(nc)
 				end
-				if data then
-					part:loadData(data)
-				end
 				part:setLocation({x, y, orientation})
+
+				-- Add to grid table
 				shipTable.parts:index(x, y, part)
 			elseif c == '{' or c == '}' then
 				break

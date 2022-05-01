@@ -24,7 +24,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 	local corePart
 	if not shipTable.parts then
-		self.gridTable = GridTable.create()
+		self.gridTable = GridTable()
 		self.gridTable:index(0, 0, shipTable)
 		shipTable:setLocation({0, 0, 1})
 		if shipTable.type ~= "generic" then
@@ -331,7 +331,7 @@ function Structure:disconnectPart(location, isDestroyed)
 
 		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 
-		local structure = GridTable.create()
+		local structure = GridTable()
 		for _, eachPart in ipairs(partList) do
 			local partVector = {unpack(eachPart.location)}
 			local netVector = StructureMath.sumVectors(baseVector, partVector)

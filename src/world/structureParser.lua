@@ -23,6 +23,10 @@ function StructureParser.shipUnpack(appendix, shipData)
 		shipString, stringLength = StructureParser.loadShipFromFile(appendix)
 	end
 
+	if not (shipString and stringLength) then
+		return
+	end
+
 	local shipTable = {}
 	local player = false
 	shipTable.parts = GridTable()
@@ -219,25 +223,9 @@ end
 
 return StructureParser
 
---Ideas to try
+--Ideas to try do not delete
 
 --[[
-local GridTable = require("gridTable")
-local PartRegistry = require("world/shipparts/partRegistry")
-local parse = require("parse")
-
-local StructureParser = {}
-
-function StructureParser.loadShipFromFile(ship)
-	local contents, size
-	if ship then
-		local file = string.format("res/ships/" .. ship .. ".txt")
-		contents, size = love.filesystem.read(file)
-		return contents, size
-	end
-	return nil, nil
-end
-
 function StructureParser.shipUnpack(appendix, shipData)
 	local shipString, stringLength
 	if string.match(appendix, "[*\n]") then
@@ -393,6 +381,4 @@ function StructureParser.shipPack(structure, saveThePartData)
 	string = string .. "\n" .. dataString
 	return string
 end
-
-return StructureParser
 --]]

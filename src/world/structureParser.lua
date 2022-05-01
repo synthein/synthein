@@ -25,7 +25,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 
 	local shipTable = {}
 	local player = false
-	shipTable.parts = GridTable.create()
+	shipTable.parts = GridTable()
 	local loadDataTable = {}
 	local location = {}
 	local loadData = {}

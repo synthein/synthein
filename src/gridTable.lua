@@ -1,33 +1,34 @@
-local GridTable = {}
+local GridTable = class()
 GridTable.__index = GridTable
+local Structure = class()
 
-function GridTable.create()
-	local self = {}
-	setmetatable(self, GridTable)
+function signTable()
+	local t = {}
+	for i = -1,1 do
+		t[i] = {false}
+	end
+	return t
+end
 
-	self.core = {
-				 { {{false},{false},{false}} },
-				 { {{false},{false},{false}} },
-				 { {{false},{false},{false}} }
-			    }
 
-	return self
+function GridTable:__create()
+	self.core = {}
+	local core = self.core
+	for i = -1,1 do
+		core[i] = {signTable()}
+	end
+end
+
+local function toGTindex(index)
+	local sign = index > 0 and 1 or index < 0 and -1 or 0
+	local mag = sign * index
+	return sign, mag ~= 0 and mag or 1
 end
 
 function GridTable:index(x, y, set, clear)
-	local xSignIndex, xMagIndex, ySignIndex, yMagIndex
 	local aTable, bTable, cTable, object
 
-	if y == 0 then
-		ySignIndex = 2
-		yMagIndex = 1
-	elseif y < 0 then
-		ySignIndex = 1
-		yMagIndex = -y
-	elseif y > 0 then
-		ySignIndex = 3
-		yMagIndex = y
-	end
+	local ySignIndex, yMagIndex = toGTindex(y)
 
 	aTable = self.core[ySignIndex]
 	bTable = aTable[yMagIndex]
@@ -35,23 +36,15 @@ function GridTable:index(x, y, set, clear)
 	if not bTable then
 		if set then
 			for _ = (#aTable + 1), yMagIndex do
-				table.insert(aTable, {{false},{false},{false}})
+				table.insert(aTable, signTable())
 			end
 			bTable = aTable[yMagIndex]
 		else
 			return nil
 		end
 	end
-	if x == 0 then
-		xSignIndex = 2
-		xMagIndex = 1
-	elseif x < 0 then
-		xSignIndex = 1
-		xMagIndex = -x
-	elseif x > 0 then
-		xSignIndex = 3
-		xMagIndex = x
-	end
+
+	local xSignIndex, xMagIndex = toGTindex(x)
 
 	cTable = bTable[xSignIndex]
 	object = cTable[xMagIndex]
@@ -83,17 +76,17 @@ end
 
 function GridTable:loop(f, inputs, addSelf)
 	local outputs = {}
-	for ySignIndex = 1,3 do
+	for ySignIndex = -1,1 do
 		local aTable = self.core[ySignIndex]
-		local ySign = ySignIndex - 2
+		local ySign = ySignIndex
 
 		for yMagIndex = 1,#aTable do
 			local bTable = aTable[yMagIndex]
 			local y = ySign * yMagIndex
 
-			for xSignIndex = 1,3 do
+			for xSignIndex = -1,1 do
 				local cTable = bTable[xSignIndex]
-				local xSign = xSignIndex -2
+				local xSign = xSignIndex
 
 				for xMagIndex = 1,#cTable do
 					local object = cTable[xMagIndex]

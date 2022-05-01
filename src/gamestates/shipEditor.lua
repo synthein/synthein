@@ -12,7 +12,7 @@ ShipEditor.menu = Menu.create(250, 5, buttonNames)
 ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
-local gridTable = GridTable.create()
+local gridTable = GridTable()
 gridTable:index( 0,  0, {"p", 1})
 gridTable:index( 0,  1, {"b", 1})
 gridTable:index( 1,  0, {"b", 1})

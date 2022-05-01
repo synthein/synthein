@@ -29,6 +29,20 @@ function StructureParser.shipUnpack(appendix, shipData)
 	local loadDataTable = {}
 	local location = {}
 	local loadData = {}
+
+
+	local baseX
+	local baseY = 0
+	for line in shipString:gmatch(".-\n") do
+		baseY = baseY + 1
+		local find = line:find("*")
+		if find then
+			baseX = find - 1
+			break
+		end
+	end
+
+
 	if shipString and stringLength then
 		local j, k, x, y, baseJ, baseK
 		j = 0

@@ -148,11 +148,15 @@ end
 
 function Menu:keypressed(key)
 	if key == "up" then
-		if self.selectedButton > 1 then
+		if self.selectedButton == nil then
+			self.selectedButton = #self.buttons
+		elseif self.selectedButton > 1 then
 			self.selectedButton = self.selectedButton - 1
 		end
 	elseif key == "down" then
-		if self.selectedButton < #self.buttons then
+		if self.selectedButton == nil then
+			self.selectedButton = 1
+		elseif self.selectedButton < #self.buttons then
 			self.selectedButton = self.selectedButton + 1
 		end
 	elseif key == "return" then

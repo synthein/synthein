@@ -206,7 +206,7 @@ function Structure:testConnection(testPoints)
 	local testedPoints = {}
 	local points = {}
 	local clusters = {}
-	local tested = GridTable.create()
+	local tested = GridTable()
 	if self.gridTable:index(0, 0) then
 		tested:index(0, 0, 2)
 	end

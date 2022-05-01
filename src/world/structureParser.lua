@@ -219,6 +219,8 @@ end
 
 return StructureParser
 
+--Ideas to try
+
 --[[
 local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")

@@ -51,13 +51,6 @@ function Player.create(world, controls, structure, camera)
 end
 
 function Player:handleInput()
-
-	if self.ship then
-		self.camera:setX(self.ship.body:getX())
-		self.camera:setY(self.ship.body:getY())
-		self.camera:setAngle(self.isCameraAngleFixed and 0 or self.ship.body:getAngle())
-	end
-
 	-----------------------
 	----- Set Cursor  -----
 	-----------------------

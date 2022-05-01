@@ -47,10 +47,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 					c = shipString:sub(i + a, i + a)
 					if c == ')' then
 						local locationString = shipString:sub(i + 1, i + a - 1)
-						location = {}
-						for coord in string.gmatch(locationString, "[-0-9.]+") do
-							table.insert(location, tonumber(coord))
-						end
+						location = parse.parseNumbers(locationString)
 					end
 				end
 			elseif c == '[' then
@@ -58,10 +55,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 					c = shipString:sub(i + a, i + a)
 					if c == ']' then
 						local dataString = shipString:sub(i + 1, i + a - 1)
-						loadData = {}
-						for var in string.gmatch(dataString, "[-0-9.]+") do
-							table.insert(loadData, tonumber(var))
-						end
+						loadData = parse.parseNumbers(dataString)
 					end
 				end
 --			elseif c == '{' then

@@ -37,6 +37,7 @@ function Player.create(world, controls, structure, camera)
 	self.selectionKeyDown = false
 	self.isBuilding = false
 	self.isRemoving = false
+	self.isCameraAngleFixed = true
 	self.partX = nil
 	self.partY = nil
 	self.cursorX = 0
@@ -54,6 +55,7 @@ function Player:handleInput()
 	if self.ship then
 		self.camera:setX(self.ship.body:getX())
 		self.camera:setY(self.ship.body:getY())
+		self.camera:setAngle(self.isCameraAngleFixed and 0 or self.ship.body:getAngle())
 	end
 
 	-----------------------
@@ -80,6 +82,7 @@ end
 
 function Player:buttonpressed(source, button, debugmode)
 	if button == "h" then self.showHealth = not self.showHealth end
+	if button == "f5" then self.isCameraAngleFixed = not self.isCameraAngleFixed end
 
 	local menuButton = Controls.test("menu", self.controls, source, button)
 	local order = Controls.test("pressed", self.controls, source, button)
@@ -184,6 +187,7 @@ function Player:draw(debugmode)
 	if self.ship then
 		self.camera:setX(self.ship.body:getX())
 		self.camera:setY(self.ship.body:getY())
+		self.camera:setAngle(self.isCameraAngleFixed and 0 or self.ship.body:getAngle())
 	end
 
 	self:drawWorldObjects(debugmode)
@@ -332,9 +336,9 @@ function Player:drawHUD()
 		love.graphics.setFont(previousFont)
 	end
 
-	local x, y = self.camera:getPosition()
+	local x, y, angle = self.camera:getPosition()
 	local _, _, width, height = self.camera:getScissor()
-	local compassAngle = math.atan2(x - point[1], y - point[2]) + math.pi/2
+	local compassAngle = math.atan2(x - point[1], y - point[2]) + math.pi/2 + (self.isCameraAngleFixed and 0 or angle)
 
 	drawCompass(width, height, compassAngle)
 

@@ -7,6 +7,7 @@ function Camera.create()
 
 	self.x = 0
 	self.y = 0
+	self.angle = 0
 	self.zoomInt = 8
 	self:adjustZoom(0)
 	self.scissorX = 0
@@ -21,7 +22,7 @@ function Camera.create()
 end
 
 function Camera:getPosition()
-	return self.x, self.y
+	return self.x, self.y, self.angle
 end
 
 function Camera:setX(newX)
@@ -30,6 +31,10 @@ end
 
 function Camera:setY(newY)
 	self.y = newY
+end
+
+function Camera:setAngle(newAngle)
+	self.angle = newAngle
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
@@ -182,6 +187,7 @@ function Camera:enable(inWorld)
 	love.graphics.translate(self.scissorX, self.scissorY)
 	if inWorld then
 		love.graphics.translate(self.scissorWidth/2, self.scissorHeight/2)
+		love.graphics.rotate(self.angle)
 		love.graphics.scale(self.zoom, -self.zoom)
 		love.graphics.translate(- self.x, - self.y)
 		--x =  self.zoom * (worldX - self.x) + self.scissorX + self.scissorWidth/2

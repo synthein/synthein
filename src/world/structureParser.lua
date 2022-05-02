@@ -14,6 +14,28 @@ function StructureParser.loadShipFromFile(ship)
 	return nil, nil
 end
 
+local function parseLetterPair(string)
+	parseLetterPair()
+	local part = PartRegistry.createPart(c, shipData)
+	if data then part:loadData(data) end
+	local orientation
+	if nc == '*' then
+		if part.getTeam then
+			shipTable.corePart = part
+			if c == 'p' then
+				player = true
+			end
+		end
+		orientation = 1
+	elseif nc == '1' or nc == '2' or nc == '3' or nc == '4' then
+		orientation = tonumber(nc)
+	end
+	part:setLocation({x, y, orientation})
+
+	-- Add to grid table
+	shipTable.parts:index(x, y, part)
+end
+
 function StructureParser.shipUnpack(appendix, shipData)
 	local shipString, stringLength
 	if string.match(appendix, "[*\n]") then
@@ -103,6 +125,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 		for i = 1, stringLength do
 			local c = shipString:sub(i,i)
 			local nc = shipString:sub(i + 1, i + 1)
+			local lp = shipString:sub(i,i+1)
 --			local angle = 1
 			local data
 			j = j + 1
@@ -118,6 +141,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 				j = 0
 				k = k + 1
 			elseif PartRegistry.partsList[c] ~= nil then
+				parseLetterPair()
 				local part = PartRegistry.createPart(c, shipData)
 				if data then part:loadData(data) end
 				local orientation

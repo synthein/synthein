@@ -14,26 +14,23 @@ function StructureParser.loadShipFromFile(ship)
 	return nil, nil
 end
 
+--function in development
 local function parseLetterPair(string)
-	parseLetterPair()
-	local part = PartRegistry.createPart(c, shipData)
-	if data then part:loadData(data) end
-	local orientation
-	if nc == '*' then
-		if part.getTeam then
-			shipTable.corePart = part
-			if c == 'p' then
-				player = true
-			end
-		end
-		orientation = 1
-	elseif nc == '1' or nc == '2' or nc == '3' or nc == '4' then
-		orientation = tonumber(nc)
-	end
-	part:setLocation({x, y, orientation})
+	if not string:match("%a[1234*]") then return end
+
+	local c  = string:sub(1, 1)
+	local nc = string:sub(2, 2)
+
+	--if not add_part_registry_parts_list_here[c] then return end
+
+	--local part = PartRegistry.createPart(c, shipData)
+	--if data then part:loadData(data) end
+
+	local orientation = nc == '*' and 1 or tonumber(nc)
+	--part:setLocation({x, y, orientation})
 
 	-- Add to grid table
-	shipTable.parts:index(x, y, part)
+	--shipTable.parts:index(x, y, part)
 end
 
 function StructureParser.shipUnpack(appendix, shipData)
@@ -45,9 +42,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 		shipString, stringLength = StructureParser.loadShipFromFile(appendix)
 	end
 
-	if not (shipString and stringLength) then
-		return
-	end
+	if not (shipString and stringLength) then return end
 
 	local shipTable = {}
 	local player = false
@@ -57,17 +52,28 @@ function StructureParser.shipUnpack(appendix, shipData)
 	local loadData = {}
 
 
-	local baseX
-	local baseY = 0
+	-- segment in development
+	local baseX, baseY
+	local lines = {}
+	-- make sure the line match can use end of file instead of new line
 	for line in shipString:gmatch(".-\n") do
-		baseY = baseY + 1
+		table.insert(lines, line)
 		local find = line:find("*")
 		if find then
+			baseY = #lines
 			baseX = find - 1
+--				if part.getTeam then --maybe replace with PartRegistry coreParts and use character then part need not be created yet????
+--					shipTable.corePart = part
+--					if c == 'p' then
+--						player = true
+--					end
+--				end
 			break
 		end
 	end
+	--end of segment
 
+	if not (baseX and baseY) then return end
 
 	if shipString and stringLength then
 		local j, k, x, y, baseJ, baseK
@@ -141,7 +147,7 @@ function StructureParser.shipUnpack(appendix, shipData)
 				j = 0
 				k = k + 1
 			elseif PartRegistry.partsList[c] ~= nil then
-				parseLetterPair()
+				parseLetterPair(lp)
 				local part = PartRegistry.createPart(c, shipData)
 				if data then part:loadData(data) end
 				local orientation
@@ -247,162 +253,42 @@ end
 
 return StructureParser
 
---Ideas to try do not delete
+--Ideas to try. Do not delete
 
---[[
-function StructureParser.shipUnpack(appendix, shipData)
-	local shipString, stringLength
-	if string.match(appendix, "[*\n]") then
-		shipString = appendix
-		stringLength = #appendix
-	else
-		shipString, stringLength = StructureParser.loadShipFromFile(appendix)
+--[[ -- Inside loop over each line
+
+y = y - 1
+local length = #line
+local m = line:find("[.%[\n]") or length + 1
+local types = line:sub(1, m - 1)
+local dataString = line:sub(m, length)
+
+local dataTable = {}
+for partData in dataString:gmatch("[.%[]([^.%[%]\n]*)%]?") do
+	partDataTable = {}
+	for number in partData:gmatch("[^,]") do
+		table.insert(partDataTable, tonumber(number))
 	end
-
-	local shipTable = {parts = GridTable()}
-	local player = false
-
-	if not shipString then return end
-
-	local baseX
-	local y = 0
-	for line in shipString:gmatch(".-\n") do
-		y = y + 1
-		local find = line:find("*")
-		if find then
-			baseX = find - 1
-			break
-		end
-	end
-
-	for line in shipString:gmatch(".-\n") do
-		y = y - 1
-		local length = #line
-		local m = line:find("[.%[\n]") or length + 1
-		local types = line:sub(1, m - 1)
-		local dataString = line:sub(m, length)
-
-		local dataTable = {}
-		for partData in dataString:gmatch("[.%[]([^.%[%]\n]*)%]?") do
-			partDataTable = {}
-			for number in partData:gmatch("[^,]") do
-				table.insert(partDataTable, tonumber(number))
-			end
-			table.insert(dataTable, partDataTable)
-		end
-
-		local partCounter = 0
-		for i = 1, #types - 1 do
-			if types:sub(i, i + 1):match("%a[1234*]") then
-				local c = types:sub(i,i)
-				local nc = types:sub(i + 1, i + 1)
-
-				local part = PartRegistry.createPart(c, shipData)
-
-				-- Data handling.
-				partCounter = partCounter + 1
-				local partData = dataTable[partCounter]
-				if partData then part:loadData(partData) end
-
-				-- Location handling.
-				local x = (i - baseX)/2
-				local orientation
-				if nc == '*' then
-					if part.getTeam then
-						shipTable.corePart = part
-						if c == 'p' then
-							player = true
-						end
-					end
-					orientation = 1
-				else
-					orientation = tonumber(nc)
-				end
-				part:setLocation({x, y, orientation})
-
-				-- Add to grid table
-				shipTable.parts:index(x, y, part)
-			end
-		end
-	end
-
-	return shipTable, player
+	table.insert(dataTable, partDataTable)
 end
 
-function StructureParser.shipPack(structure, saveThePartData)
-	PartRegistry.setPartChars()
-	local string = ""
-	local xLow, xHigh, yLow, yHigh = 0, 0, 0, 0
-	local parts = structure.gridTable:loop()
-	local stringTable = {}
-	for _, part in ipairs(parts) do
-		local x = part.location[1]
-		local y = part.location[2]
-		if     x < xLow  then
-			xLow = x
-		elseif x > xHigh then
-			xHigh = x
-		end
-		if y < yLow  then
-			yLow = y
-		elseif y > yHigh then
-			yHigh = y
-		end
-	end
-	for i = 1, (yHigh - yLow + 1) do
-		table.insert(stringTable, {})
-		for _ = 1, (xHigh - xLow + 1) do
-			table.insert(stringTable[i], {"  "})
-		end
-	end
-	for i, part in ipairs(parts) do
-		local x = part.location[1]
-		local y = part.location[2]
-		local tempString, a, b
---		local loadData = {}
+local partCounter = 0
+for i = 1, #types - 1 do
+	if types:sub(i, i + 1):match("%a[1234*]") then
+		--removed extra part suff from here
 
-		a = part.partChar
---[[
-		--Find the string representation of the part.
-		if     getmetatable(part) == Block then a = "b"
-		elseif getmetatable(part) == EngineBlock then a = "e"
-		elseif getmetatable(part) == GunBlock then a = "g"
-		elseif getmetatable(part) == AIBlock then a = "a"
-		elseif getmetatable(part) == PlayerBlock then a = "p"
-		elseif getmetatable(part) == Anchor then a = "n"
-		end
---] ]
+		-- Data handling.
+		partCounter = partCounter + 1
+		local partData = dataTable[partCounter]
+		if partData then part:loadData(partData) end
 
-		if part == structure.corePart or (not structure.corePart and i==1) then
-			b = "*"
-		else
-			b = tostring(part.location[3])
-		end
-		tempString = a .. b
-		--Add data to table
-		if saveThePartData then
-			stringTable[y - yLow + 1][x - xLow + 1] = {tempString, part:saveData()}
-		else
-			stringTable[y - yLow + 1][x - xLow + 1] = {tempString}
-		end
+		-- Location handling.
+		local x = (i - baseX)/2
+
+
+		--removed extra part suff from here
 	end
-	--Put strings together
-	local dataString = ""
-	for i = 1,#stringTable do
-		local ii = #stringTable - i + 1
-		for j = 1,#stringTable[ii] do
-			string = string .. stringTable[ii][j][1]
-			if stringTable[ii][j][2]then
-				dataString = dataString ..
-							 parse.packLocation({j + xLow - 1, ii + yLow - 1}) ..
-							 parse.packData(stringTable[ii][j][2]) ..
-							 --Tserial.pack(stringTable[i][j][2], nil, true) ..
-							 "\n"
-			end
-		end
-		string = string .. "\n"
-	end
-	string = string .. "\n" .. dataString
-	return string
 end
+
+
 --]]

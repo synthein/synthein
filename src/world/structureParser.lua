@@ -137,11 +137,6 @@ function StructureParser.shipUnpack(appendix, shipData)
 			j = j + 1
 			x = (j - baseJ)/2
 			y = baseK - k
-			if loadDataTable[1] then
-				if loadDataTable[1][1][1] == x and loadDataTable[1][1][2]	== y then
-					data = loadDataTable[1][2]
-				end
-			end
 
 			if c == '\n' then
 				j = 0
@@ -149,7 +144,6 @@ function StructureParser.shipUnpack(appendix, shipData)
 			elseif PartRegistry.partsList[c] ~= nil then
 				parseLetterPair(lp)
 				local part = PartRegistry.createPart(c, shipData)
-				if data then part:loadData(data) end
 				local orientation
 				if nc == '*' then
 					if part.getTeam then
@@ -171,6 +165,14 @@ function StructureParser.shipUnpack(appendix, shipData)
 			end
 		end
 	end
+
+	for i, t in ipairs(loadDataTable) do
+		local part = shipTable.parts:index(t[1][1], t[1][2])
+		if part then
+			part:loadData(t[2])
+		end
+	end
+
 	return shipTable, player
 end
 

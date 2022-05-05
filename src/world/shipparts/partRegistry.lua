@@ -15,14 +15,15 @@ r = require("world/shipparts/repairBlock"),
 PartRegistry.allParts = {}
 PartRegistry.coreParts = {}
 PartRegistry.noncoreParts = {}
-local coreParts = {}
-coreParts.a = true
-coreParts.p = true
-coreParts.n = true
+PartRegistry.isCorePart = {
+	a = true,
+	p = true,
+	n = true,
+}
 
 for k, v in pairs(PartRegistry.partsList) do
 	table.insert(PartRegistry.allParts, k)
-	if coreParts[k] then
+	if PartRegistry.isCorePart[k] then
 		table.insert(PartRegistry.coreParts, k)
 	else
 		table.insert(PartRegistry.noncoreParts, k)

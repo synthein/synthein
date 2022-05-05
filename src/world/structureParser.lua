@@ -21,16 +21,9 @@ local function parseLetterPair(string)
 	local c  = string:sub(1, 1)
 	local nc = string:sub(2, 2)
 
-	--if not add_part_registry_parts_list_here[c] then return end
-
-	--local part = PartRegistry.createPart(c, shipData)
-	--if data then part:loadData(data) end
-
 	local orientation = nc == '*' and 1 or tonumber(nc)
-	--part:setLocation({x, y, orientation})
 
-	-- Add to grid table
-	--shipTable.parts:index(x, y, part)
+	return c, orientation
 end
 
 function StructureParser.shipUnpack(appendix, shipData)
@@ -44,36 +37,28 @@ function StructureParser.shipUnpack(appendix, shipData)
 
 	if not (shipString and stringLength) then return end
 
-	local shipTable = {}
-	local player = false
-	shipTable.parts = GridTable()
-	local loadDataTable = {}
-	local location = {}
-	local loadData = {}
-
-
-	-- segment in development
-	local baseX, baseY
+	local baseX, baseY, corePart, player
 	local lines = {}
-	-- make sure the line match can use end of file instead of new line
+	-- TODO make sure the line match can use end of file instead of new line
 	for line in shipString:gmatch(".-\n") do
-		table.insert(lines, line)
+		table.insert(lines, line:sub(1, #line - 1))
 		local find = line:find("*")
 		if find then
 			baseY = #lines
 			baseX = find - 1
---				if part.getTeam then --maybe replace with PartRegistry coreParts and use character then part need not be created yet????
---					shipTable.corePart = part
---					if c == 'p' then
---						player = true
---					end
---				end
-			break
+			local c = line:sub(baseX, baseX)
+			corePart = PartRegistry.isCorePart[c]
+			player = c == 'p'
 		end
 	end
-	--end of segment
 
 	if not (baseX and baseY) then return end
+
+	local shipTable = {}
+	shipTable.parts = GridTable()
+	local loadDataTable = {}
+	local location = {}
+	local loadData = {}
 
 	if shipString and stringLength then
 		local j, k, x, y, baseJ, baseK
@@ -104,66 +89,33 @@ function StructureParser.shipUnpack(appendix, shipData)
 						loadData = parse.parseNumbers(dataString)
 					end
 				end
---			elseif c == '{' then
---				local braceLevel = 0
---				local endBrace
---				for a = 1,(stringLength-i) do
---					c = shipString:sub(i + a, i + a)
---					if c == '{' then
---						braceLevel = braceLevel + 1
---					elseif c == '}' then
---						if braceLevel == 0 then
---							endBrace = a
---							break
---						else
---							braceLevel = braceLevel - 1
---						end
---					elseif c == '\n' then break
---					end
---				end
---				local loadData = Tserial.unpack(shipString:sub(i, i + endBrace), true)
 				table.insert(loadDataTable, {location, loadData})
 			end
 		end
+	end
 
-		j = 0
-		k = 0
-		for i = 1, stringLength do
-			local c = shipString:sub(i,i)
-			local nc = shipString:sub(i + 1, i + 1)
-			local lp = shipString:sub(i,i+1)
---			local angle = 1
-			local data
-			j = j + 1
-			x = (j - baseJ)/2
-			y = baseK - k
+	for i, line in ipairs(lines) do
+		for j = 1,#line-1 do
+			local lp = line:sub(j, j + 1)
 
-			if c == '\n' then
-				j = 0
-				k = k + 1
-			elseif PartRegistry.partsList[c] ~= nil then
-				parseLetterPair(lp)
+			-- Location handling.
+			local x = (j - baseX)/2
+			local y = baseY - i
+			local c, orientation = parseLetterPair(lp)
+
+			if c and orientation and (PartRegistry.partsList[c] ~= nil) then
 				local part = PartRegistry.createPart(c, shipData)
-				local orientation
-				if nc == '*' then
-					if part.getTeam then
-						shipTable.corePart = part
-						if c == 'p' then
-							player = true
-						end
-					end
-					orientation = 1
-				elseif nc == '1' or nc == '2' or nc == '3' or nc == '4' then
-					orientation = tonumber(nc)
-				end
 				part:setLocation({x, y, orientation})
 
 				-- Add to grid table
 				shipTable.parts:index(x, y, part)
-			elseif c == '{' or c == '}' then
-				break
 			end
 		end
+	end
+
+
+	if corePart then
+		shipTable.corePart = shipTable.parts:index(0, 0)
 	end
 
 	for i, t in ipairs(loadDataTable) do
@@ -283,9 +235,6 @@ for i = 1, #types - 1 do
 		partCounter = partCounter + 1
 		local partData = dataTable[partCounter]
 		if partData then part:loadData(partData) end
-
-		-- Location handling.
-		local x = (i - baseX)/2
 
 
 		--removed extra part suff from here

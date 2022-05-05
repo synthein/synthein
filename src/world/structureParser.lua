@@ -14,7 +14,6 @@ function StructureParser.loadShipFromFile(ship)
 	return nil, nil
 end
 
---function in development
 local function parseLetterPair(string)
 	if not string:match("%a[1234*]") then return end
 
@@ -54,8 +53,6 @@ function StructureParser.shipUnpack(appendix, shipData)
 
 	if not (baseX and baseY) then return end
 
-	local shipTable = {}
-	shipTable.parts = GridTable()
 	local loadDataTable = {}
 	local location = {}
 	local loadData = {}
@@ -94,6 +91,9 @@ function StructureParser.shipUnpack(appendix, shipData)
 		end
 	end
 
+	local shipTable = {}
+	shipTable.parts = GridTable()
+
 	for i, line in ipairs(lines) do
 		for j = 1,#line-1 do
 			local lp = line:sub(j, j + 1)
@@ -112,7 +112,6 @@ function StructureParser.shipUnpack(appendix, shipData)
 			end
 		end
 	end
-
 
 	if corePart then
 		shipTable.corePart = shipTable.parts:index(0, 0)
@@ -226,20 +225,9 @@ for partData in dataString:gmatch("[.%[]([^.%[%]\n]*)%]?") do
 	table.insert(dataTable, partDataTable)
 end
 
-local partCounter = 0
-for i = 1, #types - 1 do
-	if types:sub(i, i + 1):match("%a[1234*]") then
-		--removed extra part suff from here
-
 		-- Data handling.
 		partCounter = partCounter + 1
 		local partData = dataTable[partCounter]
 		if partData then part:loadData(partData) end
-
-
-		--removed extra part suff from here
-	end
-end
-
 
 --]]

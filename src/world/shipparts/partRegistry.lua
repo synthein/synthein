@@ -10,6 +10,7 @@ n = require("world/shipparts/anchor"),
 m = require("world/shipparts/armorBlock"),
 s = require("world/shipparts/shieldBlock"),
 r = require("world/shipparts/repairBlock"),
+l = require("world/shipparts/missileLauncherBlock"),
 }
 
 PartRegistry.allParts = {}

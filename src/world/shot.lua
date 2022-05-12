@@ -27,6 +27,7 @@ function Shot:__create(worldInfo, location, data, appendix)
 			end
 		end,
 		draw = Draw.createObjectDrawImageFunction("shot", .1, .5),
+		damage = function() self:destroy() end,
 	})
 
 	self.timer = Timer(5)

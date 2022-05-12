@@ -10,17 +10,16 @@ function Missile:__create(worldInfo, location, data, appendix)
 
 	self.thrust = 10
 	self.torque = 0.2
-	self.body:setLinearVelocity(location[4], location[5])
-	self.body:setAngularVelocity(0)
 
 	local physicsShape = love.physics.newRectangleShape(.4, .8)
 	self.fixture = love.physics.newFixture(self.body, physicsShape)
 	PhysicsReferences.setFixtureType(self.fixture, "missile")
 
+	self.timePassed = false
 	local firstContact = true
 	self.fixture:setUserData({
 		collision = function(fixture, otherFixture)
-			if fixture ~= self.sourcePart.fixture and firstContact then
+			if self.timePassed and firstContact then
 				local object = otherFixture:getUserData()
 				object:damage(otherFixture, 10)
 				self.exploding = 1
@@ -54,12 +53,13 @@ function Missile:__create(worldInfo, location, data, appendix)
 	self.visionArc:setSensor(true)
 
 	self.timer = Timer(15)
-	self.sourcePart = data
+	self.data = data
+	self.team = data
 	self.startLocation = location
 end
 
 function Missile:postCreate(references)
-	local team, time = unpack(self.sourcePart)
+	local team, time = unpack(self.data)
 	self.team = team
 	self.timer:time(time)
 end
@@ -89,6 +89,7 @@ function Missile:explode()
 end
 
 function Missile:update(dt)
+	self.timePassed = true
 	if self.timer:ready(dt) then
 		self:destroy()
 		return
@@ -101,13 +102,17 @@ function Missile:update(dt)
 		self:destroy()
 		return
 	elseif self.target then
-		local missileX, missileY = self.body:getPosition()
-		local targetX, targetY = self.target:getPosition()
-		local angle = vector.angle(targetX - missileX, targetY - missileY)
-		local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
-		local sign = vector.sign(angleToTarget)
+		if self.target:isDestroyed() then
+			self.target = nil
+		else
+			local missileX, missileY = self.body:getPosition()
+			local targetX, targetY = self.target:getPosition()
+			local angle = vector.angle(targetX - missileX, targetY - missileY)
+			local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
+			local sign = vector.sign(angleToTarget)
 
-		self.body:applyTorque(sign * self.torque)
+			self.body:applyTorque(sign * self.torque)
+		end
 	end
 
 	self.body:applyForce(vector.components(self.thrust, self.body:getAngle() + math.pi/2))

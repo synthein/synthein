@@ -75,8 +75,9 @@ Controls.released = {
 }
 
 Controls.menu = {
-	confirm		= "confirm",
-	cancel		= "cancel"
+	confirm    = "confirm",
+	cancel     = "cancel",
+	playerMenu = "playerMenu",
 }
 
 function Controls.defaults(joystick)

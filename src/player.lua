@@ -1,6 +1,6 @@
 local Controls = require("controls")
 local Selection = require("selection")
-local Menu = require("menu")
+local PartSelector = require("partSelector")
 local PartRegistry = require("world/shipparts/partRegistry")
 local LocationTable = require("locationTable")
 local PhysicsReferences = require("world/physicsReferences")
@@ -30,7 +30,7 @@ function Player.create(world, controls, structure, camera)
 	self.menuOpen = false
 	self.closeMenu = false
 	self.openMenu = false
-	self.menuButtonNames = {"Block", "Engine", "Gun", "AI", "Enemy"}
+	self.partSelector = PartSelector.create(250, 5, {"Test"})
 
 	self.selection = nil
 	self.cancelKeyDown = false
@@ -56,8 +56,10 @@ function Player:handleInput()
 	-----------------------
 	self.cursorX = Controls.setCursor(self.controls.cursorX, self.cursorX)
 	self.cursorY = Controls.setCursor(self.controls.cursorY, self.cursorY)
-	self.cursorX, self.cursorY = self.camera:limitCursor(self.cursorX,
-														 self.cursorY)
+	self.cursorX, self.cursorY = self.camera:limitCursor(
+		self.cursorX,
+		self.cursorY)
+	self.partSelector:mousemoved(self.cursorX, self.cursorY)
 
 	-----------------------
 	---- Ship commands ----
@@ -89,43 +91,22 @@ function Player:buttonpressed(source, button, debugmode)
 			self.closeMenu = true
 		end
 	elseif self.menu then
+
 		if not menuButton then
 			return
 		end
 
-		if menuButton == "cancel" then
+		if menuButton == "cancel" or menuButton == "playerMenu" then
 			-- Exit menu if canel is pressed.
 			self.menu = nil
 		elseif menuButton == "confirm" then
-			local buttonInt = self.menu:getButtonAt(self.cursorX, self.cursorY)
-			local buttonAction = self.menuButtonNames[buttonInt]
-
-			local cameraX, cameraY = self.camera:getPosition()
-			local part, location
-			if buttonAction == "Block" then
-				-- Spawn a block
-				location = {cameraX, cameraY + 5}
-				part = PartRegistry.createPart('b')
-			elseif buttonAction == "Engine" then
-				-- Spawn an engine
-				location = {cameraX + 5, cameraY + 5}
-				part = PartRegistry.createPart('e')
-			elseif buttonAction == "Gun" then
-				-- Spawn a gun
-				location = {cameraX - 5, cameraY + 5}
-				part = PartRegistry.createPart('g')
-			elseif buttonAction == "AI" then
-				--Spawn an AI
-				location = {cameraX - 10, cameraY + 10}
-				part = PartRegistry.createPart('a', {self.ship:getTeam()})
-			elseif buttonAction == "Enemy" then
-				--Spawn an Enemy
-				location = {cameraX + 10, cameraY + 10}
-				part = PartRegistry.createPart('a', {-3})
-			end
-
-			if part and location then
-				self.world.info.create("structure", LocationTable(unpack(location)), part)
+			local part = self.partSelector:keypressed("return")
+			if part then
+				local cameraX, cameraY = self.camera:getPosition()
+				self.world.info.create(
+					"structure",
+					LocationTable(unpack({cameraX, cameraY + 5})),
+					PartRegistry.createPart(part))
 			end
 			self.menu = nil
 		end
@@ -151,12 +132,7 @@ function Player:buttonpressed(source, button, debugmode)
 
 			elseif order == "playerMenu" then
 				if debugmode then
-					self.menu = Menu.create(
-						100,
-						5,
-						self.menuButtonNames,
-						self.camera
-					)
+					self.menu = true
 				end
 			elseif order == "zoomIn" then
 				self.camera:adjustZoom(1)
@@ -307,7 +283,7 @@ function Player:drawHUD()
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 
 	if self.menu then
-		self.menu:draw()
+		self.partSelector:draw()
 	end
 
 	local _, _, screenWidth, screenHeight = self.camera:getScissor()

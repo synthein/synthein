@@ -111,15 +111,15 @@ function ShipEditor.keypressed(key)
 		end
 	elseif key == "r" then
 		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(-focusX,  focusY, false, true)
+			local t = gridTable:index(focusX,  -focusY, false, true)
 		end
 	elseif key == "space" then
 		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(-focusX,  focusY, {selectedPart, 1})
+			gridTable:index(focusX,  -focusY, {selectedPart, 1})
 		end
 	elseif key == "r" then
 		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(-focusX,  focusY, false, true)
+			gridTable:index(focusX,  -focusY, false, true)
 		end
 	end
 end

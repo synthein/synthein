@@ -2,6 +2,8 @@ local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")
 local parse = require("parse")
 
+local blueprintDir = "blueprints/"
+
 local StructureParser = {}
 
 function StructureParser.loadShipFromFile(ship)
@@ -9,6 +11,21 @@ function StructureParser.loadShipFromFile(ship)
 	if ship then
 		local file = string.format("res/ships/" .. ship .. ".txt")
 		contents, size = love.filesystem.read(file)
+		return contents, size
+	end
+	return nil, nil
+end
+
+function StructureParser.loadBlueprintFromFile(ship)
+	local fileName = blueprintDir .. ship .. ".txt"
+
+	if not love.filesystem.getInfo(fileName, "file") then
+		return nil, string.format("File %s does not exist", fileName)
+	end
+
+	local contents, size
+	if fileName then
+		contents, size = love.filesystem.read(fileName)
 		return contents, size
 	end
 	return nil, nil
@@ -23,6 +40,52 @@ local function parseLetterPair(string)
 	local orientation = nc == '*' and 1 or tonumber(nc)
 
 	return c, orientation
+end
+
+function StructureParser.blueprintUnpack(appendix)
+	local shipString, stringLength
+	if string.match(appendix, "[*\n]") then
+		shipString = appendix
+		stringLength = #appendix
+	else
+		shipString, stringLength = StructureParser.loadBlueprintFromFile(appendix)
+	end
+
+	if not (shipString and stringLength) then return end
+
+	local baseX, baseY, corePart, player
+	local lines = {}
+	-- TODO make sure the line match can use end of file instead of new line
+	for line in shipString:gmatch(".-\n") do
+		table.insert(lines, line:sub(1, #line - 1))
+		local find = line:find("*")
+		if find then
+			baseY = #lines
+			baseX = find - 1
+		end
+	end
+
+	if not (baseX and baseY) then return end
+
+	local blueprint = GridTable()
+
+	for i, line in ipairs(lines) do
+		for j = 1,#line-1 do
+			local lp = line:sub(j, j + 1)
+
+			-- Location handling.
+			local x = (j - baseX)/2
+			local y = baseY - i
+			local c, orientation = parseLetterPair(lp)
+
+			if c and orientation then
+				-- Add to grid table
+				blueprint:index(x, y, {c, orientation})
+			end
+		end
+	end
+
+	return blueprint
 end
 
 function StructureParser.shipUnpack(appendix, shipData)
@@ -57,37 +120,25 @@ function StructureParser.shipUnpack(appendix, shipData)
 	local location = {}
 	local loadData = {}
 
-	if shipString and stringLength then
-		local j, k, x, y, baseJ, baseK
-		j = 0
-		k = 0
-		for i = 1, stringLength do
-			local c = shipString:sub(i,i)
-			j = j + 1
-			if c == '\n' then
-				j = 0
-				k = k + 1
-			elseif c == '*' then
-				baseJ = j - 1
-				baseK = k
-			elseif c == '(' then
-				for a = 1,(stringLength-i) do
-					c = shipString:sub(i + a, i + a)
-					if c == ')' then
-						local locationString = shipString:sub(i + 1, i + a - 1)
-						location = parse.parseNumbers(locationString)
-					end
+	for i = 1, stringLength do
+		local c = shipString:sub(i,i)
+		if c == '(' then
+			for a = 1,(stringLength-i) do
+				c = shipString:sub(i + a, i + a)
+				if c == ')' then
+					local locationString = shipString:sub(i + 1, i + a - 1)
+					location = parse.parseNumbers(locationString)
 				end
-			elseif c == '[' then
-				for a = 1,(stringLength-i) do
-					c = shipString:sub(i + a, i + a)
-					if c == ']' then
-						local dataString = shipString:sub(i + 1, i + a - 1)
-						loadData = parse.parseNumbers(dataString)
-					end
-				end
-				table.insert(loadDataTable, {location, loadData})
 			end
+		elseif c == '[' then
+			for a = 1,(stringLength-i) do
+				c = shipString:sub(i + a, i + a)
+				if c == ']' then
+					local dataString = shipString:sub(i + 1, i + a - 1)
+					loadData = parse.parseNumbers(dataString)
+				end
+			end
+			table.insert(loadDataTable, {location, loadData})
 		end
 	end
 

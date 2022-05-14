@@ -3,6 +3,7 @@ local PartSelector = require("partSelector")
 
 local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")
+local StructureParser = require("world/structureParser")
 
 local GameState = require("gamestates/gameState")
 local ShipEditor = GameState()
@@ -12,12 +13,7 @@ ShipEditor.menu = Menu.create(250, 5, buttonNames)
 ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
-local gridTable = GridTable()
-gridTable:index( 0,  0, {"p", 1})
-gridTable:index( 0,  1, {"b", 1})
-gridTable:index( 1,  0, {"b", 1})
-gridTable:index( 0, -1, {"b", 1})
-gridTable:index(-1,  0, {"b", 1})
+local gridTable = StructureParser.blueprintUnpack("g1m1g1\nb1p*b1\ne1s1e1\n")
 
 local focusX = 0
 local focusY = 0
@@ -34,8 +30,8 @@ function ShipEditor.draw()
 	local function f(k, inputs, x, y)
 		love.graphics.draw(
 			PartRegistry.partsList[k[1]].image,
-			centerX + (-x - focusX) * 20,
-			centerY + (y - focusY) * 20,
+			centerX + (x - focusX) * 20,
+			centerY + (-y - focusY) * 20,
 			(k[2] - 1) * math.pi / 2,
 			1, 1, 10, 10, 0, 0)
 	end

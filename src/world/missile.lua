@@ -3,6 +3,8 @@ local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("timer")
 local vector = require("vector")
 
+local lume = require("vendor/lume")
+
 local Missile = class(require("world/worldObjects"))
 
 function Missile:__create(worldInfo, location, data, appendix)
@@ -107,11 +109,16 @@ function Missile:update(dt)
 		else
 			local missileX, missileY = self.body:getPosition()
 			local targetX, targetY = self.target:getPosition()
-			local angle = vector.angle(targetX - missileX, targetY - missileY)
-			local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
-			local sign = vector.sign(angleToTarget)
+			local facingAngle = vector.angle(targetX - missileX, targetY - missileY)
+			local velocityAngle = vector.angle(self.body:getLinearVelocity())
 
-			self.body:applyTorque(sign * self.torque)
+			-- Overshoot a bit to compensate for our current linear velocity.
+			local angle = 2 * facingAngle - velocityAngle
+
+			local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
+			local angularVelocity = self.body:getAngularVelocity()
+
+			self.body:applyTorque(lume.clamp(10 * angleToTarget - 3 * angularVelocity, -self.torque, self.torque))
 		end
 	end
 

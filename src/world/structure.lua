@@ -185,7 +185,7 @@ function Structure:annexPart(annexee, part, baseVector)
 
 	local x, y = unpack(netVector)
 	if self.gridTable:index(x, y) then
-		annexee:disconnectPart(part)
+		annexee:disconnectPart(part.location)
 	else
 		annexee:removePart(part)
 		self:addPart(part, netVector[1], netVector[2], netVector[3])

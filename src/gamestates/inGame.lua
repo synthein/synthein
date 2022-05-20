@@ -1,9 +1,10 @@
 local Debug = require("debugmode")
-local console = require("console")
 local Gamesave = require("gamesave")
 local LocationTable = require("locationTable")
+local Log = require("log")
 local Menu = require("menu")
 local SceneParser = require("sceneParser")
+local console = require("console")
 local utf8 = require("utf8")
 local vector = require("vector")
 
@@ -27,11 +28,12 @@ end
 local typingSaveName = false
 local saveName = ""
 
-local world, players, screen, debugmode
+local world, players, screen, debugmode, log
 function InGame.load(...)
 	world, players, screen = ...
 
 	debugmode = Debug.create(world, players)
+	log = Log(debugmode)
 	console.init({
 		players = players,
 		world = world,
@@ -190,8 +192,17 @@ function InGame.update(dt)
 					local veloVar = 1 - 50/(1 + vector.magnitude(
 								player.ship.body:getLinearVelocity()))
 					if veloVar < 0 then veloVar = 0 end
+
 					local rand = love.math.random()
-					if rand < timeVar * disVar * veloVar or
+					local product = timeVar * disVar * veloVar
+
+					log:debug("Spawn roll: %s < %s ? %s",
+						rand,
+						product,
+						{timeVar=timeVar, disVar=disVar, veloVar=veloVar}
+					)
+
+					if rand < product or
 							(debugmode.on and debugmode:getSpawn()) then
 						eventTime = 0
 						local scene = math.ceil(love.math.random() * 10)
@@ -222,6 +233,7 @@ function InGame.update(dt)
 						for _, ship in ipairs(ships) do
 							world:addObject(ship)
 						end
+						log:info("Spawned scene " .. scene)
 					end
 				end
 			end

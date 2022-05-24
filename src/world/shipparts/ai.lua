@@ -72,11 +72,6 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 		rdx, rdy, rvx, rvy = 0, 0, 0, 0
 	end
 
-	local targetX, targetY, targetVX, targetVY, distanceToTargetSq = unpack(target)
-
-	local rdx, rdy = aiBody:getLocalVector(targetX - aiX, targetY - aiY)
-	local rvx, rvy = aiBody:getLocalVector(targetVX - aiXV, targetVY - aiYV)
-
 	local pidX = rdx + 2 * rvx
 	if 2 < pidX then
 		table.insert(orders, "strafeRight")

@@ -14,21 +14,25 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	local aiAngle = aiBody:getAngle()
 	local aiXV, aiYV = aiBody:getLinearVelocity()
 	local aiAngleVol = aiBody:getAngularVelocity()
-	local target, leaderX, leaderY, leaderMSq
+	local target, leaderX, leaderY, leaderVX, leaderVY, leaderMSq
+
 	local leaderFollow = false
-	if leader and self.follow then
+	if leader then
 		leaderX, leaderY = leader:getLocation():getXY()
-		local dx = leaderX - aiX
-		local dy = leaderY - aiY
-		leaderMSq = (dx * dx) + (dy * dy)
-		leaderFollow = leaderMSq > 20 * 20
+		leaderVX, leaderVY = leader.body:getLinearVelocity()
+		target = {leaderX, leaderY, leaderVX, leaderVY}
+
+		if self.follow then
+			local dx = leaderX - aiX
+			local dy = leaderY - aiY
+			leaderMSq = (dx * dx) + (dy * dy)
+			leaderFollow = leaderMSq > 30 * 30
+			target[5] = leaderMSq
+		end
 	end
 
-	local shoot = true
-	if leaderFollow then
-		target = {leaderX, leaderY, leaderMSq}
-		shoot = false
-	else
+	local shoot = false
+	if not leaderFollow then
 		-- Search for any enemies.
 		if next(bodyList) ~= nil then
 			local targetMSq = nil
@@ -43,7 +47,9 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 						local dy = eY - aiY
 						local mSq = (dx * dx) + (dy * dy)
 						if not targetMSq or targetMSq > mSq then
-							target = {eX, eY, mSq}
+							shoot = true
+							local vx, vy = body:getLinearVelocity()
+							target = {eX, eY, vx, vy, mSq}
 							targetMSq = mSq
 						end
 					end
@@ -52,12 +58,39 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 		end
 	end
 
-	if not target then
-		return {}
+	local orders = {}
+
+	local targetX, targetY, targetVX, targetVY, distanceToTargetSq
+
+	local rdx, rdy, rvx, rvy
+	if target then
+		targetX, targetY, targetVX, targetVY, distanceToTargetSq = unpack(target)
+
+		rdx, rdy = aiBody:getLocalVector(targetX - aiX, targetY - aiY)
+		rvx, rvy = aiBody:getLocalVector(targetVX - aiXV, targetVY - aiYV)
+	else
+		rdx, rdy, rvx, rvy = 0, 0, 0, 0
 	end
 
-	local targetX, targetY, distanceToTargetSq = unpack(target)
-	local orders = {}
+	local targetX, targetY, targetVX, targetVY, distanceToTargetSq = unpack(target)
+
+	local rdx, rdy = aiBody:getLocalVector(targetX - aiX, targetY - aiY)
+	local rvx, rvy = aiBody:getLocalVector(targetVX - aiXV, targetVY - aiYV)
+
+	local pidX = rdx + 2 * rvx
+	if 2 < pidX then
+		table.insert(orders, "strafeRight")
+	elseif -2 > pidX then
+		table.insert(orders, "strafeLeft")
+	end
+
+	-- The -15 is the simplest way to add space between the two ships.
+	local pidY = (rdy - 15) + 2 * rvy
+	if 5 < pidY then
+		table.insert(orders, "forward")
+	elseif -5 > pidY then
+		table.insert(orders, "back")
+	end
 
 	-- Aim the ship.
 	local angle = vector.angle(targetX - aiX, targetY - aiY)
@@ -71,17 +104,6 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 			table.insert(orders, "right")
 		end
 	else
-		-- Move forward or backward to adjust distance to enemy.
-		local distanceSq = distanceToTargetSq - 15*15
-		local velocitySq = (aiXV * aiXV) + (aiYV * aiYV)
-		if sign * distanceSq > sign * velocitySq * 10 then
-			if sign == 1 then
-			table.insert(orders, "forward")
-			elseif sign == -1 then
-			table.insert(orders, "backward")
-			end
-		end
-
 		if shoot then
 			local hit = true
 			local function RayCastCallback(fixture, _, _, _, _, _) --(fixture, x, y, xn, yn, fraction)

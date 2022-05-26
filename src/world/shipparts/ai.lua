@@ -60,7 +60,7 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 
 	local orders = {}
 
-	local targetX, targetY, targetVX, targetVY, distanceToTargetSq
+	local targetX, targetY, targetVX, targetVY, distanceToTargetSq, angle
 
 	local rdx, rdy, rvx, rvy
 	if target then
@@ -68,8 +68,9 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 
 		rdx, rdy = aiBody:getLocalVector(targetX - aiX, targetY - aiY)
 		rvx, rvy = aiBody:getLocalVector(targetVX - aiXV, targetVY - aiYV)
+		angle = vector.angle(targetX - aiX, targetY - aiY)
 	else
-		rdx, rdy, rvx, rvy = 0, 0, 0, 0
+		rdx, rdy, rvx, rvy, angle = 0, 0, 0, 0, 0
 	end
 
 	local pidX = rdx + 2 * rvx
@@ -88,7 +89,6 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	end
 
 	-- Aim the ship.
-	local angle = vector.angle(targetX - aiX, targetY - aiY)
 	local angleToTarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
 	local sign = vector.sign(angleToTarget)
 

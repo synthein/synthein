@@ -27,15 +27,26 @@ end
 function FormationEditor.draw()
 	local centerX = love.graphics.getWidth()/2
 	local centerY = love.graphics.getHeight()/2
+
+	local canvas = love.graphics.newCanvas(60, 60)
+
 	local function f(k, inputs, x, y)
 		love.graphics.draw(
 			PartRegistry.partsList[k[1]].image,
-			centerX + (x - focusX) * 20,
-			centerY + (-y - focusY) * 20,
+			(x) * 20,
+			(-y) * 20,
 			(k[2] - 1) * math.pi / 2,
 			1, 1, 10, 10, 0, 0)
 	end
+
+	love.graphics.setCanvas(canvas)
+
 	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
+
+	love.graphics.setCanvas()
+
+	love.graphics.draw(canvas, centerX, centerY)
+
 	love.graphics.print(
 		"wsad: Move around\n" ..
 		"qe: Rotate Part\n" ..

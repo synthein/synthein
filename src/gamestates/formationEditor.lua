@@ -18,10 +18,13 @@ local gridTable = StructureParser.blueprintUnpack("g1m1g1\nb1p*b1\ne1s1e1\n")
 local focusX = 0
 local focusY = 0
 
+local angle = 0
+
 local selectedPart = "b"
 
 function FormationEditor.update(dt)
 	FormationEditor.menu:update(dt)
+	angle = angle + dt
 end
 
 function FormationEditor.draw()
@@ -45,7 +48,7 @@ function FormationEditor.draw()
 
 	love.graphics.setCanvas()
 
-	love.graphics.draw(canvas, centerX, centerY)
+	love.graphics.draw(canvas, centerX, centerY, angle)
 
 	love.graphics.print(
 		"wsad: Move around\n" ..

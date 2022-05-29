@@ -6,11 +6,11 @@ local PartRegistry = require("world/shipparts/partRegistry")
 local StructureParser = require("world/structureParser")
 
 local GameState = require("gamestates/gameState")
-local ShipEditor = GameState()
+local FormationEditor = GameState()
 
 local buttonNames = {"Main Menu", "Quit"}
-ShipEditor.menu = Menu.create(250, 5, buttonNames)
-ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
+FormationEditor.menu = Menu.create(250, 5, buttonNames)
+FormationEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
 local gridTable = StructureParser.blueprintUnpack("g1m1g1\nb1p*b1\ne1s1e1\n")
@@ -20,11 +20,11 @@ local focusY = 0
 
 local selectedPart = "b"
 
-function ShipEditor.update(dt)
-	ShipEditor.menu:update(dt)
+function FormationEditor.update(dt)
+	FormationEditor.menu:update(dt)
 end
 
-function ShipEditor.draw()
+function FormationEditor.draw()
 	local centerX = love.graphics.getWidth()/2
 	local centerY = love.graphics.getHeight()/2
 	local function f(k, inputs, x, y)
@@ -53,13 +53,13 @@ function ShipEditor.draw()
 	love.graphics.setColor(1,1,1)
 	love.graphics.rectangle("line", centerX-10, centerY-10, 20, 20)
 	if menuOpen == "State" then
-		ShipEditor.menu:draw()
+		FormationEditor.menu:draw()
 	elseif menuOpen == "Parts" then
-		ShipEditor.partSelector:draw()
+		FormationEditor.partSelector:draw()
 	end
 end
 
-function ShipEditor.keypressed(key)
+function FormationEditor.keypressed(key)
 	if menuOpen then
 		if key == "escape" then
 			menuOpen = false
@@ -72,9 +72,9 @@ function ShipEditor.keypressed(key)
 		end
 
 		if menuOpen == "State" then
-			local button = ShipEditor.menu:keypressed(key)
+			local button = FormationEditor.menu:keypressed(key)
 		elseif menuOpen == "Parts" then
-			local button = ShipEditor.partSelector:keypressed(key)
+			local button = FormationEditor.partSelector:keypressed(key)
 			if button then
 				menuOpen = false
 				selectedPart = button
@@ -120,21 +120,21 @@ function ShipEditor.keypressed(key)
 	end
 end
 
-function ShipEditor.mousepressed(x, y, mouseButton)
+function FormationEditor.mousepressed(x, y, mouseButton)
 	if menuOpen == "State" then
 		if mouseButton == 1 then
-			local button = ShipEditor.menu:pressed(x, y)
+			local button = FormationEditor.menu:pressed(x, y)
 
 			if button == "Main Menu" then
 				menuOpen = false
-				ShipEditor.stackQueue:pop()
+				FormationEditor.stackQueue:pop()
 			elseif button == "Quit" then
 				love.event.quit()
 			end
 		end
 
 	elseif menuOpen == "Parts" then
-		local part = ShipEditor.partSelector:pressed(x, y)
+		local part = FormationEditor.partSelector:pressed(x, y)
 		if part then
 			menuOpen = false
 			selectedPart = part
@@ -144,29 +144,29 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 	end
 end
 
-function ShipEditor.resize(w, h)
+function FormationEditor.resize(w, h)
 	if menuOpen == "State" then
-		ShipEditor.menu:resize(w, h)
+		FormationEditor.menu:resize(w, h)
 	elseif menuOpen == "Parts" then
 	else
 	end
 end
 
-function ShipEditor.mousemoved(x, y)
+function FormationEditor.mousemoved(x, y)
 	if menuOpen == "State" then
-		ShipEditor.menu:mousemoved(x, y)
+		FormationEditor.menu:mousemoved(x, y)
 	elseif menuOpen == "Parts" then
-		ShipEditor.partSelector:mousemoved(x, y)
+		FormationEditor.partSelector:mousemoved(x, y)
 	else
 	end
 end
 
-function ShipEditor.wheelmoved(x, y)
+function FormationEditor.wheelmoved(x, y)
 	if menuOpen == "State" then
-		ShipEditor.menu:wheelmoved(x, y)
+		FormationEditor.menu:wheelmoved(x, y)
 	elseif menuOpen == "Parts" then
 	else
 	end
 end
 
-return ShipEditor
+return FormationEditor

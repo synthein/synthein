@@ -22,6 +22,28 @@ local angle = 0
 
 local selectedPart = "b"
 
+local function generateCanvas(gridTable)
+	local xLow, yLow, xHigh, yHigh = gridTable:getLimits()
+
+	local canvas = love.graphics.newCanvas((xHigh - xLow + 1) * 20, (yHigh - yLow + 1) * 20)
+
+	local function f(k, inputs, x, y)
+		love.graphics.draw(
+			PartRegistry.partsList[k[1]].image,
+			(x - xLow) * 20,
+			(-y + yHigh) * 20,
+			(k[2] - 1) * math.pi / 2)
+	end
+
+	love.graphics.setCanvas(canvas)
+
+	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
+
+	love.graphics.setCanvas()
+
+	return canvas, -xLow * 20 + 10, yHigh * 20 + 10
+end
+
 function FormationEditor.update(dt)
 	FormationEditor.menu:update(dt)
 	angle = angle + dt
@@ -31,24 +53,9 @@ function FormationEditor.draw()
 	local centerX = love.graphics.getWidth()/2
 	local centerY = love.graphics.getHeight()/2
 
-	local canvas = love.graphics.newCanvas(60, 60)
+	local canvas, cX, cY = generateCanvas(gridTable)
 
-	local function f(k, inputs, x, y)
-		love.graphics.draw(
-			PartRegistry.partsList[k[1]].image,
-			(x) * 20,
-			(-y) * 20,
-			(k[2] - 1) * math.pi / 2,
-			1, 1, 10, 10, 0, 0)
-	end
-
-	love.graphics.setCanvas(canvas)
-
-	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
-
-	love.graphics.setCanvas()
-
-	love.graphics.draw(canvas, centerX, centerY, angle)
+	love.graphics.draw(canvas, centerX, centerY, angle, 1, 1, cX, cY, 0, 0)
 
 	love.graphics.print(
 		"wsad: Move around\n" ..
@@ -65,7 +72,6 @@ function FormationEditor.draw()
 		0, 1, 1, 10, 10, 0, 0)
 
 	love.graphics.setColor(1,1,1)
-	love.graphics.rectangle("line", centerX-10, centerY-10, 20, 20)
 	if menuOpen == "State" then
 		FormationEditor.menu:draw()
 	elseif menuOpen == "Parts" then

@@ -13,14 +13,14 @@ FormationEditor.menu = Menu.create(250, 5, buttonNames)
 FormationEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
-local gridTable = StructureParser.blueprintUnpack("g1m1g1\nb1p*b1\ne1s1e1\n")
+--local gridTable = StructureParser.blueprintUnpack("g1m1g1\nb1p*b1\ne1s1e1\n")
+local gridTable = StructureParser.blueprintUnpack("BasicShip1")
 
 local focusX = 0
 local focusY = 0
 
 local angle = 0
 
-local selectedPart = "b"
 
 local function generateCanvas(gridTable)
 	local xLow, yLow, xHigh, yHigh = gridTable:getLimits()
@@ -65,12 +65,6 @@ function FormationEditor.draw()
 		"f: Part Menu\n",
 		5, 5)
 
-	love.graphics.draw(
-		PartRegistry.partsList[selectedPart].image,
-		centerX * 2 - 30,
-		centerY * 2 - 30,
-		0, 1, 1, 10, 10, 0, 0)
-
 	love.graphics.setColor(1,1,1)
 	if menuOpen == "State" then
 		FormationEditor.menu:draw()
@@ -97,7 +91,6 @@ function FormationEditor.keypressed(key)
 			local button = FormationEditor.partSelector:keypressed(key)
 			if button then
 				menuOpen = false
-				selectedPart = button
 			end
 		end
 		return

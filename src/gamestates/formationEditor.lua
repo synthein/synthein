@@ -116,14 +116,14 @@ function FormationEditor.keypressed(key)
 		focusX = focusX + 1
 	elseif key == "q" then
 		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX,  focusY)
+			local t = gridTable:index(focusX, -focusY)
 			if t then
 				t[1] = (t[1] + 3) % 4
 			end
 		end
 	elseif key == "e" then
 		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX,  focusY)
+			local t = gridTable:index(focusX, -focusY)
 			if t then
 				t[1] = (t[1] + 1) % 4
 			end

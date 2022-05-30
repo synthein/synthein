@@ -13,14 +13,11 @@ FormationEditor.menu = Menu.create(250, 5, buttonNames)
 FormationEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
---local gridTable = StructureParser.blueprintUnpack("g1m1g1\nb1p*b1\ne1s1e1\n")
-local gridTable = StructureParser.blueprintUnpack("BasicShip1")
+local gridTable = GridTable()
+local simpleShip = StructureParser.blueprintUnpack("BasicShip1")
 
 local focusX = 0
 local focusY = 0
-
-local angle = 0
-
 
 local function generateCanvas(gridTable)
 	local xLow, yLow, xHigh, yHigh = gridTable:getLimits()
@@ -44,24 +41,33 @@ local function generateCanvas(gridTable)
 	return canvas, -xLow * 20 + 10, yHigh * 20 + 10
 end
 
+gridTable:index(0, 0, {0, generateCanvas(StructureParser.blueprintUnpack("p*\n"))})
+
 function FormationEditor.update(dt)
 	FormationEditor.menu:update(dt)
-	angle = angle + dt
 end
 
 function FormationEditor.draw()
 	local centerX = love.graphics.getWidth()/2
 	local centerY = love.graphics.getHeight()/2
 
-	local canvas, cX, cY = generateCanvas(gridTable)
+	local function f(ship, inputs, x, y)
+		local angle, canvas, cX, cY = unpack(ship)
+		love.graphics.draw(
+			canvas,
+			centerX + (x - focusX) * 20,
+			centerY + (y + focusY) * 20,
+			angle * math.pi / 2,
+			1, 1, cX, cY, 0, 0)
+	end
 
-	love.graphics.draw(canvas, centerX, centerY, angle, 1, 1, cX, cY, 0, 0)
+	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
 
 	love.graphics.print(
 		"wsad: Move around\n" ..
-		"qe: Rotate Part\n" ..
-		"space: Add Part\n" ..
-		"r: Remove Part\n" ..
+		"qe: Rotate Ship\n" ..
+		"space: Add Ship\n" ..
+		"r: Remove Ship\n" ..
 		"f: Part Menu\n",
 		5, 5)
 
@@ -110,21 +116,21 @@ function FormationEditor.keypressed(key)
 		focusX = focusX + 1
 	elseif key == "q" then
 		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(-focusX,  focusY)
+			local t = gridTable:index(focusX,  focusY)
 			if t then
-				t[2] = (t[2] + 2) % 4 + 1
+				t[1] = (t[1] + 3) % 4
 			end
 		end
 	elseif key == "e" then
 		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(-focusX,  focusY)
+			local t = gridTable:index(focusX,  focusY)
 			if t then
-				t[2] = t[2] % 4 + 1
+				t[1] = (t[1] + 1) % 4
 			end
 		end
 	elseif key == "space" then
 		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(focusX,  -focusY, {selectedPart, 1})
+			gridTable:index(focusX,  -focusY, {0, generateCanvas(simpleShip)})
 		end
 	elseif key == "r" then
 		if focusX ~= 0 or focusY ~= 0 then

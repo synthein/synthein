@@ -120,4 +120,25 @@ function GridTable:loop(f, inputs, addSelf)
 	return outputs
 end
 
+-- TODO optimization needed
+function GridTable:getLimits()
+	local xLow, yLow, xHigh, yHigh = 0, 0, 0, 0
+	local function f(k, inputs, x, y)
+		if x < xLow  then
+			xLow = x
+		elseif x > xHigh then
+			xHigh = x
+		end
+		if y < yLow  then
+			yLow = y
+		elseif y > yHigh then
+			yHigh = y
+		end
+	end
+
+	self:loop(f, {}, false)
+
+	return xLow, yLow, xHigh, yHigh
+end
+
 return GridTable

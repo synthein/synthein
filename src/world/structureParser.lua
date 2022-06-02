@@ -2,7 +2,7 @@ local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")
 local parse = require("parse")
 
-local blueprintDir = "blueprints/"
+local blueprintDir = "res/ships/" --"blueprints/"
 
 local StructureParser = {}
 

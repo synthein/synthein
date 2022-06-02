@@ -12,7 +12,7 @@ function Debug.create(world, players)
 end
 
 function Debug:getSpawn()
-	local value = Debug.spawn
+	local value = self.spawn
 	self.spawn = false
 	return value
 end

@@ -8,7 +8,7 @@ local StructureParser = require("world/structureParser")
 local GameState = require("gamestates/gameState")
 local ShipEditor = GameState()
 
-local buttonNames = {"Main Menu", "Quit"}
+local buttonNames = {"Save Blueprint", "Main Menu", "Quit"}
 ShipEditor.menu = Menu.create(250, 5, buttonNames)
 ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
@@ -125,7 +125,9 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 		if mouseButton == 1 then
 			local button = ShipEditor.menu:pressed(x, y)
 
-			if button == "Main Menu" then
+			if button == "Save Blueprint" then
+				menuOpen = false
+			elseif button == "Main Menu" then
 				menuOpen = false
 				ShipEditor.stackQueue:pop()
 			elseif button == "Quit" then

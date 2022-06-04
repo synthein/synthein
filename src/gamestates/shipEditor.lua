@@ -11,7 +11,7 @@ local ShipEditor = GameState()
 
 local buttonNames = {"Save Blueprint", "Main Menu", "Quit"}
 ShipEditor.menu = Menu.create(250, 5, buttonNames)
-ShipEditor.saveMenu = SaveMenu.create(250, 5, {"SaveMenu"})
+ShipEditor.saveMenu = SaveMenu()
 ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false

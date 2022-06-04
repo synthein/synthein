@@ -1,4 +1,5 @@
 local Menu = require("menu")
+local SaveMenu = require("saveMenu")
 local PartSelector = require("partSelector")
 
 local GridTable = require("gridTable")
@@ -10,6 +11,7 @@ local ShipEditor = GameState()
 
 local buttonNames = {"Save Blueprint", "Main Menu", "Quit"}
 ShipEditor.menu = Menu.create(250, 5, buttonNames)
+ShipEditor.saveMenu = SaveMenu.create(250, 5, {"SaveMenu"})
 ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
@@ -54,6 +56,8 @@ function ShipEditor.draw()
 	love.graphics.rectangle("line", centerX-10, centerY-10, 20, 20)
 	if menuOpen == "State" then
 		ShipEditor.menu:draw()
+	elseif menuOpen == "Save" then
+		ShipEditor.saveMenu:draw()
 	elseif menuOpen == "Parts" then
 		ShipEditor.partSelector:draw()
 	end
@@ -73,6 +77,8 @@ function ShipEditor.keypressed(key)
 
 		if menuOpen == "State" then
 			local button = ShipEditor.menu:keypressed(key)
+		elseif menuOpen == "Save" then
+			menuOpen = false
 		elseif menuOpen == "Parts" then
 			local button = ShipEditor.partSelector:keypressed(key)
 			if button then
@@ -126,7 +132,7 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 			local button = ShipEditor.menu:pressed(x, y)
 
 			if button == "Save Blueprint" then
-				menuOpen = false
+				menuOpen = "Save"
 			elseif button == "Main Menu" then
 				menuOpen = false
 				ShipEditor.stackQueue:pop()
@@ -134,7 +140,8 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 				love.event.quit()
 			end
 		end
-
+	elseif menuOpen == "Save" then
+		menuOpen = false
 	elseif menuOpen == "Parts" then
 		local part = ShipEditor.partSelector:pressed(x, y)
 		if part then
@@ -149,6 +156,7 @@ end
 function ShipEditor.resize(w, h)
 	if menuOpen == "State" then
 		ShipEditor.menu:resize(w, h)
+	elseif menuOpen == "Save" then
 	elseif menuOpen == "Parts" then
 	else
 	end
@@ -157,6 +165,7 @@ end
 function ShipEditor.mousemoved(x, y)
 	if menuOpen == "State" then
 		ShipEditor.menu:mousemoved(x, y)
+	elseif menuOpen == "Save" then
 	elseif menuOpen == "Parts" then
 		ShipEditor.partSelector:mousemoved(x, y)
 	else
@@ -166,6 +175,7 @@ end
 function ShipEditor.wheelmoved(x, y)
 	if menuOpen == "State" then
 		ShipEditor.menu:wheelmoved(x, y)
+	elseif menuOpen == "Save" then
 	elseif menuOpen == "Parts" then
 	else
 	end

@@ -3,13 +3,14 @@ local utf8 = require("utf8")
 local SaveMenu = class()
 
 -- Make a menu in the center of the screen from a list of buttons.
-function SaveMenu:__create(dir)
+function SaveMenu:__create(dir, currentName)
 
 	self.y = 250
 	self.width = 300
 	self.height = 60
 
 	self.dir = dir
+	self.currentName = currentName or "filename"
 	self:resetName()
 
 	--if love.graphics then self.font = love.graphics.newFont(size * 7) end
@@ -19,7 +20,7 @@ function SaveMenu:__create(dir)
 end
 
 function SaveMenu:resetName()
-	self.saveName = "filename"
+	self.saveName = self.currentName
 end
 
 -- Returns boolean success status and (optionally) a message explaining why
@@ -34,6 +35,8 @@ function SaveMenu:saveFile(fileContents)
 			return false, "failed to create save directory"
 		end
 	end
+
+	self.currentName = self.saveName
 
 	return love.filesystem.write(filename, fileContents)
 end

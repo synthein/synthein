@@ -11,7 +11,7 @@ local ShipEditor = GameState()
 
 local buttonNames = {"Save Blueprint", "Main Menu", "Quit"}
 ShipEditor.menu = Menu.create(250, 5, buttonNames)
-ShipEditor.saveMenu = SaveMenu()
+ShipEditor.saveMenu = SaveMenu("blueprints/")
 ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
 
 local menuOpen = false
@@ -78,7 +78,11 @@ function ShipEditor.keypressed(key)
 		if menuOpen == "State" then
 			local button = ShipEditor.menu:keypressed(key)
 		elseif menuOpen == "Save" then
-			ShipEditor.saveMenu:keypressed(key)
+			if key == "return" then
+				ShipEditor.saveMenu:saveFile("test text")
+			else
+				ShipEditor.saveMenu:keypressed(key)
+			end
 		elseif menuOpen == "Parts" then
 			local button = ShipEditor.partSelector:keypressed(key)
 			if button then
@@ -137,6 +141,7 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 
 			if button == "Save Blueprint" then
 				menuOpen = "Save"
+				ShipEditor.saveMenu:resetName()
 			elseif button == "Main Menu" then
 				menuOpen = false
 				ShipEditor.stackQueue:pop()

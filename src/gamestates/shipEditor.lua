@@ -79,7 +79,8 @@ function ShipEditor.keypressed(key)
 			local button = ShipEditor.menu:keypressed(key)
 		elseif menuOpen == "Save" then
 			if key == "return" then
-				ShipEditor.saveMenu:saveFile("test text")
+				ShipEditor.saveMenu:saveFile(
+					StructureParser.blueprintPack(gridTable))
 			else
 				ShipEditor.saveMenu:keypressed(key)
 			end

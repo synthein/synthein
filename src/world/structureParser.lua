@@ -178,6 +178,30 @@ function StructureParser.shipUnpack(appendix, shipData)
 	return shipTable, player
 end
 
+function StructureParser.blueprintPack(blueprint)
+	local string = ""
+	local xLow, yLow, xHigh, yHigh = blueprint:getLimits()
+	local stringTable = {}
+	for y = yHigh, yLow, -1 do
+		for x = xLow, xHigh, 1  do
+			part = blueprint:index(x, y)
+			if part then
+				string = string .. part[1]
+				if x == 0 and y == 0 then
+					string = string .. "*"
+				else
+					string = string .. tostring(part[2])
+				end
+			else
+				string = string .. "  "
+			end
+		end
+		string = string .. "\n"
+	end
+
+	return string
+end
+
 function StructureParser.shipPack(structure, saveThePartData)
 	PartRegistry.setPartChars()
 	local string = ""

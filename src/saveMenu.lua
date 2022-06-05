@@ -4,7 +4,7 @@ local SaveMenu = class()
 function SaveMenu:__create()
 
 	self.y = 250
-	self.width = 200
+	self.width = 300
 	self.height = 60
 
 	self.saveName = "filename"
@@ -33,6 +33,7 @@ function SaveMenu:draw()
 	love.graphics.rectangle("fill", x+5, y+5, self.width-10, self.height-10)
 
 
+	love.graphics.setFont(love.graphics.newFont(30))
 	love.graphics.setColor(0, 0, 0)
 	--love.graphics.print("Type a name to use for your save, then press enter:", screen_width/2-150, 60)
 	love.graphics.print(self.saveName, x+10, y+10)

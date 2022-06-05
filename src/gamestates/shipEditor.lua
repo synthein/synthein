@@ -78,7 +78,7 @@ function ShipEditor.keypressed(key)
 		if menuOpen == "State" then
 			local button = ShipEditor.menu:keypressed(key)
 		elseif menuOpen == "Save" then
-			menuOpen = false
+			ShipEditor.saveMenu:keypressed(key)
 		elseif menuOpen == "Parts" then
 			local button = ShipEditor.partSelector:keypressed(key)
 			if button then
@@ -124,6 +124,10 @@ function ShipEditor.keypressed(key)
 			gridTable:index(focusX,  -focusY, false, true)
 		end
 	end
+end
+
+function ShipEditor.textinput(key)
+	ShipEditor.saveMenu:textinput(key)
 end
 
 function ShipEditor.mousepressed(x, y, mouseButton)

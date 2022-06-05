@@ -1,3 +1,5 @@
+local utf8 = require("utf8")
+
 local SaveMenu = class()
 
 -- Make a menu in the center of the screen from a list of buttons.
@@ -7,7 +9,7 @@ function SaveMenu:__create()
 	self.width = 300
 	self.height = 60
 
-	self.saveName = "filename"
+	self:resetName()
 
 	--if love.graphics then self.font = love.graphics.newFont(size * 7) end
 	--if love.graphics then self.visibleHeight = love.graphics.getHeight() - self.y - self.buttonMargin end
@@ -15,7 +17,11 @@ function SaveMenu:__create()
 	return self
 end
 
-function getFileString()
+function SaveMenu:resetName()
+	self.saveName = "filename"
+end
+
+function SaveMenu:getFileString()
 	return saveName
 end
 
@@ -47,15 +53,16 @@ function SaveMenu:keypressed(key)
 	if key == "backspace" then
 		-- The string is utf-8 encoded, so the last character of the string
 		-- could be multiple bytes.
-		local byteoffset = utf8.offset(saveName, -1)
+		local byteoffset = utf8.offset(self.saveName, -1)
 		if byteoffset then
-			saveName = saveName:sub(1, byteoffset - 1)
+			self.saveName =self.saveName:sub(1, byteoffset - 1)
 		end
-	elseif key == "return" then
-		typingSaveName = false
-	elseif key == "escape" then
-		saveName = ""
-		typingSaveName = false
+	end
+end
+
+function SaveMenu:textinput(key)
+	if key:match("^%w$") then
+		self.saveName = self.saveName .. key
 	end
 end
 

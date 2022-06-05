@@ -81,6 +81,7 @@ function ShipEditor.keypressed(key)
 			if key == "return" then
 				ShipEditor.saveMenu:saveFile(
 					StructureParser.blueprintPack(gridTable))
+				menuOpen = false
 			else
 				ShipEditor.saveMenu:keypressed(key)
 			end

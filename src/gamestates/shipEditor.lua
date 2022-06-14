@@ -13,7 +13,7 @@ local ShipEditor = GameState()
 local buttonNames = {"Save Blueprint", "Load Blueprint", "Main Menu", "Quit"}
 ShipEditor.menu = Menu.create(250, 5, buttonNames)
 ShipEditor.saveMenu = SaveMenu("blueprints/")
-ShipEditor.loadMenu = LoadMenu(250, 5, {"Test"})
+ShipEditor.loadMenu = LoadMenu("blueprints")
 ShipEditor.partSelector = PartSelector.create(250)
 
 local menuOpen = false
@@ -200,6 +200,7 @@ function ShipEditor.wheelmoved(x, y)
 		ShipEditor.menu:wheelmoved(x, y)
 	elseif menuOpen == "Save" then
 	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:wheelmoved(x, y)
 	elseif menuOpen == "Parts" then
 	else
 	end

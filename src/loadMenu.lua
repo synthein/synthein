@@ -13,18 +13,22 @@ function LoadMenu:__create(dir)
 	self.selected = 1
 	self.scrollY = 0
 	self.scrollTo = 0
-	self.scrollVelocity = 0
+
 	self.filenames = {"har", "de", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har"}
 
-	if love.graphics then self.visibleHeight = love.graphics.getHeight() - 2 * bs end
-	if love.graphics then self:createMainCanvas() end
-	if love.graphics then self:createFileCanvas() end
-
-	self.nameBox = {bs, bs, bs + nameWidth, bs + self.visibleHeight}
+	--TODO Make the Load menu tolorant of changes
+	-- New files
+	-- Changes in screen size (including when the screen changes when not focused on the menu)
+	-- Recomend moving things to a reset function for when focus returns to this menu.
+	if love.graphics then
+		self.visibleHeight = love.graphics.getHeight() - 2 * bs
+		self:createMainCanvas()
+		self:createFileCanvas()
+		self.nameBox = {bs, bs, bs + nameWidth, bs + self.visibleHeight}
+	end
 end
 
 function LoadMenu:createMainCanvas()
-	local names = self.filenames
 	local width = love.graphics.getWidth() - 2 * border
 	local height = love.graphics.getHeight() - 2 * border
 
@@ -74,11 +78,6 @@ function LoadMenu:getButtonAt(x, y)
 	end
 
 	return index
-end
-
-function LoadMenu:getHeight()
-	return #self.filenames * 5 * 10
-		+ (#self.filenames - 1) * 5 * 5
 end
 
 function LoadMenu:update(dt)
@@ -134,8 +133,9 @@ function LoadMenu:draw()
 	love.graphics.print("No Preview", previewX, previewY)
 end
 
-function LoadMenu:resize(_, h) --(w, h)
-	self.visibleHeight = h - 100
+function LoadMenu:resize(w, h)
+	--TODO Add any other items here
+	-- visibleHeight and scrollMax need recaculation
 	self:createMainCanvas()
 end
 
@@ -144,14 +144,10 @@ function LoadMenu:keypressed(key)
 	local len = #self.filenames
 	if key == "up" then
 		s = s - 1
-		if s < 1 then
-			s = s + len
-		end
+		if s < 1 then s = s + len end
 	elseif key == "down" then
 		s = s + 1
-		if s > len then
-			s = s - len
-		end
+		if s > len then s = s - len end
 	elseif key == "return" then
 		return self.filenames[s]
 	end

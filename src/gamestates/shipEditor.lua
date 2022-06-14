@@ -25,7 +25,14 @@ local focusY = 0
 local selectedPart = "b"
 
 function ShipEditor.update(dt)
-	ShipEditor.menu:update(dt)
+	if menuOpen == "State" then
+		ShipEditor.menu:update(dt)
+	elseif menuOpen == "Save" then
+	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:update(dt)
+	elseif menuOpen == "Parts" then
+	else
+	end
 end
 
 function ShipEditor.draw()
@@ -178,6 +185,7 @@ function ShipEditor.resize(w, h)
 		ShipEditor.menu:resize(w, h)
 	elseif menuOpen == "Save" then
 	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:resize(w, h)
 	elseif menuOpen == "Parts" then
 	else
 	end

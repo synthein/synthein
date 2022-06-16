@@ -20,6 +20,7 @@ function MainMenu.update(dt)
 end
 
 function MainMenu.draw()
+	love.graphics.setColor(1, 1, 1)
 	local previousFont = love.graphics.getFont()
 	love.graphics.setFont(MainMenu.font)
 	love.graphics.print("SYNTHEIN", (love.graphics.getWidth() - 200)/2 + 10, 175 , 0, 1, 1, 0, 0, 0, 0)

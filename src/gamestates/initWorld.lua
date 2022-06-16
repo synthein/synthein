@@ -13,8 +13,9 @@ local GameState = require("gamestates/gameState")
 local InitWorld = GameState()
 
 function InitWorld.load(scene, playerHostility, ifSave)
-	local sceneLines, message
+	local sceneLines, message, saveName
 	if ifSave then
+		saveName = scene
 		sceneLines, message = Gamesave.load(scene)
 		if not sceneLines then
 			print("Failed to load game: " .. message)
@@ -74,7 +75,7 @@ function InitWorld.load(scene, playerHostility, ifSave)
 	-- Reastablish collisions and
 	world.physics:update(0)
 
-	InitWorld.stackQueue:replace(InGame).load(world, players, screen)
+	InitWorld.stackQueue:replace(InGame).load(world, players, screen, saveName)
 end
 
 return InitWorld

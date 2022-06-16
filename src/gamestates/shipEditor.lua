@@ -1,5 +1,6 @@
 local Menu = require("menu")
 local SaveMenu = require("saveMenu")
+local LoadMenu = require("loadMenu")
 local PartSelector = require("partSelector")
 
 local GridTable = require("gridTable")
@@ -9,10 +10,11 @@ local StructureParser = require("world/structureParser")
 local GameState = require("gamestates/gameState")
 local ShipEditor = GameState()
 
-local buttonNames = {"Save Blueprint", "Main Menu", "Quit"}
+local buttonNames = {"Save Blueprint", "Load Blueprint", "Main Menu", "Quit"}
 ShipEditor.menu = Menu.create(250, 5, buttonNames)
 ShipEditor.saveMenu = SaveMenu("blueprints/")
-ShipEditor.partSelector = PartSelector.create(250, 5, {"Test"})
+ShipEditor.loadMenu = LoadMenu("blueprints")
+ShipEditor.partSelector = PartSelector.create(250)
 
 local menuOpen = false
 local gridTable = StructureParser.blueprintUnpack("g1m1g1\nb1p*b1\ne1s1e1\n")
@@ -23,7 +25,14 @@ local focusY = 0
 local selectedPart = "b"
 
 function ShipEditor.update(dt)
-	ShipEditor.menu:update(dt)
+	if menuOpen == "State" then
+		ShipEditor.menu:update(dt)
+	elseif menuOpen == "Save" then
+	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:update(dt)
+	elseif menuOpen == "Parts" then
+	else
+	end
 end
 
 function ShipEditor.draw()
@@ -58,6 +67,8 @@ function ShipEditor.draw()
 		ShipEditor.menu:draw()
 	elseif menuOpen == "Save" then
 		ShipEditor.saveMenu:draw()
+	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:draw()
 	elseif menuOpen == "Parts" then
 		ShipEditor.partSelector:draw()
 	end
@@ -85,6 +96,8 @@ function ShipEditor.keypressed(key)
 			else
 				ShipEditor.saveMenu:keypressed(key)
 			end
+		elseif menuOpen == "Load" then
+			ShipEditor.loadMenu:keypressed(key)
 		elseif menuOpen == "Parts" then
 			local button = ShipEditor.partSelector:keypressed(key)
 			if button then
@@ -144,6 +157,8 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 			if button == "Save Blueprint" then
 				menuOpen = "Save"
 				ShipEditor.saveMenu:resetName()
+			elseif button == "Load Blueprint" then
+				menuOpen = "Load"
 			elseif button == "Main Menu" then
 				menuOpen = false
 				ShipEditor.stackQueue:pop()
@@ -153,6 +168,7 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 		end
 	elseif menuOpen == "Save" then
 		menuOpen = false
+	elseif menuOpen == "Load" then
 	elseif menuOpen == "Parts" then
 		local part = ShipEditor.partSelector:pressed(x, y)
 		if part then
@@ -168,6 +184,8 @@ function ShipEditor.resize(w, h)
 	if menuOpen == "State" then
 		ShipEditor.menu:resize(w, h)
 	elseif menuOpen == "Save" then
+	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:resize(w, h)
 	elseif menuOpen == "Parts" then
 	else
 	end
@@ -177,6 +195,8 @@ function ShipEditor.mousemoved(x, y)
 	if menuOpen == "State" then
 		ShipEditor.menu:mousemoved(x, y)
 	elseif menuOpen == "Save" then
+	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:mousemoved(x, y)
 	elseif menuOpen == "Parts" then
 		ShipEditor.partSelector:mousemoved(x, y)
 	else
@@ -187,6 +207,8 @@ function ShipEditor.wheelmoved(x, y)
 	if menuOpen == "State" then
 		ShipEditor.menu:wheelmoved(x, y)
 	elseif menuOpen == "Save" then
+	elseif menuOpen == "Load" then
+		ShipEditor.loadMenu:wheelmoved(x, y)
 	elseif menuOpen == "Parts" then
 	else
 	end

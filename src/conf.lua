@@ -36,7 +36,11 @@ function love.conf(t)
 
 	for _, flag in ipairs(arg) do
 		if flag == "--test" then
+			local stub = require("tests/stub")
 			t.window, t.modules.window, t.modules.graphics, t.modules.audio = false, false, false, false
+			love.window = stub()
+			love.graphics = stub()
+			love.audio = stub()
 		end
 	end
 end

@@ -14,7 +14,14 @@ function LoadMenu:__create(dir)
 	self.scrollY = 0
 	self.scrollTo = 0
 
-	self.filenames = {"har", "de", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har"}
+	local filenames = {}
+	local files = love.filesystem.getDirectoryItems(self.dir)
+	for _, fileName in pairs(files) do
+		local name = string.gsub(fileName, ".txt", "")
+		table.insert(filenames, name)
+	end
+
+	self.filenames = filenames
 
 	--TODO Make the Load menu tolorant of changes
 	-- New files
@@ -78,6 +85,10 @@ function LoadMenu:getButtonAt(x, y)
 	end
 
 	return index
+end
+
+function LoadMenu:loadfile(index)
+	return self.dir .. "/" .. self.filenames[index] .. ".txt"
 end
 
 function LoadMenu:update(dt)
@@ -149,7 +160,7 @@ function LoadMenu:keypressed(key)
 		s = s + 1
 		if s > len then s = s - len end
 	elseif key == "return" then
-		return self.filenames[s]
+		return self:loadfile(s)
 	end
 	self.selected = s
 end
@@ -181,7 +192,7 @@ function LoadMenu:pressed(x, y)
 	if index == nil then
 		return nil
 	end
-	return self.filenames[index]
+	return self:loadfile(index)
 end
 
 return LoadMenu

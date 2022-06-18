@@ -97,7 +97,11 @@ function ShipEditor.keypressed(key)
 				ShipEditor.saveMenu:keypressed(key)
 			end
 		elseif menuOpen == "Load" then
-			ShipEditor.loadMenu:keypressed(key)
+			local file = ShipEditor.loadMenu:keypressed(key)
+			if file then
+				gridTable = StructureParser.blueprintUnpack(love.filesystem.read(file))
+				menuOpen = false
+			end
 		elseif menuOpen == "Parts" then
 			local button = ShipEditor.partSelector:keypressed(key)
 			if button then
@@ -169,6 +173,11 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 	elseif menuOpen == "Save" then
 		menuOpen = false
 	elseif menuOpen == "Load" then
+		local file = ShipEditor.loadMenu:pressed(x, y)
+		if file then
+			gridTable = StructureParser.blueprintUnpack(love.filesystem.read(file))
+			menuOpen = false
+		end
 	elseif menuOpen == "Parts" then
 		local part = ShipEditor.partSelector:pressed(x, y)
 		if part then

@@ -88,6 +88,9 @@ function ShipEditor.keypressed(key)
 
 		if menuOpen == "State" then
 			local button = ShipEditor.menu:keypressed(key)
+
+			--TODO add menu selection code here
+			-- mabye create a function for handling both key and mosue presses
 		elseif menuOpen == "Save" then
 			if key == "return" then
 				ShipEditor.saveMenu:saveFile(
@@ -163,6 +166,7 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 				ShipEditor.saveMenu:resetName()
 			elseif button == "Load Blueprint" then
 				menuOpen = "Load"
+				ShipEditor.loadMenu:reset()
 			elseif button == "Main Menu" then
 				menuOpen = false
 				ShipEditor.stackQueue:pop()

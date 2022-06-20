@@ -14,28 +14,20 @@ function LoadMenu:__create(dir)
 	self.scrollY = 0
 	self.scrollTo = 0
 
-	local filenames = {}
-	local files = love.filesystem.getDirectoryItems(self.dir)
-	for _, fileName in pairs(files) do
-		local name = string.gsub(fileName, ".txt", "")
-		table.insert(filenames, name)
-	end
-
-	self.filenames = filenames
-
-	--TODO Make the Load menu tolorant of changes
-	-- New files
-	-- Changes in screen size (including when the screen changes when not focused on the menu)
-	-- Recomend moving things to a reset function for when focus returns to this menu.
 	if love.graphics then
-		self.visibleHeight = love.graphics.getHeight() - 2 * bs
-		self:createMainCanvas()
-		self:createFileCanvas()
-		self.nameBox = {bs, bs, bs + nameWidth, bs + self.visibleHeight}
+		self:reset()
 	end
 end
 
+function LoadMenu:reset()
+	self:createMainCanvas()
+	self:refreshFiles()
+end
+
 function LoadMenu:createMainCanvas()
+	self.visibleHeight = love.graphics.getHeight() - 2 * bs
+	self.nameBox = {bs, bs, bs + nameWidth, bs + self.visibleHeight}
+
 	local width = love.graphics.getWidth() - 2 * border
 	local height = love.graphics.getHeight() - 2 * border
 
@@ -54,13 +46,21 @@ function LoadMenu:createMainCanvas()
 	self.mainCanvas = canvas
 end
 
-function LoadMenu:createFileCanvas()
-	local names = self.filenames
-	local canvas = love.graphics.newCanvas(200, nameHeight * #names)
+function LoadMenu:refreshFiles()
+	local filenames = {}
+	local files = love.filesystem.getDirectoryItems(self.dir)
+	for _, fileName in pairs(files) do
+		local name = string.gsub(fileName, ".txt", "")
+		table.insert(filenames, name)
+	end
+
+	self.filenames = filenames
+
+	local canvas = love.graphics.newCanvas(200, nameHeight * #filenames)
 	love.graphics.setCanvas(canvas)
 
 	love.graphics.setColor(0, 0, 0)
-	for i, name in ipairs(names) do
+	for i, name in ipairs(filenames) do
 		love.graphics.print(name, 5, nameHeight * (i - 1) + 5)
 	end
 

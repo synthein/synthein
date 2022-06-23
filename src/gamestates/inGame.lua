@@ -3,6 +3,7 @@ local Gamesave = require("gamesave")
 local LocationTable = require("locationTable")
 local Log = require("log")
 local Menu = require("menu")
+local SaveMenu = require("saveMenu")
 local SceneParser = require("sceneParser")
 local console = require("console")
 local utf8 = require("utf8")
@@ -25,13 +26,13 @@ if love.graphics then
 	menu = Menu.create(225, 5, pauseMenu.buttons)
 end
 
-local typingSaveName = false
-local saveName = ""
 
-local world, players, screen, debugmode, log
+local world, players, screen, saveMenu, debugmode, log
 function InGame.load(...)
-	world, players, screen = ...
+	local saveName
+	world, players, screen, saveName = ...
 
+	saveMenu = SaveMenu(nil, saveName)
 	debugmode = Debug.create(world, players)
 	log = Log(debugmode)
 	console.init({
@@ -45,29 +46,24 @@ function InGame.resize(w, h)
 end
 
 function InGame.textinput(key)
-	if typingSaveName then
-		if key:match("^%w$") then
-			saveName = saveName .. key
-		end
+	if menuOpen == "Save" then
+		saveMenu:textinput(key)
 	end
 end
 
 function InGame.keypressed(key)
 	if key == "f12" then debugmode.on = not debugmode.on end
+	if key == "escape" then menuOpen = false end
 
-	if typingSaveName then
-		if key == "backspace" then
-			-- The string is utf-8 encoded, so the last character of the string
-			-- could be multiple bytes.
-			local byteoffset = utf8.offset(saveName, -1)
-			if byteoffset then
-				saveName = saveName:sub(1, byteoffset - 1)
+	if menuOpen == "Save" then
+		if key == "return" then
+			local ok, message = Gamesave.save(saveMenu.saveName, world)
+			if not ok then
+				log.error("Failed to save the game: " .. message)
 			end
-		elseif key == "return" then
-			typingSaveName = false
-		elseif key == "escape" then
-			saveName = ""
-			typingSaveName = false
+			menuOpen = false
+		else
+			saveMenu:keypressed(key)
 		end
 	else
 		for _, player in ipairs(players) do
@@ -77,17 +73,17 @@ function InGame.keypressed(key)
 		if key == "p" or key == "pause" then
 			paused = not paused
 		end
-	end
 
-	if debugmode.on then
-		debugmode:keyboard(key)
+		if debugmode.on then
+			debugmode:keyboard(key)
+		end
 	end
 
 	return InGame
 end
 
 function InGame.keyreleased(key)
-	if not typingSaveName then
+	if not menuOpen then
 		for _, player in ipairs(players) do
 			player:buttonreleased(love.keyboard, key)
 		end
@@ -95,19 +91,13 @@ function InGame.keyreleased(key)
 end
 
 function InGame.mousepressed(x, y, button)
-	if not typingSaveName then
-		for _, player in ipairs(players) do
-			player:buttonpressed(love.mouse, button)
-		end
-	end
-
 	if menuOpen then
 		if button == 1 then
 			local index = menu:getButtonAt(x, y)
 			local selection = pauseMenu.buttons[index]
 
 			if selection == "Save" then
-				typingSaveName = true
+				menuOpen = "Save"
 			elseif selection == "Main Menu" then
 				menuOpen = false
 				InGame.stackQueue:pop()
@@ -115,10 +105,14 @@ function InGame.mousepressed(x, y, button)
 				love.event.quit()
 			end
 		end
-	end
+	else
+		for _, player in ipairs(players) do
+			player:buttonpressed(love.mouse, button)
+		end
 
-	if debugmode.on then
-		debugmode:mousepressed(x, y, button)
+		if debugmode.on then
+			debugmode:mousepressed(x, y, button)
+		end
 	end
 end
 
@@ -172,7 +166,7 @@ function InGame.update(dt)
 	if closeMenu then
 		menuOpen = false
 	elseif openMenu then
-		menuOpen = true
+		menuOpen = "Pause"
 	end
 
 	if not (paused or menuOpen) then
@@ -241,16 +235,6 @@ function InGame.update(dt)
 		end
 	end
 
-	-- Save the game.
-	if not typingSaveName and #saveName > 0 then
-		local ok, message = Gamesave.save(saveName, world)
-		if not ok then
-			print("Failed to save the game: " .. message)
-		end
-
-		saveName = ""
-	end
-
 	if debugmode.on then debugmode:update(dt) end
 end
 
@@ -265,12 +249,10 @@ function InGame.draw()
 	if paused then
 		love.graphics.print("Paused", screen_width/2-24, 30)
 	end
-	if menuOpen then
+	if menuOpen == "Pause" then
 		menu:draw()
-	end
-	if typingSaveName then
-		love.graphics.print("Type a name to use for your save, then press enter:", screen_width/2-150, 60)
-		love.graphics.print(saveName, screen_width/2-150, 90)
+	elseif menuOpen == "Save" then
+		saveMenu:draw()
 	end
 
 	-- Print debug info.

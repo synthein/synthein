@@ -1,6 +1,5 @@
-local Settings = {}
-
-Settings.PARTSIZE = 20
-Settings.chunkSize = 1000
-
-return Settings
+return {
+  PARTSIZE = 20,
+  chunkSize = 1000,
+  saveDir = "saves/",
+}

@@ -26,6 +26,10 @@ local function out(message, ...)
   io.stderr:write(os.date() .. " " .. string.format(message, unpack(processed)) .. "\n")
 end
 
+function Log:error(message, ...)
+  out("ERR " .. message, ...)
+end
+
 function Log:info(message, ...)
   out("INFO " .. message, ...)
 end

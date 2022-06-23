@@ -88,6 +88,9 @@ function ShipEditor.keypressed(key)
 
 		if menuOpen == "State" then
 			local button = ShipEditor.menu:keypressed(key)
+
+			--TODO add menu selection code here
+			-- mabye create a function for handling both key and mosue presses
 		elseif menuOpen == "Save" then
 			if key == "return" then
 				ShipEditor.saveMenu:saveFile(
@@ -97,7 +100,11 @@ function ShipEditor.keypressed(key)
 				ShipEditor.saveMenu:keypressed(key)
 			end
 		elseif menuOpen == "Load" then
-			ShipEditor.loadMenu:keypressed(key)
+			local file = ShipEditor.loadMenu:keypressed(key)
+			if file then
+				gridTable = StructureParser.blueprintUnpack(love.filesystem.read(file))
+				menuOpen = false
+			end
 		elseif menuOpen == "Parts" then
 			local button = ShipEditor.partSelector:keypressed(key)
 			if button then
@@ -159,6 +166,7 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 				ShipEditor.saveMenu:resetName()
 			elseif button == "Load Blueprint" then
 				menuOpen = "Load"
+				ShipEditor.loadMenu:reset()
 			elseif button == "Main Menu" then
 				menuOpen = false
 				ShipEditor.stackQueue:pop()
@@ -169,6 +177,11 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 	elseif menuOpen == "Save" then
 		menuOpen = false
 	elseif menuOpen == "Load" then
+		local file = ShipEditor.loadMenu:pressed(x, y)
+		if file then
+			gridTable = StructureParser.blueprintUnpack(love.filesystem.read(file))
+			menuOpen = false
+		end
 	elseif menuOpen == "Parts" then
 		local part = ShipEditor.partSelector:pressed(x, y)
 		if part then

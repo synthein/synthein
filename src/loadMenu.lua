@@ -14,21 +14,18 @@ function LoadMenu:__create(dir)
 	self.scrollY = 0
 	self.scrollTo = 0
 
-	self.filenames = {"har", "de", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har", "har har"}
+	self:reset()
+end
 
-	--TODO Make the Load menu tolorant of changes
-	-- New files
-	-- Changes in screen size (including when the screen changes when not focused on the menu)
-	-- Recomend moving things to a reset function for when focus returns to this menu.
-	if love.graphics then
-		self.visibleHeight = love.graphics.getHeight() - 2 * bs
-		self:createMainCanvas()
-		self:createFileCanvas()
-		self.nameBox = {bs, bs, bs + nameWidth, bs + self.visibleHeight}
-	end
+function LoadMenu:reset()
+	self:createMainCanvas()
+	self:refreshFiles()
 end
 
 function LoadMenu:createMainCanvas()
+	self.visibleHeight = love.graphics.getHeight() - 2 * bs
+	self.nameBox = {bs, bs, bs + nameWidth, bs + self.visibleHeight}
+
 	local width = love.graphics.getWidth() - 2 * border
 	local height = love.graphics.getHeight() - 2 * border
 
@@ -47,13 +44,21 @@ function LoadMenu:createMainCanvas()
 	self.mainCanvas = canvas
 end
 
-function LoadMenu:createFileCanvas()
-	local names = self.filenames
-	local canvas = love.graphics.newCanvas(200, nameHeight * #names)
+function LoadMenu:refreshFiles()
+	local filenames = {}
+	local files = love.filesystem.getDirectoryItems(self.dir)
+	for _, fileName in pairs(files) do
+		local name = string.gsub(fileName, ".txt", "")
+		table.insert(filenames, name)
+	end
+
+	self.filenames = filenames
+
+	local canvas = love.graphics.newCanvas(200, nameHeight * #filenames)
 	love.graphics.setCanvas(canvas)
 
 	love.graphics.setColor(0, 0, 0)
-	for i, name in ipairs(names) do
+	for i, name in ipairs(filenames) do
 		love.graphics.print(name, 5, nameHeight * (i - 1) + 5)
 	end
 
@@ -78,6 +83,10 @@ function LoadMenu:getButtonAt(x, y)
 	end
 
 	return index
+end
+
+function LoadMenu:loadfile(index)
+	return self.dir .. "/" .. self.filenames[index] .. ".txt"
 end
 
 function LoadMenu:update(dt)
@@ -149,7 +158,7 @@ function LoadMenu:keypressed(key)
 		s = s + 1
 		if s > len then s = s - len end
 	elseif key == "return" then
-		return self.filenames[s]
+		return self:loadfile(s)
 	end
 	self.selected = s
 end
@@ -181,7 +190,7 @@ function LoadMenu:pressed(x, y)
 	if index == nil then
 		return nil
 	end
-	return self.filenames[index]
+	return self:loadfile(index)
 end
 
 return LoadMenu

@@ -14,9 +14,7 @@ function LoadMenu:__create(dir)
 	self.scrollY = 0
 	self.scrollTo = 0
 
-	if love.graphics then
-		self:reset()
-	end
+	self:reset()
 end
 
 function LoadMenu:reset()

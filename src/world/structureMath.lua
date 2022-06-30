@@ -1,11 +1,20 @@
 local StructureMath = {}
 
 StructureMath.unitVectors = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}}
+local unitVectors = StructureMath.unitVectors
 StructureMath.multipliers = {{1, 1}, {-1, 1}, {-1, -1},{1, -1}}
 StructureMath.swap = {false, true, false, true}
 
 function StructureMath.toDirection(value)
 	return (value - 2) % 4 + 1
+end
+
+function StructureMath.addDirections(a, b)
+	return (a + b - 2) % 4 + 1
+end
+
+function StructureMath.step(vector)
+	return vector[1] + unitVectors[vector[3]][1], vector[2] + unitVectors[vector[3]][2]
 end
 
 function StructureMath.addUnitVector(vector, direction)

@@ -192,6 +192,27 @@ function Structure:annexPart(annexee, part, baseVector)
 	end
 end
 
+--TODO function not validated.
+function Structure:testEdge(vector)
+	local aX, aY, direction = unpack(vector)
+	local bX, bY = StructureMath.step(vector)
+	local gridTable = self.gridTable
+	local connection = false
+	local aPart = gridTable:index(aX, aY)
+	if aPart then
+		local aSide = StructureMath.addDirections(
+			aPart.location[3], direction)
+		connection = aPart.connectableSides[aSide]
+	end
+	local bPart = gridTable:index(bX, bY)
+	if bPart then
+		local bSide = StructureMath.addDirections(
+			bPart.location[3], direction + 2)
+		connection = connection and bPart.connectableSides[bSide]
+	end
+	return pPart, bPart, connection, {bX, aX}
+end
+
 function Structure:testConnection(testPoints)
 	local keep = {}
 	for _, location in ipairs(testPoints) do

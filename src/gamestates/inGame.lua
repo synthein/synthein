@@ -20,12 +20,18 @@ local menuOpen = false
 local pauseMenu = {}
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 
-local menu
-if love.graphics then
-	pauseMenu.font = love.graphics.newFont(18)
-	menu = Menu.create(225, 5, pauseMenu.buttons)
+local function pauseMenuAction(selection)
+	if selection == "Save" then
+		menuOpen = "Save"
+	elseif selection == "Main Menu" then
+		menuOpen = false
+		InGame.stackQueue:pop()
+	elseif selection == "Quit" then
+		love.event.quit()
+	end
 end
 
+local menu = Menu.create(225, 5, pauseMenu.buttons)
 
 local world, players, screen, saveMenu, debugmode, log
 function InGame.load(...)
@@ -55,7 +61,9 @@ function InGame.keypressed(key)
 	if key == "f12" then debugmode.on = not debugmode.on end
 	if key == "escape" then menuOpen = false end
 
-	if menuOpen == "Save" then
+	if menuOpen == "Pause" then
+		pauseMenuAction(menu:keypressed(key))
+	elseif menuOpen == "Save" then
 		if key == "return" then
 			local ok, message = Gamesave.save(saveMenu.saveName, world)
 			if not ok then
@@ -91,19 +99,9 @@ function InGame.keyreleased(key)
 end
 
 function InGame.mousepressed(x, y, button)
-	if menuOpen then
+	if menuOpen == "Pause" then
 		if button == 1 then
-			local index = menu:getButtonAt(x, y)
-			local selection = pauseMenu.buttons[index]
-
-			if selection == "Save" then
-				menuOpen = "Save"
-			elseif selection == "Main Menu" then
-				menuOpen = false
-				InGame.stackQueue:pop()
-			elseif selection == "Quit" then
-				love.event.quit()
-			end
+			pauseMenuAction(menu:pressed(x, y))
 		end
 	else
 		for _, player in ipairs(players) do

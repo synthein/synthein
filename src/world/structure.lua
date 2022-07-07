@@ -179,6 +179,7 @@ function Structure:annex(annexee, annexeeBaseVector, structureVector)
 	end
 end
 
+-- TODO: combine with annex
 function Structure:annexPart(annexee, part, baseVector)
 	local annexeeVector = {part.location[1], part.location[2], part.location[3]}
 	local netVector = StructureMath.sumVectors(baseVector, annexeeVector)

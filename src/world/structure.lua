@@ -53,6 +53,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 		--self.type = "generic"
 	end
 
+	-- TODO: Use a separate table for the user data
 	self.body:setUserData(self)
 	self.shield = Shield(self.body)
 
@@ -69,6 +70,7 @@ function Structure:postCreate(references)
 	end
 end
 
+-- TODO: Move to user data and not a function, just a field
 function Structure:type()
 	return "structure"
 end
@@ -179,6 +181,7 @@ function Structure:annex(annexee, annexeeBaseVector, structureVector)
 	end
 end
 
+-- TODO: combine with annex
 function Structure:annexPart(annexee, part, baseVector)
 	local annexeeVector = {part.location[1], part.location[2], part.location[3]}
 	local netVector = StructureMath.sumVectors(baseVector, annexeeVector)

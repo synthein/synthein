@@ -53,6 +53,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 		--self.type = "generic"
 	end
 
+	-- TODO: Use a separate table for the user data
 	self.body:setUserData(self)
 	self.shield = Shield(self.body)
 
@@ -69,6 +70,7 @@ function Structure:postCreate(references)
 	end
 end
 
+-- TODO: Move to user data and not a function, just a field
 function Structure:type()
 	return "structure"
 end

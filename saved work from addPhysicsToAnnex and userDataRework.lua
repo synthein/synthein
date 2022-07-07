@@ -73,3 +73,128 @@ print(self.isDestroyed)
 		end
 	end
 end
+
+-- annexRequest.lua
+
+ local Annex = class()
+
+function Annex:__create(
+		bodyUserData, partLocation,
+		annexeeBodyUserData, nnexeePartLocation)
+
+	self.denied = false
+	self.replied = false
+	self.partLocation = partLocation
+	self.annexeePartLocation = annexeePartLocation
+
+
+
+end
+
+function Annex:deny()
+	self.denied = true
+end
+
+function Annex:isDenied()
+	return self.denied
+end
+
+function Annex:hasReplied()
+	return self.replied
+end
+
+function Annex:getLocations()
+	return partLocation, annexeePartLocation
+end
+
+function Annex:getRequest()
+	local function f(structure)
+		self.replied = true
+		self.annexee = structure
+		return true
+	 end
+	 return f
+end
+
+function Annex:getAtempt()
+	local function f(structure)
+		if self.annexee then return false end
+		structure:annex(
+			self.annexee, self.annexeePart,
+			self.annexeePartSide,
+			self.structurePart, self.structurePartSide)
+		return true
+end
+
+return Annex
+
+-- structure.lua
+
+ function Structure:update(dt)
+	local userData = self.body:getUserData()
+	local buildRequest = userData.buildRequest
+	if buildRequest then
+		local team = userData.getTeam()
+		if buildRequest.type == 1 then
+			if team == buildRequest.team or team == 0 then
+				userData.buildRequest = nil
+				if buildRequest.disconnect then
+					self:disconnectPart(buildRequest.aPart, false)
+				else
+					self:annex(
+						buildRequest.b, buildRequest.bPart, buildRequest.bSide,
+						buildRequest.aPart, buildRequest.aSide)
+				end
+			end
+		elseif buildRequest.type == 2 then
+			if team == 0 then
+				userData.buildRequest = nil
+				buildRequest.b = self
+			end
+		end
+	end
+
+	local partsInfo = self:command(dt)
+	self.shield:update(dt)
+end
+
+-- beginning of Selection:pressed()
+
+		local x, y = body:getLocalPoint(cursorX, cursorY)
+		local roundedX = math.floor(x + .5)
+		local roundedY = math.floor(y + .5)
+
+		local location = {roundedX, roundedY}
+
+		-- build request disconnect
+		if not structure.buildRequest then
+			local buildRequest = {}
+			buildRequest.type = 1
+			buildRequest.disconnect = true
+			buildRequest.team = self.team
+			buildRequest.aPart = {roundedX, roundedY}
+
+			structure.buildRequest = buildRequest
+		end
+
+	-- Selection.lua
+	local function getpartSide(body, partLocation, cursorX, cursorY)
+		local cursorX, cursorY = body:getLocalPoint(cursorX, cursorY)
+		local netX , netY = cursorX - partLocation[1], cursorY - partLocation[2]
+		local netXSq, netYSq = netX * netX, netY * netY
+
+		local a, b = 0, 0
+		if netXSq > netYSq then a = 1 end
+		if netY - netX < 0 then b = 2 end
+		return 1 + a + b, netXSq <= .25 and netYSq <= .25
+	end
+
+-- Beginning of Selection:released()
+		local l = self.part.location
+		local partSide, withinPart = getpartSide(body, l, cursorX, cursorY)
+		local x, y = body:getWorldPoints(l[1], l[2])
+
+-- Beginning of Selection:draw()
+		local x, y = body:getWorldPoints(l[1], l[2])
+		local angle = (l[3] - 1) * math.pi/2 + body:getAngle()
+		local partSide = getpartSide(body, l, cursorX, cursorY)

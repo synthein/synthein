@@ -1,3 +1,4 @@
+local Log = require("log")
 local PhysicsReferences = require("world/physicsReferences")
 
 local World = class()
@@ -9,6 +10,8 @@ local objectTypes = {
 	particles = require("world/particles"),
 }
 World.objectTypes = objectTypes
+
+local log = Log({})
 
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.
@@ -54,7 +57,7 @@ function World:__create(playerHostility)
 			if not object then
 				error("There is no such object class \"" .. type .. "\"")
 			end
-			table.insert(events.create, {debug.getinfo(2, "nSl"), object, ...})
+			table.insert(events.create, {debug.traceback("", 2), object, ...})
 		end,
 		physics = self.physics,
 		teamHostility = teamHostility,
@@ -217,11 +220,11 @@ function World:update(dt)
 	self.borders[4] = self.borders[4] + 10000
 
 	for _, event in ipairs(self.events.create) do
-		local debuginfo, objectClass = unpack(event)
-		local ok, result = pcall(objectClass, self.info, select(3, unpack(event)))
+		local generatedAt, objectClass = unpack(event)
+		local ok, result = xpcall(objectClass, debug.traceback, self.info, select(3, unpack(event)))
 		if not ok then
-			print(string.format("ERROR: Creating an object in the world failed. Event generated at %s:%s in function '%s'. %s",
-				debuginfo.source, debuginfo.currentline, debuginfo.name, result))
+			log:error("Creating an object in the world failed: %s\nEvent generated at:%s",
+				result, generatedAt)
 		else
 			table.insert(self.objects, result)
 		end

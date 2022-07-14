@@ -14,11 +14,11 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	local aiAngle = aiBody:getAngle()
 	local aiXV, aiYV = aiBody:getLinearVelocity()
 	local aiAngleVol = aiBody:getAngularVelocity()
-	local target, leaderX, leaderY, leaderVX, leaderVY, leaderMSq
+	local target, leaderX, leaderY, leaderA, leaderVX, leaderVY, leaderMSq
 
 	local leaderFollow = false
 	if leader then
-		leaderX, leaderY = leader:getLocation():getXY()
+		leaderX, leaderY, leaderA = leader:getLocation():getXYA()
 		leaderVX, leaderVY = leader.body:getLinearVelocity()
 		target = {leaderX, leaderY, leaderVX, leaderVY}
 
@@ -68,7 +68,13 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 
 		rdx, rdy = aiBody:getLocalVector(targetX - aiX, targetY - aiY)
 		rvx, rvy = aiBody:getLocalVector(targetVX - aiXV, targetVY - aiYV)
-		angle = vector.angle(targetX - aiX, targetY - aiY)
+
+		--Fix target x, y while following before using this logic
+		--if shoot then
+			angle = vector.angle(targetX - aiX, targetY - aiY)
+		--else
+		--	angle = leaderA + math.pi/2
+		--end
 	else
 		rdx, rdy, rvx, rvy, angle = 0, 0, 0, 0, 0
 	end

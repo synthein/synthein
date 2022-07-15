@@ -19,19 +19,30 @@ function Selection.create(world, team)
 	return self
 end
 
+local function getPartSide(structure, partLocation, cursorX, cursorY)
+	local cursorX, cursorY = structure.body:getLocalPoint(cursorX, cursorY)
+	local netX , netY = cursorX - partLocation[1], cursorY - partLocation[2]
+	local netXSq, netYSq = netX * netX, netY * netY
+
+	local a = netXSq > netYSq and 1 or 0
+	local b = netY - netX < 0 and 2 or 0
+	return 1 + a + b, netXSq <= .25 and netYSq <= .25
+end
+
 function Selection:pressed(cursorX, cursorY, order)
 	local structure = self.world:getObject(cursorX, cursorY)
 	local part, partSide
 	if structure then part, partSide = structure:findPart(cursorX, cursorY) end
 	if structure and structure:type() == "structure" and part then
-		if self.build then
+		local build = self.build
+		local team = structure:getTeam()
+		if build then
 			if order == "build" then
-				if self.build.mode == 3 then
-					if not structure.corePart or
-							structure.corePart:getTeam() == self.team then
+				if build.mode == 3 then
+					if team == 0 or team == self.team then
 						self.structure = structure
 						self.part = part
-						if self.build:setStructure(structure, part) then
+						if build:setStructure(structure, part) then
 							self.structure = nil
 							self.part = nil
 							self.build = nil
@@ -45,10 +56,10 @@ function Selection:pressed(cursorX, cursorY, order)
 			end
 		else
 			if order == "build" then
-				if structure.corePart then
+				if team ~= 0 then
 					local corePart = structure.corePart
 					if corePart == part then
-						if corePart:getTeam() == self.team and corePart.modules.ai then
+						if team == self.team and corePart.modules.ai then
 							self.structure = structure
 							self.part = part
 						end
@@ -61,7 +72,6 @@ function Selection:pressed(cursorX, cursorY, order)
 				end
 			elseif order == "destroy" then
 				local corePart = structure.corePart
-				local team = structure:getTeam()
 				if team == 0 or (team == self.team and part ~= corePart) then
 					structure:disconnectPart(part.location)
 				end
@@ -115,25 +125,30 @@ function Selection.angleToIndex(angle, length)
 end
 
 function Selection:draw(cursorX, cursorY)
-	if self.structure and self.part then
-		local partSide = self.part:getPartSide(cursorX, cursorY)
-		local x, y, angle = self.part:getWorldLocation():getXYA()
-		local strength, lables
-		if self.build then
-			local connectableSides = self.part.connectableSides
-			strength = {
-				connectableSides[1] and 1 or 0,
-				connectableSides[4] and 1 or 0,
-				connectableSides[3] and 1 or 0,
-				connectableSides[2] and 1 or 0
-			}
-			local indexReverse = {1, 4, 3, 2}
-			local i = indexReverse[partSide]
+	local structure = self.structure
+	local part = self.part
+	local build = self.build
+	if structure and part then
+		local location = part.location
+		local partX, partY = unpack(location)
+		local partSide = getPartSide(structure, location, cursorX, cursorY)
 
-			strength[i] = strength[i] * 2
+		local strength, lables
+		if build then
+			local indexReverse = {1, 4, 3, 2}
+			strength = {}
+			local l = {partX, partY}
+			for i = 1,4 do
+				l[3] = i
+				local _, partB, connection = structure:testEdge(l)
+				local connectable = not partB and connection
+				local highlight = i == partSide
+				local brightness = highlight and 2 or 1
+				strength[indexReverse[i]] = connectable and brightness or 0
+			end
 		else
 			angle = 0
-			strength, lables = self.part:getMenu()
+			strength, lables = part:getMenu()
 			local newAngle = vector.angle(cursorX - x, cursorY - y)
 			local index = self.angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
@@ -141,11 +156,14 @@ function Selection:draw(cursorX, cursorY)
 			end
 		end
 		if strength then
+			local body = structure.body
+			local x, y = body:getWorldPoints(partX, partY)
+			local angle = body:getAngle()
 			CircleMenu.draw(x, y, angle, 1, strength, lables)
 		end
 	end
-	if self.build then
-		self.build:draw()
+	if build then
+		build:draw()
 	end
 end
 

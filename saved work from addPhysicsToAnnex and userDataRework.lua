@@ -160,12 +160,6 @@ end
 
 -- beginning of Selection:pressed()
 
-		local x, y = body:getLocalPoint(cursorX, cursorY)
-		local roundedX = math.floor(x + .5)
-		local roundedY = math.floor(y + .5)
-
-		local location = {roundedX, roundedY}
-
 		-- build request disconnect
 		if not structure.buildRequest then
 			local buildRequest = {}

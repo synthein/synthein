@@ -202,13 +202,13 @@ function Structure:testEdge(vector)
 	local connection = false
 	local aPart = gridTable:index(aX, aY)
 	if aPart then
-		local aSide = StructureMath.addDirections(
+		local aSide = StructureMath.subDirections(
 			aPart.location[3], direction)
 		connection = aPart.connectableSides[aSide]
 	end
 	local bPart = gridTable:index(bX, bY)
 	if bPart then
-		local bSide = StructureMath.addDirections(
+		local bSide = StructureMath.subDirections(
 			bPart.location[3], direction + 2)
 		connection = connection and bPart.connectableSides[bSide]
 	end

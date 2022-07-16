@@ -88,13 +88,15 @@ function Selection:pressed(cursorX, cursorY, order)
 end
 
 function Selection:released(cursorX, cursorY)
-	if self.structure and self.part then
-		local partSide = self.part:getPartSide(cursorX, cursorY)
-		local withinPart = self.part:withinPart(cursorX, cursorY)
-		local x, y = self.part:getWorldLocation(self.partIndex):getXY()
+	local structure = self.structure
+	local part = self.part
+	if structure and part then
+		local l = part.location
+		local partSide, withinPart = getPartSide(structure, l, cursorX, cursorY)
 		if not withinPart then
 			if self.build then
-				if self.part.connectableSides[partSide] then
+
+				if structure:testEdge({l[1], l[2], partSide}) then
 					self.build:setSide(partSide)
 					if self.build.mode == 5 then
 						self.build = nil
@@ -103,6 +105,7 @@ function Selection:released(cursorX, cursorY)
 					self.build = nil
 				end
 			else
+				local x, y = body:getWorldPoints(l[1], l[2])
 				local strength = self.part:getMenu()
 				local newAngle = vector.angle(cursorX - x, cursorY - y)
 				local index = self.angleToIndex(newAngle, #strength)

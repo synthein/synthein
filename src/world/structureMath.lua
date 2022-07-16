@@ -13,6 +13,10 @@ function StructureMath.addDirections(a, b)
 	return (a + b - 2) % 4 + 1
 end
 
+function StructureMath.subDirections(a, b)
+	return (a - b) % 4 + 1
+end
+
 function StructureMath.step(vector)
 	return vector[1] + unitVectors[vector[3]][1], vector[2] + unitVectors[vector[3]][2]
 end

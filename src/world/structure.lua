@@ -114,7 +114,7 @@ function Structure:findPart(cursorX, cursorY)
 		math.floor(x + .5),
 		math.floor(y + .5))
 
-	return part, part and part:getPartSide(cursorX, cursorY)
+	return part
 end
 
 -------------------------------

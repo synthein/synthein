@@ -51,12 +51,10 @@ end
 
 function Building:setSide(partSide)
 	if self.mode == 2 then
-		self.annexeeBaseVector[3] =
-			StructureMath.toDirection(partSide + self.annexeeBaseVector[3])
+		self.annexeeBaseVector[3] = partSide
 		self.mode = 3
 	elseif self.mode == 4 then
-		self.structureVector[3] =
-			StructureMath.toDirection(partSide + self.structureVector[3])
+		self.structureVector[3] = partSide
 		if self.annexee and self.annexeeBaseVector and
 			self.structure and self.structureVector then
 			self.structure:annex(

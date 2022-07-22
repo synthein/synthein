@@ -50,15 +50,4 @@ function Part:getWorldLocation()
 	end
 end
 
-function Part:getPartSide(locationX, locationY)
-	local partX, partY, partAngle = self:getWorldLocation():getXYA()
-	local angleToCursor = vector.angle(
-		locationX - partX,
-		locationY - partY
-	)
-	local angleDifference = angleToCursor - partAngle
-	local partSide = math.floor((angleDifference*2/math.pi - 1/2) % 4 +1)
-	return partSide
-end
-
 return Part

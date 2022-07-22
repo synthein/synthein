@@ -160,12 +160,6 @@ end
 
 -- beginning of Selection:pressed()
 
-		local x, y = body:getLocalPoint(cursorX, cursorY)
-		local roundedX = math.floor(x + .5)
-		local roundedY = math.floor(y + .5)
-
-		local location = {roundedX, roundedY}
-
 		-- build request disconnect
 		if not structure.buildRequest then
 			local buildRequest = {}
@@ -176,25 +170,3 @@ end
 
 			structure.buildRequest = buildRequest
 		end
-
-	-- Selection.lua
-	local function getpartSide(body, partLocation, cursorX, cursorY)
-		local cursorX, cursorY = body:getLocalPoint(cursorX, cursorY)
-		local netX , netY = cursorX - partLocation[1], cursorY - partLocation[2]
-		local netXSq, netYSq = netX * netX, netY * netY
-
-		local a, b = 0, 0
-		if netXSq > netYSq then a = 1 end
-		if netY - netX < 0 then b = 2 end
-		return 1 + a + b, netXSq <= .25 and netYSq <= .25
-	end
-
--- Beginning of Selection:released()
-		local l = self.part.location
-		local partSide, withinPart = getpartSide(body, l, cursorX, cursorY)
-		local x, y = body:getWorldPoints(l[1], l[2])
-
--- Beginning of Selection:draw()
-		local x, y = body:getWorldPoints(l[1], l[2])
-		local angle = (l[3] - 1) * math.pi/2 + body:getAngle()
-		local partSide = getpartSide(body, l, cursorX, cursorY)

@@ -10,7 +10,6 @@ local nameWidth = 200
 -- Make a menu in the center of the screen from a list of buttons.
 function LoadMenu:__create(dir)
 	self.dir = dir
-	self.selected = 1
 	self.scrollY = 0
 	self.scrollTo = 0
 
@@ -47,14 +46,18 @@ end
 function LoadMenu:refreshFiles()
 	local filenames = {}
 	local files = love.filesystem.getDirectoryItems(self.dir)
+	local selected = 0
 	for _, fileName in pairs(files) do
 		local name = string.gsub(fileName, ".txt", "")
 		table.insert(filenames, name)
+		selected = 1
 	end
 
 	self.filenames = filenames
+	self.selected = selected
 
-	local canvas = love.graphics.newCanvas(200, nameHeight * #filenames)
+	-- Canvases must have nonzero dimensions.
+	local canvas = love.graphics.newCanvas(200, nameHeight * (#filenames + 1))
 	love.graphics.setCanvas(canvas)
 
 	love.graphics.setColor(0, 0, 0)
@@ -79,7 +82,7 @@ function LoadMenu:getButtonAt(x, y)
 		index = math.floor((y - top + self.scrollY) / nameHeight + 1)
 	end
 	if index > #self.filenames then
-		index = 1
+		index = 0
 	end
 
 	return index
@@ -117,6 +120,7 @@ function LoadMenu:draw()
 	love.graphics.setCanvas(canvas)
 
 	love.graphics.setColor(0.4, 0.4, 0.4)
+	-- When nothing is selected, self.selected == 0.
 	local highlightY = nameHeight * (self.selected - 1) - self.scrollY
 	love.graphics.rectangle("fill", 0, highlightY, nameWidth, nameHeight)
 	love.graphics.draw(self.fileCanvas, 0, - self.scrollY)
@@ -151,23 +155,22 @@ end
 function LoadMenu:keypressed(key)
 	local s = self.selected
 	local len = #self.filenames
-	if key == "up" then
-		s = s - 1
-		if s < 1 then s = s + len end
-	elseif key == "down" then
-		s = s + 1
-		if s > len then s = s - len end
-	elseif key == "return" then
-		return self:loadfile(s)
+	if not len == 0 then
+		if key == "up" then
+			s = s - 1
+			if s < 1 then s = s + len end
+		elseif key == "down" then
+			s = s + 1
+			if s > len then s = s - len end
+		elseif key == "return" then
+			return self:loadfile(s)
+		end
 	end
 	self.selected = s
 end
 
 function LoadMenu:mousemoved(x, y)
 	local index = self:getButtonAt(x, y)
-	if index == nil then
-		return
-	end
 	self.selected = index
 end
 
@@ -187,7 +190,7 @@ end
 
 function LoadMenu:pressed(x, y)
 	local index = self:getButtonAt(x, y)
-	if index == nil then
+	if index == 0 then
 		return nil
 	end
 	return self:loadfile(index)

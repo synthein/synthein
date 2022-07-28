@@ -3,7 +3,7 @@ local Location = require("world/location")
 
 local Hull = class()
 
-function Hull:__create(imagefunction, maxHealth)--, connectableSides)
+function Hull:__create(imageFunction, maxHealth)--, connectableSides)
 
 	self.health = maxHealth
 	self.maxHealth = maxHealth
@@ -22,7 +22,7 @@ function Hull:__create(imagefunction, maxHealth)--, connectableSides)
 		local l = userData.location
 		local x, y, angle = Location.fixturePoint3(fixture, l[1], l[2])
 		angle = angle + (l[3] - 1) * math.pi / 2
-		imagefunction(x, y, angle)
+		imageFunction(x, y, angle)
 	end
 
 	function userData.collision(fixture, otherFixture, sqVelocity, pointVelocity)

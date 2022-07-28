@@ -10,11 +10,14 @@ local PlayerBlock = class(Part)
 
 -- Graphics
 local Draw = require("world/draw")
-PlayerBlock.image = Draw.loadImage("player")
-local imagefunction = Draw.createDrawBlockFunction(PlayerBlock.image)
+local imageFunctions = {}
+for team = 1,2 do
+	imageFunctions[team] = Draw.createDrawBlockFunction(Draw.loadImage("player" .. team))
+end
+PlayerBlock.image = Draw.loadImage("player1")
 
 function PlayerBlock:__create(team, leader)
-	self.modules["hull"] = Hull(imagefunction, 10)
+	self.modules["hull"] = Hull(imageFunctions[team], 10)
 	self.type = "control"
 
 	self.modules["engine"] = Engine(1, 15, 5)

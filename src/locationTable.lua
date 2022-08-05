@@ -97,19 +97,4 @@ function LocationTable:getV() return self[4], self[5] end
 function LocationTable:getVW() return self[4], self[5], self[6] end
 function LocationTable:getAll() return unpack(self) end
 
-local printNotification = true
-
-function LocationTable:createBody(physics, mode)
-	if printNotification then
-		print(debug.traceback("Using deprecated function LocationTable.createBody"))
-		printNotification = false
-	end
-
-	local body = love.physics.newBody(physics, self[1], self[2], mode)
-	body:setAngle(self[3])
-	body:setLinearVelocity(self[4], self[5])
-	body:setAngularVelocity(self[6])
-	return body
-end
-
 return LocationTable

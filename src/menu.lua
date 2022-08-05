@@ -164,6 +164,19 @@ function Menu:keypressed(key)
 	end
 end
 
+function Menu:gamepadpressed(button)
+	local key
+	if button == "dpup" then
+		key = "up"
+	elseif button == "dpdown" then
+		key = "down"
+	elseif button == "a" then
+		key = "return"
+	end
+
+	return self:keypressed(key)
+end
+
 function Menu:mousemoved(x, y)
 	local index = self:getButtonAt(x, y)
 	if index == nil then

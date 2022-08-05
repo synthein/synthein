@@ -136,6 +136,12 @@ function InGame.joystickreleased(joystick, button)
 	end
 end
 
+function InGame.gamepadpressed(joystick, button)
+	if menuOpen == "Pause" then
+		pauseMenuAction(menu:gamepadpressed(button))
+	end
+end
+
 function InGame.wheelmoved(_, y) --(x, y)
 	for _, player in ipairs(players) do
 		if y > 0 then

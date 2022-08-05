@@ -7,6 +7,8 @@ local enabledFunctionNames =
 	"mousemoved",
 	"mousepressed",
 	"mousereleased",
+	"gamepadpressed",
+	"gamepadreleased",
 	"joystickpressed",
 	"joystickreleased",
 	"textinput",

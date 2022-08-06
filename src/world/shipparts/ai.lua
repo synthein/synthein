@@ -17,18 +17,16 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	local target, leaderX, leaderY, leaderA, leaderVX, leaderVY, leaderMSq
 
 	local leaderFollow = false
-	if leader then
+	if leader and self.follow then
 		leaderX, leaderY, leaderA = leader:getLocation():getXYA()
 		leaderVX, leaderVY = leader.body:getLinearVelocity()
 		target = {leaderX, leaderY, leaderVX, leaderVY}
 
-		if self.follow then
-			local dx = leaderX - aiX
-			local dy = leaderY - aiY
-			leaderMSq = (dx * dx) + (dy * dy)
-			leaderFollow = leaderMSq > 30 * 30
-			target[5] = leaderMSq
-		end
+		local dx = leaderX - aiX
+		local dy = leaderY - aiY
+		leaderMSq = (dx * dx) + (dy * dy)
+		leaderFollow = leaderMSq > 30 * 30
+		target[5] = leaderMSq
 	end
 
 	local shoot = false
@@ -76,7 +74,7 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 		--	angle = leaderA + math.pi/2
 		--end
 	else
-		rdx, rdy, rvx, rvy, angle = 0, 0, 0, 0, 0
+		rdx, rdy, rvx, rvy, angle = 0, 15, 0, 0, 0
 	end
 
 	local pidX = rdx + 2 * rvx

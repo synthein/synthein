@@ -29,6 +29,11 @@ local function getPartSide(structure, partLocation, cursorX, cursorY)
 	return 1 + a + b, netXSq <= .25 and netYSq <= .25
 end
 
+local function angleToIndex(angle, length)
+	local index = math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
+	return index
+end
+
 function Selection:pressed(cursorX, cursorY, order)
 	local structure = self.world:getObject(cursorX, cursorY)
 	local part
@@ -93,38 +98,34 @@ function Selection:released(cursorX, cursorY)
 	if structure and part then
 		local l = part.location
 		local partSide, withinPart = getPartSide(structure, l, cursorX, cursorY)
+		local build = self.build
 		if not withinPart then
-			if self.build then
-
+			if build then
 				if structure:testEdge({l[1], l[2], partSide}) then
-					self.build:setSide(partSide)
-					if self.build.mode == 5 then
+					build:setSide(partSide)
+					if build.mode == 5 then
 						self.build = nil
 					end
 				else
 					self.build = nil
 				end
 			else
+				local body = structure.body
 				local x, y = body:getWorldPoints(l[1], l[2])
-				local strength = self.part:getMenu()
+				local strength = part:getMenu()
 				local newAngle = vector.angle(cursorX - x, cursorY - y)
-				local index = self.angleToIndex(newAngle, #strength)
+				local index = angleToIndex(newAngle, #strength)
 				self.part:runMenu(index)
 			end
 			self.structure = nil
 			self.partSide = nil
 		else
-			if not self.build then
+			if not build then
 				self.structure = nil
 				self.partSide = nil
 			end
 		end
 	end
-end
-
-function Selection.angleToIndex(angle, length)
-	local index = math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
-	return index
 end
 
 function Selection:draw(cursorX, cursorY)
@@ -135,9 +136,12 @@ function Selection:draw(cursorX, cursorY)
 		local location = part.location
 		local partX, partY = unpack(location)
 		local partSide = getPartSide(structure, location, cursorX, cursorY)
+		local body = structure.body
+		local angle -- Body angle if building else 0
 
 		local strength, lables
 		if build then
+			angle = body:getAngle()
 			local indexReverse = {1, 4, 3, 2}
 			strength = {}
 			local l = {partX, partY}
@@ -151,17 +155,16 @@ function Selection:draw(cursorX, cursorY)
 			end
 		else
 			angle = 0
+			local x, y = body:getWorldPoints(partX, partY)
 			strength, lables = part:getMenu()
 			local newAngle = vector.angle(cursorX - x, cursorY - y)
-			local index = self.angleToIndex(newAngle, #strength)
+			local index = angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2
 			end
 		end
 		if strength then
-			local body = structure.body
 			local x, y = body:getWorldPoints(partX, partY)
-			local angle = body:getAngle()
 			CircleMenu.draw(x, y, angle, 1, strength, lables)
 		end
 	end

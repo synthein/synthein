@@ -1,14 +1,18 @@
 anchor = structure(0,0,0)[1]
 {
-g1b1b1b1g1
-b1b1n*b1b1
-e1b1b1b1e1
+b1b1b1
+b1n*b1
+b1b1b1
 }
 structure(-5,0,0)[1, anchor]
 {
-p*
+g1  g1
+b1p*b1
+e1  e1
 }
 structure(5,0,0)[1, anchor]
 {
-p*
+g1  g1
+b1p*b1
+e1  e1
 }

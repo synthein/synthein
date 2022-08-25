@@ -1,4 +1,5 @@
 local vector = require("vector")
+local Location = require("world/location")
 
 local AI = class()
 
@@ -8,12 +9,29 @@ function AI:__create(team)
 end
 
 function AI:getOrders(worldInfo, leader, aiBody, bodyList)
-	local physics = worldInfo.physics
+
+
+	--Check for Leader + follow
+		--Do something for fomation location
+
+		--Get post
+
+
+	--Compute relative Components
+
+
+
+
+
+
+
+
+
 	local teamHostility = worldInfo.teamHostility
-	local aiX, aiY = aiBody:getPosition()
-	local aiAngle = aiBody:getAngle()
-	local aiXV, aiYV = aiBody:getLinearVelocity()
-	local aiAngleVol = aiBody:getAngularVelocity()
+
+	local aiX, aiY, aiA, aiXV, aiYV, aiAV =
+		Location.bodyCenter6(aiBody)
+
 	local target, leaderX, leaderY, leaderA, leaderVX, leaderVY, leaderMSq
 
 	local leaderFollow = false
@@ -58,25 +76,50 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 
 	local orders = {}
 
-	local targetX, targetY, targetVX, targetVY, distanceToTargetSq, angle
+	local targetX, targetY
+	local destXV, destYV, destAV
 
-	local rdx, rdy, rvx, rvy
+	local rdx, rdy, rvx, rvy, rda, rva
 	if target then
+		local targetVX, targetVY, distanceToTargetSq
 		targetX, targetY, targetVX, targetVY, distanceToTargetSq = unpack(target)
 
 		rdx, rdy = aiBody:getLocalVector(targetX - aiX, targetY - aiY)
-		rvx, rvy = aiBody:getLocalVector(targetVX - aiXV, targetVY - aiYV)
 
-		--Fix target x, y while following before using this logic
-		--if shoot then
-			angle = vector.angle(targetX - aiX, targetY - aiY)
-		--else
-		--	angle = leaderA + math.pi/2
-		--end
+		-- The -15 is the simplest way to add space between the two ships.
+		--rdy = rdy - 15
+
+
+		local d = 15
+		local dsq = d * d
+		local m = 1 - dsq/distanceToTargetSq
+
+		rdx = rdx * m
+		rdy = rdy * m
+
+		local angle
+		local pi = math.pi
+
+		if shoot then
+			angle = vector.angle(targetX - aiX, targetY - aiY) + pi/2
+		else
+			angle = leaderA + pi
+		end
+		rda = (angle - aiA) % (2*pi) - pi
+
+		destXV, destYV, destAV = targetVX, targetVY, 0
+
 	else
-		rdx, rdy, rvx, rvy, angle = 0, 15, 0, 0, 0
+		rdx, rdy, rda = 0, 0, 0
+		destXV, destYV, destAV = 0, 0, 0
 	end
 
+	rvx, rvy = aiBody:getLocalVector(destXV - aiXV, destYV - aiYV)
+	rva = destAV - aiAV
+
+
+
+	--Filght Controls
 	local pidX = rdx + 2 * rvx
 	if 2 < pidX then
 		table.insert(orders, "strafeRight")
@@ -84,46 +127,40 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 		table.insert(orders, "strafeLeft")
 	end
 
-	-- The -15 is the simplest way to add space between the two ships.
-	local pidY = (rdy - 15) + 2 * rvy
+	local pidY = rdy + 2 * rvy
 	if 5 < pidY then
 		table.insert(orders, "forward")
 	elseif -5 > pidY then
 		table.insert(orders, "back")
 	end
 
-	-- Aim the ship.
-	local angleToTarget = (-aiAngle + angle + math.pi/2) % (2*math.pi) - math.pi
-	local sign = vector.sign(angleToTarget)
+	local pidA = rda + rva / 10
+	if pidA > 0.05 then
+		table.insert(orders, "left")
+	elseif pidA < -0.05 then
+		table.insert(orders, "right")
+	end
 
-	if sign * angleToTarget > sign * aiAngleVol /10 then
-		if sign == 1 then
-			table.insert(orders, "left")
-		elseif sign == -1 then
-			table.insert(orders, "right")
+	--Shooting Logic
+	local ontarget = -0.1 < rda and rda < 0.1
+	if ontarget and shoot then
+		--Safety Check before shooting
+		local hit = false
+		local min = 1
+		local function RayCastCallback(fixture, x, y, xn, yn, fraction)
+			local body = fixture:getBody()
+			local object = body:getUserData()
+			local hasTeam = object and object.getTeam
+			if body ~= aiBody and hasTeam and fraction < min then
+				min = fraction
+				local team = object:getTeam()
+				hit = teamHostility:test(self.team, team)
+			end
+			return -1
 		end
-	else
-		if shoot then
-			local hit = true
-			local function RayCastCallback(fixture, _, _, _, _, _) --(fixture, x, y, xn, yn, fraction)
-				local structure = fixture:getBody():getUserData()
-				if structure and structure.corePart then
-					local team = structure.corePart:getTeam()
-					if not teamHostility:test(self.team, team) then
-						if not structure.corePart.ai or
-								structure.corePart.ai ~= self then
-							hit = false
-							return 0
-						end
-					end
-				end
-				return -1
-			end
-
-			physics:rayCast(aiX, aiY, targetX, targetY, RayCastCallback)
-			if hit then
-				table.insert(orders, "shoot")
-			end
+		worldInfo.physics:rayCast(aiX, aiY, targetX, targetY, RayCastCallback)
+		if hit then
+			table.insert(orders, "shoot")
 		end
 	end
 

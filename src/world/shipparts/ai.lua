@@ -9,117 +9,94 @@ function AI:__create(team)
 end
 
 function AI:getOrders(worldInfo, leader, aiBody, bodyList)
-
-
-	--Check for Leader + follow
-		--Do something for fomation location
-
-		--Get post
-
-
-	--Compute relative Components
-
-
-
-
-
-
-
-
-
 	local teamHostility = worldInfo.teamHostility
+	local aiX, aiY, aiA, aiXV, aiYV, aiAV = Location.bodyCenter6(aiBody)
 
-	local aiX, aiY, aiA, aiXV, aiYV, aiAV =
-		Location.bodyCenter6(aiBody)
+	--Spacing variables
+	local d = 15
+	local dsq = d * d
+	local m = 1
 
-	local target, leaderX, leaderY, leaderA, leaderVX, leaderVY, leaderMSq
-
-	local leaderFollow = false
+	--Cordination Logic
+	local destination
+	local leaderFollow
 	if leader and self.follow then
-		leaderX, leaderY, leaderA = leader:getLocation():getXYA()
-		leaderVX, leaderVY = leader.body:getLinearVelocity()
-		target = {leaderX, leaderY, leaderVX, leaderVY}
+		leaderBody = leader.body
+		local dx, dy = leaderBody:getLocalPoint(aiX, aiY)
+		local leaderMSq = (dx * dx) + (dy * dy)
 
-		local dx = leaderX - aiX
-		local dy = leaderY - aiY
-		leaderMSq = (dx * dx) + (dy * dy)
 		leaderFollow = leaderMSq > 30 * 30
-		target[5] = leaderMSq
+
+		--TODO add formation logic here
+		destination = {Location.bodyCenter6(leaderBody)}
+		m = 1 - dsq/leaderMSq
+	else
+		--TODO logic for ai post/home/station
 	end
 
 	local shoot = false
-	if not leaderFollow then
-		-- Search for any enemies.
-		if next(bodyList) ~= nil then
-			local targetMSq = nil
-			for body, fixtures in pairs(bodyList) do
-				local object = body:getUserData()
-				-- Look for core blocks.
-				if object and object.getTeam and
-				   teamHostility:test(self.team, object:getTeam()) then
-					local eX, eY = body:getPosition()
-					if eX and eY then
-						local dx = eX - aiX
-						local dy = eY - aiY
-						local mSq = (dx * dx) + (dy * dy)
-						if not targetMSq or targetMSq > mSq then
-							shoot = true
-							local vx, vy = body:getLinearVelocity()
-							target = {eX, eY, vx, vy, mSq}
-							targetMSq = mSq
-						end
+	local targetMSq = nil
+	local target
+	-- Loop through visable things
+	if next(bodyList) ~= nil then
+		for body, fixtures in pairs(bodyList) do
+			local object = body:getUserData()
+			-- Look for structures.
+			if object and object.type() == "structure" then
+				local dx, dy = body:getLocalPoint(aiX, aiY)
+				local mSq = (dx * dx) + (dy * dy)
+
+				--TODO add spacing logic here.
+
+				if teamHostility:test(self.team, object:getTeam()) then
+					if not targetMSq or targetMSq > mSq then
+						shoot = true
+						target = {Location.bodyCenter6(body)}
+						targetMSq = mSq
 					end
 				end
 			end
 		end
 	end
 
-	local orders = {}
+	local pi = math.pi
 
-	local targetX, targetY
-	local destXV, destYV, destAV
-
-	local rdx, rdy, rvx, rvy, rda, rva
+	--Change Logic if enemy is around
 	if target then
-		local targetVX, targetVY, distanceToTargetSq
-		targetX, targetY, targetVX, targetVY, distanceToTargetSq = unpack(target)
+		local angle = vector.angle(target[1] - aiX, target[2] - aiY) - pi/2
 
-		rdx, rdy = aiBody:getLocalVector(targetX - aiX, targetY - aiY)
-
-		-- The -15 is the simplest way to add space between the two ships.
-		--rdy = rdy - 15
-
-
-		local d = 15
-		local dsq = d * d
-		local m = 1 - dsq/distanceToTargetSq
-
-		rdx = rdx * m
-		rdy = rdy * m
-
-		local angle
-		local pi = math.pi
-
-		if shoot then
-			angle = vector.angle(targetX - aiX, targetY - aiY) + pi/2
+		if destination and leaderFollow then
+			--Keep travel information just aim at enemy
+			destination[3] = angle
 		else
-			angle = leaderA + pi
+			--Follow enemy if bored
+			destination = target
+			target[3] = angle
+			target[6] = 0
+			m = 1 - dsq/targetMSq
 		end
-		rda = (angle - aiA) % (2*pi) - pi
-
-		destXV, destYV, destAV = targetVX, targetVY, 0
-
-	else
-		rdx, rdy, rda = 0, 0, 0
-		destXV, destYV, destAV = 0, 0, 0
 	end
 
-	rvx, rvy = aiBody:getLocalVector(destXV - aiXV, destYV - aiYV)
-	rva = destAV - aiAV
-
+	--Prepare Relative Values
+	local rdx, rdy, rvx, rvy, rda, rva
+	if destination then
+		rdx = (destination[1] - aiX) * m
+		rdy = (destination[2] - aiY) * m
+		rda = (destination[3] - aiA + pi) % (2*pi) - pi
+		rvx =  destination[4] - aiXV
+		rvy =  destination[5] - aiYV
+		rva =  destination[6] - aiAV
+	else
+		rdx, rdy, rda = 0, 0, 0
+		rvx, rvy, rva = -aiXV, -aiYV, -aiAV
+	end
+	rdx, rdy = aiBody:getLocalVector(rdx, rdy)
+	rvx, rvy = aiBody:getLocalVector(rvx, rvy)
 
 
 	--Filght Controls
+	local orders = {}
+
 	local pidX = rdx + 2 * rvx
 	if 2 < pidX then
 		table.insert(orders, "strafeRight")
@@ -158,7 +135,7 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 			end
 			return -1
 		end
-		worldInfo.physics:rayCast(aiX, aiY, targetX, targetY, RayCastCallback)
+		worldInfo.physics:rayCast(aiX, aiY, target[1], target[2], RayCastCallback)
 		if hit then
 			table.insert(orders, "shoot")
 		end

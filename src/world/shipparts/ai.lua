@@ -20,18 +20,24 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	--Cordination Logic
 	local destination
 	local leaderFollow
-	if leader and self.follow then
-		leaderBody = leader.body
-		local dx, dy = leaderBody:getLocalPoint(aiX, aiY)
-		local leaderMSq = (dx * dx) + (dy * dy)
+	if self.follow then
+		if leader then
+			leaderBody = leader.body
+			local dx, dy = leaderBody:getLocalPoint(aiX, aiY)
+			local leaderMSq = (dx * dx) + (dy * dy)
 
-		leaderFollow = leaderMSq > 30 * 30
+			leaderFollow = leaderMSq > 30 * 30
 
-		--TODO add formation logic here
-		destination = {Location.bodyCenter6(leaderBody)}
-		m = 1 - dsq/leaderMSq
+			--TODO add formation logic here
+			destination = {Location.bodyCenter6(leaderBody)}
+			m = 1 - dsq/leaderMSq
+		end
 	else
-		--TODO logic for ai post/home/station
+		local post = self.post
+		if post then
+			local x, y, a = unpack(post)
+			destination = {x, y, a, 0, 0, 0}
+		end
 	end
 
 	local shoot = false
@@ -145,14 +151,17 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 end
 
 function AI:getMenu()
-	return {1, 0, 0, 1, 0, 0}, {"Follow", "", "", "Stay", "", ""}
+	return {1, 1, 1}, {"Follow", "Return", "Stay"}
 end
 
-function AI:runMenu(i)
+function AI:runMenu(i, body)
 	if i == 1 then
 		self.follow = true
-	elseif i == 4 then
+	elseif i == 2 then
 		self.follow = false
+	elseif i == 3 then
+		self.follow = false
+		self.post = {Location.bodyCenter3(body)}
 	end
 end
 

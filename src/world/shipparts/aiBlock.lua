@@ -60,8 +60,8 @@ function AIBlock:getMenu()
 	return self.modules.ai:getMenu()
 end
 
-function AIBlock:runMenu(i)
-	return self.modules.ai:runMenu(i)
+function AIBlock:runMenu(i, body)
+	return self.modules.ai:runMenu(i, body)
 end
 
 return AIBlock

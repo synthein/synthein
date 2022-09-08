@@ -115,7 +115,7 @@ function Selection:released(cursorX, cursorY)
 				local strength = part:getMenu()
 				local newAngle = vector.angle(cursorX - x, cursorY - y)
 				local index = angleToIndex(newAngle, #strength)
-				self.part:runMenu(index)
+				self.part:runMenu(index, body)
 			end
 			self.structure = nil
 			self.partSide = nil

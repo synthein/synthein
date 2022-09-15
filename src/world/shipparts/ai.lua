@@ -43,14 +43,31 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	local shoot = false
 	local targetMSq = nil
 	local target
+
+	local sepX, sepY = 0, 0
 	-- Loop through visable things
 	if next(bodyList) ~= nil then
 		for body, fixtures in pairs(bodyList) do
 			local object = body:getUserData()
 			-- Look for structures.
 			if object and object.type() == "structure" then
-				local dx, dy = body:getLocalPoint(aiX, aiY)
+				local  dx,  dy = body:getPosition()
+				local dvx, dvy = body:getLinearVelocity()
+
+				dx = dx - aiX
+				dy = dy - aiY
+				dvx = dvx - aiXV
+				dvy = dvy - aiYV
+
 				local mSq = (dx * dx) + (dy * dy)
+				local collisionMetric = (dx * dvx + dy * dvy) / mSq
+
+				-- 0 is somewhat arbitrary it can be used to create a threshhold
+				if collisionMetric < 0 then
+					-- Constant is calibrated subject to change
+					sepX = sepX + dx * 10 * collisionMetric
+					sepY = sepY + dy * 10 * collisionMetric
+				end
 
 				--TODO add spacing logic here.
 
@@ -86,8 +103,8 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	--Prepare Relative Values
 	local rdx, rdy, rvx, rvy, rda, rva
 	if destination then
-		rdx = (destination[1] - aiX) * m
-		rdy = (destination[2] - aiY) * m
+		rdx = (destination[1] - aiX) * m + sepX
+		rdy = (destination[2] - aiY) * m + sepY
 		rda = (destination[3] - aiA + pi) % (2*pi) - pi
 		rvx =  destination[4] - aiXV
 		rvy =  destination[5] - aiYV
@@ -96,9 +113,8 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 		rdx, rdy, rda = 0, 0, 0
 		rvx, rvy, rva = -aiXV, -aiYV, -aiAV
 	end
-	rdx, rdy = aiBody:getLocalVector(rdx, rdy)
-	rvx, rvy = aiBody:getLocalVector(rvx, rvy)
-
+	rdx,  rdy  = aiBody:getLocalVector(rdx,  rdy )
+	rvx,  rvy  = aiBody:getLocalVector(rvx,  rvy )
 
 	--Filght Controls
 	local orders = {}

@@ -22,6 +22,8 @@ function NewGameMenu.draw()
 end
 
 function NewGameMenu.keypressed(key)
+	-- TODO: Handle going back to the previous state in an
+	-- inupt-independent way.
 	if key == "escape" then
 		NewGameMenu.stackQueue:pop()
 	end
@@ -35,6 +37,10 @@ function NewGameMenu.mousepressed(x, y, mouseButton)
 	if mouseButton == 1 then
 		NewGameMenu.testButton(button)
 	end
+end
+
+function NewGameMenu.gamepadpressed(joystick, button)
+	NewGameMenu.testButton(NewGameMenu.menu:gamepadpressed(button))
 end
 
 function NewGameMenu.testButton(button)

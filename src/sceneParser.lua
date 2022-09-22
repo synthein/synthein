@@ -130,9 +130,16 @@ function SceneParser.saveScene(world)
 		lume.serialize(world.info.teamHostility.playerHostility) ..
 		"\n[scene]\n"
 
+	local indexes = {}
+	for k, _ in pairs(world.objectTypes) do
+		indexes[k] = 1
+	end
 
 	for _, object in ipairs(world.objects) do
-		references[object] = object:type() .. tostring(index)
+		local type = object:type()
+		local index = indexes[type]
+		references[object] = type .. tostring(index)
+		indexes[type] = index + 1
 	end
 
 	for _, object in ipairs(world.objects) do

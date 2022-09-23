@@ -40,13 +40,8 @@ function Controls.setCursor(control, Cursor)
 end
 
 function Controls.isDown(control)
-	if type(control[1]) == "userdata" then
-		if type(control[2]) == "string" then
-			local direction = control[1]:getHat(control[3])
-			return string.match(direction, control[2])
-		else
-			return control[1]:isDown(control[2])
-		end
+	if control[1].isGamepad and control[1]:isGamepad() then
+		return control[1]:isGamepadDown(control[2])
 	else
 		return control[1].isDown(control[2])
 	end
@@ -83,22 +78,22 @@ Controls.menu = {
 function Controls.defaults(joystick)
 	if joystick then
 		return {
-			forward 	= {joystick, "u", 1}, --dpup
-			back    	= {joystick, "d", 1}, --dpdown
-			left    	= {joystick, "l", 1}, --dpleft
-			right   	= {joystick, "r", 1}, --dpright
-			strafeLeft	= {joystick, 5}, --leftshoulder
-			strafeRight	= {joystick, 6}, --rightshoulder
-			shoot   	= {joystick, 1}, --a
-			build   	= {joystick, 4}, --y
-			destroy 	= {joystick, 3}, --x
-			playerMenu  = {joystick, 7},
+			forward 	= {joystick, "dpup"},
+			back    	= {joystick, "dpdown"},
+			left    	= {joystick, "dpleft"},
+			right   	= {joystick, "dpright"},
+			strafeLeft	= {joystick, "leftshoulder"},
+			strafeRight	= {joystick, "rightshoulder"},
+			shoot   	= {joystick, "a"},
+			build   	= {joystick, "b"},
+			destroy 	= {joystick, "x"},
+			playerMenu      = {joystick, "start"},
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
 			cursorX 	= {joystick, 1, "change"},
 			cursorY 	= {joystick, 2, "change"},
-			confirm		= {joystick, 1}, --a
-			cancel		= {joystick, 8}  --b
+			confirm		= {joystick, "a"},
+			cancel		= {joystick, "b"}
 			}
 	else
 		return {

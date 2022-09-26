@@ -4,7 +4,7 @@
 *  Destroy enemies that spawn at random.
 *  Build AI allies can follow you and attack nearby enemies.
 
-![screenshot](https://user-images.githubusercontent.com/2390950/148664456-b180ff4e-5237-42ce-8397-deed5472ecbe.png)
+![Synthein - go home](https://user-images.githubusercontent.com/2390950/192361016-93351564-5a8f-4ee7-93b5-688cfb4686fc.gif)
 
 ## Planned Features
 

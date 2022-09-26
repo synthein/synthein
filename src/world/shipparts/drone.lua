@@ -1,16 +1,16 @@
 local vector = require("vector")
 local Location = require("world/location")
 
-local AI = class()
+local Drone = class()
 
-function AI:__create(team)
+function Drone:__create(team)
 	self.team = team
 	self.follow = true
 end
 
-function AI:getOrders(worldInfo, leader, aiBody, bodyList)
+function Drone:getOrders(worldInfo, leader, droneBody, bodyList)
 	local teamHostility = worldInfo.teamHostility
-	local aiX, aiY, aiA, aiXV, aiYV, aiAV = Location.bodyCenter6(aiBody)
+	local droneX, droneY, droneA, droneXV, droneYV, droneAV = Location.bodyCenter6(droneBody)
 
 	--Spacing variables
 	local d = 15
@@ -23,7 +23,7 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	if self.follow then
 		if leader then
 			leaderBody = leader.body
-			local dx, dy = leaderBody:getLocalPoint(aiX, aiY)
+			local dx, dy = leaderBody:getLocalPoint(droneX, droneY)
 			local leaderMSq = (dx * dx) + (dy * dy)
 
 			leaderFollow = leaderMSq > 30 * 30
@@ -54,10 +54,10 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 				local  dx,  dy = body:getPosition()
 				local dvx, dvy = body:getLinearVelocity()
 
-				dx = dx - aiX
-				dy = dy - aiY
-				dvx = dvx - aiXV
-				dvy = dvy - aiYV
+				dx = dx - droneX
+				dy = dy - droneY
+				dvx = dvx - droneXV
+				dvy = dvy - droneYV
 
 				local mSq = (dx * dx) + (dy * dy)
 				local collisionMetric = (dx * dvx + dy * dvy) / mSq
@@ -86,7 +86,7 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 
 	--Change Logic if enemy is around
 	if target then
-		local angle = vector.angle(target[1] - aiX, target[2] - aiY) - pi/2
+		local angle = vector.angle(target[1] - droneX, target[2] - droneY) - pi/2
 
 		if destination and leaderFollow then
 			--Keep travel information just aim at enemy
@@ -103,18 +103,18 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	--Prepare Relative Values
 	local rdx, rdy, rvx, rvy, rda, rva
 	if destination then
-		rdx = (destination[1] - aiX) * m + sepX
-		rdy = (destination[2] - aiY) * m + sepY
-		rda = (destination[3] - aiA + pi) % (2*pi) - pi
-		rvx =  destination[4] - aiXV
-		rvy =  destination[5] - aiYV
-		rva =  destination[6] - aiAV
+		rdx = (destination[1] - droneX) * m + sepX
+		rdy = (destination[2] - droneY) * m + sepY
+		rda = (destination[3] - droneA + pi) % (2*pi) - pi
+		rvx =  destination[4] - droneXV
+		rvy =  destination[5] - droneYV
+		rva =  destination[6] - droneAV
 	else
 		rdx, rdy, rda = 0, 0, 0
-		rvx, rvy, rva = -aiXV, -aiYV, -aiAV
+		rvx, rvy, rva = -droneXV, -droneYV, -droneAV
 	end
-	rdx,  rdy  = aiBody:getLocalVector(rdx,  rdy )
-	rvx,  rvy  = aiBody:getLocalVector(rvx,  rvy )
+	rdx,  rdy  = droneBody:getLocalVector(rdx,  rdy )
+	rvx,  rvy  = droneBody:getLocalVector(rvx,  rvy )
 
 	--Filght Controls
 	local orders = {}
@@ -150,14 +150,14 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 			local body = fixture:getBody()
 			local object = body:getUserData()
 			local hasTeam = object and object.getTeam
-			if body ~= aiBody and hasTeam and fraction < min then
+			if body ~= droneBody and hasTeam and fraction < min then
 				min = fraction
 				local team = object:getTeam()
 				hit = teamHostility:test(self.team, team)
 			end
 			return -1
 		end
-		worldInfo.physics:rayCast(aiX, aiY, target[1], target[2], RayCastCallback)
+		worldInfo.physics:rayCast(droneX, droneY, target[1], target[2], RayCastCallback)
 		if hit then
 			table.insert(orders, "shoot")
 		end
@@ -166,11 +166,11 @@ function AI:getOrders(worldInfo, leader, aiBody, bodyList)
 	return orders
 end
 
-function AI:getMenu()
+function Drone:getMenu()
 	return {1, 1, 1}, {"Follow", "Return", "Stay"}
 end
 
-function AI:runMenu(i, body)
+function Drone:runMenu(i, body)
 	if i == 1 then
 		self.follow = true
 	elseif i == 2 then
@@ -181,7 +181,7 @@ function AI:runMenu(i, body)
 	end
 end
 
-function AI:update()
+function Drone:update()
 end
 
-return AI
+return Drone

@@ -1,14 +1,14 @@
 Cage = structure(0, 0 ,0)[-3]
 {
-b1m1m*m1b1
-m1      m1
-m1      m1
-m1      m1
-b1m1m1m1b1
+b1a1a*a1b1
+a1      a1
+a1      a1
+a1      a1
+b1a1a1a1b1
 }
 structure(-5, 0,0)[-3, Cage]BasicShip2
 structure(5, 0,0)[-3, Cage]BasicShip2
 structure(0, -2, 0)[*playerTeam,*playerShip]
 {
-a*
+d*
 }

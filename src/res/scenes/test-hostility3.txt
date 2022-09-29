@@ -1,16 +1,16 @@
 
 structure(10,10,0)[-1]
 {
-a*
+d*
 }
 
 structure(0,10,0)[1]
 {
-a*
+d*
 }
 
 structure(-10,10,0)[1]
 {
 g1
-a*
+d*
 }

@@ -1,329 +1,329 @@
 structure(-16,10,0)[-4]
 {
-a*
+d*
 }
 structure(-14,10,0)[-4]
 {
-a*
+d*
 }
 
 structure(-10,10,0)[-4]
 {
-a*
+d*
 }
 structure(-8,10,0)[-3]
 {
-a*
+d*
 }
 
 structure(-4,10,0)[-4]
 {
-a*
+d*
 }
 structure(-2,10,0)[-2]
 {
-a*
+d*
 }
 
 structure(2,10,0)[-4]
 {
-a*
+d*
 }
 structure(4,10,0)[-1]
 {
-a*
+d*
 }
 
 structure(8,10,0)[-4]
 {
-a*
+d*
 }
 structure(10,10,0)[1]
 {
-a*
+d*
 }
 
 structure(14,10,0)[-4]
 {
-a*
+d*
 }
 structure(16,10,0)[2]
 {
-a*
+d*
 }
 
 
 structure(-16,6,0)[-3]
 {
-a*
+d*
 }
 structure(-14,6,0)[-4]
 {
-a*
+d*
 }
 
 structure(-10,6,0)[-3]
 {
-a*
+d*
 }
 structure(-8,6,0)[-3]
 {
-a*
+d*
 }
 
 structure(-4,6,0)[-3]
 {
-a*
+d*
 }
 structure(-2,6,0)[-2]
 {
-a*
+d*
 }
 
 structure(2,6,0)[-3]
 {
-a*
+d*
 }
 structure(4,6,0)[-1]
 {
-a*
+d*
 }
 
 structure(8,6,0)[-3]
 {
-a*
+d*
 }
 structure(10,6,0)[1]
 {
-a*
+d*
 }
 
 structure(14,6,0)[-3]
 {
-a*
+d*
 }
 structure(16,6,0)[2]
 {
-a*
+d*
 }
 
 
 structure(-16,2,0)[-2]
 {
-a*
+d*
 }
 structure(-14,2,0)[-4]
 {
-a*
+d*
 }
 
 structure(-10,2,0)[-2]
 {
-a*
+d*
 }
 structure(-8,2,0)[-3]
 {
-a*
+d*
 }
 
 structure(-4,2,0)[-2]
 {
-a*
+d*
 }
 structure(-2,2,0)[-2]
 {
-a*
+d*
 }
 
 structure(2,2,0)[-2]
 {
-a*
+d*
 }
 structure(4,2,0)[-1]
 {
-a*
+d*
 }
 
 structure(8,2,0)[-2]
 {
-a*
+d*
 }
 structure(10,2,0)[1]
 {
-a*
+d*
 }
 
 structure(14,2,0)[-2]
 {
-a*
+d*
 }
 structure(16,2,0)[2]
 {
-a*
+d*
 }
 
 
 structure(-16,-2,0)[-1]
 {
-a*
+d*
 }
 structure(-14,-2,0)[-4]
 {
-a*
+d*
 }
 
 structure(-10,-2,0)[-1]
 {
-a*
+d*
 }
 structure(-8,-2,0)[-3]
 {
-a*
+d*
 }
 
 structure(-4,-2,0)[-1]
 {
-a*
+d*
 }
 structure(-2,-2,0)[-2]
 {
-a*
+d*
 }
 
 structure(2,-2,0)[-1]
 {
-a*
+d*
 }
 structure(4,-2,0)[-1]
 {
-a*
+d*
 }
 
 structure(8,-2,0)[-1]
 {
-a*
+d*
 }
 structure(10,-2,0)[1]
 {
-a*
+d*
 }
 
 structure(14,-2,0)[-1]
 {
-a*
+d*
 }
 structure(16,-2,0)[2]
 {
-a*
+d*
 }
 
 
 structure(-16,-6,0)[1]
 {
-a*
+d*
 }
 structure(-14,-6,0)[-4]
 {
-a*
+d*
 }
 
 structure(-10,-6,0)[1]
 {
-a*
+d*
 }
 structure(-8,-6,0)[-3]
 {
-a*
+d*
 }
 
 structure(-4,-6,0)[1]
 {
-a*
+d*
 }
 structure(-2,-6,0)[-2]
 {
-a*
+d*
 }
 
 structure(2,-6,0)[1]
 {
-a*
+d*
 }
 structure(4,-6,0)[-1]
 {
-a*
+d*
 }
 
 structure(8,-6,0)[1]
 {
-a*
+d*
 }
 structure(10,-6,0)[1]
 {
-a*
+d*
 }
 
 structure(14,-6,0)[1]
 {
-a*
+d*
 }
 structure(16,-6,0)[2]
 {
-a*
+d*
 }
 
 
 structure(-16,-10,0)[2]
 {
-a*
+d*
 }
 structure(-14,-10,0)[-4]
 {
-a*
+d*
 }
 
 structure(-10,-10,0)[2]
 {
-a*
+d*
 }
 structure(-8,-10,0)[-3]
 {
-a*
+d*
 }
 
 structure(-4,-10,0)[2]
 {
-a*
+d*
 }
 structure(-2,-10,0)[-2]
 {
-a*
+d*
 }
 
 structure(2,-10,0)[2]
 {
-a*
+d*
 }
 structure(4,-10,0)[-1]
 {
-a*
+d*
 }
 
 structure(8,-10,0)[2]
 {
-a*
+d*
 }
 structure(10,-10,0)[1]
 {
-a*
+d*
 }
 
 structure(14,-10,0)[2]
 {
-a*
+d*
 }
 
 structure(16,-10,0)[2]
 {
-a*
+d*
 }

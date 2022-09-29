@@ -4,20 +4,20 @@ PartRegistry.partsList = {
 b = require("world/shipparts/block"),
 e = require("world/shipparts/engineBlock"),
 g = require("world/shipparts/gunBlock"),
-a = require("world/shipparts/aiBlock"),
+d = require("world/shipparts/droneBlock"),
 p = require("world/shipparts/playerBlock"),
 n = require("world/shipparts/anchor"),
-m = require("world/shipparts/armorBlock"),
+a = require("world/shipparts/armorBlock"),
 s = require("world/shipparts/shieldBlock"),
 r = require("world/shipparts/repairBlock"),
-l = require("world/shipparts/missileLauncherBlock"),
+m = require("world/shipparts/missileLauncherBlock"),
 }
 
 PartRegistry.allParts = {}
 PartRegistry.coreParts = {}
 PartRegistry.noncoreParts = {}
 PartRegistry.isCorePart = {
-	a = true,
+	d = true,
 	p = true,
 	n = true,
 }

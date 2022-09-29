@@ -2,60 +2,60 @@
 
 structure(-16,10,0)[-1]
 {
-a*
+d*
 }
 structure(-12,10,0)[-4]
 {
 g1
-a*
+d*
 }
 
 structure(-2,10,0)[-1]
 {
-a*
+d*
 }
 structure(2,10,0)[-3]
 {
 g1
-a*
+d*
 }
 
 structure(12,10,0)[-1]
 {
-a*
+d*
 }
 structure(16,10,0)[-2]
 {
 g1
-a*
+d*
 }
 
 structure(-16,-10,0)[-1]
 {
-a*
+d*
 }
 structure(-12,-10,0)[-1]
 {
 g1
-a*
+d*
 }
 
 structure(-2,-10,0)[-1]
 {
-a*
+d*
 }
 structure(2,-10,0)[1]
 {
 g1
-a*
+d*
 }
 
 structure(12,-10,0)[-1]
 {
-a*
+d*
 }
 structure(16,-10,0)[2]
 {
 g1
-a*
+d*
 }

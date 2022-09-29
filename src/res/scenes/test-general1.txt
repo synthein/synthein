@@ -22,7 +22,7 @@ g*
 }
 structure(8,0,0)[0]
 {
-m*
+a*
 }
 structure(2,2,0)[0]
 {
@@ -34,28 +34,28 @@ s*
 }
 structure(6,2,0)[0]
 {
-l*
+m*
 }
 
 structure(4,-4,0)[1]
 {
-a*
+d*
 }
 structure(2,-4,0)[-1]
 {
-a*
+d*
 }
 structure(0,-4,0)[-2]
 {
-a*
+d*
 }
 structure(-2,-4,0)[-3]
 {
-a*
+d*
 }
 structure(-4,-4,0)[-4]
 {
-a*
+d*
 }
 
 shot(-10,-5,0, 0, 10, 0)[10]

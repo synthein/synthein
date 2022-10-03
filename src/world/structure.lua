@@ -53,8 +53,29 @@ function Structure:__create(worldInfo, location, data, appendix)
 		--self.type = "generic"
 	end
 
-	-- TODO: Use a separate table for the user data
-	self.body:setUserData(self)
+	local userDataParent = {
+		__index = function(t, key)
+			print("Undesirable connection in structure body userdata. Key:", key)
+			print(debug.traceback())
+			return self[key]
+		end
+	}
+	local userData = setmetatable({}, userDataParent)
+	-- TODO Make a feild not a function
+	function userData.type()
+		return "structure"
+	end
+
+	function userData.getTeam()
+		--TODO Still circluar
+		local corePart = self.corePart
+		if corePart then
+			return corePart:getTeam()
+		end
+		return 0
+	end
+
+	self.body:setUserData(userData)
 	self.shield = Shield(self.body)
 
 	local function callback(part, structure, x , y)
@@ -70,7 +91,7 @@ function Structure:postCreate(references)
 	end
 end
 
--- TODO: Move to user data and not a function, just a field
+-- TODO: Remove Duplicate between user data
 function Structure:type()
 	return "structure"
 end
@@ -78,9 +99,11 @@ end
 -------------------------
 -- Setters and Getters --
 -------------------------
+--TODO Still needed???
 function Structure:getTeam()
-	if self.corePart then
-		return self.corePart:getTeam()
+	local corePart = self.corePart
+	if corePart then
+		return corePart:getTeam()
 	end
 	return 0
 end

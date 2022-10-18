@@ -37,7 +37,8 @@ function Repair:update(moduleInputs, location)
             local bodyObject = body:getUserData()
             local teamHostility = moduleInputs.teamHostility
 
-            if bodyObject and bodyObject.getTeam and not teamHostility:test(self.team, bodyObject:getTeam()) then
+			local team = bodyObject and bodyObject.team
+            if team and not teamHostility:test(self.team, team) then
                 for fixture, visable in pairs(fixtures) do
                     local object = fixture:getUserData()
                     if object.getScaledHealth then

@@ -400,9 +400,22 @@ end
 -- Restructure input from player or output from ai
 -- make the information easy for parts to handle.
 function Structure:command(dt)
+	--TODO This is a wasteful way to do this look for a better way.
+	local capabilities = {}
+	for i, part in ipairs(self.gridTable:loop()) do
+		for key, module in pairs(part:getModules()) do
+			if key == "repair" then
+				capabilities.repair = true
+			elseif key == "gun" then
+				capabilities.combat = true
+			end
+		end
+	end
+
+
 	local orders = {}
 	if self.corePart then
-		orders = self.corePart:getOrders(self.body)
+		orders = self.corePart:getOrders(self.body, capabilities)
 	end
 
 	local engineOrders = {}

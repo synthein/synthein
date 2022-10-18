@@ -8,7 +8,7 @@ function Drone:__create(team)
 	self.follow = true
 end
 
-function Drone:getOrders(worldInfo, leader, droneBody, bodyList)
+function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	local teamHostility = worldInfo.teamHostility
 	local droneX, droneY, droneA, droneXV, droneYV, droneAV = Location.bodyCenter6(droneBody)
 

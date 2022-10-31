@@ -200,21 +200,17 @@ function Structure:annex(annexee, annexeeBaseVector, structureVector)
 
 	local parts = annexee.gridTable:loop()
 	for i=1,#parts do
-		self:annexPart(annexee, parts[i], baseVector)
-	end
-end
+		local part = parts[i]
+		local annexeeVector = {part.location[1], part.location[2], part.location[3]}
+		local netVector = StructureMath.sumVectors(baseVector, annexeeVector)
 
--- TODO: combine with annex
-function Structure:annexPart(annexee, part, baseVector)
-	local annexeeVector = {part.location[1], part.location[2], part.location[3]}
-	local netVector = StructureMath.sumVectors(baseVector, annexeeVector)
-
-	local x, y = unpack(netVector)
-	if self.gridTable:index(x, y) then
-		annexee:disconnectPart(part.location)
-	else
-		annexee:removePart(part)
-		self:addPart(part, netVector[1], netVector[2], netVector[3])
+		local x, y = unpack(netVector)
+		if self.gridTable:index(x, y) then
+			annexee:disconnectPart(part.location)
+		else
+			annexee:removePart(part)
+			self:addPart(part, netVector[1], netVector[2], netVector[3])
+		end
 	end
 end
 

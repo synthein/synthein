@@ -1,17 +1,10 @@
 -- Utilities
-local vector = require("vector")
 local LocationTable = require("locationTable")
 
 local Part = class()
 
 function Part:__create()
-	self.physicsShape = nil
 	self.connectableSides = {true, true, true, true}
-	self.thrust = 0
-	self.torque = 0
-	self.gun = false
-	self.type = "generic"
-
 	self.modules = {}
 end
 
@@ -23,6 +16,7 @@ function Part:saveData()
 	return {self.modules.hull.health}
 end
 
+--TODO This function is unessecary remove after branches are merged
 function Part:getModules()
 	return self.modules
 end

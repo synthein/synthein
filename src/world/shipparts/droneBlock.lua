@@ -48,12 +48,13 @@ function DroneBlock:removeFixtures()
 	self.modules.sensor:removeFixtures()
 end
 
-function DroneBlock:getOrders(body)
+function DroneBlock:getOrders(body, capabilities)
 	return self.modules.drone:getOrders(
 		self.worldInfo,
 		self.leader,
 		body,
-		self.modules.sensor:getBodyList())
+		self.modules.sensor:getBodyList(),
+		capabilities)
 end
 
 function DroneBlock:getMenu()

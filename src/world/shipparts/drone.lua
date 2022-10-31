@@ -70,8 +70,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList)
 				end
 
 				--TODO add spacing logic here.
-
-				if teamHostility:test(self.team, object:getTeam()) then
+				if teamHostility:test(self.team, object.team or 0) then
 					if not targetMSq or targetMSq > mSq then
 						shoot = true
 						target = {Location.bodyCenter6(body)}
@@ -149,10 +148,9 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList)
 		local function RayCastCallback(fixture, x, y, xn, yn, fraction)
 			local body = fixture:getBody()
 			local object = body:getUserData()
-			local hasTeam = object and object.getTeam
-			if body ~= droneBody and hasTeam and fraction < min then
+			local team = object and object.team
+			if body ~= droneBody and team and fraction < min then
 				min = fraction
-				local team = object:getTeam()
 				hit = teamHostility:test(self.team, team)
 			end
 			return -1

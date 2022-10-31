@@ -40,7 +40,10 @@ function love.load()
 
 			if scene then
 				local InitWorld = require("gamestates/initWorld")
-				MainMenu.stackQueue:push(InitWorld).load(scene, {}, false)
+				--TODO {{true}} is a bandaid. Perminant solution required
+				-- No longer crashes with drones/players of team 1
+				-- Still crashes with drones/players of teams 2+
+				MainMenu.stackQueue:push(InitWorld).load(scene, {{true}}, false)
 			else
 				error(
 					"--scene must have an argument. You provided these arguments: "

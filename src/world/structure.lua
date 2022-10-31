@@ -35,6 +35,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 		corePart = shipTable.corePart
 	end
 
+	local team = 0
 	if corePart then
 		if corePart.type == "control" then
 			self.body:setAngularDamping(1)
@@ -47,6 +48,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 
 		corePart.worldInfo = worldInfo
 		self.corePart = corePart
+		team = corePart:getTeam()
 	else
 		self.body:setAngularDamping(.1)
 		self.body:setLinearDamping(0.01)
@@ -66,14 +68,7 @@ function Structure:__create(worldInfo, location, data, appendix)
 		return "structure"
 	end
 
-	function userData.getTeam()
-		--TODO Still circluar
-		local corePart = self.corePart
-		if corePart then
-			return corePart:getTeam()
-		end
-		return 0
-	end
+	userData.team = team
 
 	self.body:setUserData(userData)
 	self.shield = Shield(self.body)
@@ -94,18 +89,6 @@ end
 -- TODO: Remove Duplicate between user data
 function Structure:type()
 	return "structure"
-end
-
--------------------------
--- Setters and Getters --
--------------------------
---TODO Still needed???
-function Structure:getTeam()
-	local corePart = self.corePart
-	if corePart then
-		return corePart:getTeam()
-	end
-	return 0
 end
 
 function Structure:getSaveData(references)

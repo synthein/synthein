@@ -382,7 +382,7 @@ function Structure:command(dt)
 	--TODO This is a wasteful way to do this look for a better way.
 	local capabilities = {}
 	for i, part in ipairs(self.gridTable:loop()) do
-		for key, module in pairs(part:getModules()) do
+		for key, module in pairs(part.modules) do
 			if key == "repair" then
 				capabilities.repair = true
 			elseif key == "gun" then
@@ -435,7 +435,7 @@ function Structure:command(dt)
 		teamHostility = self.worldInfo.teamHostility}
 
 	for i, part in ipairs(self.gridTable:loop()) do
-		for key, module in pairs(part:getModules()) do
+		for key, module in pairs(part.modules) do
 			local location = part.location
 			local newObject, disconnect = module:update(moduleInputs, location)
 

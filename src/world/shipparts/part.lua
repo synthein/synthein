@@ -16,11 +16,6 @@ function Part:saveData()
 	return {self.modules.hull.health}
 end
 
---TODO This function is unessecary remove after branches are merged
-function Part:getModules()
-	return self.modules
-end
-
 function Part:addFixtures(body)
 	self.modules["hull"]:addFixtures(body)
 end

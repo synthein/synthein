@@ -15,12 +15,9 @@ if love.graphics then
 end
 MainMenu.menu = Menu.create(250, 5, buttonNames)
 
--- TODO: Replace this function with just buttons[name].
 local function gotoState(state)
-	for i, name in ipairs(buttonNames) do
-		if state == name then
-			MainMenu.stackQueue:push(buttons[i]).load()
-		end
+	if state ~= nil then
+		MainMenu.stackQueue:push(buttons[state]).load()
 	end
 end
 
@@ -52,22 +49,29 @@ function MainMenu.keypressed(key)
 		love.event.quit()
 	end
 
+	-- TODO: Refactor menu to return the index.
 	local button = MainMenu.menu:keypressed(key)
 	for i, name in ipairs(buttonNames) do
 		if button == name then
-			MainMenu.stackQueue:push(buttons[i])
+			gotoState(i)
 		end
 	end
 end
 
 function MainMenu.mousepressed(x, y, mouseButton)
 	if mouseButton == 1 then
-		gotoState(MainMenu.menu:pressed(x, y))
+		gotoState(MainMenu.menu:getButtonAt(x, y))
 	end
 end
 
 function MainMenu.gamepadpressed(joystick, button)
-	gotoState(MainMenu.menu:gamepadpressed(button))
+	-- TODO: Refactor menu to return the index.
+	local button = MainMenu.menu:gamepadpressed(button)
+	for i, name in ipairs(buttonNames) do
+		if button == name then
+			gotoState(i)
+		end
+	end
 end
 
 function MainMenu.resize(w, h)

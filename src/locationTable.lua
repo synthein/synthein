@@ -1,5 +1,8 @@
 local vector = require("vector")
 
+
+print(debug.traceback("Using Deprecated LocationTable"))
+
 local LocationTable = class()
 
 function LocationTable:__create(...)
@@ -17,17 +20,20 @@ function LocationTable:__create(...)
 	elseif typeString == "number" then
 		t = input
 	elseif typeString == "string" then
+		print(debug.traceback("Using Deprecated Functionality"))
 		t = {}
 		for coord in string.gmatch(lead, "[%w]-([-%d.e]*)[%w]-[,]-") do
 			table.insert(t, tonumber(coord))
 		end
 	elseif typeString == "Body" then
+		--print(debug.traceback("Using Deprecated Functionality"))
 		t = {}
 		t[1], t[2] = lead:getPosition()
 		t[3] = lead:getAngle()
 		t[4], t[5] = lead:getLinearVelocity()
 		t[6] = lead:getAngularVelocity()
 	elseif typeString == "Fixture" then
+		print(debug.traceback("Using Deprecated Functionality"))
 		local body = lead:getBody()
 		local l = input[2]
 		if body and l then
@@ -51,6 +57,7 @@ function LocationTable:__create(...)
 end
 
 function LocationTable:__tostring()
+	print(debug.traceback("Using Deprecated Functionality"))
 	local string = ""
 	for i in ipairs(self) do
 		if not (i == 1) then string = string .. ","	end
@@ -60,6 +67,7 @@ function LocationTable:__tostring()
 end
 
 function LocationTable:__add(locationTable)
+	print(debug.traceback("Using Deprecated Functionality"))
 	local l = LocationTable(locationTable:getAll())
 
 	l[1], l[2] = vector.rotate(l[1], l[2], self[3])
@@ -85,16 +93,49 @@ function LocationTable:setV(vx, vy) self[4] = vx; self[5] = vy end
 function LocationTable:setVW(vx, vy, w) self[4] = vx; self[5] = vy; self[6] = w end
 --]]
 
-function LocationTable:getX() return self[1] end
-function LocationTable:getY() return self[2] end
-function LocationTable:getA() return self[3] end
-function LocationTable:getVX() return self[4] end
-function LocationTable:getVY() return self[5] end
-function LocationTable:getW() return self[6] end
-function LocationTable:getXY() return self[1], self[2] end
-function LocationTable:getXYA() return self[1], self[2], self[3] end
-function LocationTable:getV() return self[4], self[5] end
-function LocationTable:getVW() return self[4], self[5], self[6] end
-function LocationTable:getAll() return unpack(self) end
+function LocationTable:getX()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[1]
+end
+function LocationTable:getY()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[2]
+end
+function LocationTable:getA()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[3]
+end
+function LocationTable:getVX()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[4]
+end
+function LocationTable:getVY()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[5]
+end
+function LocationTable:getW()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[6]
+end
+function LocationTable:getXY()
+	--print(debug.traceback("Using Deprecated Functionality"))
+	return self[1], self[2]
+end
+function LocationTable:getXYA()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[1], self[2], self[3]
+end
+function LocationTable:getV()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[4], self[5]
+end
+function LocationTable:getVW()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return self[4], self[5], self[6]
+end
+function LocationTable:getAll()
+	print(debug.traceback("Using Deprecated Functionality"))
+	return unpack(self)
+end
 
 return LocationTable

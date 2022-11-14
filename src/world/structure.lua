@@ -92,7 +92,7 @@ function Structure:type()
 end
 
 function Structure:getSaveData(references)
-	local team = self:getTeam()
+	local team = self.body:getUserData().team
 	local leader
 	if self.corePart and self.corePart.leader then
 		leader = references[self.corePart.leader]

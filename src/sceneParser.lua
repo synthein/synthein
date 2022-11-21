@@ -1,8 +1,8 @@
-local LocationTable = require("locationTable")
+local Vector = require("vector")
 
 -- SceneParser serializes and deserializes scenes and ships as strings.
 local Spawn = require("world/spawn")
-local parse = require("parse")
+local Parse = require("parse")
 
 local lume = require("vendor/lume")
 
@@ -81,7 +81,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					ifShipString = true
 				end
 
-				local l = location + LocationTable(locationString)
+				local l = Vector.add(location, Parse.parseNumbers(locationString))
 
 				local data = {}
 				for var in string.gmatch(dataString, varStr) do
@@ -147,7 +147,7 @@ function SceneParser.saveScene(world)
 		local string = ""
 			.. references[object] .. " = " .. object:type()
 			.. "(" .. tostring(object:getLocation()) .. ")"
-			.. parse.packData(data) .. "\n"
+			.. Parse.packData(data) .. "\n"
 			.. (appendix and "{\n" .. appendix .. "\n}\n" or "")
 
 		sceneString = sceneString .. string

@@ -182,7 +182,7 @@ function World:update(dt)
 
 	for i, object in ipairs(self.objects) do
 		if object.isDestroyed == false then
-			local objectX, objectY = object:getLocation():getXY()
+			local objectX, objectY = object.body:getPosition()
 
 			if object:type() == "structure" and object.corePart and
 					object.corePart:getTeam() > 0 then

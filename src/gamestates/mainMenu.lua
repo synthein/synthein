@@ -49,13 +49,7 @@ function MainMenu.keypressed(key)
 		love.event.quit()
 	end
 
-	-- TODO: Refactor menu to return the index.
-	local button = MainMenu.menu:keypressed(key)
-	for i, name in ipairs(buttonNames) do
-		if button == name then
-			gotoState(i)
-		end
-	end
+	gotoState(MainMenu.menu:keypressed(key))
 end
 
 function MainMenu.mousepressed(x, y, mouseButton)
@@ -65,13 +59,7 @@ function MainMenu.mousepressed(x, y, mouseButton)
 end
 
 function MainMenu.gamepadpressed(joystick, button)
-	-- TODO: Refactor menu to return the index.
-	local button = MainMenu.menu:gamepadpressed(button)
-	for i, name in ipairs(buttonNames) do
-		if button == name then
-			gotoState(i)
-		end
-	end
+	gotoState(MainMenu.menu:gamepadpressed(key))
 end
 
 function MainMenu.resize(w, h)

@@ -4,8 +4,8 @@ local Menu = require("menu")
 
 local NewGameMenu = GameState()
 
-local buttonNames = {"Single Player", "COOP", "Allied", "VS"}
-NewGameMenu.menu = Menu.create(250, 5, buttonNames)
+local modes = {"Single Player", "COOP", "Allied", "VS"}
+NewGameMenu.menu = Menu.create(250, 5, modes)
 
 function NewGameMenu.update(dt)
 	NewGameMenu.menu:update(dt)
@@ -44,18 +44,19 @@ function NewGameMenu.gamepadpressed(joystick, button)
 end
 
 function NewGameMenu.testButton(button)
+	local mode = modes[button]
 	local scene, playerHostility
 	local start = true
-	if button == "Single Player" then
+	if mode == "Single Player" then
 		scene = "startScene"
 		playerHostility = {{false}}
-	elseif button == "COOP" then
+	elseif mode == "COOP" then
 		scene = "startSceneCOOP"
 		playerHostility = {{false, false}, {false, false}}
-	elseif button == "Allied" then
+	elseif mode == "Allied" then
 		scene = "startSceneTwoPlayer"
 		playerHostility = {{false, false}, {false, false}}
-	elseif button == "VS" then
+	elseif mode == "VS" then
 		scene = "startSceneTwoPlayer"
 		playerHostility = {{false, true}, {true, false}}
 	else

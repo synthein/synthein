@@ -65,10 +65,10 @@ function LocationTable:__tostring()
 	end
 	return string
 end
-
+--[[
 function LocationTable:__add(locationTable)
 	print(debug.traceback("Using Deprecated Functionality"))
-	local l = LocationTable(locationTable:getAll())
+	local l = LocationTable(unpack(locationTable))
 
 	l[1], l[2] = vector.rotate(l[1], l[2], self[3])
 	l[4], l[5] = vector.rotate(l[4], l[5], self[3])
@@ -79,7 +79,7 @@ function LocationTable:__add(locationTable)
 
 	return l
 end
-
+--]]
 --[[
 function LocationTable:setX(x) self[1] = x end
 function LocationTable:setY(y) self[2] = y end
@@ -93,6 +93,7 @@ function LocationTable:setV(vx, vy) self[4] = vx; self[5] = vy end
 function LocationTable:setVW(vx, vy, w) self[4] = vx; self[5] = vy; self[6] = w end
 --]]
 
+--[[
 function LocationTable:getX()
 	print(debug.traceback("Using Deprecated Functionality"))
 	return self[1]
@@ -118,7 +119,7 @@ function LocationTable:getW()
 	return self[6]
 end
 function LocationTable:getXY()
-	--print(debug.traceback("Using Deprecated Functionality"))
+	print(debug.traceback("Using Deprecated Functionality"))
 	return self[1], self[2]
 end
 function LocationTable:getXYA()
@@ -137,5 +138,5 @@ function LocationTable:getAll()
 	print(debug.traceback("Using Deprecated Functionality"))
 	return unpack(self)
 end
-
+--]]
 return LocationTable

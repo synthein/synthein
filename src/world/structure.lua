@@ -2,6 +2,7 @@ local GridTable = require("gridTable")
 local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
 local LocationTable = require("locationTable")
+local Location = require("world/location")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
 local Shield = require("world/shipparts/shield")
@@ -352,7 +353,9 @@ function Structure:disconnectPart(location, isDestroyed)
 		local partList = structureList[i]
 		local basePart = partList[1]
 		local baseVector = basePart.location
-		local location = basePart:getWorldLocation()
+		local basePartFixture = basePart.modules["hull"].fixture
+		local location = Location.fixturePoint6(
+			basePartFixture, baseVector[1], baseVector[2])
 
 		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 

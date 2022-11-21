@@ -1,7 +1,6 @@
 local Controls = require("controls")
 local Gamesave = require("gamesave")
 local InGame = require("gamestates/inGame")
-local LocationTable = require("locationTable")
 local Player = require("player")
 local SceneParser = require("sceneParser")
 local Screen = require("screen")
@@ -39,7 +38,7 @@ function InitWorld.load(scene, playerHostility, ifSave)
 
 	local screen = Screen()
 
-	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, LocationTable(0,0))
+	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, {0,0,0,0,0,0})
 	local players = {}
 	for i, ship in ipairs(playerShips) do
 		if i == 1 then

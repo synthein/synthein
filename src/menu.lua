@@ -108,7 +108,7 @@ function Menu:draw()
 	end
 
 	love.graphics.stencil(stencilFunction, "replace", 1)
-    love.graphics.setStencilTest("greater", 0)
+	love.graphics.setStencilTest("greater", 0)
 
 	for i, _ in ipairs(self.buttons) do
 		if i == self.selectedButton then
@@ -160,7 +160,7 @@ function Menu:keypressed(key)
 			self.selectedButton = self.selectedButton + 1
 		end
 	elseif key == "return" then
-		return self.buttons[self.selectedButton]
+		return self.selectedButton
 	end
 end
 

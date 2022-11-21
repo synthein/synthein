@@ -21,12 +21,13 @@ local pauseMenu = {}
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 
 local function pauseMenuAction(selection)
-	if selection == "Save" then
+	local action = pauseMenu.buttons[selection]
+	if action == "Save" then
 		menuOpen = "Save"
-	elseif selection == "Main Menu" then
+	elseif action == "Main Menu" then
 		menuOpen = false
 		InGame.stackQueue:pop()
-	elseif selection == "Quit" then
+	elseif action == "Quit" then
 		love.event.quit()
 	end
 end

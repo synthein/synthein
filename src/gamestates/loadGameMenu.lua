@@ -5,16 +5,16 @@ local InitWorld = require("gamestates/initWorld")
 
 local LoadGameMenu = GameState()
 
-local buttons = {}
+local scenes = {}
 local files = {}
-LoadGameMenu.menu = Menu.create(250, 5, buttons)
+LoadGameMenu.menu = Menu.create(250, 5, scenes)
 
 function LoadGameMenu.load()
-	buttons = {}
+	scenes = {}
 	files = love.filesystem.getDirectoryItems("saves")
 	for _, fileName in pairs(files) do
 		local buttonName = string.gsub(fileName, ".txt", "")
-		table.insert(buttons, buttonName)
+		table.insert(scenes, buttonName)
 	end
 end
 
@@ -46,7 +46,8 @@ function LoadGameMenu.mousepressed(x, y, mouseButton)
 	LoadGameMenu.LoadGame(loadGameChoice)
 end
 
-function LoadGameMenu.LoadGame(scene)
+function LoadGameMenu.LoadGame(index)
+	local scene = scenes[index]
 	if scene then
 		LoadGameMenu.stackQueue:replace(InitWorld).load(scene, {}, true)
 	end

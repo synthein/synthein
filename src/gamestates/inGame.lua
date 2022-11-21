@@ -1,6 +1,5 @@
 local Debug = require("debugmode")
 local Gamesave = require("gamesave")
-local LocationTable = require("locationTable")
 local Log = require("log")
 local Menu = require("menu")
 local SaveMenu = require("saveMenu")
@@ -205,8 +204,11 @@ function InGame.update(dt)
 						eventTime = 0
 						local scene = math.ceil(love.math.random() * 10)
 						scene = tostring(scene)
-						local location = {player.ship.body:getX(),
-										  player.ship.body:getY()}
+						local location = {
+							player.ship.body:getX(), player.ship.body:getY(),
+							0, 0, 0, 0
+							}
+
 						local vV = {player.ship.body:getLinearVelocity()}
 						local mag = vector.magnitude(unpack(vV))
 						local uV
@@ -225,7 +227,6 @@ function InGame.update(dt)
 						location[2] = location[2] + netV[2]
 						location[3] = 2 * math.pi * math.random()
 
-						location = LocationTable(unpack(location))
 						local inputs = {playerTeam = 1, playerShip = player.ship}
 						local ships = SceneParser.loadScene("scene" .. scene, world, location, inputs)
 						for _, ship in ipairs(ships) do

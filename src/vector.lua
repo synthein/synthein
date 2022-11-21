@@ -32,4 +32,18 @@ function vector.rotate(x, y, angle)
 	return vector.components(r, t + angle)
 end
 
+function vector.add(a, b)
+	local l = {}
+	l[1], l[2] = vector.rotate(b[1], b[2], a[3])
+	l[3] = b[3]
+	l[4], l[5] = vector.rotate(b[4] or 0, b[5] or 0, a[3])
+	l[6] = b[6] or 0
+
+	for i = 1, 6 do
+		l[i] = l[i] + a[i]
+	end
+
+	return l
+end
+
 return vector

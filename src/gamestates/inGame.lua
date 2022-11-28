@@ -19,7 +19,7 @@ local menuOpen = false
 local pauseMenu = {}
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 
-local function pauseMenuAction(selection)
+local function pauseMenuAction(selection, back)
 	local action = pauseMenu.buttons[selection]
 	if action == "Save" then
 		menuOpen = "Save"
@@ -29,6 +29,8 @@ local function pauseMenuAction(selection)
 	elseif action == "Quit" then
 		love.event.quit()
 	end
+
+	if back then menuOpen = false end
 end
 
 local menu = Menu.create(225, 5, pauseMenu.buttons)
@@ -59,7 +61,6 @@ end
 
 function InGame.keypressed(key)
 	if key == "f12" then debugmode.on = not debugmode.on end
-	if key == "escape" then menuOpen = false end
 
 	if menuOpen == "Pause" then
 		pauseMenuAction(menu:keypressed(key))
@@ -155,6 +156,7 @@ end
 function InGame.update(dt)
 	console.repl()
 
+	-- TODO: debug why controllers can't open the menu
 	local openMenu, closeMenu = false, false
 	-- Send input to the players.
 	for _, player in ipairs(players) do

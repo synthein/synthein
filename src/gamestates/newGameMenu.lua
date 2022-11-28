@@ -22,14 +22,7 @@ function NewGameMenu.draw()
 end
 
 function NewGameMenu.keypressed(key)
-	-- TODO: Handle going back to the previous state in an
-	-- inupt-independent way.
-	if key == "escape" then
-		NewGameMenu.stackQueue:pop()
-	end
-
-	local button = NewGameMenu.menu:keypressed(key)
-	NewGameMenu.testButton(button)
+	NewGameMenu.testButton(NewGameMenu.menu:keypressed(key))
 end
 
 function NewGameMenu.mousepressed(x, y, mouseButton)
@@ -43,7 +36,11 @@ function NewGameMenu.gamepadpressed(joystick, button)
 	NewGameMenu.testButton(NewGameMenu.menu:gamepadpressed(button))
 end
 
-function NewGameMenu.testButton(button)
+function NewGameMenu.testButton(button, back)
+	if back then
+		NewGameMenu.stackQueue:pop()
+	end
+
 	local mode = modes[button]
 	local scene, playerHostility
 	local start = true

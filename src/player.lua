@@ -82,15 +82,7 @@ function Player:buttonpressed(source, button, debugmode)
 	local menuButton = Controls.test("menu", self.controls, source, button)
 	local order = Controls.test("pressed", self.controls, source, button)
 
-	if self.menuOpen then
-		if not menuButton then
-			return
-		end
-		if menuButton == "cancel" then
-			-- Exit menu if canel is pressed.
-			self.closeMenu = true
-		end
-	elseif self.menu then
+	if self.menu then
 
 		if not menuButton then
 			return

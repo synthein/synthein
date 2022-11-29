@@ -139,6 +139,7 @@ function FormationEditor.keypressed(key)
 	end
 end
 
+-- TODO: Make menu work with keyboard and controller
 function FormationEditor.mousepressed(x, y, mouseButton)
 	if menuOpen == "State" then
 		if mouseButton == 1 then

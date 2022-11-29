@@ -40,7 +40,7 @@ function Selection:pressed(cursorX, cursorY, order)
 	if structure then part = structure:findPart(cursorX, cursorY) end
 	if structure and structure:type() == "structure" and part then
 		local build = self.build
-		local team = structure:getTeam()
+		local team = structure.body:getUserData().team
 		if build then
 			if order == "build" then
 				if build.mode == 3 then

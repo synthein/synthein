@@ -354,8 +354,8 @@ function Structure:disconnectPart(location, isDestroyed)
 		local basePart = partList[1]
 		local baseVector = basePart.location
 		local basePartFixture = basePart.modules["hull"].fixture
-		local location = Location.fixturePoint6(
-			basePartFixture, baseVector[1], baseVector[2])
+		local location = {Location.fixturePoint6(
+			basePartFixture, baseVector[1], baseVector[2])}
 
 		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 

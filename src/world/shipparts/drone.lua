@@ -1,5 +1,6 @@
 local vector = require("vector")
 local Location = require("world/location")
+local StructureMath = require("world/structureMath")
 
 local Drone = class()
 
@@ -76,6 +77,19 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 						target = {Location.bodyCenter6(body)}
 						targetMSq = mSq
 					end
+				elseif object.team and object.team ~= 0 then
+					if capabilities.repair and not self.repairFixture then
+						local fixtures = body:getFixtures()
+						for _, fixture in ipairs(fixtures) do
+							local object = fixture:getUserData()
+							if object.getScaledHealth then
+								local health = object:getScaledHealth()
+								if health ~= 1 then
+									self.repairFixture = fixture
+								end
+							end
+						end
+					end
 				end
 			end
 		end
@@ -84,7 +98,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	local pi = math.pi
 
 	--Change Logic if enemy is around
-	if target then
+	if target and capabilities.combat then
 		local angle = vector.angle(target[1] - droneX, target[2] - droneY) - pi/2
 
 		if destination and leaderFollow then
@@ -96,6 +110,57 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 			target[3] = angle
 			target[6] = 0
 			m = 1 - dsq/targetMSq
+		end
+	elseif self.repairFixture then
+		-- Move close to repair blocks
+		local fixture = self.repairFixture
+		local body = fixture:getBody()
+		local object = fixture:getUserData()
+
+		local l = {unpack(object.location)}
+		local mx, my
+		mx = l[1]
+		my = l[2]
+		local s = 1
+
+		if mx < 0 then
+			mx = -mx
+		end
+		if my < 0 then
+			my = -my
+		end
+		if my < mx then
+			if l[1] < 0 then
+				s = 2
+			else
+				s = 4
+			end
+		else
+			if l[2] < 0 then
+				s = 3
+			else
+				s = 1
+			end
+		end
+
+		l[3] = s
+
+		local x, y, side = unpack(StructureMath.subtractVectors(
+			l, capabilities.repairLocation))
+
+		x, y = body:getWorldPoints(x, y)
+		local angle = body:getAngle()
+		angle = (side - 1) * math.pi/2
+		local vx, vy = body:getLinearVelocityFromLocalPoint(x, y)
+		local va = body:getAngularVelocity()
+		destination = {x, y, angle, vx, vy, va}
+		m = 1
+		sepX = sepX/4
+		sepY = sepY/4
+
+		local health = object:getScaledHealth()
+		if health == 1 then
+			self.repairFixture = nil
 		end
 	end
 
@@ -119,16 +184,16 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	local orders = {}
 
 	local pidX = rdx + 2 * rvx
-	if 2 < pidX then
+	if 1 < pidX then
 		table.insert(orders, "strafeRight")
-	elseif -2 > pidX then
+	elseif -1 > pidX then
 		table.insert(orders, "strafeLeft")
 	end
 
 	local pidY = rdy + 2 * rvy
-	if 5 < pidY then
+	if 1 < pidY then
 		table.insert(orders, "forward")
-	elseif -5 > pidY then
+	elseif -1 > pidY then
 		table.insert(orders, "back")
 	end
 

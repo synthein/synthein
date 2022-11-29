@@ -102,7 +102,7 @@ end
 function InGame.mousepressed(x, y, button)
 	if menuOpen == "Pause" then
 		if button == 1 then
-			pauseMenuAction(menu:pressed(x, y))
+			pauseMenuAction(menu:getButtonAt(x, y))
 		end
 	else
 		for _, player in ipairs(players) do

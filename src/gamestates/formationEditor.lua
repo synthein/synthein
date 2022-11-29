@@ -143,7 +143,7 @@ end
 function FormationEditor.mousepressed(x, y, mouseButton)
 	if menuOpen == "State" then
 		if mouseButton == 1 then
-			local button = FormationEditor.menu:pressed(x, y)
+			local button = FormationEditor.menu:getButtonAt(x, y)
 
 			if button == "Main Menu" then
 				menuOpen = false

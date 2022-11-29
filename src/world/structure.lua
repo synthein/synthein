@@ -388,6 +388,8 @@ function Structure:command(dt)
 		for key, module in pairs(part.modules) do
 			if key == "repair" then
 				capabilities.repair = true
+				capabilities.repairLocation =StructureMath.addDirectionVector(
+					part.location, part.location[3], 1.2)
 			elseif key == "gun" then
 				capabilities.combat = true
 			end

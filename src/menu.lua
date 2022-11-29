@@ -161,6 +161,8 @@ function Menu:keypressed(key)
 		end
 	elseif key == "return" then
 		return self.selectedButton
+	elseif key == "escape" then
+		return nil, true
 	end
 end
 
@@ -172,6 +174,8 @@ function Menu:gamepadpressed(button)
 		key = "down"
 	elseif button == "a" then
 		key = "return"
+	elseif button == "b" then
+		key = "escape"
 	end
 
 	return self:keypressed(key)

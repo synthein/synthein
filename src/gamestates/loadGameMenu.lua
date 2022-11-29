@@ -33,11 +33,11 @@ function LoadGameMenu.draw()
 end
 
 function LoadGameMenu.keypressed(key)
-	if key == "escape" then
+	local loadGameChoice, back = LoadGameMenu.menu:keypressed(key)
+	if back then
 		LoadGameMenu.stackQueue:pop()
 	end
 
-	local loadGameChoice = LoadGameMenu.menu:keypressed(key)
 	LoadGameMenu.LoadGame(loadGameChoice)
 end
 

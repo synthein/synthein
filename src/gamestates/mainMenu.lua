@@ -59,7 +59,7 @@ function MainMenu.mousepressed(x, y, mouseButton)
 end
 
 function MainMenu.gamepadpressed(joystick, button)
-	gotoState(MainMenu.menu:gamepadpressed(key))
+	gotoState(MainMenu.menu:gamepadpressed(button))
 end
 
 function MainMenu.resize(w, h)

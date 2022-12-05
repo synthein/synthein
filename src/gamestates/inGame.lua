@@ -125,6 +125,10 @@ function InGame.mousereleased(x, y, button)
 	end
 end
 
+function InGame.mousemoved(x, y)
+	menu:mousemoved(x, y)
+end
+
 function InGame.joystickpressed(joystick, button)
 	for _, player in ipairs(players) do
 		player:buttonpressed(joystick, button)

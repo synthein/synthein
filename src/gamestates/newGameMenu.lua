@@ -26,9 +26,8 @@ function NewGameMenu.keypressed(key)
 end
 
 function NewGameMenu.mousepressed(x, y, mouseButton)
-	local button = NewGameMenu.menu:pressed(x, y)
 	if mouseButton == 1 then
-		NewGameMenu.testButton(button)
+		NewGameMenu.testButton(NewGameMenu.menu:getButtonAt(x, y))
 	end
 end
 

@@ -1,7 +1,14 @@
 local Controls = {}
 
+local Log = require("log")
+
+local log = Log({on = true})
 local mouse = love.mouse
 local keyboard = love.keyboard
+
+local bindingsFile = "config/bindings.lua"
+
+-- TODO: We probably want to organize this file as a class with methods?
 
 function Controls.getOrders(controls)
 	local orders = {}
@@ -75,9 +82,10 @@ Controls.menu = {
 	playerMenu = "playerMenu",
 }
 
-function Controls.defaults(joystick)
+function Controls.create(joystick)
+	local bindings
 	if joystick then
-		return {
+		bindings = {
 			forward 	= {joystick, "dpup"},
 			back    	= {joystick, "dpdown"},
 			left    	= {joystick, "dpleft"},
@@ -96,7 +104,7 @@ function Controls.defaults(joystick)
 			cancel		= {joystick, "b"}
 			}
 	else
-		return {
+		bindings = {
 			forward 	= {keyboard, "w"},
 			back    	= {keyboard, "s"},
 			left    	= {keyboard, "a"},
@@ -115,6 +123,41 @@ function Controls.defaults(joystick)
 			cancel		= {keyboard, "escape"}
 			}
 	end
+
+	local ok, chunk, err = pcall(love.filesystem.load, bindingsFile)
+	if not ok then
+		log:error("Failed to read key bindings: %s", chunk)
+		return bindings
+	end
+	if not chunk then
+		if string.match(err, "Does not exist.$") then
+			log:debug("Failed to load key bindings file: %s", err)
+		else
+			log:error("Failed to load key bindings file: %s", err)
+		end
+
+		return bindings
+	end
+
+	ok, result = pcall(chunk)
+	if not ok then
+		log:error("Failed to read key bindings: %s", result)
+		return bindings
+	end
+	if type(result) ~= "table" then
+		log:error("Failed to read key bindings: \"%s\" is not a table", result)
+		return bindings
+	end
+
+	for bind in pairs(bindings) do
+		local newVal = result[bind]
+		if newVal then
+			log:debug("Binding %s to %s", bind, newVal)
+			bindings[bind][2] = newVal
+		end
+	end
+
+	return bindings
 end
 
 return Controls

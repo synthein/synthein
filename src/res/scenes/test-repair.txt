@@ -1,0 +1,16 @@
+
+player = structure(0,2,0)[1, anchor]
+{
+p*
+b1b1
+
+(1,-1)[1]
+}
+
+
+structure(8,-4,0)[1]
+{
+b1r4
+b1
+d*
+}

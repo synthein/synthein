@@ -39,26 +39,29 @@ function InitWorld.load(scene, playerHostility, ifSave)
 	local screen = Screen()
 
 	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, {0,0,0,0,0,0})
+	-- TODO: Instead of creating players here, we should create one
+	-- player per controller when the game starts up and pass those
+	-- players into the world here.
 	local players = {}
 	for i, ship in ipairs(playerShips) do
 		if i == 1 then
 			table.insert(
 				players,
-				Player.create(world, Controls.defaults(), ship, screen:createCamera())
+				Player.create(world, Controls.create(), ship, screen:createCamera())
 			)
 		else
 			local joystick = love.joystick.getJoysticks()[#players]
 			if joystick then
 				table.insert(
 					players,
-					Player.create(world, Controls.defaults(joystick), ship, screen:createCamera())
+					Player.create(world, Controls.create(joystick), ship, screen:createCamera())
 				)
 			end
 		end
 	end
 
 	if #players == 0 then
-	  table.insert(players, Player.create(world, Controls.defaults(), nil, screen:createCamera()))
+	  table.insert(players, Player.create(world, Controls.create(), nil, screen:createCamera()))
 	end
 
 	while #playerHostility < maxTeam do

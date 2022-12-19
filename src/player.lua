@@ -19,7 +19,7 @@ function Player.create(world, controls, structure, camera)
 	self.controls = controls
 	self.ship = structure
 	self.camera = camera
-	self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
+	--self.drawWorldObjects = self.camera.wrap(Player.drawWorldObjects, true)
 	self.drawHUD = self.camera.wrap(Player.drawHUD, false)
 
 	if self.ship then
@@ -144,6 +144,67 @@ function Player:buttonreleased(source, button)
 	end
 end
 
+local function drawWorldObjects(player, debugmode)
+	player.camera:enable(true)
+	local drawOrder = {
+		"visual",
+		"projectiles",
+		"missile",
+		"general",
+		"shield"
+	}
+	if debugmode then
+		table.insert(drawOrder, "sensor")
+	end
+
+	local fixtureList = {}
+
+	for _, c in ipairs(drawOrder) do
+		fixtureList[PhysicsReferences.categories[c]] = {}
+	end
+
+	local a, b, c, d = player.camera:getWorldBorder()
+
+	local function callback(fixture)
+		local category = fixture:getFilterData()
+		if fixtureList[category] then
+			table.insert(fixtureList[category], fixture)
+		end
+		return true
+	end
+
+	player.world.physics:queryBoundingBox(a, b, c, d, callback)
+
+	for _, category in ipairs(drawOrder) do
+		local categoryNumber = PhysicsReferences.categories[category]
+		for _, fixture in ipairs(fixtureList[categoryNumber]) do
+			local object = fixture:getUserData()
+			if object.draw then object:draw(fixture, player.showHealth) end
+			if debugmode then
+				debugDraw(fixture)
+			end
+		end
+	end
+
+
+	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
+
+	local testPointFunctions = {}
+	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
+		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
+	end
+	player.shieldPoints = player.camera:testPoints(testPointFunctions)
+
+	if player.selected then
+		player.selected:draw(
+			player.camera:getWorldCoords(
+				player.cursorX,
+				player.cursorY))
+	end
+
+	player.camera:disable()
+end
+
 function Player:draw(debugmode)
 	if self.ship then
 		self.camera:setX(self.ship.body:getX())
@@ -151,7 +212,7 @@ function Player:draw(debugmode)
 		self.camera:setAngle(self.isCameraAngleFixed and 0 or self.ship.body:getAngle())
 	end
 
-	self:drawWorldObjects(debugmode)
+	drawWorldObjects(self, debugmode)
 	self:drawHUD()
 end
 
@@ -174,64 +235,6 @@ local function debugDraw(fixture)
 	end
 
 	love.graphics.pop()
-end
-
-function Player:drawWorldObjects(debugmode)
-	local drawOrder = {
-		"visual",
-		"projectiles",
-		"missile",
-		"general",
-		"shield"
-	}
-	if debugmode then
-		table.insert(drawOrder, "sensor")
-	end
-
-	local fixtureList = {}
-
-	for _, c in ipairs(drawOrder) do
-		fixtureList[PhysicsReferences.categories[c]] = {}
-	end
-
-	local a, b, c, d = self.camera:getWorldBorder()
-
-	local function callback(fixture)
-		local category = fixture:getFilterData()
-		if fixtureList[category] then
-			table.insert(fixtureList[category], fixture)
-		end
-		return true
-	end
-
-	self.world.physics:queryBoundingBox(a, b, c, d, callback)
-
-	for _, category in ipairs(drawOrder) do
-		local categoryNumber = PhysicsReferences.categories[category]
-		for _, fixture in ipairs(fixtureList[categoryNumber]) do
-			local object = fixture:getUserData()
-			if object.draw then object:draw(fixture, self.showHealth) end
-			if debugmode then
-				debugDraw(fixture)
-			end
-		end
-	end
-
-
-	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
-
-	local testPointFunctions = {}
-	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
-		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
-	end
-	self.shieldPoints = self.camera:testPoints(testPointFunctions)
-
-	if self.selected then
-		self.selected:draw(
-			self.camera:getWorldCoords(
-				self.cursorX,
-				self.cursorY))
-	end
 end
 
 function drawCompass(width, height, angle)

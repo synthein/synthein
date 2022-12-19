@@ -2,6 +2,7 @@ require("class")
 local StackManager = require("stackManager")
 local enabledFunctions = require("gamestates/enabledFunctions")
 local MainMenu = require("gamestates/mainMenu")
+local log = require("log")
 
 local state
 
@@ -49,6 +50,10 @@ function love.load()
 					"--scene must have an argument. You provided these arguments: "
 					.. table.concat(arg, " "))
 			end
+		elseif arg[i] == "--c" then
+			local sonic = require("sonic")
+			log:info("%s", sonic)
+			log:info("%s", sonic.hello())
 		elseif arg[i] == "--help" then
 			print(usage)
 			love.event.quit()

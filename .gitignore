@@ -1,9 +1,6 @@
+# build files
 build
+*.so
 
-# Snap build files:
-package/snapcraft/*
-!package/snapcraft/snapcraft.yaml.template
-
-# Vim files:
-*.swp
-*.un~
+# editor files
+.*.s?p

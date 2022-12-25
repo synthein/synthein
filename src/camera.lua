@@ -248,7 +248,6 @@ local function debugDraw(fixture)
 end
 
 function Camera:drawWorldObjects(player, debugmode)
-	player.camera:enable(true)
 	local drawOrder = {
 		"visual",
 		"projectiles",
@@ -304,8 +303,6 @@ function Camera:drawWorldObjects(player, debugmode)
 				player.cursorX,
 				player.cursorY))
 	end
-
-	player.camera:disable()
 end
 
 local function drawCompass(width, height, angle)
@@ -339,7 +336,6 @@ local function drawCompass(width, height, angle)
 end
 
 function Camera:drawHUD(player)
-	player.camera:enable(false)
 	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
 	local drawPoints = love.graphics.points
 	for _, list in ipairs(player.shieldPoints) do
@@ -389,13 +385,15 @@ function Camera:drawHUD(player)
 		screenWidth,
 		screenHeight
 	)
-
-	player.camera:disable()
 end
 
 function Camera:drawPlayer(player, debugmode)
+	self:enable(true)
 	self:drawWorldObjects(player, debugmode)
+	self:disable()
+	self:enable(false)
 	self:drawHUD(player)
+	self:disable()
 end
 
 return Camera

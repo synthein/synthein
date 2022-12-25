@@ -1,3 +1,8 @@
+local PhysicsReferences = require("world/physicsReferences")
+
+local lume = require("vendor/lume")
+
+
 local Camera = {}
 Camera.__index = Camera
 
@@ -218,6 +223,179 @@ function Camera:print(string, x, y)
 	x = x or 0
 	y = y or 0
 	love.graphics.print(string, self.scissorX + x, self.scissorY + y)
+end
+
+
+local function debugDraw(fixture)
+	love.graphics.push("all")
+	love.graphics.setColor(0.5, 0.5, 0.5, 0.5)
+	love.graphics.setLineWidth(2/Settings.PARTSIZE)
+
+	local shape = fixture:getShape()
+	local type = shape:getType()
+
+	if type == "circle" then
+		local x, y = shape:getPoint()
+		x, y = fixture:getBody():getWorldPoint(x, y)
+		love.graphics.circle("line", x, y, shape:getRadius())
+	elseif type == "polygon" then
+		love.graphics.polygon("line", fixture:getBody():getWorldPoints(shape:getPoints()))
+	else
+		error("Unhandled shape type \"" .. type .. "\"")
+	end
+
+	love.graphics.pop()
+end
+
+function Camera:drawWorldObjects(player, debugmode)
+	player.camera:enable(true)
+	local drawOrder = {
+		"visual",
+		"projectiles",
+		"missile",
+		"general",
+		"shield"
+	}
+	if debugmode then
+		table.insert(drawOrder, "sensor")
+	end
+
+	local fixtureList = {}
+
+	for _, c in ipairs(drawOrder) do
+		fixtureList[PhysicsReferences.categories[c]] = {}
+	end
+
+	local a, b, c, d = player.camera:getWorldBorder()
+
+	local function callback(fixture)
+		local category = fixture:getFilterData()
+		if fixtureList[category] then
+			table.insert(fixtureList[category], fixture)
+		end
+		return true
+	end
+
+	player.world.physics:queryBoundingBox(a, b, c, d, callback)
+
+	for _, category in ipairs(drawOrder) do
+		local categoryNumber = PhysicsReferences.categories[category]
+		for _, fixture in ipairs(fixtureList[categoryNumber]) do
+			local object = fixture:getUserData()
+			if object.draw then object:draw(fixture, player.showHealth) end
+			if debugmode then
+				debugDraw(fixture)
+			end
+		end
+	end
+
+
+	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
+
+	local testPointFunctions = {}
+	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
+		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
+	end
+	player.shieldPoints = player.camera:testPoints(testPointFunctions)
+
+	if player.selected then
+		player.selected:draw(
+			player.camera:getWorldCoords(
+				player.cursorX,
+				player.cursorY))
+	end
+
+	player.camera:disable()
+end
+
+local function drawCompass(width, height, angle)
+	-- Draw the compass in the lower right hand corner.
+	local compassSize = 20
+	local compassPadding = 10
+	local compassX = width - compassSize - compassPadding
+	local compassY = height - compassSize - compassPadding
+
+	love.graphics.circle(
+		"line",
+		compassX,
+		compassY,
+		compassSize
+	)
+	local needleX, needleY = lume.vector(
+		angle,
+		compassSize
+	)
+	love.graphics.polygon(
+		"fill",
+		compassX - needleX * 0.1,
+		compassY - needleY * 0.1,
+		compassX + needleY * 0.1,
+		compassY - needleX * 0.1,
+		compassX + needleX,
+		compassY + needleY,
+		compassX - needleY * 0.1,
+		compassY + needleX * 0.1
+	)
+end
+
+function Camera:drawHUD(player)
+	player.camera:enable(false)
+	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
+	local drawPoints = love.graphics.points
+	for _, list in ipairs(player.shieldPoints) do
+		drawPoints(unpack(list))
+	end
+	love.graphics.setColor(1, 1, 1, 1)
+
+	local cursorX, cursorY = player.camera:getWorldCoords(player.cursorX, player.cursorY)
+
+	if player.menu then
+		player.partSelector:draw()
+	end
+
+	local _, _, screenWidth, screenHeight = player.camera:getScissor()
+
+	local point = {0,0}
+	if player.ship then
+		local leader = (player.ship.corePart or {}).leader
+		if leader then
+			point = leader:getLocation()
+		end
+		if player.ship.isDestroyed then
+			player.ship = nil
+		end
+	else
+		local previousFont = love.graphics.getFont()
+		local font = love.graphics.newFont(20)
+		love.graphics.setFont(font)
+		love.graphics.print("Game Over", 10, screenHeight - 30, 0, 1, 1, 0, 0, 0, 0)
+		love.graphics.setFont(previousFont)
+	end
+
+	local x, y, angle = player.camera:getPosition()
+	local _, _, width, height = player.camera:getScissor()
+	local compassAngle = math.atan2(x - point[1], y - point[2]) + math.pi/2 + (player.isCameraAngleFixed and 0 or angle)
+
+	drawCompass(width, height, compassAngle)
+
+	-- Draw the cursor.
+	love.graphics.draw(player.cursor, player.cursorX - 2, player.cursorY - 2)
+
+	-- Draw a box around the entire region.
+	love.graphics.rectangle(
+		"line",
+		0,
+		0,
+		screenWidth,
+		screenHeight
+	)
+
+	player.camera:disable()
+end
+
+function Camera:drawPlayer(player, debugmode)
+	self:drawWorldObjects(player, debugmode)
+	self:drawHUD(player)
 end
 
 return Camera

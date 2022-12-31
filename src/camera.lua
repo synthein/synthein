@@ -1,4 +1,5 @@
 local PhysicsReferences = require("world/physicsReferences")
+local Settings = require("settings")
 
 local lume = require("vendor/lume")
 
@@ -15,20 +16,12 @@ function Camera.create()
 	self.angle = 0
 	self.zoomInt = 8
 	self:adjustZoom(0)
-	self.scissorX = 0
-	self.scissorY = 0
-	self.scissorWidth = 0
-	self.scissorHeight = 0
 	self.scissor = {x = 0, y = 0, width = 0, height = 0}
 
 	self.graphics = {}
 	setmetatable(self.graphics, self)
 
 	return self
-end
-
-function Camera:getPosition()
-	return self.x, self.y, self.angle
 end
 
 function Camera:setX(newX)
@@ -44,28 +37,32 @@ function Camera:setAngle(newAngle)
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
-	local x =  (cursorX - self.scissorWidth/2  - self.scissorX) / self.zoom + self.x
-	local y = -(cursorY - self.scissorHeight/2 - self.scissorY) / self.zoom + self.y
+	local scissor = self.scissor
+	local x =  (cursorX - scissor.width/2  - scissor.x) / self.zoom + self.x
+	local y = -(cursorY - scissor.height/2 - scissor.y) / self.zoom + self.y
 	return x, y
 end
 
 function Camera:getScreenCoords(worldX, worldY, a, b)
-	local x =  self.zoom * (worldX - self.x) + self.scissorX + self.scissorWidth/2
-	local y = -self.zoom * (worldY - self.y) + self.scissorY + self.scissorHeight/2
+	local scissor = self.scissor
+	local x =  self.zoom * (worldX - self.x) + scissor.x + scissor.width/2
+	local y = -self.zoom * (worldY - self.y) + scissor.y + scissor.height/2
 	a = self.zoom * a
 	b = self.zoom * b
 	return x, y, a, b
 end
 
 function Camera:getWorldBorder()
-	return self.x - self.scissorWidth /(2 * self.zoom),
-		   self.y - self.scissorHeight/(2 * self.zoom),
-		   self.x + self.scissorWidth /(2 * self.zoom),
-		   self.y + self.scissorHeight/(2 * self.zoom)
+	local scissor = self.scissor
+	return self.x - scissor.width /(2 * self.zoom),
+		   self.y - scissor.height/(2 * self.zoom),
+		   self.x + scissor.width /(2 * self.zoom),
+		   self.y + scissor.height/(2 * self.zoom)
 end
 
 -- Make sure the correct transforms are active
 function Camera:getAllPoints()
+	local scissor = self.scissor
 	local pointTable = {}
 	local table_insert = table.insert
 	local inverseTransform = love.graphics.inverseTransformPoint
@@ -77,8 +74,8 @@ function Camera:getAllPoints()
 	xdy = p10y - p00y
 	ydx = p01x - p00x
 	ydy = p01y - p00y
-	local ye = self.scissorHeight - 1
-	local xe = self.scissorWidth - 1
+	local ye = scissor.height - 1
+	local xe = scissor.width - 1
 	for y = 0, ye do
 		local row = {}
 		for x = 0, xe do
@@ -92,6 +89,7 @@ end
 
 -- Make sure the correct transforms are active
 function Camera:testPoints(testFunctions)
+	local scissor = self.scissor
 	local table_insert = table.insert
 	local inverseTransform = love.graphics.inverseTransformPoint
 	local xdx, xdy, ydx, ydy
@@ -102,8 +100,8 @@ function Camera:testPoints(testFunctions)
 	xdy = p10y - p00y
 	ydx = p01x - p00x
 	ydy = p01y - p00y
-	local ye = self.scissorHeight - 1
-	local xe = self.scissorWidth - 1
+	local ye = scissor.height - 1
+	local xe = scissor.width - 1
 	local drawPoints = {}
 	local pointList = {}
 	local l = 1
@@ -155,10 +153,6 @@ function Camera:adjustZoom(step)
 end
 
 function Camera:setScissor(x, y, width, height)
-	self.scissorX = x
-	self.scissorY = y
-	self.scissorWidth = width
-	self.scissorHeight = height
 	self.scissor = {x = x, y = y, width = width, height = height}
 end
 
@@ -196,7 +190,8 @@ end
 function Camera:print(string, x, y)
 	x = x or 0
 	y = y or 0
-	love.graphics.print(string, self.scissorX + x, self.scissorY + y)
+	local scissor = self.scissor
+	love.graphics.print(string, scissor.x + x, scissor.y + y)
 end
 
 
@@ -348,8 +343,9 @@ function Camera:drawHUD(player)
 		love.graphics.setFont(previousFont)
 	end
 
-	local x, y, angle = player.camera:getPosition()
-	local compassAngle = math.atan2(x - point[1], y - point[2]) + math.pi/2 + (player.isCameraAngleFixed and 0 or angle)
+	local compassAngle = math.atan2(self.x - point[1], self.y - point[2])
+		+ math.pi/2
+		+ (player.isCameraAngleFixed and 0 or self.angle)
 
 	self:drawCompass(compassAngle)
 
@@ -367,6 +363,16 @@ function Camera:drawHUD(player)
 end
 
 function Camera:drawPlayer(player, debugmode)
+	local body = self.body
+	if body then
+		if body:isDestroyed() then
+			self.body = nil
+		else
+			self.x, self.y = body:getPosition()
+			self.angle = player.isCameraAngleFixed and 0 or body:getAngle()
+		end
+	end
+
 	local scissor = self.scissor
 	love.graphics.setScissor(unpack(scissor))
 

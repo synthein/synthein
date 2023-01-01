@@ -50,7 +50,7 @@ function love.load()
 					"--scene must have an argument. You provided these arguments: "
 					.. table.concat(arg, " "))
 			end
-		elseif arg[i] == "--c" then
+		elseif arg[i] == "--extern" then
 			local sonic = require("sonic")
 			log:info("%s", sonic)
 			log:info("%s", sonic.hello())

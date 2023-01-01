@@ -1,6 +1,7 @@
 # build files
 build
 *.so
+target
 
 # editor files
 .*.s?p

@@ -19,8 +19,8 @@ windows: love
 	$(env) scripts/package-windows.sh
 
 rust:
-	cd lib/sonic && cargo build
-	cp lib/sonic/target/debug/libsonic.so src/sonic.so
+	cd src/timer && cargo build --release
+	cp src/timer/target/release/libtimer.so src/timer.so
 
 # Maintenance commands
 run: rust

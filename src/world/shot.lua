@@ -39,7 +39,7 @@ end
 
 function Shot:postCreate(references)
 	local time = unpack(self.data)
-	self.timer:time(time)
+	self.timer.time = time
 	self.body:setLinearVelocity(self.startLocation[4], self.startLocation[5])
 end
 
@@ -48,7 +48,7 @@ function Shot:type()
 end
 
 function Shot:getSaveData(references)
-	return {self.timer:time()}
+	return {self.timer.time}
 end
 
 function Shot:update(dt)

@@ -14,7 +14,7 @@ function Particles:__create(worldInfo, location, data, appendix)
 end
 
 function Particles:postCreate() --(references)
-	self.timer:time(self.data[1])
+	self.timer.time = self.data[1]
 end
 
 function Particles:type()
@@ -22,7 +22,7 @@ function Particles:type()
 end
 
 function Particles:getSaveData() --(references)
-	return {self.timer:time()}
+	return {self.timer.time}
 end
 
 function Particles.collision() --(fixture)

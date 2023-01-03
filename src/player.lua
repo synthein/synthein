@@ -21,6 +21,7 @@ function Player.create(world, controls, structure, camera)
 	self.camera = camera
 
 	if self.ship then
+		self.camera.body = structure.body
 		self.selected = Selection.create(world, self.ship.corePart:getTeam(), self.camera)
 	end
 
@@ -92,10 +93,10 @@ function Player:buttonpressed(source, button, debugmode)
 		elseif menuButton == "confirm" then
 			local part = self.partSelector:keypressed("return")
 			if part then
-				local cameraX, cameraY = self.camera:getPosition()
+				local camera = self.camera
 				self.world.info.create(
 					"structure",
-					LocationTable(unpack({cameraX, cameraY + 5})),
+					LocationTable(unpack({camera.x, camera.y + 5})),
 					PartRegistry.createPart(part))
 			end
 			self.menu = nil
@@ -143,12 +144,6 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:draw(debugmode)
-	if self.ship then
-		self.camera:setX(self.ship.body:getX())
-		self.camera:setY(self.ship.body:getY())
-		self.camera:setAngle(self.isCameraAngleFixed and 0 or self.ship.body:getAngle())
-	end
-
 	self.camera:drawPlayer(self, debugmode)
 end
 

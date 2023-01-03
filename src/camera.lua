@@ -24,18 +24,6 @@ function Camera.create()
 	return self
 end
 
-function Camera:setX(newX)
-	self.x = newX
-end
-
-function Camera:setY(newY)
-	self.y = newY
-end
-
-function Camera:setAngle(newAngle)
-	self.angle = newAngle
-end
-
 function Camera:getWorldCoords(cursorX, cursorY)
 	local scissor = self.scissor
 	local x =  (cursorX - scissor.width/2  - scissor.x) / self.zoom + self.x

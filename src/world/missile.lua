@@ -63,7 +63,7 @@ end
 function Missile:postCreate(references)
 	local team, time = unpack(self.data)
 	self.team = team
-	self.timer:time(time)
+	self.timer.time = time
 end
 
 function Missile:type()
@@ -75,7 +75,7 @@ function Missile:getSaveData(references)
 	local x, y = unpack(part.location)
 	local structure = part.fixture:getBody():getUserData()
 	structure = references[structure]
-	return {self.timer:time(), structure, x, y}
+	return {self.timer.time, structure, x, y}
 end
 
 function Missile:explode()

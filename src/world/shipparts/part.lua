@@ -3,6 +3,7 @@ local Part = class()
 function Part:__create()
 	self.connectableSides = {true, true, true, true}
 	self.modules = {}
+	self.type = "generic"
 end
 
 function Part:loadData(data)

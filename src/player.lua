@@ -2,11 +2,6 @@ local Controls = require("controls")
 local Selection = require("selection")
 local PartSelector = require("partSelector")
 local PartRegistry = require("world/shipparts/partRegistry")
-local LocationTable = require("locationTable")
-local PhysicsReferences = require("world/physicsReferences")
-local Settings = require("settings")
-
-local lume = require("vendor/lume")
 
 local Player = {}
 Player.__index = Player
@@ -50,24 +45,24 @@ function Player.create(world, controls, structure, camera)
 end
 
 function Player:handleInput()
-	-----------------------
-	----- Set Cursor  -----
-	-----------------------
-	self.cursorX = Controls.setCursor(self.controls.cursorX, self.cursorX)
-	self.cursorY = Controls.setCursor(self.controls.cursorY, self.cursorY)
-	self.cursorX, self.cursorY = self.camera:limitCursor(
-		self.cursorX,
-		self.cursorY)
-	self.partSelector:mousemoved(self.cursorX, self.cursorY)
+	local controls = self.controls
 
-	-----------------------
-	---- Ship commands ----
-	-----------------------
-	local orders = Controls.getOrders(self.controls)
+	-- Set Cursor Position
+	local cursorX, cursorY = self.cursorX, self.cursorY
 
-	if self.ship then
-		if self.ship.corePart then
-			self.ship.corePart:setOrders(orders)
+	cursorX = Controls.setCursor(controls.cursorX, cursorX)
+	cursorY = Controls.setCursor(controls.cursorY, cursorY)
+	cursorX, cursorY = self.camera:limitCursor(cursorX, cursorY)
+	self.partSelector:mousemoved(cursorX, cursorY)
+
+	self.cursorX, self.cursorY = cursorX, cursorY
+
+	-- Pass Commands To Ship
+	local ship = self.ship
+	if ship then
+		local corePart = ship.corePart
+		if corePart then
+			corePart:setOrders(Controls.getOrders(controls))
 		else
 			self.ship = nil
 		end
@@ -96,7 +91,7 @@ function Player:buttonpressed(source, button, debugmode)
 				local camera = self.camera
 				self.world.info.create(
 					"structure",
-					LocationTable(unpack({camera.x, camera.y + 5})),
+					{camera.x, camera.y + 5},
 					PartRegistry.createPart(part))
 			end
 			self.menu = nil
@@ -116,9 +111,10 @@ function Player:buttonpressed(source, button, debugmode)
 		elseif not order then
 			return
 		else
-			local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX,
-																self.cursorY)
 			if order == "build" or order == "destroy" then
+				local cursorX, cursorY = self.camera:getWorldCoords(
+					self.cursorX,
+					self.cursorY)
 				self.selected:pressed(cursorX, cursorY, order)
 
 			elseif order == "playerMenu" then

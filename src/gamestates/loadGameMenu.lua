@@ -42,8 +42,7 @@ function LoadGameMenu.keypressed(key)
 end
 
 function LoadGameMenu.mousepressed(x, y, mouseButton)
-	local loadGameChoice = LoadGameMenu.menu:pressed(x, y)
-	LoadGameMenu.LoadGame(loadGameChoice)
+	LoadGameMenu.LoadGame(LoadGameMenu.menu:getButtonAt(x, y))
 end
 
 function LoadGameMenu.LoadGame(index)

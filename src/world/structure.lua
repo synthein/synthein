@@ -1,7 +1,6 @@
 local GridTable = require("gridTable")
 local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
-local LocationTable = require("locationTable")
 local Location = require("world/location")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
@@ -103,15 +102,11 @@ function Structure:getSaveData(references)
 end
 
 function Structure:getWorldLocation(l)
-	local body = self.body
 	local partX, partY, angle = unpack(l)
-
-	local x, y = body:getWorldPoints(partX, partY)
-	angle = (angle - 1) * math.pi/2 + body:getAngle()
-	local vx, vy = body:getLinearVelocityFromLocalPoint(partX, partY)
-	local w = body:getAngularVelocity()
-
-	return LocationTable(x, y, angle, vx, vy, w)
+	local l = {Location.bodyPoint6(self.body, partX, partY)}
+	-- Add the rotation of the part onto the angle
+	l[3] = (angle - 1) * math.pi/2 + l[3]
+	return l
 end
 
 function Structure:findPart(cursorX, cursorY)

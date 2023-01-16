@@ -1,4 +1,3 @@
-local LocationTable = require("locationTable")
 local Location = require("world/location")
 
 local WorldObjects = class()
@@ -18,7 +17,7 @@ function WorldObjects:destroy()
 end
 
 function WorldObjects:getLocation()
-	return (LocationTable(self.body))
+	return {Location.bodyCenter6(self.body)}
 end
 
 return WorldObjects

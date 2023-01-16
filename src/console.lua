@@ -6,7 +6,6 @@ local console = {}
 local env = {
 	print = print,
 	table = table,
-	LocationTable = require("locationTable")
 }
 
 function console.init(state)

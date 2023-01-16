@@ -1,4 +1,4 @@
-local LocationTable = require("locationTable")
+local Location = require("world/location")
 
 local lume = require("vendor/lume")
 
@@ -40,6 +40,7 @@ function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight
 	end
 end
 
+-- TODO Why is this function used? Use or Delete
 function Draw.createPartDrawImageFunction(imageName)
 	local imageData = {}
 
@@ -53,7 +54,8 @@ function Draw.createPartDrawImageFunction(imageName)
 
 		imageData = setup(Draw.loadImage(imageName), 1, 1)
 
-		local x, y, angle = LocationTable(fixture, self.location):getXYA()
+		--This line is untested
+		local x, y, angle = Location.bodyPoint3(fixture, self.location)
 
 		love.graphics.draw(
 			imageData.image,

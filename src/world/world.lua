@@ -18,8 +18,10 @@ local log = Log({})
 function World:__create(playerHostility)
 
 	self.physics = love.physics.newWorld()
-	self.physics:setCallbacks(World.beginContact, World.endContact,
-							  World.preSolve, World.postSolve)
+	love.physics.setMeter(1) -- there are 20 pixels per meter
+	self.physics:setCallbacks(
+		World.beginContact, World.endContact,
+		World.preSolve, World.postSolve)
 
 	self.objects = {}
 	local generalHostility = {}

@@ -1,3 +1,21 @@
+
+--TODO Clean up requires
+
+local Controls = require("controls")
+local Gamesave = require("gamesave")
+local Player = require("player")
+local SceneParser = require("sceneParser")
+local Screen = require("screen")
+local World = require("world/world")
+
+local lume = require("vendor/lume")
+
+
+
+
+
+
+
 local Debug = require("debugmode")
 local Gamesave = require("gamesave")
 local Log = require("log")
@@ -36,9 +54,71 @@ end
 local menu = Menu.create(225, 5, pauseMenu.buttons)
 
 local world, players, screen, saveMenu, debugmode, log
-function InGame.load(...)
+function InGame.load(scene, playerHostility, ifSave)
+	if ifSave then
+		saveName = scene
+		sceneLines, message = Gamesave.load(scene)
+		if not sceneLines then
+			print("Failed to load game: " .. message)
+		end
+		for line in sceneLines do
+			local match = string.match(line, "teamhostility = (.*)")
+			if match then
+				playerHostility = lume.deserialize(match, true)
+			elseif string.match(line, "%[scene%]") then
+				break
+			end
+		end
+	else
+		local fileName = string.format("/res/scenes/%s.txt", scene)
+		sceneLines = love.filesystem.lines(fileName)
+
+	end
+
+	world = World(playerHostility)
+
+	local screen = Screen()
+
+	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, {0,0,0,0,0,0})
+	-- TODO: Instead of creating players here, we should create one
+	-- player per controller when the game starts up and pass those
+	-- players into the world here.
+	players = {}
+	for i, ship in ipairs(playerShips) do
+		if i == 1 then
+			table.insert(
+				players,
+				Player.create(world, Controls.create(), ship, screen:createCamera())
+			)
+		else
+			local joystick = love.joystick.getJoysticks()[#players]
+			if joystick then
+				table.insert(
+					players,
+					Player.create(world, Controls.create(joystick), ship, screen:createCamera())
+				)
+			end
+		end
+	end
+
+	while #playerHostility < maxTeam do
+		table.insert(playerHostility, {})
+	end
+
+	for i, t in ipairs(playerHostility) do
+		while #t < maxTeam do
+			table.insert(t, false)
+		end
+	end
+
 	local saveName
-	world, players, screen, saveName = ...
+
+	-- Reastablish collisions and
+	world.physics:update(0)
+
+	if #players == 0 then
+		table.insert(players, Player.create(world, Controls.create(), nil, screen:createCamera()))
+	end
 
 	saveMenu = SaveMenu(nil, saveName)
 	debugmode = Debug.create(world, players)

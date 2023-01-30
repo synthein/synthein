@@ -20,7 +20,7 @@ windows: love
 
 rust:
 	cargo build --release
-	cp target/release/libsynthein.so src/synthein.so
+	cp target/release/libsyntheinrust.so src/syntheinrust.so
 
 # Maintenance commands
 run: rust

@@ -7,7 +7,7 @@ mod world;
 use world::shipparts::missile_launcher;
 
 #[mlua::lua_module]
-fn synthein(lua: &Lua) -> Result<LuaTable> {
+fn syntheinrust(lua: &Lua) -> Result<LuaTable> {
     let exports = lua.create_table()?;
 
     exports.set("timer", timer::lua_module(lua)?)?;

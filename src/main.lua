@@ -40,11 +40,11 @@ function love.load()
 			end
 
 			if scene then
-				local InitWorld = require("gamestates/initWorld")
+				local InGame = require("gamestates/inGame")
 				--TODO {{false, false}, {false, false}} is a bandaid. Perminant solution required
 				-- No longer crashes with drones/players of team 1,2
 				-- Still crashes with drones/players of teams 3+
-				MainMenu.stackQueue:push(InitWorld).load(scene, {{false, false}, {false, false}}, false)
+				MainMenu.stackQueue:push(InGame).load(scene, {{false, false}, {false, false}}, false)
 			else
 				error(
 					"--scene must have an argument. You provided these arguments: "

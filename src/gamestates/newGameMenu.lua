@@ -1,5 +1,5 @@
 local GameState = require("gamestates/gameState")
-local InitWorld = require("gamestates/initWorld")
+local InGame = require("gamestates/inGame")
 local Menu = require("menu")
 
 local NewGameMenu = GameState()
@@ -60,7 +60,7 @@ function NewGameMenu.testButton(button, back)
 	end
 
 	if start then
-		local callList = NewGameMenu.stackQueue:replace(InitWorld)
+		local callList = NewGameMenu.stackQueue:replace(InGame)
 		callList.load(scene, playerHostility, false)
 	end
 end

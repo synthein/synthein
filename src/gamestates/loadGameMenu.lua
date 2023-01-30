@@ -1,7 +1,7 @@
 local GameState = require("gamestates/gameState")
 local Menu = require("menu")
 
-local InitWorld = require("gamestates/initWorld")
+local InGame = require("gamestates/inGame")
 
 local LoadGameMenu = GameState()
 
@@ -48,7 +48,7 @@ end
 function LoadGameMenu.LoadGame(index)
 	local scene = scenes[index]
 	if scene then
-		LoadGameMenu.stackQueue:replace(InitWorld).load(scene, {}, true)
+		LoadGameMenu.stackQueue:replace(InGame).load(scene, {}, true)
 	end
 end
 

@@ -1,4 +1,4 @@
-local Timer = require("timer")
+local Timer = require("synthein").timer
 
 local Gun = class()
 

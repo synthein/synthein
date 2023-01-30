@@ -1,6 +1,6 @@
 local Draw = require("world/draw")
 local PhysicsReferences = require("world/physicsReferences")
-local Timer = require("timer")
+local Timer = require("synthein").timer
 local vector = require("vector")
 
 local lume = require("vendor/lume")

@@ -26,9 +26,9 @@ impl Module for MissileLauncher {
                 // Check if there is a part one block in front of the gun.
                 let part = match inputs.get_part.call::<_, LuaValue>((location, [0, 1])) {
                     Ok(part) => part,
-                    Err(error) => panic!("Failed to look up part: {:?}", error),
+                    Err(error) => panic!("failed to look up part: {:?}", error),
                 };
-                if part != Nil {
+                if part == Nil {
                     self.charged = false;
                     Some(WorldEvent {
                         event_type: "missile".to_string(),

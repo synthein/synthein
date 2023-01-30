@@ -2,8 +2,8 @@ use mlua::prelude::{LuaNumber, LuaTable};
 use mlua::{Lua, Result, ToLua, UserData, UserDataFields, UserDataMethods};
 
 pub struct Timer {
-    limit: f64,
-    time: f64,
+    pub limit: f64,
+    pub time: f64,
 }
 
 impl Timer {

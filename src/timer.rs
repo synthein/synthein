@@ -1,13 +1,13 @@
 use mlua::prelude::{LuaNumber, LuaTable};
 use mlua::{Lua, Result, ToLua, UserData, UserDataFields, UserDataMethods};
 
-struct Timer {
-    limit: f64,
-    time: f64,
+pub struct Timer {
+    pub limit: f64,
+    pub time: f64,
 }
 
 impl Timer {
-    fn ready(&mut self, dt: f64) -> bool {
+    pub fn ready(&mut self, dt: f64) -> bool {
         self.time -= dt;
 
         if self.time <= 0.0 {
@@ -30,8 +30,7 @@ impl UserData for Timer {
     }
 }
 
-#[mlua::lua_module]
-fn timer(lua: &Lua) -> Result<LuaTable> {
+pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
     let exports = lua.create_table()?;
 
     let metatable = lua.create_table()?;

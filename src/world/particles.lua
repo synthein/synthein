@@ -1,4 +1,4 @@
-local Timer = require("timer")
+local Timer = require("syntheinrust").timer
 local Draw = require("world/draw")
 
 local Particles = class(require("world/worldObjects"))

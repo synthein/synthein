@@ -1,4 +1,4 @@
-local Timer = require("timer")
+local Timer = require("syntheinrust").timer
 
 local Repair = class()
 

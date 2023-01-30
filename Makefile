@@ -19,8 +19,8 @@ windows: love
 	$(env) scripts/package-windows.sh
 
 rust:
-	cd src/timer && cargo build --release
-	cp src/timer/target/release/libtimer.so src/timer.so
+	cargo build --release
+	cp target/release/libsyntheinrust.so src/syntheinrust.so
 
 # Maintenance commands
 run: rust

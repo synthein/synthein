@@ -10,15 +10,7 @@ struct MissileLauncher {
 
 impl MissileLauncher {
     fn process(&self, orders: Vec<String>) -> bool {
-        // TODO: functionalize
-        let mut shoot = false;
-        for order in orders {
-            if order == "shoot" {
-                shoot = true;
-            }
-        }
-
-        shoot
+        orders.iter().any(|order| order == "shoot")
     }
 }
 

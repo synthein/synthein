@@ -44,7 +44,7 @@ function love.load()
 				--TODO {{false, false}, {false, false}} is a bandaid. Perminant solution required
 				-- No longer crashes with drones/players of team 1,2
 				-- Still crashes with drones/players of teams 3+
-				MainMenu.stackQueue:push(InGame).load(scene, {{false, false}, {false, false}}, false)
+				MainMenu.stackQueue:push(InGame).load(scene, {}, false)
 			else
 				error(
 					"--scene must have an argument. You provided these arguments: "

@@ -101,16 +101,6 @@ function InGame.load(scene, playerHostility, ifSave)
 		end
 	end
 
-	while #playerHostility < maxTeam do
-		table.insert(playerHostility, {})
-	end
-
-	for i, t in ipairs(playerHostility) do
-		while #t < maxTeam do
-			table.insert(t, false)
-		end
-	end
-
 	local saveName
 
 	-- Reastablish collisions and

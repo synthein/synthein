@@ -23,6 +23,7 @@ impl UserData for Timer {
     fn add_fields<'lua, F: UserDataFields<'lua, Self>>(fields: &mut F) {
         fields.add_field_method_get("limit", |_, this| Ok(this.limit));
         fields.add_field_method_get("time", |_, this| Ok(this.time));
+        fields.add_field_method_set("time", |_, this, val: f64| Ok(this.time = val));
     }
 
     fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {

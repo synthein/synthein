@@ -151,9 +151,7 @@ function World:spawnObject(type, location, data, appendix)
 	local team = userData and userData.team or 0
 
 	local teamHostility = self.info.teamHostility
-	print("World.spawnObject", #teamHostility.playerHostility, team)
 	while #teamHostility.playerHostility < team do
-		print("Extending Hostility")
 		table.insert(teamHostility.playerHostility, {})
 	end
 

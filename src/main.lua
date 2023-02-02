@@ -41,9 +41,6 @@ function love.load()
 
 			if scene then
 				local InGame = require("gamestates/inGame")
-				--TODO {{false, false}, {false, false}} is a bandaid. Perminant solution required
-				-- No longer crashes with drones/players of team 1,2
-				-- Still crashes with drones/players of teams 3+
 				MainMenu.stackQueue:push(InGame).load(scene, {}, false)
 			else
 				error(

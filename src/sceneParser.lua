@@ -1,7 +1,6 @@
 local Vector = require("vector")
 
 -- SceneParser serializes and deserializes scenes and ships as strings.
-local Spawn = require("world/spawn")
 local Parse = require("parse")
 
 local lume = require("vendor/lume")
@@ -42,8 +41,8 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 
 	local function spawnObject(ship)
 		local shipID, type, location, data, appendix = unpack(ship)
-		local object, player, team = Spawn.spawnObject(world, type, location,
-												 data, appendix)
+		local object, player, team = world:spawnObject(
+			type, location, data, appendix)
 		table.insert(objects, object)
 		if player then
 			table.insert(playerShips, object)

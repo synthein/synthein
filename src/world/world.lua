@@ -142,6 +142,29 @@ function World:addObject(object, objectKey)
 	table.insert(self.objects, object)
 end
 
+function World:spawnObject(type, location, data, appendix)
+	local object = World.objectTypes[type](self.info, location, data, appendix)
+	table.insert(self.objects, object)
+
+	local body = object.body
+	local userData = body:getUserData()
+	local team = userData and userData.team or 0
+
+	local teamHostility = self.info.teamHostility
+	while #teamHostility.playerHostility < team do
+		table.insert(teamHostility.playerHostility, {})
+	end
+
+	for _, t in ipairs(teamHostility.playerHostility) do
+		while #t < team do
+			table.insert(t, false)
+		end
+	end
+
+	return object, object.isPlayer, team
+end
+
+
 World.callbackData = {objects = {}}
 
 

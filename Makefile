@@ -23,9 +23,6 @@ rust:
 	cp target/release/libsyntheinrust.so src/syntheinrust.so
 
 # Maintenance commands
-run: rust
-	love src
-
 check:
 	find src -name '*.lua' -not -path 'src/vendor/*' | xargs wc -l | sort -rg
 	find src -name '*.lua' -exec luac -p {} + && echo "No problems found"

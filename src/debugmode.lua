@@ -1,5 +1,3 @@
-local Spawn = require("world/spawn")
-
 local Debug = {}
 
 function Debug.create(world, players)
@@ -68,11 +66,14 @@ function Debug:keyboard(key)
 			self.spawn = true
 
 		elseif love.keyboard.isDown("lctrl", "rctrl") then
+			--TODO this functionality was destroyed at some point needs repair.
 			-- Export the player's ship.
+			--[[
 			if key == "s" then
 				local string = Spawn.shipPack(self.player.ship, true)
 				love.filesystem.write("playerShip.txt", string)
 			end
+			--]]
 		end
 --	end
 end

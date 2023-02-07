@@ -2,6 +2,10 @@ local Building = require("building")
 local CircleMenu = require("circleMenu")
 local vector = require("vector")
 
+local pointerImage = love.graphics.newImage("res/images/pointer.png")
+local pointerWidth = pointerImage:getWidth()
+local pointerWidth = pointerImage:getWidth()
+
 local Selection = {}
 Selection.__index = Selection
 
@@ -15,6 +19,8 @@ function Selection.create(world, team)
 	self.build = nil
 	self.sturcture = nil
 	self.partIndex = nil
+
+	self.assign = nil
 
 	return self
 end
@@ -59,12 +65,15 @@ function Selection:pressed(cursorX, cursorY, order)
 				self.part = nil
 				self.build = nil
 			end
+		elseif self.assign then
+			self.assign.leader = structure
+			self.assign = nil
 		else
 			if order == "build" then
 				if team ~= 0 then
 					local corePart = structure.corePart
 					if corePart == part then
-						if team == self.team and corePart.modules.ai then
+						if team == self.team and corePart.modules.drone then
 							self.structure = structure
 							self.part = part
 						end
@@ -115,7 +124,10 @@ function Selection:released(cursorX, cursorY)
 				local strength = part:getMenu()
 				local newAngle = vector.angle(cursorX - x, cursorY - y)
 				local index = angleToIndex(newAngle, #strength)
-				self.part:runMenu(index, body)
+				local option = self.part:runMenu(index, body)
+				if option == "assign" then
+					self.assign = self.part
+				end
 			end
 			self.structure = nil
 			self.partSide = nil
@@ -170,6 +182,17 @@ function Selection:draw(cursorX, cursorY)
 	end
 	if build then
 		build:draw()
+	end
+	local assign = self.assign
+	if assign then
+		local body = assign.modules.hull.fixture:getBody()
+		local x, y  = body:getPosition()
+		local angle = body:getAngle()
+		love.graphics.draw(
+			pointerImage,
+			x, y, angle,
+			1/20, 1/20,
+			pointerWidth/2, pointerWidth/2)
 	end
 end
 

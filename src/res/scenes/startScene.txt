@@ -11,7 +11,4 @@ b1p*b1
 e1  e1
 }
 structure(-5,0,0)[1, player]BasicShip1
-structure(5,0,0)[0]
-{
-b*
-}
+structure(5,0,0)[1, player]BasicShip1

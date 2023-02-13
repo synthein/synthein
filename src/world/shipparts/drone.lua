@@ -230,15 +230,17 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 end
 
 function Drone:getMenu()
-	return {1, 1, 1}, {"Follow", "Return", "Stay"}
+	return {1, 1, 1, 1}, {"Follow", "assign", "Return", "Stay"}
 end
 
 function Drone:runMenu(i, body)
 	if i == 1 then
 		self.follow = true
 	elseif i == 2 then
-		self.follow = false
+		return "assign"
 	elseif i == 3 then
+		self.follow = false
+	elseif i == 4 then
 		self.follow = false
 		self.post = {Location.bodyCenter3(body)}
 	end

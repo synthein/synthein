@@ -199,12 +199,6 @@ function InGame.mousemoved(x, y)
 	menu:mousemoved(x, y)
 end
 
-function InGame.joystickpressed(joystick, button)
-	for _, player in ipairs(players) do
-		player:buttonpressed(joystick, button)
-	end
-end
-
 function InGame.joystickreleased(joystick, button)
 	for _, player in ipairs(players) do
 		player:buttonreleased(joystick, button)
@@ -212,6 +206,10 @@ function InGame.joystickreleased(joystick, button)
 end
 
 function InGame.gamepadpressed(joystick, button)
+	for _, player in ipairs(players) do
+		player:buttonpressed(joystick, button)
+	end
+
 	if menuOpen == "Pause" then
 		pauseMenuAction(menu:gamepadpressed(button))
 	end
@@ -230,7 +228,6 @@ end
 function InGame.update(dt)
 	console.repl()
 
-	-- TODO: debug why controllers can't open the menu
 	local openMenu, closeMenu = false, false
 	-- Send input to the players.
 	for _, player in ipairs(players) do

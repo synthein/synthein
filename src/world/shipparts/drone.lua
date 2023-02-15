@@ -18,20 +18,46 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	local dsq = d * d
 	local m = 1
 
+	-- Constant is calibrated subject to change
+	local collisionMultiplier = 10
+
 	--Cordination Logic
 	local destination
 	local leaderFollow
 	if self.follow then
 		if leader then
 			leaderBody = leader.body
-			local dx, dy = leaderBody:getLocalPoint(droneX, droneY)
-			local leaderMSq = (dx * dx) + (dy * dy)
+			corePart = leader.corePart
+			if corePart and corePart.getFormationPosition then
+				-- Hold rules defined postioning
+				if not self.formationPostion then
+					self.formationPostion = corePart:getFormationPosition(539)
+				end
+				local position = self.formationPostion
+				--local fixedAngle = true
+				if fixedAngle then
+					destination = {Location.bodyCenter6(leaderBody)}
+					--TODO Assuming angle of 0
+					destination[1] = destination[1] + position[1]
+					destination[2] = destination[2] + position[2]
+				else
+					destination = {Location.bodyPoint6(
+						leaderBody, position[1], position[2])}
+				end
 
-			leaderFollow = leaderMSq > 30 * 30
+				collisionMultiplier = 2
+			else
+				-- Lost Puppy Following
+				local dx, dy = leaderBody:getLocalPoint(droneX, droneY)
+				local leaderMSq = (dx * dx) + (dy * dy)
 
-			--TODO add formation logic here
-			destination = {Location.bodyCenter6(leaderBody)}
-			m = 1 - dsq/leaderMSq
+				leaderFollow = leaderMSq > 30 * 30
+
+				destination = {Location.bodyCenter6(leaderBody)}
+				m = 1 - dsq/leaderMSq
+			end
+		else
+			self.formationPostion = nil
 		end
 	else
 		local post = self.post
@@ -65,9 +91,8 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 				-- 0 is somewhat arbitrary it can be used to create a threshhold
 				if collisionMetric < 0 then
-					-- Constant is calibrated subject to change
-					sepX = sepX + dx * 10 * collisionMetric
-					sepY = sepY + dy * 10 * collisionMetric
+					sepX = sepX + dx * collisionMultiplier * collisionMetric
+					sepY = sepY + dy * collisionMultiplier * collisionMetric
 				end
 
 				--TODO add spacing logic here.

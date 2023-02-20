@@ -29,6 +29,8 @@ function PlayerBlock:__create(team, leader)
 	self.team = team
 	self.leader = leader
 
+	self.formationCounter = 1
+
 	return self
 end
 
@@ -40,6 +42,20 @@ end
 
 function PlayerBlock:getTeam()
 	return self.team
+end
+
+function PlayerBlock:getFormationPosition(key)
+	local fc = self.formationCounter
+	local p
+	if self.formationFlag then
+		p ={10 * fc, -5 * fc}
+		self.formationFlag = false
+		self.formationCounter = fc + 1
+	else
+		p = {-10 * fc, -5 * fc}
+		self.formationFlag = true
+	end
+	return p
 end
 
 function PlayerBlock:setOrders(orders)

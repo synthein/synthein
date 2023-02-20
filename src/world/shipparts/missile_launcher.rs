@@ -3,15 +3,13 @@ use crate::world::types::{Location, Module, ModuleInputs, WorldEvent};
 use mlua::prelude::{LuaTable, LuaValue};
 use mlua::{Lua, Nil, Result, ToLua, UserData, UserDataMethods};
 
+fn process(orders: Vec<String>) -> bool {
+    orders.iter().any(|order| order == "shoot")
+}
+
 struct MissileLauncher {
     charged: bool,
     recharge_timer: Timer,
-}
-
-impl MissileLauncher {
-    fn process(&self, orders: Vec<String>) -> bool {
-        orders.iter().any(|order| order == "shoot")
-    }
 }
 
 impl Module for MissileLauncher {
@@ -21,7 +19,7 @@ impl Module for MissileLauncher {
                 self.charged = true;
             }
             None
-        } else if inputs.controls.gun {
+        } else if inputs.controls.missile_launcher {
             // Check if there is a part one block in front of the gun.
             let part = match inputs.get_part.call::<_, LuaValue>((location, [0, 1])) {
                 Ok(part) => part,
@@ -45,9 +43,6 @@ impl Module for MissileLauncher {
 
 impl UserData for MissileLauncher {
     fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {
-        methods.add_method("ready", |_, this, orders: Vec<String>| {
-            Ok(MissileLauncher::process(this, orders))
-        });
         methods.add_method_mut(
             "update",
             |_, this, (inputs, location): (ModuleInputs, Location)| {
@@ -59,6 +54,12 @@ impl UserData for MissileLauncher {
 
 pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
     let exports = lua.create_table()?;
+    exports.set(
+        "process",
+        lua.create_function(|_, orders: Vec<String>| {
+            Ok(process(orders))
+        })?,
+    )?;
 
     let metatable = lua.create_table()?;
     metatable.set(

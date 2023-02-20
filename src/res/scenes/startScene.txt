@@ -12,15 +12,3 @@ e1  e1
 }
 structure(-5,0,0)[1, player]BasicShip1
 structure(5,0,0)[1, player]BasicShip1
-structure(-10,0,0)[1, player]BasicShip1
-structure(10,0,0)[1, player]BasicShip1
-structure(-15,0,0)[1, player]BasicShip1
-structure(15,0,0)[1, player]BasicShip1
-structure(-20,0,0)[1, player]BasicShip1
-structure(20,0,0)[1, player]BasicShip1
-structure(-25,0,0)[1, player]BasicShip1
-structure(25,0,0)[1, player]BasicShip1
-structure(-30,0,0)[1, player]BasicShip1
-structure(30,0,0)[1, player]BasicShip1
-structure(-35,0,0)[1, player]BasicShip1
-structure(35,0,0)[1, player]BasicShip1

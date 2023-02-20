@@ -3,6 +3,7 @@ use mlua::{FromLua, Lua, Result, ToLua};
 
 pub struct Controls<'lua> {
     pub gun: bool,
+    pub missile_launcher: bool,
     pub engine: LuaTable<'lua>,
 }
 
@@ -11,6 +12,7 @@ impl<'lua> FromLua<'lua> for Controls<'lua> {
         match value {
             LuaValue::Table(table) => Ok(Controls {
                 gun: table.get("gun")?,
+                missile_launcher: table.get("missileLauncher")?,
                 engine: table.get("engine")?,
             }),
             _ => Err(LuaError::FromLuaConversionError {

@@ -4,6 +4,7 @@ local StructureParser = require("world/structureParser")
 local Location = require("world/location")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
+local MissileLauncher = require("syntheinrust").missileLauncher
 local Shield = require("world/shipparts/shield")
 
 local Structure = class(require("world/worldObjects"))
@@ -410,15 +411,11 @@ function Structure:command(dt)
 		if order == "shoot" then table.insert(gunOrders, order) end
 	end
 
-	local gunControls = Gun.process(gunOrders)
-	local engineControls = Engine.process(engineOrders)
-
 	local function create(object, location)
 		location = StructureMath.sumVectors(location, object[2])
 		object[2] = self:getWorldLocation(location)
 		self.createObject(unpack(object))
 	end
-
 
 	local function getPart(location, pointer)
 		pointer[3] = 0
@@ -426,13 +423,17 @@ function Structure:command(dt)
 		return self.gridTable:index(x, y)
 	end
 
-
 	local moduleInputs = {
 		dt = dt,
 		body = self.body,
 		getPart = getPart,
-		controls = {gun = gunControls, engine = engineControls},
-		teamHostility = self.worldInfo.teamHostility}
+		controls = {
+			gun = Gun.process(gunOrders),
+			missileLauncher = MissileLauncher.process(gunOrders),
+			engine = Engine.process(engineOrders)
+		},
+		teamHostility = self.worldInfo.teamHostility
+	}
 
 	for i, part in ipairs(self.gridTable:loop()) do
 		for key, module in pairs(part.modules) do

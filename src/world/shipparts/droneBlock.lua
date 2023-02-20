@@ -57,6 +57,10 @@ function DroneBlock:getOrders(body, capabilities)
 		capabilities)
 end
 
+function DroneBlock:getFormationPosition(key)
+	return {10, -10}
+end
+
 function DroneBlock:getMenu()
 	return self.modules.drone:getMenu()
 end

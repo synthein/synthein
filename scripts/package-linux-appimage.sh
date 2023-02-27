@@ -4,6 +4,8 @@ set -e
 root_dir=$(pwd)
 build_dir=${root_dir}/build
 cache_dir=${build_dir}/cache
+rust_lib=${root_dir}/src/syntheinrust.so
+app_dir=${build_dir}/synthein-${SYNTHEIN_VERSION}.AppDir
 build_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.AppImage
 love_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.love
 
@@ -13,56 +15,33 @@ if [ ! -f "$love_file" ]; then
 	echo "Need to build the .love file first."
 	exit 1
 fi
-if [ ! -d "${cache_dir}" ]; then
-	mkdir "${cache_dir}"
-fi
+
+mkdir -p "$cache_dir"
+rm -rf "$app_dir"
 
 echo "Getting Linux LÖVE binaries."
-cd "${cache_dir}"
+cd "$cache_dir"
 
-love_tar=love-${LOVE_VERSION}-linux-x86_64.tar.gz
-dlcache "https://github.com/love2d/love/releases/download/${LOVE_VERSION}/${love_tar}"
+love_appimage=love-${LOVE_VERSION}-x86_64.AppImage
+dlcache "https://github.com/love2d/love/releases/download/${LOVE_VERSION}/${love_appimage}"
 
-extracted_love_tar=${cache_dir}/love-${LOVE_VERSION}-x86_64
-[ -d "$extracted_love_tar" ] && rm -r "$extracted_love_tar"
-tar -xzf "$love_tar" && mv -T dest "$extracted_love_tar"
+chmod +x "$love_appimage" && "./$love_appimage" --appimage-extract 2>/dev/null && mv -T squashfs-root "$app_dir"
+
+dlcache "https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+chmod +x appimagetool-x86_64.AppImage
 
 echo "Building AppImage package."
-cd "${cache_dir}"
-dlcache "https://github.com/probonopd/AppImageKit/releases/download/continuous/AppRun-x86_64"
+cd "$app_dir"
 
-if [ -d "${build_dir}/synthein-appimage" ]; then
-	rm -r "${build_dir}/synthein-appimage"
-fi
-mkdir "${build_dir}/synthein-appimage"
-cd "${build_dir}/synthein-appimage"
-
-# Install Synthein.
-install -D -m0755 "${cache_dir}/AppRun-x86_64" AppRun
-install -D -m0755 "${root_dir}/package/synthein.appimage.sh" usr/bin/synthein
 install -D "$love_file" usr/share/synthein/synthein.love
+install -D "$rust_lib" usr/syntheinrust.so # This is the only relative path LOVE checks.
 install -D "${root_dir}/package/synthein.desktop" usr/share/applications/synthein.desktop
 install -D "${root_dir}/package/synthein.png" usr/share/pixmaps/synthein.png
+rm love.desktop .DirIcon
 ln -s usr/share/applications/synthein.desktop synthein.desktop
 ln -s usr/share/pixmaps/synthein.png synthein.png
+ln -s usr/share/pixmaps/synthein.png .DirIcon
 
-# Install LOVE.
-install -D -m0755 "${extracted_love_tar}/usr/bin/love" usr/bin/love
-install -d usr/lib
-cp -r "${extracted_love_tar}/usr/lib/"* usr/lib
-install -D "${extracted_love_tar}/license.txt" usr/share/doc/love
-
-# Package as an AppImage.
-cd "${cache_dir}"
-dlcache "https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
-chmod a+x appimagetool-x86_64.AppImage
-
-./appimagetool-x86_64.AppImage --appimage-extract 2> /dev/null
-./squashfs-root/AppRun "${build_dir}/synthein-appimage/" "${build_file}"
-
-# Clean up.
-rm -r "$extracted_love_tar"
-rm -r "${cache_dir}/squashfs-root"
-rm -r "${build_dir}/synthein-appimage"
+"${cache_dir}/appimagetool-x86_64.AppImage" "$app_dir" "$build_file"
 
 echo "Built ${build_file}."

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-make
+make rust
 love src "$@"

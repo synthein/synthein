@@ -1,12 +1,10 @@
 synthein_version = devel
-love_version = 11.3
+love_version = 11.4
 
 env = SYNTHEIN_VERSION=$(synthein_version) LOVE_VERSION=$(love_version)
 
 # Building commands
-love: rust build/synthein-$(synthein_version).love
-
-build/synthein-$(synthein_version).love: $(shell find ./src/ -type f)
+love: rust
 	$(env) scripts/package-love.sh
 
 appimage: love

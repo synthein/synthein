@@ -124,7 +124,27 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 	--Change Logic if enemy is around
 	if target and capabilities.combat then
-		local angle = vector.angle(target[1] - droneX, target[2] - droneY) - pi/2
+		local dpx = target[1] - droneX
+		local dpy = target[2] - droneY
+		local dvx = target[4] - droneXV
+		local dvy = target[5] - droneYV
+		local dvm = math.sqrt(dvx * dvx + dvy * dvy)
+		local  angle = vector.angle(dpx, dpy)
+		local vAngle = vector.angle(dvx, dvy)
+
+		local projectileSpeed = 25
+		local leadOffset = dvm * math.sin(angle - vAngle)
+
+		if shoot then
+			if -projectileSpeed < leadOffset and
+				leadOffset < projectileSpeed then
+				angle = angle - math.asin(leadOffset/projectileSpeed)
+			else
+				shoot = false
+			end
+		end
+
+ 		angle = angle - pi/2
 
 		if destination and leaderFollow then
 			--Keep travel information just aim at enemy

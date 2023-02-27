@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Synthein
 Comment=A space ship building and combat game
-Exec=synthein
+Exec=love share/synthein/synthein.love
 Icon=synthein
 Terminal=false
 Type=Application

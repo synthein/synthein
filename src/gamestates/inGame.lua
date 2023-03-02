@@ -77,7 +77,7 @@ function InGame.load(scene, playerHostility, ifSave)
 
 	world = World(playerHostility)
 
-	local screen = Screen()
+	screen = Screen()
 
 	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, {0,0,0,0,0,0})
 	-- TODO: Instead of creating players here, we should create one

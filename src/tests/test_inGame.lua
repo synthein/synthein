@@ -5,7 +5,7 @@ local t = {}
 
 function t.test_screen_resize_should_not_crash()
 	local screen = Screen()
-	InGame.load({}, {}, screen)
+	InGame.load("test-general1", {}, false)
 	InGame.resize(100, 100)
 end
 

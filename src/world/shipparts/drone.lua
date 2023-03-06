@@ -77,7 +77,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 		for body, fixtures in pairs(bodyList) do
 			local object = body:getUserData()
 			-- Look for structures.
-			if object and object.type() == "structure" then
+			if object then
 				local  dx,  dy = body:getPosition()
 				local dvx, dvy = body:getLinearVelocity()
 
@@ -96,21 +96,23 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 				end
 
 				--TODO add spacing logic here.
-				if teamHostility:test(self.team, object.team or 0) then
-					if not targetMSq or targetMSq > mSq then
-						shoot = true
-						target = {Location.bodyCenter6(body)}
-						targetMSq = mSq
-					end
-				elseif object.team and object.team ~= 0 then
-					if capabilities.repair and not self.repairFixture then
-						local fixtures = body:getFixtures()
-						for _, fixture in ipairs(fixtures) do
-							local object = fixture:getUserData()
-							if object.getScaledHealth then
-								local health = object:getScaledHealth()
-								if health ~= 1 then
-									self.repairFixture = fixture
+				if object.type() == "structure" then
+					if teamHostility:test(self.team, object.team or 0) then
+						if not targetMSq or targetMSq > mSq then
+							shoot = true
+							target = {Location.bodyCenter6(body)}
+							targetMSq = mSq
+						end
+					elseif object.team and object.team ~= 0 then
+						if capabilities.repair and not self.repairFixture then
+							local fixtures = body:getFixtures()
+							for _, fixture in ipairs(fixtures) do
+								local object = fixture:getUserData()
+								if object.getScaledHealth then
+									local health = object:getScaledHealth()
+									if health ~= 1 then
+										self.repairFixture = fixture
+									end
 								end
 							end
 						end
@@ -212,8 +214,8 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	--Prepare Relative Values
 	local rdx, rdy, rvx, rvy, rda, rva
 	if destination then
-		rdx = (destination[1] - droneX) * m + sepX
-		rdy = (destination[2] - droneY) * m + sepY
+		rdx = (destination[1] - droneX) * m
+		rdy = (destination[2] - droneY) * m
 		rda = (destination[3] - droneA + pi) % (2*pi) - pi
 		rvx =  destination[4] - droneXV
 		rvy =  destination[5] - droneYV
@@ -222,6 +224,10 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 		rdx, rdy, rda = 0, 0, 0
 		rvx, rvy, rva = -droneXV, -droneYV, -droneAV
 	end
+
+
+	rdx = rdx + sepX
+	rdy = rdy + sepY
 	rdx,  rdy  = droneBody:getLocalVector(rdx,  rdy )
 	rvx,  rvy  = droneBody:getLocalVector(rvx,  rvy )
 

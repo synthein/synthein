@@ -11,6 +11,7 @@ function Shot:__create(worldInfo, location, data, appendix)
 	self.body:setLinearVelocity(location[4] + vx, location[5] + vy)
 	self.body:setAngularVelocity(0)
 	self.body:setBullet(true)
+	self.body:setUserData(self)
 
 	self.physicsShape = love.physics.newRectangleShape(.2, .2)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)

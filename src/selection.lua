@@ -1,3 +1,4 @@
+local StructureMath = require("world/structureMath")
 local Building = require("building")
 local CircleMenu = require("circleMenu")
 local vector = require("vector")
@@ -181,7 +182,20 @@ function Selection:draw(cursorX, cursorY)
 		end
 	end
 	if build then
-		build:draw()
+
+		local body = build.body
+		local vec = build.annexeeBaseVector
+		if body and vec and build.mode > 2 then
+			local l = StructureMath.addDirectionVector(vec, vec[3], .5)
+			local x, y = body:getWorldPoint(l[1], l[2])
+			local angle = body:getAngle()
+
+			love.graphics.draw(
+				pointerImage,
+				x, y, angle,
+				1/20, 1/20,
+				pointerWidth/2, pointerWidth/2)
+		end
 	end
 	local assign = self.assign
 	if assign then

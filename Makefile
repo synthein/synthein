@@ -37,5 +37,6 @@ luacheck:
 
 test:
 	love src --test
+	lua test/init.lua
 
 .PHONY: appimage check clean dep love luacheck macos rust test windows

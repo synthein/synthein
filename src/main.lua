@@ -27,7 +27,7 @@ function love.load()
 
 	local i = 1
 	while arg[i] do
-		if arg[i] == "--test" then
+		if arg[i] == "--unit-tests" then
 			require("tests")
 			love.event.quit()
 		elseif arg[i]:match("^--scene") then

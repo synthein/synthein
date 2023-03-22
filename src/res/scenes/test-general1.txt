@@ -22,11 +22,11 @@ g*
 }
 structure(8,0,0)[0]
 {
-a*
+r*
 }
 structure(2,2,0)[0]
 {
-r*
+a*
 }
 structure(4,2,0)[0]
 {

@@ -36,7 +36,7 @@ luacheck:
 	find src -name '*.lua' -not -path 'src/vendor/*' -exec luacheck --no-unused-args {} +
 
 test:
-	love src --test
-	lua test/init.lua
+	love src --unit-tests
+	test/init.sh
 
 .PHONY: appimage check clean dep love luacheck macos rust test windows

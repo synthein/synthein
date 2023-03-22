@@ -27,7 +27,10 @@ function console.repl()
 			-- of the function. We don't currently use the first
 			-- return value. We print errors or results for the
 			-- user to see.
-			print(select(2, pcall(code)))
+			local results = {select(2, pcall(code))}
+			if #results > 0 then
+				print(unpack(results))
+			end
 		end
 	end
 end

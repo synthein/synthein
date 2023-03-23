@@ -1,9 +1,11 @@
 local StructureMath = {}
 
-StructureMath.unitVectors = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}}
-local unitVectors = StructureMath.unitVectors
-StructureMath.multipliers = {{1, 1}, {-1, 1}, {-1, -1},{1, -1}}
-StructureMath.swap = {false, true, false, true}
+local unitVectors = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}}
+
+local piOverTwo = math.pi / 2
+function StructureMath.directionToAngle(d)
+	return (d - 1) * piOverTwo
+end
 
 function StructureMath.toDirection(value)
 	return (value - 2) % 4 + 1
@@ -22,22 +24,24 @@ function StructureMath.step(vector)
 end
 
 function StructureMath.addUnitVector(vector, direction)
-	return {vector[1] + StructureMath.unitVectors[direction][1],
-			vector[2] + StructureMath.unitVectors[direction][2],
+	return {vector[1] + unitVectors[direction][1],
+			vector[2] + unitVectors[direction][2],
 			vector[3]}
 end
 
 function StructureMath.addDirectionVector(vector, direction, scale)
-	return {vector[1] + StructureMath.unitVectors[direction][1] * scale,
-			vector[2] + StructureMath.unitVectors[direction][2] * scale,
+	return {vector[1] + unitVectors[direction][1] * scale,
+			vector[2] + unitVectors[direction][2] * scale,
 			vector[3]}
 end
 
+local multipliers = {{1, 1}, {-1, 1}, {-1, -1},{1, -1}}
+local swap = {false, true, false, true}
 function StructureMath.rotateVector(vector, rotation)
-	if StructureMath.swap[rotation] then
+	if swap[rotation] then
 		vector = {vector[2], vector[1]}
 	end
-	local mult = StructureMath.multipliers[rotation]
+	local mult = multipliers[rotation]
 	vector = {mult[1] * vector[1],
 			  mult[2] * vector[2]}
 	return vector

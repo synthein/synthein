@@ -299,11 +299,52 @@ function Structure:testConnection(testPoints)
 	return clusters
 end
 
--- Part was disconnected or destroyed remove part and handle outcome.
-function Structure:disconnectPart(location, isDestroyed)
+function Structure:fracture(location)
 	local part = self.gridTable:index(location[1], location[2])
-	if #self.gridTable:loop() == 1 and not isDestroyed then
-		-- if structure will bedestoryed
+
+	--self:removePart(part)
+	local x, y = unpack(part.location)
+	self.gridTable:index(x, y, nil, true)
+
+	self:removePart(part)
+
+	local points = {}
+	for i = 1,4 do
+		table.insert(points, StructureMath.addUnitVector(part.location, i))
+	end
+	local structureList = self:testConnection(points)
+
+	for i = 1, #structureList do
+		local partList = structureList[i]
+		local basePart = partList[1]
+		local baseVector = basePart.location
+		local basePartFixture = basePart.modules["hull"].fixture
+		local location = {Location.fixturePoint6(
+			basePartFixture, baseVector[1], baseVector[2])}
+
+		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
+
+		local structure = GridTable()
+		for _, eachPart in ipairs(partList) do
+			local partVector = {unpack(eachPart.location)}
+			local netVector = StructureMath.sumVectors(baseVector, partVector)
+			--if eachPart ~= savedPart then
+				self:removePart(eachPart)
+			--end
+			eachPart:setLocation(netVector)
+			structure:index(netVector[1], netVector[2], eachPart)
+
+		end
+
+		self.createObject("structure", location, {parts = structure})
+	end
+end
+
+-- Part was disconnected or destroyed remove part and handle outcome.
+function Structure:disconnectPart(location)
+	local part = self.gridTable:index(location[1], location[2])
+	if #self.gridTable:loop() == 1 then
+		-- if structure will be destroyed
 		if part.isDestroyed then
 			self:removePart(part)
 		end
@@ -314,13 +355,7 @@ function Structure:disconnectPart(location, isDestroyed)
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
 
-	local savedPart
-	if isDestroyed then
-		self:removePart(part)
-	else
-		savedPart = part
-	end
-
+	local savedPart = part
 
 	local points = {}
 	for i = 1,4 do
@@ -329,20 +364,16 @@ function Structure:disconnectPart(location, isDestroyed)
 	local clusters = self:testConnection(points)
 	local structureList
 
-	if savedPart then
-		if not self.corePart then
-			structureList = clusters
-			table.insert(structureList, {savedPart})
-		else
-			structureList = {{savedPart}}
-			for _, group in ipairs(clusters) do
-				for _, eachPart in ipairs(group) do
-					table.insert(structureList[1], eachPart)
-				end
+	if not self.corePart then
+		structureList = clusters
+		table.insert(structureList, {savedPart})
+	else
+		structureList = {{savedPart}}
+		for _, group in ipairs(clusters) do
+			for _, eachPart in ipairs(group) do
+				table.insert(structureList[1], eachPart)
 			end
 		end
-	else
-		structureList = clusters
 	end
 
 	for i = 1, #structureList do
@@ -444,7 +475,8 @@ function Structure:command(dt)
 				create(newObject, location)
 			end
 			if disconnect then
-				self:disconnectPart(location, true)
+				--TODO Likely edge case bug destroy 2 blocks at the same time.
+				self:fracture(location)
 			end
 		end
 	end

@@ -300,20 +300,19 @@ function Structure:testConnection(testPoints)
 end
 
 function Structure:fracture(location)
-	local part = self.gridTable:index(location[1], location[2])
-
-	--self:removePart(part)
-	local x, y = unpack(part.location)
-	self.gridTable:index(x, y, nil, true)
-
+	local x, y = unpack(location)
+	local part = self.gridTable:index(x, y)
+	--Remove destroyed part.
 	self:removePart(part)
 
+	--List adjacent grid points.
 	local points = {}
 	for i = 1,4 do
 		table.insert(points, StructureMath.addUnitVector(part.location, i))
 	end
 	local structureList = self:testConnection(points)
 
+	--Generate arguments for spawning new structures.
 	for i = 1, #structureList do
 		local partList = structureList[i]
 		local basePart = partList[1]
@@ -342,7 +341,10 @@ end
 
 -- Part was disconnected or destroyed remove part and handle outcome.
 function Structure:disconnectPart(location)
-	local part = self.gridTable:index(location[1], location[2])
+	local x, y = unpack(location)
+	local part = self.gridTable:index(x, y)
+
+	--If there is only one part this is pointless return early.
 	if #self.gridTable:loop() == 1 then
 		-- if structure will be destroyed
 		if part.isDestroyed then
@@ -351,31 +353,36 @@ function Structure:disconnectPart(location)
 		return
 	end
 
-	--self:removePart(part)
-	local x, y = unpack(part.location)
+	--Remove part from grid table for the connection testing. Fully removed in loop.
 	self.gridTable:index(x, y, nil, true)
 
-	local savedPart = part
-
+	--List adjacent grid points.
 	local points = {}
 	for i = 1,4 do
 		table.insert(points, StructureMath.addUnitVector(part.location, i))
 	end
+	
+	--Group connected parts into clusters.
 	local clusters = self:testConnection(points)
 	local structureList
 
-	if not self.corePart then
-		structureList = clusters
-		table.insert(structureList, {savedPart})
-	else
-		structureList = {{savedPart}}
+	--If there is a corePart split one group off the corePart Group.
+	--If there is no corePart then there is no reference point so split it multiple ways.
+	if self.corePart then
+		--Put all clusters into one new structure
+		structureList = {{part}}
 		for _, group in ipairs(clusters) do
 			for _, eachPart in ipairs(group) do
 				table.insert(structureList[1], eachPart)
 			end
 		end
+	else
+		--Keep clusters and other part separate.
+		structureList = clusters
+		table.insert(structureList, {part})
 	end
 
+	--Generate arguments for spawning new structures.
 	for i = 1, #structureList do
 		local partList = structureList[i]
 		local basePart = partList[1]
@@ -390,7 +397,7 @@ function Structure:disconnectPart(location)
 		for _, eachPart in ipairs(partList) do
 			local partVector = {unpack(eachPart.location)}
 			local netVector = StructureMath.sumVectors(baseVector, partVector)
-			--if eachPart ~= savedPart then
+			--if eachPart ~= part then
 				self:removePart(eachPart)
 			--end
 			eachPart:setLocation(netVector)

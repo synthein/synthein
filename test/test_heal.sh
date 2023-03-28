@@ -8,7 +8,9 @@ exec 3>"$input"
 
 cat >> "$input" <<EOF
 players[1].ship.corePart.modules.hull.health = 1
-players[1].ship.corePart.modules.heal.timer.time = 0.1
+timer = players[1].ship.corePart.modules.heal.timer
+timer.time = 0.1
+players[1].ship.corePart.modules.heal.timer = timer
 EOF
 
 sleep 1
@@ -22,7 +24,7 @@ exec 3>&-
 wait
 
 actual=$(cat "$output")
-if [ $actual -gt 1 ]; then
+if [ "$actual" -gt 1 ]; then
 	printf .
 else
 	printf "FAILED: expected %s > 1\n" "$actual"

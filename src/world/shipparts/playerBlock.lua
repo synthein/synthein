@@ -2,7 +2,7 @@
 local Hull = require("world/shipparts/hull")
 local Engine = require("world/shipparts/engine")
 local Gun = require("world/shipparts/gun")
-local Heal = require("world/shipparts/heal")
+local Heal = require("syntheinrust").heal
 
 -- Class Setup
 local Part = require("world/shipparts/part")

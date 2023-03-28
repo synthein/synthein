@@ -70,5 +70,6 @@ impl<'lua> ToLua<'lua> for WorldEvent {
 }
 
 pub trait Module {
-    fn update(&mut self, inputs: ModuleInputs, location: Location) -> Option<WorldEvent>;
+    fn update(&mut self, lua: &Lua, inputs: ModuleInputs, location: Location)
+        -> Option<WorldEvent>;
 }

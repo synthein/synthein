@@ -8,6 +8,7 @@ exec 3>"$input"
 
 cat >> "$input" <<EOF
 players[1].ship.corePart.modules.hull.health = 1
+players[1].ship.corePart.modules.heal.timer.time = 0.1
 EOF
 
 sleep 1

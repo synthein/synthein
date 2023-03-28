@@ -13,7 +13,7 @@ struct MissileLauncher {
 }
 
 impl Module for MissileLauncher {
-    fn update(&mut self, inputs: ModuleInputs, location: Location) -> Option<WorldEvent> {
+    fn update(&mut self, _: &Lua, inputs: ModuleInputs, location: Location) -> Option<WorldEvent> {
         if !self.charged {
             if self.recharge_timer.ready(inputs.dt) {
                 self.charged = true;
@@ -45,8 +45,8 @@ impl UserData for MissileLauncher {
     fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {
         methods.add_method_mut(
             "update",
-            |_, this, (inputs, location): (ModuleInputs, Location)| {
-                Ok(MissileLauncher::update(this, inputs, location))
+            |lua, this, (inputs, location): (ModuleInputs, Location)| {
+                Ok(MissileLauncher::update(this, lua, inputs, location))
             },
         );
     }
@@ -56,9 +56,7 @@ pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
     let exports = lua.create_table()?;
     exports.set(
         "process",
-        lua.create_function(|_, orders: Vec<String>| {
-            Ok(process(orders))
-        })?,
+        lua.create_function(|_, orders: Vec<String>| Ok(process(orders)))?,
     )?;
 
     let metatable = lua.create_table()?;

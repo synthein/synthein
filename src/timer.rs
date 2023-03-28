@@ -1,6 +1,7 @@
 use mlua::prelude::{LuaNumber, LuaTable};
 use mlua::{Lua, Result, ToLua, UserData, UserDataFields, UserDataMethods};
 
+#[derive(Copy, Clone)]
 pub struct Timer {
     pub limit: f64,
     pub time: f64,
@@ -23,7 +24,10 @@ impl UserData for Timer {
     fn add_fields<'lua, F: UserDataFields<'lua, Self>>(fields: &mut F) {
         fields.add_field_method_get("limit", |_, this| Ok(this.limit));
         fields.add_field_method_get("time", |_, this| Ok(this.time));
-        fields.add_field_method_set("time", |_, this, val: f64| Ok(this.time = val));
+        fields.add_field_method_set("time", |_, this, val: f64| {
+            this.time = val;
+            Ok(())
+        });
     }
 
     fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {

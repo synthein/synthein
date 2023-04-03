@@ -69,4 +69,15 @@ function DroneBlock:runMenu(i, body)
 	return self.modules.drone:runMenu(i, body)
 end
 
+
+function DroneBlock:update(moduleInputs, location)
+	local newObject, disconnect
+	
+	self.modules.engine:update(moduleInputs, location)
+	_, disconnect = self.modules.hull:update(moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
+
 return DroneBlock

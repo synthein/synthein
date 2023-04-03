@@ -48,4 +48,14 @@ function RepairBlock:removeFixtures()
 	self.modules.sensor:removeFixtures()
 end
 
+function RepairBlock:update(moduleInputs, location)
+	local newObject, disconnect
+	
+	self.modules.sensor:update(moduleInputs, location)
+	self.modules.repair:update(moduleInputs, location)
+	_, disconnect = self.modules.hull:update(moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return RepairBlock

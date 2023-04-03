@@ -11,4 +11,11 @@ function Block:__create()
 	self.modules["hull"] = Hull(imageFunction, 10)
 end
 
+function Block:update(moduleInputs, location)
+	local newObject, disconnect = self.modules.hull:update(
+		moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return Block

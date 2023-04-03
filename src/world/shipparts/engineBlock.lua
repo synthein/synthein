@@ -33,4 +33,13 @@ function EngineBlock:__create()
 	self.modules["engine"] = engine
 end
 
+function EngineBlock:update(moduleInputs, location)
+	local newObject, disconnect
+	
+	self.modules.engine:update(moduleInputs, location)
+	_, disconnect = self.modules.hull:update(moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return EngineBlock

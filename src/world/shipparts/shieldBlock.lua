@@ -17,4 +17,11 @@ function ShieldBlock:__create()
 	return self
 end
 
+function ShieldBlock:update(moduleInputs, location)
+	local newObject, disconnect = self.modules.hull:update(
+		moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return ShieldBlock

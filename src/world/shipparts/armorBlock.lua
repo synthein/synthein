@@ -14,4 +14,11 @@ function ArmorBlock:__create()
 	self.modules["hull"] = Hull(imageFunction, 20)
 end
 
+function ArmorBlock:update(moduleInputs, location)
+	local newObject, disconnect = self.modules.hull:update(
+		moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return ArmorBlock

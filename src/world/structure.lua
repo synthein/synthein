@@ -474,17 +474,16 @@ function Structure:command(dt)
 	}
 
 	for i, part in ipairs(self.gridTable:loop()) do
-		for key, module in pairs(part.modules) do
-			local location = part.location
-			local newObject, disconnect = module:update(moduleInputs, location)
+		local location = part.location
+		
+		local newObject, disconnect = part:update(moduleInputs, location)
 
-			if newObject then
-				create(newObject, location)
-			end
-			if disconnect then
-				--TODO Likely edge case bug destroy 2 blocks at the same time.
-				self:fracture(location)
-			end
+		if newObject then
+			create(newObject, location)
+		end
+		if disconnect then
+			--TODO Likely edge case bug destroy 2 blocks at the same time.
+			self:fracture(location)
 		end
 	end
 

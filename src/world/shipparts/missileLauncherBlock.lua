@@ -23,4 +23,13 @@ function MissileLauncherBlock:__create()
 	return self
 end
 
+function MissileLauncherBlock:update(moduleInputs, location)
+	local newObject, disconnect
+	
+	newObject, _ = self.modules.missileLuancher:update(moduleInputs, location)
+	_, disconnect = self.modules.hull:update(moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return MissileLauncherBlock

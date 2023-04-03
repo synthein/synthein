@@ -25,4 +25,11 @@ function Anchor:getOrders()
 	return {}
 end
 
+function Anchor:update(moduleInputs, location)
+	local newObject, disconnect = self.modules.hull:update(
+		moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return Anchor

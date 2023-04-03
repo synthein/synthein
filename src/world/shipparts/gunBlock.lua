@@ -24,4 +24,13 @@ function GunBlock:__create()
 	return self
 end
 
+function GunBlock:update(moduleInputs, location)
+	local newObject, disconnect
+	
+	newObject, _ = self.modules.gun:update(moduleInputs, location)
+	_, disconnect = self.modules.hull:update(moduleInputs, location)
+	
+	return newObject, disconnect
+end
+
 return GunBlock

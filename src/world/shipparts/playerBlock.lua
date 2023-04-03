@@ -65,9 +65,15 @@ function PlayerBlock:getOrders()
 	return self.orders
 end
 
-function PlayerBlock:shot()
-	self.recharge = true
-	self.rechargeStart = 0
+function PlayerBlock:update(moduleInputs, location)
+	local newObject, disconnect
+	
+	self.modules.engine:update(moduleInputs, location)
+	newObject, _ = self.modules.gun:update(moduleInputs, location)
+	self.modules.heal:update(moduleInputs, location)
+	_, disconnect = self.modules.hull:update(moduleInputs, location)
+	
+	return newObject, disconnect
 end
 
 return PlayerBlock

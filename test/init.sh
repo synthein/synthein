@@ -1,4 +1,6 @@
 #!/bin/sh
 set -eu
 
-find "$(dirname "$0")" -name 'test_*.sh' -exec sh -eu {} \;
+tests_dir=$(dirname "$0")
+
+find "$tests_dir" -name 'test_*.sh' -exec "$tests_dir"/run_test.sh {} \;

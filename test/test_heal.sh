@@ -1,9 +1,12 @@
-input=$(mktemp -u)
-mkfifo "$input"
-output=$(mktemp)
-result=0
+#!/bin/sh
 
-love src --headless --scene test-general1 < "$input" > "$output" 2>/dev/null &
+input="$1"
+output="$2"
+extra_args="$3"
+
+love src $extra_args --scene test-general1 < "$input" > "$output" 2>/dev/null &
+
+# Hold input open until after all our writes are done.
 exec 3>"$input"
 
 cat >> "$input" <<EOF
@@ -20,18 +23,14 @@ return players[1].ship.corePart.modules.hull.health
 quit()
 EOF
 
+# Close input.
 exec 3>&-
+
+# Wait for love to exit.
 wait
 
 actual=$(cat "$output")
-if [ "$actual" -gt 1 ]; then
-	printf .
-else
+if ! [ "$actual" -gt 1 ]; then
 	printf "FAILED: expected %s > 1\n" "$actual"
-	result=1
+	return 1
 fi
-
-rm "$input"
-rm "$output"
-
-exit $result

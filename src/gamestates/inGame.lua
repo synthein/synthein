@@ -116,6 +116,7 @@ function InGame.load(scene, playerHostility, ifSave)
 	console.init({
 		players = players,
 		world = world,
+		debugmode = debugmode,
 		quit = love.event.quit
 	})
 end

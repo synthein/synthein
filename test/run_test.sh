@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -u
 
 # Setup
 input=$(mktemp -u)
@@ -12,9 +12,13 @@ extra_args=
 ! [ "${SYNTHEIN_ENABLE_TEST_GRAPHICS:-0}" = 1 ] && extra_args="$extra_args --headless"
 
 # Run test
-sh -eu "$1" "$input" "$output" "$extra_args"
+message=$(sh -eu "$1" "$input" "$output" "$extra_args")
 result=$?
-[ "$result" -eq 0 ] && printf .
+if [ "$result" -eq 0 ]; then
+	printf .
+else
+	printf "%s: %s\n" "$1" "$message"
+fi
 
 # Cleanup
 rm "$input"

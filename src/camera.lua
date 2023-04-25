@@ -1,8 +1,6 @@
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
-
-local lume = require("vendor/lume")
-
+local vector = require("vector")
 
 local Camera = {}
 Camera.__index = Camera
@@ -40,12 +38,52 @@ function Camera:getScreenCoords(worldX, worldY, a, b)
 	return x, y, a, b
 end
 
-function Camera:getWorldBorder()
-	local scissor = self.scissor
-	return self.x - scissor.width /(2 * self.zoom),
-		   self.y - scissor.height/(2 * self.zoom),
-		   self.x + scissor.width /(2 * self.zoom),
-		   self.y + scissor.height/(2 * self.zoom)
+function Camera:getAABB()
+	-- Offset for the corners with the same x and y sign.
+	local xoffset1, yoffset1 = vector.rotate(
+		self.scissor.width /(2 * self.zoom),
+		self.scissor.height/(2 * self.zoom),
+		self.angle
+	)
+
+	-- Offset for the corners with the opposite x and y sign.
+	local xoffset2, yoffset2 = vector.rotate(
+		-self.scissor.width/(2 * self.zoom),
+		self.scissor.height/(2 * self.zoom),
+		self.angle
+	)
+
+	local points = {
+		{
+			self.x - xoffset1,
+			self.y - yoffset1
+		},
+		{
+			self.x + xoffset2,
+			self.y - yoffset2
+		},
+		{
+			self.x + xoffset1,
+			self.y + yoffset1
+		},
+		{
+			self.x - xoffset2,
+			self.y + yoffset2
+		}
+	}
+
+	local minX, maxX = self.x, self.x
+	local minY, maxY = self.y, self.y
+
+	for _, point in ipairs(points) do
+		minX = math.min(minX, point[1])
+		minY = math.min(minY, point[2])
+		maxX = math.max(maxX, point[1])
+		maxY = math.max(maxY, point[2])
+	end
+
+	return minX, minY, maxX, maxY
+		
 end
 
 -- Make sure the correct transforms are active
@@ -163,18 +201,6 @@ function Camera:limitCursor(cursorX, cursorY)
 	return cursorX, cursorY
 end
 
-function Camera:draw(image, x, y, angle, sx, sy, ox, oy)
-	local scissor = self.scissor
-	love.graphics.setScissor(
-		scissor.x, scissor.y,
-		scissor.width, scissor.height)
-
-	x, y, sx, sy = self:getScreenCoords(x, y, sx, sy)
-	love.graphics.draw(image, x, y, -angle, sx, sy, ox, oy)
-
-	love.graphics.setScissor()
-end
-
 function Camera:print(string, x, y)
 	x = x or 0
 	y = y or 0
@@ -222,8 +248,6 @@ function Camera:drawWorldObjects(player, debugmode)
 		fixtureList[PhysicsReferences.categories[c]] = {}
 	end
 
-	local a, b, c, d = player.camera:getWorldBorder()
-
 	local function callback(fixture)
 		local category = fixture:getFilterData()
 		if fixtureList[category] then
@@ -232,6 +256,7 @@ function Camera:drawWorldObjects(player, debugmode)
 		return true
 	end
 
+	local a, b, c, d = player.camera:getAABB()
 	player.world.physics:queryBoundingBox(a, b, c, d, callback)
 
 	for _, category in ipairs(drawOrder) do
@@ -279,9 +304,9 @@ function Camera:drawCompass(angle)
 		compassY,
 		compassSize
 	)
-	local needleX, needleY = lume.vector(
-		angle,
-		compassSize
+	local needleX, needleY = vector.components(
+		compassSize,
+		angle
 	)
 	love.graphics.polygon(
 		"fill",

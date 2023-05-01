@@ -299,6 +299,30 @@ function Structure:testConnection(testPoints)
 	return clusters
 end
 
+function Structure:splitOffParts(partList)
+	local basePart = partList[1]
+	local baseVector = basePart.location
+	local basePartFixture = basePart.modules["hull"].fixture
+	local location = {Location.fixturePoint6(
+		basePartFixture, baseVector[1], baseVector[2])}
+
+	baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
+
+	local structure = GridTable()
+	for _, eachPart in ipairs(partList) do
+		local partVector = {unpack(eachPart.location)}
+		local netVector = StructureMath.sumVectors(baseVector, partVector)
+		--if eachPart ~= part then
+			self:removePart(eachPart)
+		--end
+		eachPart:setLocation(netVector)
+		structure:index(netVector[1], netVector[2], eachPart)
+
+	end
+
+	self.createObject("structure", location, {parts = structure})
+end
+
 function Structure:fracture(location)
 	local x, y = unpack(location)
 	local part = self.gridTable:index(x, y)
@@ -315,27 +339,7 @@ function Structure:fracture(location)
 	--Generate arguments for spawning new structures.
 	for i = 1, #structureList do
 		local partList = structureList[i]
-		local basePart = partList[1]
-		local baseVector = basePart.location
-		local basePartFixture = basePart.modules["hull"].fixture
-		local location = {Location.fixturePoint6(
-			basePartFixture, baseVector[1], baseVector[2])}
-
-		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
-
-		local structure = GridTable()
-		for _, eachPart in ipairs(partList) do
-			local partVector = {unpack(eachPart.location)}
-			local netVector = StructureMath.sumVectors(baseVector, partVector)
-			--if eachPart ~= savedPart then
-				self:removePart(eachPart)
-			--end
-			eachPart:setLocation(netVector)
-			structure:index(netVector[1], netVector[2], eachPart)
-
-		end
-
-		self.createObject("structure", location, {parts = structure})
+		self:splitOffParts(partList)
 	end
 end
 
@@ -385,27 +389,7 @@ function Structure:disconnectPart(location)
 	--Generate arguments for spawning new structures.
 	for i = 1, #structureList do
 		local partList = structureList[i]
-		local basePart = partList[1]
-		local baseVector = basePart.location
-		local basePartFixture = basePart.modules["hull"].fixture
-		local location = {Location.fixturePoint6(
-			basePartFixture, baseVector[1], baseVector[2])}
-
-		baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
-
-		local structure = GridTable()
-		for _, eachPart in ipairs(partList) do
-			local partVector = {unpack(eachPart.location)}
-			local netVector = StructureMath.sumVectors(baseVector, partVector)
-			--if eachPart ~= part then
-				self:removePart(eachPart)
-			--end
-			eachPart:setLocation(netVector)
-			structure:index(netVector[1], netVector[2], eachPart)
-
-		end
-
-		self.createObject("structure", location, {parts = structure})
+		self:splitOffParts(partList)
 	end
 end
 

@@ -305,19 +305,18 @@ function Structure:splitOffParts(partList)
 	local basePartFixture = basePart.modules["hull"].fixture
 	local location = {Location.fixturePoint6(
 		basePartFixture, baseVector[1], baseVector[2])}
-
+	--Add part rotation to location and see if it fixes the bug.
+	
 	baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 
 	local structure = GridTable()
 	for _, eachPart in ipairs(partList) do
+		self:removePart(eachPart)
+
 		local partVector = {unpack(eachPart.location)}
 		local netVector = StructureMath.sumVectors(baseVector, partVector)
-		--if eachPart ~= part then
-			self:removePart(eachPart)
-		--end
 		eachPart:setLocation(netVector)
 		structure:index(netVector[1], netVector[2], eachPart)
-
 	end
 
 	self.createObject("structure", location, {parts = structure})
@@ -330,16 +329,13 @@ function Structure:fracture(location)
 	self:removePart(part)
 
 	--List adjacent grid points.
-	local points = {}
-	for i = 1,4 do
-		table.insert(points, StructureMath.addUnitVector(part.location, i))
-	end
-	local structureList = self:testConnection(points)
+	local points = StructureMath.adjacentPoints(part.location)
+
+	local clusters = self:testConnection(points)
 
 	--Generate arguments for spawning new structures.
-	for i = 1, #structureList do
-		local partList = structureList[i]
-		self:splitOffParts(partList)
+	for _, cluster in ipairs(clusters) do
+		self:splitOffParts(cluster)
 	end
 end
 
@@ -350,10 +346,6 @@ function Structure:disconnectPart(location)
 
 	--If there is only one part this is pointless return early.
 	if #self.gridTable:loop() == 1 then
-		-- if structure will be destroyed
-		if part.isDestroyed then
-			self:removePart(part)
-		end
 		return
 	end
 
@@ -361,36 +353,29 @@ function Structure:disconnectPart(location)
 	self.gridTable:index(x, y, nil, true)
 
 	--List adjacent grid points.
-	local points = {}
-	for i = 1,4 do
-		table.insert(points, StructureMath.addUnitVector(part.location, i))
-	end
+	local points = StructureMath.adjacentPoints(part.location)
 	
 	--Group connected parts into clusters.
 	local clusters = self:testConnection(points)
-	local structureList
+	local mainCluster = {part}
 
 	--If there is a corePart split one group off the corePart Group.
 	--If there is no corePart then there is no reference point so split it multiple ways.
 	if self.corePart then
 		--Put all clusters into one new structure
-		structureList = {{part}}
-		for _, group in ipairs(clusters) do
-			for _, eachPart in ipairs(group) do
-				table.insert(structureList[1], eachPart)
+		for _, cluster in ipairs(clusters) do
+			for _, eachPart in ipairs(cluster) do
+				table.insert(mainCluster, eachPart)
 			end
 		end
 	else
-		--Keep clusters and other part separate.
-		structureList = clusters
-		table.insert(structureList, {part})
+		--Keep clusters separate.
+		for _, cluster in ipairs(clusters) do
+			self:splitOffParts(cluster)
+		end
 	end
 
-	--Generate arguments for spawning new structures.
-	for i = 1, #structureList do
-		local partList = structureList[i]
-		self:splitOffParts(partList)
-	end
+	self:splitOffParts(mainCluster)
 end
 
 -------------------------

@@ -29,6 +29,14 @@ function StructureMath.addUnitVector(vector, direction)
 			vector[3]}
 end
 
+function StructureMath.adjacentPoints(location)
+	local points = {}
+        for i = 1,4 do
+                table.insert(points, StructureMath.addUnitVector(location, i))
+        end
+	return points
+end
+
 function StructureMath.addDirectionVector(vector, direction, scale)
 	return {vector[1] + unitVectors[direction][1] * scale,
 			vector[2] + unitVectors[direction][2] * scale,

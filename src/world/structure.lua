@@ -303,10 +303,13 @@ function Structure:splitOffParts(partList)
 	local basePart = partList[1]
 	local baseVector = basePart.location
 	local basePartFixture = basePart.modules["hull"].fixture
+	
 	local location = {Location.fixturePoint6(
 		basePartFixture, baseVector[1], baseVector[2])}
-	--Add part rotation to location and see if it fixes the bug.
+	--Include the part orientation into the structures rotation.
+	location[3] = location[3] + StructureMath.directionToAngle(baseVector[3])
 	
+	--Invert base vector. Changes the sum into difference between vectors.
 	baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 
 	local structure = GridTable()

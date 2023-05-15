@@ -57,8 +57,14 @@ function DroneBlock:getOrders(body, capabilities)
 		capabilities)
 end
 
-function DroneBlock:getFormationPosition(key)
-	return {10, -10}
+function DroneBlock:getFormationPosition(id)
+	brain = self.modules.drone
+	assignment = brain:getAssignment(id)
+	if type(assignment) == "string" then
+		return {10, -10} --TODO old placeholder
+	else
+		return assignment
+	end
 end
 
 function DroneBlock:getMenu()
@@ -71,6 +77,7 @@ end
 
 
 function DroneBlock:update(moduleInputs, location)
+	self.modules.drone:update(moduleInputs.dt)
 	local newObject, disconnect
 	
 	self.modules.engine:update(moduleInputs, location)

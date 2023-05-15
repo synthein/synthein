@@ -1,6 +1,6 @@
 -- Components
 local Hull = require("world/shipparts/hull")
-local Gun = require("world/shipparts/gun")
+local Gun = require("syntheinrust").gun
 
 -- Class Setup
 local Part = require("world/shipparts/part")

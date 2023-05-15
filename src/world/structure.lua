@@ -3,7 +3,7 @@ local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
 local Location = require("world/location")
 local Engine = require("world/shipparts/engine")
-local Gun = require("world/shipparts/gun")
+local Gun = require("syntheinrust").gun
 local MissileLauncher = require("syntheinrust").missileLauncher
 local Shield = require("world/shipparts/shield")
 

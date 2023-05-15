@@ -39,7 +39,11 @@ function Drone:checkin(position)
 	self.formation[postion].timeout = 0
 end
 
-function Drone:getAssignment()
+function Drone:assignmentLookup(assignment)
+	return self.formation[assignment].location
+end
+
+function Drone:getAssignment(id)
 	for _, postion in ipairs(self.formationPriority) do
 		if not self.formation[postion].inuse then
 			self.formation[postion].inuse = true

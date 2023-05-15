@@ -21,19 +21,19 @@ impl Module for Gun {
             None
         } else if inputs.controls.gun {
             // Check if there is a part one block in front of the gun.
-            let part = match inputs.get_part.call::<_, LuaValue>((location, [0, 1])) {
+            let partExists = match inputs.get_part.call::<_, bool>((location, [0, 1])) {
                 Ok(part) => part,
                 Err(error) => panic!("failed to look up part: {:?}", error),
             };
-            if part == Nil {
+            if partExists {
+                None
+            } else {
                 self.charged = false;
                 Some(WorldEvent {
                     event_type: "shot".to_string(),
                     location: [0.0, 0.0, 1.0],
                     data: 1.0,
                 })
-            } else {
-                None
             }
         } else {
             None

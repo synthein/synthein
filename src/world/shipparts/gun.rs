@@ -1,7 +1,7 @@
 use crate::timer::Timer;
 use crate::world::types::{Location, Module, ModuleInputs, WorldEvent};
 use mlua::prelude::{LuaTable, LuaValue};
-use mlua::{Lua, Nil, Result, ToLua, UserData, UserDataMethods};
+use mlua::{Lua, Result, ToLua, UserData, UserDataMethods};
 
 fn process(orders: Vec<String>) -> bool {
     orders.iter().any(|order| order == "shoot")
@@ -21,11 +21,11 @@ impl Module for Gun {
             None
         } else if inputs.controls.gun {
             // Check if there is a part one block in front of the gun.
-            let partExists = match inputs.get_part.call::<_, bool>((location, [0, 1])) {
+            let part_exists = match inputs.get_part.call::<_, bool>((location, [0, 1])) {
                 Ok(part) => part,
                 Err(error) => panic!("failed to look up part: {:?}", error),
             };
-            if partExists {
+            if part_exists {
                 None
             } else {
                 self.charged = false;

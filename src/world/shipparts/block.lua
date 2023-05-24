@@ -1,5 +1,5 @@
 
-local Hull = require("world/shipparts/hull")
+local Hull = require("world/shipparts/modules/hull")
 
 local Block = class(require("world/shipparts/part"))
 

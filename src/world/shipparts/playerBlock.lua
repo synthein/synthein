@@ -1,8 +1,11 @@
 -- Components
 local Hull = require("world/shipparts/modules/hull")
 local Engine = require("world/shipparts/modules/engine")
+local Command = require("world/shipparts/modules/command")
 local Gun = require("syntheinrust").shipparts.modules.gun
 local Heal = require("syntheinrust").shipparts.modules.heal
+
+local Log = require("log")
 
 -- Class Setup
 local Part = require("world/shipparts/part")
@@ -23,6 +26,8 @@ function PlayerBlock:__create(team, leader)
 	self.modules["engine"] = Engine(1, 15, 5)
 	self.modules["gun"] = Gun()
 	self.modules["heal"] = Heal(self.modules["hull"])
+	self.modules["command"] = Command()
+	Log:info("%s", self.modules.command)
 	self.orders = {}
 
 	self.isPlayer = true
@@ -44,23 +49,20 @@ function PlayerBlock:getTeam()
 	return self.team
 end
 
-function PlayerBlock:getFormationPosition(key)
-	local fc = self.formationCounter
-	local p
-	if self.formationFlag then
-		p ={10 * fc, -5 * fc}
-		self.formationFlag = false
-		self.formationCounter = fc + 1
+function PlayerBlock:getFormationPosition(id)
+	command = self.modules.command
+	assignment = command:getAssignment(id)
+	if type(assignment) == "string" then
+		return {10, -10} --TODO old placeholder
 	else
-		p = {-10 * fc, -5 * fc}
-		self.formationFlag = true
+		return assignment
 	end
-	return p
 end
 
 function PlayerBlock:setOrders(orders)
 	self.orders = orders
 end
+
 function PlayerBlock:getOrders()
 	return self.orders
 end
@@ -68,6 +70,7 @@ end
 function PlayerBlock:update(moduleInputs, location)
 	local newObject, disconnect
 	
+	self.modules.command:update(moduleInputs.dt)
 	self.modules.engine:update(moduleInputs, location)
 	newObject, _ = self.modules.gun:update(moduleInputs, location)
 	self.modules.heal:update(moduleInputs, location)

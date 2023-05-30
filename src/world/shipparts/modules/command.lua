@@ -1,4 +1,6 @@
-function Command:_create()
+local Command = class()
+
+function Command:__create()
 	self.formationTimeout = 5
 	self.formation = {
 		["L5"] = {location = {-50, -50}, inuse = false, timeout = 0},
@@ -41,6 +43,10 @@ function Command:getAssignment()
 end
 
 function Command:update(dt)
+	print(self)
+	for k,v in pairs(self) do
+		print(k, v)
+	end
 	for position, station in pairs(self.formation) do
 		if station.inuse then
 			station.timeout = station.timeout + dt

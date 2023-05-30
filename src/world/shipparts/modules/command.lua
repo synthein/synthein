@@ -1,4 +1,6 @@
-function Command:_create()
+local Command = class()
+
+function Command:__create()
 	self.formationTimeout = 5
 	self.formation = {
 		["L5"] = {location = {-50, -50}, inuse = false, timeout = 0},

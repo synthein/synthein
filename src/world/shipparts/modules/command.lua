@@ -43,10 +43,6 @@ function Command:getAssignment()
 end
 
 function Command:update(dt)
-	print(self)
-	for k,v in pairs(self) do
-		print(k, v)
-	end
 	for position, station in pairs(self.formation) do
 		if station.inuse then
 			station.timeout = station.timeout + dt

@@ -5,8 +5,6 @@ local Command = require("world/shipparts/modules/command")
 local Gun = require("syntheinrust").shipparts.modules.gun
 local Heal = require("syntheinrust").shipparts.modules.heal
 
-local Log = require("log")
-
 -- Class Setup
 local Part = require("world/shipparts/part")
 local PlayerBlock = class(Part)
@@ -27,7 +25,6 @@ function PlayerBlock:__create(team, leader)
 	self.modules["gun"] = Gun()
 	self.modules["heal"] = Heal(self.modules["hull"])
 	self.modules["command"] = Command()
-	Log:info("%s", self.modules.command)
 	self.orders = {}
 
 	self.isPlayer = true

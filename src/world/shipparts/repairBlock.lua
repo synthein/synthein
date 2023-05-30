@@ -1,7 +1,7 @@
 -- Components
-local Hull = require("world/shipparts/hull")
-local Sensor = require("world/shipparts/sensor")
-local Repair = require("world/shipparts/repair")
+local Hull = require("world/shipparts/modules/hull")
+local Sensor = require("world/shipparts/modules/sensor")
+local Repair = require("world/shipparts/modules/repair")
 
 -- Class Setup
 local Part = require("world/shipparts/part")

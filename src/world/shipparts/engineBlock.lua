@@ -1,6 +1,6 @@
 -- Components
-local Hull = require("world/shipparts/hull")
-local Engine = require("world/shipparts/engine")
+local Hull = require("world/shipparts/modules/hull")
+local Engine = require("world/shipparts/modules/engine")
 
 -- Class Setup
 local Part = require("world/shipparts/part")

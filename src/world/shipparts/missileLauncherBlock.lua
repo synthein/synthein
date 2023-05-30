@@ -1,6 +1,6 @@
 -- Components
-local Hull = require("world/shipparts/hull")
-local MissileLauncher = require("syntheinrust").missileLauncher
+local Hull = require("world/shipparts/modules/hull")
+local MissileLauncher = require("syntheinrust").shipparts.modules.missileLauncher
 
 -- Class Setup
 local Part = require("world/shipparts/part")

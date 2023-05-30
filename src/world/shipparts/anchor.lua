@@ -1,5 +1,5 @@
 -- Components
-local Hull = require("world/shipparts/hull")
+local Hull = require("world/shipparts/modules/hull")
 
 local Anchor = class(require("world/shipparts/part"))
 

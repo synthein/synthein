@@ -1,8 +1,8 @@
 -- Components
-local Hull = require("world/shipparts/hull")
-local Engine = require("world/shipparts/engine")
-local Drone = require("world/shipparts/drone")
-local Sensor = require("world/shipparts/sensor")
+local Hull = require("world/shipparts/modules/hull")
+local Engine = require("world/shipparts/modules/engine")
+local Drone = require("world/shipparts/modules/drone")
+local Sensor = require("world/shipparts/modules/sensor")
 
 -- Graphics
 local Draw = require("world/draw")

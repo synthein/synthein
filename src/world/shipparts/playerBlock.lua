@@ -46,14 +46,8 @@ function PlayerBlock:getTeam()
 	return self.team
 end
 
-function PlayerBlock:getFormationPosition(id)
-	command = self.modules.command
-	assignment = command:getAssignment(id)
-	if type(assignment) == "string" then
-		return {10, -10} --TODO old placeholder
-	else
-		return assignment
-	end
+function PlayerBlock:getCommand()
+	return self.modules.command
 end
 
 function PlayerBlock:setOrders(orders)

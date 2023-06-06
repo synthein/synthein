@@ -1,4 +1,4 @@
-local Log = require("log")
+local log = require("log")
 local PhysicsReferences = require("world/physicsReferences")
 
 local World = class()
@@ -10,8 +10,6 @@ local objectTypes = {
 	particles = require("world/particles"),
 }
 World.objectTypes = objectTypes
-
-local log = Log({})
 
 -- The world object contains all of the state information about the game world
 -- and is responsible for updating and drawing everything in the game world.

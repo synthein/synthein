@@ -1,17 +1,17 @@
 local Log = class()
 
 function Log:__create(debugmode)
-  self.debugmode = debugmode
+  self.debugmode = debugmode or {}
 end
 
 local function texpand(t)
-  local str
+  local str = "{"
+  local num_items = 0
   for k, v in pairs(t) do
-    if str == nil then
-      str = "{"
-    else
+    if num_items > 0 then
       str = str .. ", "
     end
+    num_items = num_items + 1
 
     str = str .. string.format("%s = %s", k, v)
   end

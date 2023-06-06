@@ -7,50 +7,6 @@ local Drone = class()
 function Drone:__create(team)
 	self.team = team
 	self.follow = true
-	
-	self.formationTimeout = 5
-	self.formation = {
-		["L5"] = {location = {-50, -50}, inuse = false, timeout = 0},
-		["L4"] = {location = {-40, -40}, inuse = false, timeout = 0},
-		["L3"] = {location = {-30, -30}, inuse = false, timeout = 0},
-		["L2"] = {location = {-20, -20}, inuse = false, timeout = 0},
-		["L1"] = {location = {-10, -10}, inuse = false, timeout = 0},
-		["R1"] = {location = { 10, -10}, inuse = false, timeout = 0},
-		["R2"] = {location = { 20, -20}, inuse = false, timeout = 0},
-		["R3"] = {location = { 30, -30}, inuse = false, timeout = 0},
-		["R4"] = {location = { 40, -40}, inuse = false, timeout = 0},
-		["R5"] = {location = { 50, -50}, inuse = false, timeout = 0},
-	}
-	self.formationPriority = {
-		"R1",
-		"L1",
-		"R2",
-		"L2",
-		"R3",
-		"L3",
-		"R4",
-		"L4",
-		"R5",
-		"L5",
-	}
-end
-
-function Drone:checkin(position)
-	self.formation[postion].timeout = 0
-end
-
-function Drone:assignmentLookup(assignment)
-	return self.formation[assignment].location
-end
-
-function Drone:getAssignment(id)
-	for _, postion in ipairs(self.formationPriority) do
-		if not self.formation[postion].inuse then
-			self.formation[postion].inuse = true
-			return postion
-		end
-	end
-	return {0, -30}
 end
 
 function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
@@ -71,13 +27,19 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	if self.follow then
 		if leader then
 			leaderBody = leader.body
-			corePart = leader.corePart
-			if corePart and corePart.getFormationPosition then
+			local command = leader.corePart
+				and leader.corePart.getCommand
+				and leader.corePart:getCommand()
+			if command then
 				-- Hold rules defined postioning
-				if not self.formationPostion then
-					self.formationPostion = corePart:getFormationPosition(539)
+				if self.assignment then
+					self.assignment = command:checkin(self.assignment)
+				else
+					self.assignment = command:getAssignment(id)
 				end
-				local position = self.formationPostion
+				
+				local position = command:getPosition(self.assignment)
+				
 				--local fixedAngle = true
 				if fixedAngle then
 					destination = {Location.bodyCenter6(leaderBody)}
@@ -101,7 +63,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 				m = 1 - dsq/leaderMSq
 			end
 		else
-			self.formationPostion = nil
+			self.assignment = nil
 		end
 	else
 		local post = self.post
@@ -342,15 +304,6 @@ function Drone:runMenu(i, body)
 end
 
 function Drone:update(dt)
-	for position, station in pairs(self.formation) do
-		if station.inuse then
-			station.timeout = station.timeout + dt
-			if station.timeout > self.formationTimeout then
-				station.timeout = 0
-				station.inuse = false
-			end
-		end
-	end
 end
 
 return Drone

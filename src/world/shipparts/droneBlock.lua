@@ -3,6 +3,7 @@ local Hull = require("world/shipparts/modules/hull")
 local Engine = require("world/shipparts/modules/engine")
 local Drone = require("world/shipparts/modules/drone")
 local Sensor = require("world/shipparts/modules/sensor")
+local Command = require("world/shipparts/modules/command")
 
 -- Graphics
 local Draw = require("world/draw")
@@ -25,6 +26,7 @@ function DroneBlock:__create(team, leader)
 	self.modules["engine"] = Engine(1, 10, 10)
 	self.modules["sensor"] = Sensor(200)
 	self.modules["drone"] = Drone(team)
+	self.modules["command"] = Command()
 	self.leader = leader
 end
 
@@ -57,14 +59,8 @@ function DroneBlock:getOrders(body, capabilities)
 		capabilities)
 end
 
-function DroneBlock:getFormationPosition(id)
-	brain = self.modules.drone
-	assignment = brain:getAssignment(id)
-	if type(assignment) == "string" then
-		return {10, -10} --TODO old placeholder
-	else
-		return assignment
-	end
+function DroneBlock:getCommand()
+	return self.modules.command
 end
 
 function DroneBlock:getMenu()
@@ -74,7 +70,6 @@ end
 function DroneBlock:runMenu(i, body)
 	return self.modules.drone:runMenu(i, body)
 end
-
 
 function DroneBlock:update(moduleInputs, location)
 	self.modules.drone:update(moduleInputs.dt)

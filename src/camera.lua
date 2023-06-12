@@ -336,8 +336,8 @@ function Camera:drawHUD(player)
 	end
 
 	local scissor = self.scissor
-	local screenWidth = scissor.x
-	local screenHeight = scissor.y
+	local screenWidth = scissor.width
+	local screenHeight = scissor.height
 
 	local point = {0,0}
 	if player.ship then
@@ -366,12 +366,22 @@ function Camera:drawHUD(player)
 	love.graphics.draw(player.cursor, player.cursorX - 2, player.cursorY - 2)
 
 	-- Draw a box around the entire region.
+	--TODO double check this on two Player
 	love.graphics.rectangle(
 		"line",
 		0,
 		0,
 		screenWidth,
 		screenHeight
+	)
+	
+	--TODO double check this on two Player
+	love.graphics.rectangle(
+		"fill",
+		screenWidth - 150,
+		0,
+		screenWidth,
+		120
 	)
 end
 

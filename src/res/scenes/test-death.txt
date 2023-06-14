@@ -1,0 +1,13 @@
+anchor = structure(0,0,0)[1]
+{
+n*
+}
+player = structure(0,10,0)[1, anchor]
+{
+p*
+(0,0)[1]
+}
+
+
+shot(0, 5,0, 0, 10, 0)[10]
+shot(0, 7,0, 0, 10, 0)[10]

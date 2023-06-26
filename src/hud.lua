@@ -1,8 +1,15 @@
+local ListSelector = require("listSelector")
 local vector = require("vector")
 
 local Hud = class()
 
 function Hud:__create()
+	self.formationSelector = ListSelector(
+		40,
+		0, 0,
+		150, 120,
+		{"button A", "button B"})
+	self.formationSelector:set_reference_points("right", "top", "right", "top")
 	return self
 end
 
@@ -70,12 +77,7 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 		love.graphics.setFont(previousFont)
 	end
 	
-	--TODO double check this on two Player
-	love.graphics.rectangle(
-		"fill",
-		screenWidth - 150, 0,
-		screenWidth, 120
-	)
+	self.formationSelector:draw(viewPort)
 end
 
 return Hud

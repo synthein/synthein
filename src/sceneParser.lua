@@ -145,7 +145,7 @@ function SceneParser.saveScene(world)
 		local data, appendix = object:getSaveData(references)
 		local string = ""
 			.. references[object] .. " = " .. object:type()
-			.. "(" .. tostring(object:getLocation()) .. ")"
+			.. "(" .. Parse.packLocation(object:getLocation()) .. ")"
 			.. Parse.packData(data) .. "\n"
 			.. (appendix and "{\n" .. appendix .. "\n}\n" or "")
 

@@ -11,7 +11,7 @@ cat >> "$input" <<EOF
 return #world.objects
 EOF
 
-sleep 5
+sleep 2
 
 cat >> "$input" <<EOF
 return #world.objects
@@ -28,7 +28,7 @@ if ! [ "$output_before" -eq 16 ]; then
 	printf "FAILED: expected %s = 16\n" "$output_before"
 	return 1
 fi
-if ! [ "$output_after" -eq 9 ]; then
-	printf "FAILED: expected %s = 9\n" "$output_after"
+if ! [ "$output_after" -eq 11 ]; then
+	printf "FAILED: expected %s = 11\n" "$output_after"
 	return 1
 fi

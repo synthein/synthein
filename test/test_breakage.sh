@@ -1,26 +1,14 @@
 #!/bin/sh
 
-input="$1"
+extra_args="$1"
 output="$2"
-extra_args="$3"
 
-love src $extra_args --scene test-breakage < "$input" > "$output" &
-
-exec 3>"$input"
-
-cat >> "$input" <<EOF
+love src $extra_args --scene test-breakage > "$output" <<EOF
 return #world.objects
-EOF
-
-sleep 2
-
-cat >> "$input" <<EOF
+sleep(2)
 return #world.objects
 quit()
 EOF
-
-exec 3>&-
-wait
 
 num_objects_before=$(sed -n 1p "$output")
 num_objects_after=$(sed -n 2p "$output")

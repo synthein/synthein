@@ -8,9 +8,27 @@ function Hud:__create()
 		40,
 		0, 0,
 		150, 120,
-		{"button A", "button B"})
+		{})
 	self.formationSelector:set_reference_points("right", "top", "right", "top")
+	
+	self.selectedMenu = "formation"
 	return self
+end
+
+function Hud:setCommand(commandModule)
+	self.command = commandModule
+	local formationList = commandModule.availableFormations
+	self.formationList = formationList
+	self.formationSelector:setList(formationList)
+end
+
+function Hud:keypressed(key)
+	if self.selectedMenu == "formation" then
+		local formationIndex = self.formationSelector:keypressed(key)
+		if formationIndex then
+			self.command.activeFormation = self.formationList[formationIndex]
+		end
+	end
 end
 
 function Hud:drawCompass(viewPort, compassAngle)

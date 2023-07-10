@@ -2,10 +2,15 @@ local reader = love.thread.newThread("consolereader.lua")
 local input = love.thread.newChannel()
 reader:start(input)
 
-local console = {}
+local console = {
+	sleeptime = 0,
+}
 local env = {
 	print = print,
 	table = table,
+	sleep = function(n)
+		console.sleeptime = n
+	end,
 }
 
 function console.init(state)
@@ -14,8 +19,15 @@ function console.init(state)
 	end
 end
 
-function console.repl()
-	local line = input:pop()
+function console.repl(dt)
+	local line
+
+	if console.sleeptime > 0 then
+		console.sleeptime = console.sleeptime - dt
+	else
+		line = input:pop()
+	end
+
 	if line then
 		local code, err = load(line, "stdin", "t", env)
 		if not code then

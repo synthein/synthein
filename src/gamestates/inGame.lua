@@ -228,7 +228,7 @@ function InGame.wheelmoved(_, y) --(x, y)
 end
 
 function InGame.update(dt)
-	console.repl()
+	console.repl(dt)
 
 	local openMenu, closeMenu = false, false
 	-- Send input to the players.

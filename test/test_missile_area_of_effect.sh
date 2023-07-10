@@ -1,25 +1,14 @@
 #!/bin/sh
 
-input="$1"
+extra_args="$1"
 output="$2"
-extra_args="$3"
 
-love src $extra_args --scene test-missile2 < "$input" > "$output" 2>/dev/null &
-exec 3>"$input"
-
-cat >> "$input" <<EOF
+love src $extra_args --scene test-missile2 > "$output" 2>/dev/null <<EOF
 return #world.objects
-EOF
-
-sleep 2
-
-cat >> "$input" <<EOF
+sleep(2)
 return #world.objects
 quit()
 EOF
-
-exec 3>&-
-wait
 
 output_before=$(sed -n 1p "$output")
 output_after=$(sed -n 2p "$output")

@@ -2,6 +2,40 @@ local Command = class()
 
 function Command:__create()
 	self.formationTimeout = 5
+	
+	self.availableFormations = {"travel", "combat"}
+	self.activeFormation = self.availableFormations[1]
+	
+	--TODO move assignments to a separate table
+	self.formations = {
+		travel = {
+			["L5"] = {location = {-50, -50}, inuse = false, timeout = 0},
+			["L4"] = {location = {-40, -40}, inuse = false, timeout = 0},
+			["L3"] = {location = {-30, -30}, inuse = false, timeout = 0},
+			["L2"] = {location = {-20, -20}, inuse = false, timeout = 0},
+			["L1"] = {location = {-10, -10}, inuse = false, timeout = 0},
+			["R1"] = {location = { 10, -10}, inuse = false, timeout = 0},
+			["R2"] = {location = { 20, -20}, inuse = false, timeout = 0},
+			["R3"] = {location = { 30, -30}, inuse = false, timeout = 0},
+			["R4"] = {location = { 40, -40}, inuse = false, timeout = 0},
+			["R5"] = {location = { 50, -50}, inuse = false, timeout = 0},
+			[""  ] = {location = {  0, -50}, inuse = false, timeout = 0},
+		},
+		combat = {
+			["L5"] = {location = {-50,   0}, inuse = false, timeout = 0},
+			["L4"] = {location = {-40,   0}, inuse = false, timeout = 0},
+			["L3"] = {location = {-30,   0}, inuse = false, timeout = 0},
+			["L2"] = {location = {-20,   0}, inuse = false, timeout = 0},
+			["L1"] = {location = {-10,   0}, inuse = false, timeout = 0},
+			["R1"] = {location = { 10,   0}, inuse = false, timeout = 0},
+			["R2"] = {location = { 20,   0}, inuse = false, timeout = 0},
+			["R3"] = {location = { 30,   0}, inuse = false, timeout = 0},
+			["R4"] = {location = { 40,   0}, inuse = false, timeout = 0},
+			["R5"] = {location = { 50,   0}, inuse = false, timeout = 0},
+			[""  ] = {location = {  0, -50}, inuse = false, timeout = 0},
+		},
+	}
+	--TODO old remove connections and delete
 	self.formation = {
 		["L5"] = {location = {-50, -50}, inuse = false, timeout = 0},
 		["L4"] = {location = {-40, -40}, inuse = false, timeout = 0},
@@ -15,7 +49,7 @@ function Command:__create()
 		["R5"] = {location = { 50, -50}, inuse = false, timeout = 0},
 		[""  ] = {location = {  0, -50}, inuse = false, timeout = 0},
 	}
-	self.formationPriority = {
+	self.assignmentPriority = {
 		"R1",
 		"L1",
 		"R2",
@@ -39,7 +73,7 @@ end
 function Command:getAssignment(id)
 	--TODO id based assignment
 	--TODO ship type based assignment
-	for _, assignment in ipairs(self.formationPriority) do
+	for _, assignment in ipairs(self.assignmentPriority) do
 		if not self.formation[assignment].inuse then
 			self.formation[assignment].inuse = true
 			return assignment
@@ -49,7 +83,11 @@ function Command:getAssignment(id)
 end
 
 function Command:getPosition(assignment)
-	return self.formation[assignment].location
+	local formations = self.formations
+	local activeFormation = self.activeFormation
+	local positions = formations[activeFormation]
+	local position = positions[assignment]
+	return position.location
 end
 
 function Command:update(dt)

@@ -6,18 +6,24 @@ local PartRegistry = require("world/shipparts/partRegistry")
 local Player = {}
 Player.__index = Player
 
-function Player.create(world, controls, structure, camera)
+function Player.create(world, controls, ship, camera)
 	local self = {}
 	setmetatable(self, Player)
 
 	self.world = world
 	self.controls = controls
-	self.ship = structure
+	self.ship = ship
 	self.camera = camera
-
-	if self.ship then
-		self.camera.body = structure.body
+	
+	
+	if ship then
+		self.camera.body = ship.body
 		self.selected = Selection.create(world, self.ship.corePart:getTeam(), self.camera)
+		
+		local corePart = ship.corePart
+		if corePart then
+			self.camera.hud:setCommand(corePart:getCommand())
+		end
 	end
 
 	self.menu = nil
@@ -77,7 +83,6 @@ function Player:buttonpressed(source, button, debugmode)
 	local order = Controls.test("pressed", self.controls, source, button)
 
 	if self.menu then
-
 		if not menuButton then
 			return
 		end
@@ -109,7 +114,7 @@ function Player:buttonpressed(source, button, debugmode)
 
 			return
 		elseif not order then
-			return
+			self.camera.hud:keypressed(button)
 		else
 			if order == "build" or order == "destroy" then
 				local cursorX, cursorY = self.camera:getWorldCoords(

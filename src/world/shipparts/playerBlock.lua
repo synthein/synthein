@@ -31,8 +31,6 @@ function PlayerBlock:__create(team, leader)
 	self.team = team
 	self.leader = leader
 
-	self.formationCounter = 1
-
 	return self
 end
 

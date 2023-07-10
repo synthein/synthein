@@ -1,13 +1,11 @@
 local ListSelector = class()
 
-
 local scrollSpeed = 150
 local border = 100
 local spacing = 20
 local bs = border + spacing
 local nameHeight = 30
 local nameWidth = 200
-
 
 function ListSelector:__create(size, x, y, width, height, list)
 	self.x = x
@@ -25,6 +23,8 @@ function ListSelector:__create(size, x, y, width, height, list)
 	self.scrollY = 0
 	self.scrollTo = 0
 	
+	self.selected = 0
+	
 	self.font = love.graphics.newFont(size * 0.6)
 
 	self:setList(list)
@@ -34,6 +34,7 @@ function ListSelector:__create(size, x, y, width, height, list)
 end
 
 function ListSelector:setList(list)
+	self.list = list
 	local size = self.size
 	local border = size/8
 	local doubleBorder = size/4
@@ -174,8 +175,8 @@ end
 
 function ListSelector:keypressed(key)
 	local s = self.selected
-	local len = #self.filenames
-	if not len == 0 then
+	local len = #self.list
+	if len ~= 0 then
 		if key == "up" then
 			s = s - 1
 			if s < 1 then s = s + len end
@@ -183,7 +184,7 @@ function ListSelector:keypressed(key)
 			s = s + 1
 			if s > len then s = s - len end
 		elseif key == "return" then
-			return self:loadfile(s)
+			return s
 		end
 	end
 	self.selected = s
@@ -241,19 +242,16 @@ function ListSelector:draw(viewPort)
 	
 	love.graphics.setCanvas(self.visableCanvas)
 
-	--TODO delete overiding variables
-	self.selected = 1
-	
-	--TODO add scrool offsets
 	love.graphics.draw(self.buttonCanvas, 0, 0)
-	love.graphics.setColor(0.6, 0.6, 0.6)
+	love.graphics.setColor(1, 1, 1, 0.25)
+
 	-- When nothing is selected, self.selected == 0.
 	local highlightY = size * (self.selected - 1) - self.scrollY
 	local border = size/8
 	love.graphics.rectangle(
 		"fill",
 		border, highlightY + border,
-		nameWidth, size - 2 * border)
+		self.width - 2 * border, size - 2 * border)
 	
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.draw(self.textCanvas, 0, -self.scrollY)

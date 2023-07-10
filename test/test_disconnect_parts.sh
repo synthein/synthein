@@ -1,8 +1,7 @@
 #!/bin/sh
 
-input="$1"
+extra_args="$1"
 output="$2"
-extra_args="$3"
 
 love src $extra_args --scene test-disconnect-parts > "$output" <<EOF
 return #world.objects

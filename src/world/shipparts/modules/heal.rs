@@ -1,11 +1,11 @@
 use crate::timer::Timer;
 use crate::world::types::{Location, Module, ModuleInputs, WorldEvent};
 use mlua::prelude::{LuaFunction, LuaTable};
-use mlua::{Lua, RegistryKey, Result, ToLua, UserData, UserDataFields, UserDataMethods};
+use mlua::{Lua, RegistryKey, UserData, UserDataFields, UserDataMethods};
 
-struct Heal {
-    timer: Timer,
-    hull: RegistryKey,
+pub struct Heal {
+    pub timer: Timer,
+    pub hull: RegistryKey,
 }
 
 impl Module for Heal {
@@ -35,26 +35,4 @@ impl UserData for Heal {
             Ok(Heal::update(this, lua, inputs, location))
         });
     }
-}
-
-pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
-    let exports = lua.create_table()?;
-
-    let metatable = lua.create_table()?;
-    metatable.set(
-        "__call",
-        lua.create_function(|lua, (_, hull): (LuaTable, LuaTable)| {
-            Heal {
-                timer: Timer {
-                    limit: 10.0,
-                    time: 10.0,
-                },
-                hull: lua.create_registry_value(hull)?,
-            }
-            .to_lua(lua)
-        })?,
-    )?;
-    exports.set_metatable(Some(metatable));
-
-    Ok(exports)
 }

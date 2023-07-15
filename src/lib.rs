@@ -4,9 +4,7 @@ use mlua::{Lua, Result};
 mod timer;
 mod world;
 
-use world::shipparts::modules::gun;
-use world::shipparts::modules::heal;
-use world::shipparts::modules::missile_launcher;
+use world::shipparts::modules::lua_interfaces::*;
 
 #[mlua::lua_module]
 fn syntheinrust(lua: &Lua) -> Result<LuaTable> {

@@ -1,15 +1,15 @@
 use crate::timer::Timer;
 use crate::world::types::{Location, Module, ModuleInputs, WorldEvent};
-use mlua::prelude::{LuaTable, LuaValue};
-use mlua::{Lua, Nil, Result, ToLua, UserData, UserDataMethods};
+use mlua::prelude::LuaValue;
+use mlua::{Lua, Nil, UserData, UserDataMethods};
 
-fn process(orders: Vec<String>) -> bool {
+pub fn process(orders: Vec<String>) -> bool {
     orders.iter().any(|order| order == "shoot")
 }
 
-struct MissileLauncher {
-    charged: bool,
-    recharge_timer: Timer,
+pub struct MissileLauncher {
+    pub charged: bool,
+    pub recharge_timer: Timer,
 }
 
 impl Module for MissileLauncher {
@@ -50,30 +50,4 @@ impl UserData for MissileLauncher {
             },
         );
     }
-}
-
-pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
-    let exports = lua.create_table()?;
-    exports.set(
-        "process",
-        lua.create_function(|_, orders: Vec<String>| Ok(process(orders)))?,
-    )?;
-
-    let metatable = lua.create_table()?;
-    metatable.set(
-        "__call",
-        lua.create_function(|lua, _: LuaValue| {
-            MissileLauncher {
-                charged: true,
-                recharge_timer: Timer {
-                    limit: 1.0,
-                    time: 1.0,
-                },
-            }
-            .to_lua(lua)
-        })?,
-    )?;
-    exports.set_metatable(Some(metatable));
-
-    Ok(exports)
 }

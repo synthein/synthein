@@ -12,3 +12,5 @@ e1  e1
 }
 structure(5,0,0)[1, player]BasicShip1
 structure(-5,0,0)[1, player]BasicShip1
+structure(5,-5,0)[1, player]BasicShip1
+structure(-5,-5,0)[1, player]BasicShip1

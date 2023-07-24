@@ -107,66 +107,37 @@ function ListSelector:set_reference_points(horRef, verRef, horOff, verOff)
 	end
 end
 
---[[
+function ListSelector:toParentCoords(viewPort)
+	local screenWidth = viewPort.width
+	local screenHeight = viewPort.height
 
-	love.graphics.push("all")
-	local x = love.graphics.getWidth() / 2 - self.width / 2
-	local y = self.y
+	local x = self.x + self.horRef * screenWidth  - self.width  * self.horOff
+	local y = self.y + self.verRef * screenHeight - self.height * self.verOff
+	
+	return x,y
+end
 
-	love.graphics.setColor(0.8, 0.8, 0.8)
-	love.graphics.rectangle(
-		"fill",
-		x, y,
-		self.width, math.min(self:getHeight(), self.visibleHeight))
+function ListSelector:toLocalCoords(viewPort, x, y)
+	local screenWidth = viewPort.width
+	local screenHeight = viewPort.height
 
-	local stencilFunction = function()
-		love.graphics.rectangle("fill", x, y,
-								self.width, self.visibleHeight)
-	end
-
-	love.graphics.stencil(stencilFunction, "replace", 1)
-	love.graphics.setStencilTest("greater", 0)
-
-	for i, _ in ipairs(self.buttons) do
-		if i == self.selectedButton then
-			love.graphics.setColor(0.6, 0.6, 0.6)
-		else
-			love.graphics.setColor(0.4, 0.4, 0.4)
-		end
-
-		love.graphics.rectangle(
-			"fill",
-			x + self.buttonMargin,
-			y + self.buttonMargin + self.buttonHeight * (i - 1)
-				+ self.buttonSpacing * (i - 1) - self.scrollY,
-			self.buttonWidth, self.buttonHeight
-		)
-		love.graphics.setColor(1, 1, 1)
-		local previousFont = love.graphics.getFont()
-		love.graphics.setFont(self.font)
-		love.graphics.print(
-			self.buttons[i],
-			x + self.buttonMargin + 10,
-			y + self.buttonMargin + self.buttonHeight * (i - 1)
-				+ self.buttonSpacing * (i - 1)
-				+ (self.buttonHeight - self.textHeight)/2
-				- self.scrollY,
-			0, 1, 1, 0, 0, 0, 0
-		)
-		love.graphics.setFont(previousFont)
-	end
-
-	love.graphics.pop()
---]]
+	x = x - self.x - self.horRef * screenWidth + self.width  * self.horOff
+	y = y - self.y - self.verRef * screenHeight + self.height * self.verOff
+	
+	return x, y
+end
 
 function ListSelector:getButtonAt(x, y)
-	local left, top, right, bottom = unpack(self.nameBox)
-
-	local index = 1
-	if left < x and x < right and top < y and y < bottom then
-		index = math.floor((y - top + self.scrollY) / nameHeight + 1)
+	local width = self.width
+	local height = self.height
+	local index = 0
+	if 0 < x and x < width and 0 < y and y < height then
+		index = math.floor((y + self.scrollY) / self.size + 1)
+		self.hovering = true
+	else
+		self.hovering = false
 	end
-	if index > #self.filenames then
+	if index > #self.list then
 		index = 0
 	end
 
@@ -209,12 +180,11 @@ function ListSelector:wheelmoved(x, y)
 	end
 end
 
-function ListSelector:pressed(x, y)
-	local index = self:getButtonAt(x, y)
-	if index == 0 then
-		return nil
+function ListSelector:pressed()
+	local index = self.selected
+	if index ~= 0 and self.hovering then
+		return index
 	end
-	return self:loadfile(index)
 end
 
 function ListSelector:update(dt)
@@ -234,11 +204,14 @@ function ListSelector:update(dt)
 
 end
 
-function ListSelector:draw(viewPort)
-	local screenWidth = viewPort.width
-	local screenHeight = viewPort.height
-
+function ListSelector:draw(viewPort, cursor)
 	local size = self.size
+	
+	local cx, cy = self:toLocalCoords(viewPort, cursor.x, cursor.y)
+	local index = self:getButtonAt(cx, cy)
+	if index ~=0 then
+		self.selected = index
+	end
 	
 	love.graphics.setCanvas(self.visableCanvas)
 
@@ -258,10 +231,7 @@ function ListSelector:draw(viewPort)
 
 	love.graphics.setCanvas()
 	
-	
-	local x = self.x + self.horRef * screenWidth  - self.width  * self.horOff
-	local y = self.y + self.verRef * screenHeight - self.height * self.verOff
-
+	local x, y = self:toParentCoords(viewPort)
 	love.graphics.draw(self.visableCanvas, x, y)
 	
 	love.graphics.setColor(1, 1, 1)

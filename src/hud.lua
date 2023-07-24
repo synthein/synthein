@@ -31,6 +31,15 @@ function Hud:keypressed(key)
 	end
 end
 
+function Hud:pressed(order)
+	if self.selectedMenu == "formation" then
+		local formationIndex = self.formationSelector:pressed()
+		if formationIndex then
+			self.command.activeFormation = self.formationList[formationIndex]
+		end
+	end
+end
+
 function Hud:drawCompass(viewPort, compassAngle)
 	local width = viewPort.width
 	local height = viewPort.height
@@ -95,7 +104,7 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 		love.graphics.setFont(previousFont)
 	end
 	
-	self.formationSelector:draw(viewPort)
+	self.formationSelector:draw(viewPort, cursor)
 end
 
 return Hud

@@ -1,0 +1,10 @@
+obstacle = structure(-7,0,0,0,1,0)[0]
+{
+b*
+}
+
+player = structure(-10,5,0)[1]
+{
+b1b1p*    b1
+    b1b1b1b1
+}

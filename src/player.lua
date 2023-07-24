@@ -116,6 +116,7 @@ function Player:buttonpressed(source, button, debugmode)
 		elseif not order then
 			self.camera.hud:keypressed(button)
 		else
+			self.camera.hud:pressed(order)
 			if order == "build" or order == "destroy" then
 				local cursorX, cursorY = self.camera:getWorldCoords(
 					self.cursorX,

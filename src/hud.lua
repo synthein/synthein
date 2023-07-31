@@ -1,4 +1,4 @@
-local ListSelector = require("listSelector")
+local ListSelector = require("widgets/listSelector")
 local vector = require("vector")
 
 local Hud = class()

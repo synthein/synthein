@@ -435,7 +435,7 @@ function Structure:command(dt)
 
 	local moduleInputs = {
 		dt = dt,
-		body = self.body,
+		body = self.body, --TODO: nothing seems to use this? Maybe delete it.
 		getPart = getPart,
 		controls = {
 			gun = Gun.process(gunOrders),

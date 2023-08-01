@@ -1,5 +1,5 @@
 use mlua::prelude::{LuaError, LuaFunction, LuaTable, LuaValue};
-use mlua::{FromLua, Lua, Result, ToLua};
+use mlua::{FromLua, Lua, Result, ToLua, AnyUserData};
 
 pub struct Controls<'lua> {
     pub gun: bool,
@@ -26,7 +26,7 @@ impl<'lua> FromLua<'lua> for Controls<'lua> {
 
 pub struct ModuleInputs<'lua> {
     pub dt: f64,
-    //pub body: LuaUserData, // TODO: Figure out how to use LuaUserData
+    pub body: AnyUserData<'lua>, // TODO: implement a type that implements the UserData trait
     pub get_part: LuaFunction<'lua>,
     pub controls: Controls<'lua>,
     pub team_hostility: LuaTable<'lua>,
@@ -37,7 +37,7 @@ impl<'lua> FromLua<'lua> for ModuleInputs<'lua> {
         match value {
             LuaValue::Table(table) => Ok(ModuleInputs {
                 dt: table.get("dt")?,
-                //body: table.get("body")?, // TODO: Figure out how to user LuaUserData
+                body: table.get("body")?,
                 get_part: table.get("getPart")?,
                 controls: table.get("controls")?,
                 team_hostility: table.get("teamHostility")?,

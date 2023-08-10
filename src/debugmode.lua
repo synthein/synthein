@@ -1,4 +1,9 @@
+local Log = require("log")
+local StructureParser = require("world/structureParser")
+
 local Debug = {}
+
+local log = Log({on = true})
 
 function Debug.create(world, players)
 	local self = setmetatable({}, {__index = Debug})
@@ -66,14 +71,19 @@ function Debug:keyboard(key)
 			self.spawn = true
 
 		elseif love.keyboard.isDown("lctrl", "rctrl") then
-			--TODO this functionality was destroyed at some point needs repair.
 			-- Export the player's ship.
-			--[[
 			if key == "s" then
-				local string = Spawn.shipPack(self.player.ship, true)
-				love.filesystem.write("playerShip.txt", string)
+				for i, player in ipairs(self.players) do
+					local filename = "playerShip"..i..".txt"
+					local shipData = StructureParser.shipPack(player.ship, true)
+					local ok, err = love.filesystem.write(filename, shipData)
+					if ok then
+						log:debug("Wrote %s/%s", love.filesystem.getSaveDirectory(), filename)
+					else
+						log:error(err)
+					end
+				end
 			end
-			--]]
 		end
 --	end
 end

@@ -1,4 +1,6 @@
 local utf8 = require("utf8")
+local TextBox = require("widgets/textBox")
+--TODO implement text box.
 
 local SaveMenu = class()
 
@@ -12,6 +14,8 @@ function SaveMenu:__create(dir, currentName)
 	self.dir = dir
 	self.currentName = currentName or "filename"
 	self:resetName()
+	
+	self.textBox = TextBox(x, y, width, height, currentName or "filename")
 
 	--if love.graphics then self.font = love.graphics.newFont(size * 7) end
 	--if love.graphics then self.visibleHeight = love.graphics.getHeight() - self.y - self.buttonMargin end

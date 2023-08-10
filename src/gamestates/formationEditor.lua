@@ -1,5 +1,5 @@
 local Menu = require("menu")
-local PartSelector = require("partSelector")
+local PartSelector = require("widgets/partSelector")
 
 local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")

@@ -1,6 +1,6 @@
 local Controls = require("controls")
 local Selection = require("selection")
-local PartSelector = require("partSelector")
+local PartSelector = require("widgets/partSelector")
 local PartRegistry = require("world/shipparts/partRegistry")
 
 local Player = {}

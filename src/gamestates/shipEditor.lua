@@ -1,7 +1,7 @@
 local Menu = require("menu")
 local SaveMenu = require("saveMenu")
 local LoadMenu = require("loadMenu")
-local PartSelector = require("partSelector")
+local PartSelector = require("widgets/partSelector")
 
 local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")

@@ -56,8 +56,7 @@ function Player:handleInput()
 	-- Set Cursor Position
 	local cursorX, cursorY = self.cursorX, self.cursorY
 
-	cursorX = Controls.setCursor(controls.cursorX, cursorX)
-	cursorY = Controls.setCursor(controls.cursorY, cursorY)
+	cursorX, cursorY = controls:getCursorPosition(cursorX, cursorY)
 	cursorX, cursorY = self.camera:limitCursor(cursorX, cursorY)
 	self.partSelector:mousemoved(cursorX, cursorY)
 
@@ -68,7 +67,7 @@ function Player:handleInput()
 	if ship then
 		local corePart = ship.corePart
 		if corePart then
-			corePart:setOrders(Controls.getOrders(controls))
+			corePart:setOrders(controls:getOrders())
 		else
 			self.ship = nil
 		end
@@ -79,8 +78,8 @@ function Player:buttonpressed(source, button, debugmode)
 	if button == "h" then self.showHealth = not self.showHealth end
 	if button == "f5" then self.isCameraAngleFixed = not self.isCameraAngleFixed end
 
-	local menuButton = Controls.test("menu", self.controls, source, button)
-	local order = Controls.test("pressed", self.controls, source, button)
+	local menuButton = self.controls:test("menu", source, button)
+	local order = self.controls:test("pressed", source, button)
 
 	if self.menu then
 		if not menuButton then
@@ -137,7 +136,7 @@ function Player:buttonpressed(source, button, debugmode)
 end
 
 function Player:buttonreleased(source, button)
-	local order = Controls.test("released", self.controls, source, button)
+	local order = self.controls:test("released", source, button)
 
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then

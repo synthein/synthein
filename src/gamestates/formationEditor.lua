@@ -34,6 +34,7 @@ local function generateCanvas(gridTable)
 
 	love.graphics.setCanvas(canvas)
 
+	love.graphics.setColor(1,1,1)
 	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
 
 	love.graphics.setCanvas()
@@ -93,6 +94,14 @@ function FormationEditor.keypressed(key)
 
 		if menuOpen == "State" then
 			local button = FormationEditor.menu:keypressed(key)
+			button = buttonNames[button]
+
+			if button == "Main Menu" then
+				menuOpen = false
+				FormationEditor.stackQueue:pop()
+			elseif button == "Quit" then
+				love.event.quit()
+			end
 		elseif menuOpen == "Parts" then
 			local button = FormationEditor.partSelector:keypressed(key)
 			if button then
@@ -107,13 +116,13 @@ function FormationEditor.keypressed(key)
 	elseif key == "f" then
 		menuOpen = "Parts"
 	elseif key == "w" then
-		focusY = focusY - 1
+		focusY = focusY + 1
 	elseif key == "a" then
 		focusX = focusX - 1
 	elseif key == "s" then
 		focusY = focusY + 1
 	elseif key == "d" then
-		focusX = focusX + 1
+		focusX = focusX - 1
 	elseif key == "q" then
 		if focusX ~= 0 or focusY ~= 0 then
 			local t = gridTable:index(focusX, -focusY)

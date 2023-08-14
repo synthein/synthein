@@ -88,14 +88,14 @@ function InGame.load(scene, playerHostility, ifSave)
 		if i == 1 then
 			table.insert(
 				players,
-				Player.create(world, Controls.create(), ship, screen:createCamera())
+				Player.create(world, Controls(), ship, screen:createCamera())
 			)
 		else
 			local joystick = love.joystick.getJoysticks()[#players]
 			if joystick then
 				table.insert(
 					players,
-					Player.create(world, Controls.create(joystick), ship, screen:createCamera())
+					Player.create(world, Controls(joystick), ship, screen:createCamera())
 				)
 			end
 		end

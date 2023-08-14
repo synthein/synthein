@@ -1,48 +1,48 @@
-local Controls = {}
-
 local Log = require("log")
 
 local log = Log({on = true})
 local mouse = love.mouse
 local keyboard = love.keyboard
 
+local Controls = class()
+
 local bindingsFile = "config/bindings.lua"
 
--- TODO: We probably want to organize this file as a class with methods?
-
-function Controls.getOrders(controls)
+function Controls:getOrders()
 	local orders = {}
 	for key, order in pairs(Controls.shipCommands) do
-		if Controls.isDown(controls[key]) then
+		if Controls.isDown(self.bindings[key]) then
 			table.insert(orders, order)
 		end
 	end
 	return orders
 end
 
-function Controls.test(mode, controls, source, button)
+function Controls:test(mode, source, button)
 	for key, value in pairs(Controls[mode]) do
-		local control = controls[key]
+		local control = self.bindings[key]
 		if control[1] == source and control[2] == button then
 			return value
 		end
 	end
 end
 
-function Controls.setCursor(control, Cursor)
-	local cursorChange
-	if control[2] == "xAxis" then
-		cursorChange = control[1].getX()
-	elseif control[2] == "yAxis" then
-		cursorChange = control[1].getY()
+function Controls:getCursorPosition(oldX, oldY)
+	local cursor = self.bindings.cursor
+	local device = cursor.device
+	local xChange, yChange
+
+	if device == mouse then
+		xChange, yChange = device.getPosition()
 	else
-		cursorChange = control[1]:getAxis(control[2])
+		xChange = device:getAxis(cursor.x)
+		xChange = device:getAxis(cursor.y)
 	end
 
-	if control[3] == "set" then
-		return cursorChange
-	elseif control[3] == "change" then
-		return cursorChange + Cursor
+	if cursor.offset == "set" then
+		return xChange, yChange
+	elseif cursor.offset == "change" then
+		return xChange + oldX, yChange + oldY
 	end
 end
 
@@ -82,10 +82,10 @@ Controls.menu = {
 	playerMenu = "playerMenu",
 }
 
-function Controls.create(joystick)
+function Controls:__create(joystick)
 	local bindings
 	if joystick then
-		bindings = {
+		self.bindings = {
 			forward 	= {joystick, "dpup"},
 			back    	= {joystick, "dpdown"},
 			left    	= {joystick, "dpleft"},
@@ -98,13 +98,17 @@ function Controls.create(joystick)
 			playerMenu      = {joystick, "start"},
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
-			cursorX 	= {joystick, 1, "change"},
-			cursorY 	= {joystick, 2, "change"},
+			cursor          = {
+				device  = joystick,
+				offset  = "change",
+				x       = 1,
+				y       = 2
+			},
 			confirm		= {joystick, "a"},
 			cancel		= {joystick, "b"}
-			}
+		}
 	else
-		bindings = {
+		self.bindings = {
 			forward 	= {keyboard, "w"},
 			back    	= {keyboard, "s"},
 			left    	= {keyboard, "a"},
@@ -117,17 +121,21 @@ function Controls.create(joystick)
 			playerMenu  = {keyboard, "i"},
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
-			cursorX 	= {mouse, "xAxis", "set"},
-			cursorY 	= {mouse, "yAxis", "set"},
+			cursor          = {
+				device  = mouse,
+				offset  = "set",
+				x       = "xAsix",
+				y       = "yAxis"
+			},
 			confirm		= {mouse, 1},
 			cancel		= {keyboard, "escape"}
-			}
+		}
 	end
 
 	local ok, chunk, err = pcall(love.filesystem.load, bindingsFile)
 	if not ok then
 		log:error("Failed to read key bindings: %s", chunk)
-		return bindings
+		return
 	end
 	if not chunk then
 		if string.match(err, "Does not exist.$") then
@@ -136,28 +144,26 @@ function Controls.create(joystick)
 			log:error("Failed to load key bindings file: %s", err)
 		end
 
-		return bindings
+		return
 	end
 
 	ok, result = pcall(chunk)
 	if not ok then
 		log:error("Failed to read key bindings: %s", result)
-		return bindings
+		return
 	end
 	if type(result) ~= "table" then
 		log:error("Failed to read key bindings: \"%s\" is not a table", result)
-		return bindings
+		return
 	end
 
-	for bind in pairs(bindings) do
+	for bind in pairs(self.bindings) do
 		local newVal = result[bind]
 		if newVal then
 			log:debug("Binding %s to %s", bind, newVal)
-			bindings[bind][2] = newVal
+			self.bindings[bind][2] = newVal
 		end
 	end
-
-	return bindings
 end
 
 return Controls

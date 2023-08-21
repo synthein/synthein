@@ -4,10 +4,10 @@ local TextBox = class()
 
 -- Make a menu in the center of the screen from a list of buttons.
 function TextBox:__create(x, y, width, height, startText)
-
-	self.y = 250
-	self.width = 300
-	self.height = 60
+	self.x = x
+	self.y = y
+	self.width = width
+	self.height = height
 
 	self.text = startText or ""
 	

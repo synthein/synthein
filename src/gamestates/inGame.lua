@@ -138,7 +138,14 @@ function InGame.keypressed(key)
 		pauseMenuAction(menu:keypressed(key))
 	elseif menuOpen == "Save" then
 		if key == "return" then
-			local ok, message = Gamesave.save(saveMenu.saveName, world)
+			--TODO
+			-- Xordspar
+			-- Save menu and game save both have file writing capabilities.
+			-- I think they are redundant.
+			-- Both are used. Savemenu should be able to be used in all cases.
+			-- I don't understand why gamesave was created, so I am hesitant to delete it.
+		
+			local ok, message = Gamesave.save(saveMenu.textBox.text, world)
 			if not ok then
 				log.error("Failed to save the game: " .. message)
 			end

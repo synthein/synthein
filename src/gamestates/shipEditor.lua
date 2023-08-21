@@ -93,8 +93,12 @@ function ShipEditor.keypressed(key)
 			-- mabye create a function for handling both key and mosue presses
 		elseif menuOpen == "Save" then
 			if key == "return" then
-				ShipEditor.saveMenu:saveFile(
+				Success, Message = ShipEditor.saveMenu:saveFile(
 					StructureParser.blueprintPack(gridTable))
+				if not Success then
+					print("shipEditor save file ERROR:")
+					print(Message)
+				end
 				menuOpen = false
 			else
 				ShipEditor.saveMenu:keypressed(key)

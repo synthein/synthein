@@ -1,7 +1,8 @@
+local Hud = require("hud")
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
+local lume = require("vendor/lume")
 local vector = require("vector")
-local Hud = require("hud")
 
 local Camera = {}
 Camera.__index = Camera
@@ -186,22 +187,10 @@ function Camera:setScissor(x, y, width, height)
 end
 
 function Camera:limitCursor(cursorX, cursorY)
-	local scissor = self.scissor
-	local x = scissor.x
-	local y = scissor.y
-	local width = scissor.width
-	local height = scissor.height
-	if cursorX < x then
-		cursorX = x
-	elseif cursorX > x + width then
-		cursorX = x + width
-	end
-	if cursorY < y then
-		cursorY = y
-	elseif cursorY > y + height then
-		cursorY = y + height
-	end
-	return cursorX, cursorY
+	local width = self.scissor.width
+	local height = self.scissor.height
+
+	return lume.clamp(cursorX, 0, width), lume.clamp(cursorY, 0, height)
 end
 
 function Camera:print(string, x, y)

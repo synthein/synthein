@@ -28,21 +28,16 @@ function Controls:test(mode, source, button)
 end
 
 function Controls:getCursorPosition(oldX, oldY)
-	local cursor = self.bindings.cursor
-	local device = cursor.device
-	local xChange, yChange
+	local device = self.bindings.cursor[1]
+	local stick = self.bindings.cursor[2]
 
 	if device == mouse then
-		xChange, yChange = device.getPosition()
+		return device.getPosition()
 	else
-		xChange = device:getAxis(cursor.x)
-		xChange = device:getAxis(cursor.y)
-	end
+		local xChange = device:getGamepadAxis(stick .. "x")
+		local yChange = device:getGamepadAxis(stick .. "y")
 
-	if cursor.offset == "set" then
-		return xChange, yChange
-	elseif cursor.offset == "change" then
-		return xChange + oldX, yChange + oldY
+		return oldX + xChange, oldY + yChange
 	end
 end
 
@@ -98,12 +93,7 @@ function Controls:__create(joystick)
 			playerMenu      = {joystick, "start"},
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
-			cursor          = {
-				device  = joystick,
-				offset  = "change",
-				x       = 1,
-				y       = 2
-			},
+			cursor		= {joystick, "left"},
 			confirm		= {joystick, "a"},
 			cancel		= {joystick, "b"}
 		}
@@ -118,15 +108,10 @@ function Controls:__create(joystick)
 			shoot   	= {keyboard, "space"},
 			build   	= {mouse, 1},
 			destroy 	= {mouse, 2},
-			playerMenu  = {keyboard, "i"},
+			playerMenu	= {keyboard, "i"},
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
-			cursor          = {
-				device  = mouse,
-				offset  = "set",
-				x       = "xAsix",
-				y       = "yAxis"
-			},
+			cursor		= {mouse},
 			confirm		= {mouse, 1},
 			cancel		= {keyboard, "escape"}
 		}

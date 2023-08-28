@@ -1,11 +1,36 @@
 local GameState = require("gamestates/gameState")
 local InGame = require("gamestates/inGame")
 local Menu = require("menu")
+local Settings = require("settings")
 
 local NewGameMenu = GameState()
 
 local modes = {"Single Player", "COOP", "Allied", "VS"}
 NewGameMenu.menu = Menu.create(250, 5, modes)
+
+function NewGameMenu.NewGame(mode)
+	local scene, playerHostility
+	if mode == "Single Player" then
+		scene = "startScene"
+		playerHostility = {{false}}
+	elseif mode == "COOP" then
+		scene = "startSceneCOOP"
+		playerHostility = {{false, false}, {false, false}}
+	elseif mode == "Allied" then
+		scene = "startSceneTwoPlayer"
+		playerHostility = {{false, false}, {false, false}}
+	elseif mode == "VS" then
+		scene = "startSceneTwoPlayer"
+		playerHostility = {{false, true}, {true, false}}
+	end
+
+	if scene then
+		local fileName = string.format(Settings.scenesDir .. scene .. ".txt")
+
+		local callList = NewGameMenu.stackQueue:replace(InGame)
+		callList.load(love.filesystem.lines(fileName), playerHostility, false)
+	end
+end
 
 function NewGameMenu.update(dt)
 	NewGameMenu.menu:update(dt)
@@ -40,29 +65,7 @@ function NewGameMenu.testButton(button, back)
 		NewGameMenu.stackQueue:pop()
 	end
 
-	local mode = modes[button]
-	local scene, playerHostility
-	local start = true
-	if mode == "Single Player" then
-		scene = "startScene"
-		playerHostility = {{false}}
-	elseif mode == "COOP" then
-		scene = "startSceneCOOP"
-		playerHostility = {{false, false}, {false, false}}
-	elseif mode == "Allied" then
-		scene = "startSceneTwoPlayer"
-		playerHostility = {{false, false}, {false, false}}
-	elseif mode == "VS" then
-		scene = "startSceneTwoPlayer"
-		playerHostility = {{false, true}, {true, false}}
-	else
-		start = false
-	end
-
-	if start then
-		local callList = NewGameMenu.stackQueue:replace(InGame)
-		callList.load(scene, playerHostility, false)
-	end
+	NewGameMenu.NewGame(modes[button])
 end
 
 function NewGameMenu.resize(w, h)

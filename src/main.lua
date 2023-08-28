@@ -1,7 +1,8 @@
 require("class")
+local MainMenu = require("gamestates/mainMenu")
+local Settings = require("settings")
 local StackManager = require("stackManager")
 local enabledFunctions = require("gamestates/enabledFunctions")
-local MainMenu = require("gamestates/mainMenu")
 local log = require("log")
 
 local state
@@ -40,8 +41,10 @@ function love.load()
 			end
 
 			if scene then
+				local fileName = string.format(Settings.scenesDir .. scene .. ".txt")
+
 				local InGame = require("gamestates/inGame")
-				MainMenu.stackQueue:push(InGame).load(scene, {}, false)
+				MainMenu.stackQueue:push(InGame).load(love.filesystem.lines(fileName), {}, false)
 			else
 				error(
 					"--scene must have an argument. You provided these arguments: "

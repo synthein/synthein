@@ -2,7 +2,6 @@
 --TODO Clean up requires
 
 local Controls = require("controls")
-local Gamesave = require("gamesave")
 local Player = require("player")
 local SceneParser = require("sceneParser")
 local Screen = require("screen")
@@ -17,7 +16,6 @@ local lume = require("vendor/lume")
 
 
 local Debug = require("debugmode")
-local Gamesave = require("gamesave")
 local Log = require("log")
 local Menu = require("menu")
 local SaveMenu = require("saveMenu")
@@ -54,14 +52,9 @@ end
 local menu = Menu.create(225, 5, pauseMenu.buttons)
 
 local world, players, screen, saveMenu, debugmode, log
-function InGame.load(scene, playerHostility, ifSave)
-	if ifSave then
-		saveName = scene
-		sceneLines, message = Gamesave.load(scene)
-		if not sceneLines then
-			print("Failed to load game: " .. message)
-		end
-		for line in sceneLines do
+function InGame.load(scene, playerHostility, saveName)
+	if saveName then
+		for line in scene do
 			local match = string.match(line, "teamhostility = (.*)")
 			if match then
 				playerHostility = lume.deserialize(match, true)
@@ -69,17 +62,13 @@ function InGame.load(scene, playerHostility, ifSave)
 				break
 			end
 		end
-	else
-		local fileName = string.format("/res/scenes/%s.txt", scene)
-		sceneLines = love.filesystem.lines(fileName)
-
 	end
 
 	world = World(playerHostility)
 
 	screen = Screen()
 
-	local playerShips, maxTeam = SceneParser.loadScene(sceneLines, world, {0,0,0,0,0,0})
+	local playerShips, maxTeam = SceneParser.loadScene(scene, world, {0,0,0,0,0,0})
 	-- TODO: Instead of creating players here, we should create one
 	-- player per controller when the game starts up and pass those
 	-- players into the world here.
@@ -100,8 +89,6 @@ function InGame.load(scene, playerHostility, ifSave)
 			end
 		end
 	end
-
-	local saveName
 
 	-- Reastablish collisions and
 	world.physics:update(0)
@@ -138,14 +125,7 @@ function InGame.keypressed(key)
 		pauseMenuAction(menu:keypressed(key))
 	elseif menuOpen == "Save" then
 		if key == "return" then
-			--TODO
-			-- Xordspar
-			-- Save menu and game save both have file writing capabilities.
-			-- I think they are redundant.
-			-- Both are used. Savemenu should be able to be used in all cases.
-			-- I don't understand why gamesave was created, so I am hesitant to delete it.
-		
-			local ok, message = Gamesave.save(saveMenu.textBox.text, world)
+			local ok, message = saveMenu:saveFile(SceneParser.saveScene(world))
 			if not ok then
 				log.error("Failed to save the game: " .. message)
 			end

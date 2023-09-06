@@ -53,3 +53,15 @@ function CanvasUtils.drawCanvas(source, x, y, scaleTable, color, destination)
 	love.graphics.setCanvas()
 end
 
+function CanvasUtils.isWithin(x, y, source, destination, scaleTable)
+	local srcWidth, srcHeight = source:getDimensions()
+	local desWidth, desHeight = (destination or love.window):getDimensions()
+
+	local x = x - desWidth  * horRef + srcWidth  * horOff
+	local y = y - desHeight * verRef + srcHeight * verOff
+	
+	local within = 0 <= x and x <= srcWidth and 0 <= y and y <= srcWidth
+	
+	return within, x, y
+end
+

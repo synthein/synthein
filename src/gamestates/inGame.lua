@@ -1,27 +1,14 @@
-
---TODO Clean up requires
-
 local Controls = require("controls")
-local Player = require("player")
-local SceneParser = require("sceneParser")
-local Screen = require("screen")
-local World = require("world/world")
-
-local lume = require("vendor/lume")
-
-
-
-
-
-
-
 local Debug = require("debugmode")
 local Log = require("log")
 local Menu = require("menu")
+local Player = require("player")
 local SaveMenu = require("saveMenu")
 local SceneParser = require("sceneParser")
+local Screen = require("screen")
+local World = require("world/world")
 local console = require("console")
-local utf8 = require("utf8")
+local lume = require("vendor/lume")
 local vector = require("vector")
 
 local GameState = require("gamestates/gameState")

@@ -1,3 +1,4 @@
+local CanvasUtils = require("widgets/canvasUtils")
 local ListSelector = require("widgets/listSelector")
 local vector = require("vector")
 
@@ -9,7 +10,8 @@ function Hud:__create()
 		0, 0,
 		150, 120,
 		{})
-	self.formationSelector:set_reference_points("right", "top", "right", "top")
+	--self.formationSelector:set_reference_points("right", "top", "right", "top")
+	self.formationScaleTable = CanvasUtils.generateScaleTable("right", "top", "right", "top")
 	
 	self.selectedMenu = "formation"
 	return self
@@ -104,7 +106,17 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 		love.graphics.setFont(previousFont)
 	end
 	
-	self.formationSelector:draw(viewPort, cursor)
+	local canvas = love.graphics.newCanvas(viewPort.width, viewPort.height)
+	
+	local within, x, y = CanvasUtils.isWithin(
+		cursor.x, cursor.y, 0, 0, self.formationSelector.visableCanvas, canvas, self.formationScaleTable)
+	if within then
+		self.formationSelector:cursorHighlight(x, y)
+	end
+	local formationSelectorCanvas = self.formationSelector:draw(viewPort, cursor)
+	CanvasUtils.copyCanvas(formationSelectorCanvas, 0, 0, self.formationScaleTable, nil, canvas)
+	
+	love.graphics.draw(canvas, 0, 0)
 end
 
 return Hud

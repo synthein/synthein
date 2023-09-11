@@ -1,11 +1,6 @@
 local ListSelector = class()
 
 local scrollSpeed = 150
-local border = 100
-local spacing = 20
-local bs = border + spacing
-local nameHeight = 30
-local nameWidth = 200
 
 function ListSelector:__create(size, x, y, width, height, list)
 	self.x = x
@@ -29,6 +24,20 @@ function ListSelector:__create(size, x, y, width, height, list)
 
 	self:setList(list)
 	self.visableCanvas = love.graphics.newCanvas(width, height)
+	self.highlightCanvas = love.graphics.newCanvas(width, size)
+	
+	
+	love.graphics.setCanvas(self.highlightCanvas)
+	love.graphics.setColor(1, 1, 1, 0.75)
+	
+	local border = size/8
+	love.graphics.rectangle(
+		"fill",
+		border, border,
+		width - 2 * border, size - 2 * border)
+
+	love.graphics.setColor(1, 1, 1)
+	love.graphics.setCanvas()
 
 	return self
 end
@@ -74,7 +83,7 @@ function ListSelector:setList(list)
 		self.scrollMax = 0
 	end--]]
 end
-
+--[[
 --TODO rename variables
 function ListSelector:set_reference_points(horRef, verRef, horOff, verOff)
 	if     horRef == "left" then
@@ -105,8 +114,8 @@ function ListSelector:set_reference_points(horRef, verRef, horOff, verOff)
 	elseif verOff == "bottom" then
 		self.verOff = 1
 	end
-end
-
+end --]]
+--[[
 function ListSelector:toParentCoords(viewPort)
 	local screenWidth = viewPort.width
 	local screenHeight = viewPort.height
@@ -116,7 +125,7 @@ function ListSelector:toParentCoords(viewPort)
 	
 	return x,y
 end
-
+--
 function ListSelector:toLocalCoords(viewPort, x, y)
 	local screenWidth = viewPort.width
 	local screenHeight = viewPort.height
@@ -126,7 +135,7 @@ function ListSelector:toLocalCoords(viewPort, x, y)
 	
 	return x, y
 end
-
+--]]
 function ListSelector:getButtonAt(x, y)
 	local width = self.width
 	local height = self.height
@@ -204,37 +213,40 @@ function ListSelector:update(dt)
 
 end
 
+function ListSelector:cursorHighlight(x, y)
+	local index = self:getButtonAt(x, y)
+	if index ~=0 then
+		self.selected = index
+	end
+end
+
 function ListSelector:draw(viewPort, cursor)
-	local size = self.size
-	
+--[[
 	local cx, cy = self:toLocalCoords(viewPort, cursor.x, cursor.y)
 	local index = self:getButtonAt(cx, cy)
 	if index ~=0 then
 		self.selected = index
-	end
+	end--]]
 	
-	love.graphics.setCanvas(self.visableCanvas)
-
-	love.graphics.draw(self.buttonCanvas, 0, 0)
-	love.graphics.setColor(1, 1, 1, 0.25)
+	local size = self.size
+	local selected = self.selected
+	local scrollY = self.scrollY
 
 	-- When nothing is selected, self.selected == 0.
-	local highlightY = size * (self.selected - 1) - self.scrollY
-	local border = size/8
-	love.graphics.rectangle(
-		"fill",
-		border, highlightY + border,
-		self.width - 2 * border, size - 2 * border)
+	local highlightY = size * (selected - 1) - scrollY
 	
+	local visableCanvas = self.visableCanvas
+	
+	love.graphics.setCanvas(visableCanvas)
 	love.graphics.setColor(1, 1, 1)
-	love.graphics.draw(self.textCanvas, 0, -self.scrollY)
+
+	love.graphics.draw(self.buttonCanvas, 0, 0)
+	love.graphics.draw(self.highlightCanvas, 0, highlightY)
+	love.graphics.draw(self.textCanvas, 0, -scrollY)
 
 	love.graphics.setCanvas()
 	
-	local x, y = self:toParentCoords(viewPort)
-	love.graphics.draw(self.visableCanvas, x, y)
-	
-	love.graphics.setColor(1, 1, 1)
+	return visableCanvas
 end
 
 return ListSelector

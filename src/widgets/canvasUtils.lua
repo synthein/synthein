@@ -36,7 +36,7 @@ function CanvasUtils.generateScaleTable(horRef, verRef, horOff, verOff)
 	return {horRef, verRef, horOff, verOff}
 end
 
-function CanvasUtils.drawCanvas(source, x, y, scaleTable, color, destination)
+function CanvasUtils.copyCanvas(source, x, y, scaleTable, color, destination)
 	local horRef, verRef, horOff, verOff = unpack(scaleTable)
 	love.graphics.setColor(unpack(color or {1, 1, 1}))
 	
@@ -53,15 +53,17 @@ function CanvasUtils.drawCanvas(source, x, y, scaleTable, color, destination)
 	love.graphics.setCanvas()
 end
 
-function CanvasUtils.isWithin(x, y, source, destination, scaleTable)
+function CanvasUtils.isWithin(curX, curY, canX, canY, source, destination, scaleTable)
+	local horRef, verRef, horOff, verOff = unpack(scaleTable)
 	local srcWidth, srcHeight = source:getDimensions()
 	local desWidth, desHeight = (destination or love.window):getDimensions()
 
-	local x = x - desWidth  * horRef + srcWidth  * horOff
-	local y = y - desHeight * verRef + srcHeight * verOff
+	local x = curX - canX - desWidth  * horRef + srcWidth  * horOff
+	local y = curY - canY - desHeight * verRef + srcHeight * verOff
 	
 	local within = 0 <= x and x <= srcWidth and 0 <= y and y <= srcWidth
 	
 	return within, x, y
 end
 
+return CanvasUtils

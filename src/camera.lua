@@ -28,9 +28,11 @@ end
 
 function Camera:getWorldCoords(cursorX, cursorY)
 	local scissor = self.scissor
-	local x =  (cursorX - scissor.width/2  - scissor.x) / self.zoom + self.x
-	local y = -(cursorY - scissor.height/2 - scissor.y) / self.zoom + self.y
-	return x, y
+	local xoffset, yoffset = vector.rotate(
+		(cursorX - scissor.width/2  - scissor.x) / self.zoom,
+		-(cursorY - scissor.height/2 - scissor.y) / self.zoom,
+		self.angle)
+	return self.x + xoffset, self.y + yoffset
 end
 
 function Camera:getScreenCoords(worldX, worldY, a, b)

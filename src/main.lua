@@ -2,6 +2,7 @@ require("class")
 local MainMenu = require("gamestates/mainMenu")
 local Settings = require("settings")
 local StackManager = require("stackManager")
+local console = require("console")
 local enabledFunctions = require("gamestates/enabledFunctions")
 local log = require("log")
 
@@ -63,4 +64,8 @@ function love.keypressed(key)
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 
 	state.keypressed(key)
+end
+
+function love.quit()
+	console.quit()
 end

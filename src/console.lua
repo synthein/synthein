@@ -1,6 +1,7 @@
 local reader = love.thread.newThread("consolereader.lua")
 local input = love.thread.newChannel()
-reader:start(input)
+local done = love.thread.newChannel()
+reader:start(input, done)
 
 local console = {
 	sleeptime = 0,
@@ -45,6 +46,10 @@ function console.repl(dt)
 			end
 		end
 	end
+end
+
+function console.quit()
+	done:push(true)
 end
 
 return console

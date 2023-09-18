@@ -1,5 +1,5 @@
-local input = ...
+local input, done = ...
 
-while true do
+while not done:pop() do
 	input:push(io.read())
 end

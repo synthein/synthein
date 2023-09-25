@@ -122,6 +122,12 @@ function Player:buttonpressed(source, button, debugmode)
 					self.cursorY)
 				self.selected:pressed(cursorX, cursorY, order)
 
+				-- TODO: Yikes, this is bad! It's just a proof
+				-- of concept. Delete or refactor.
+				if self.selected.build and self.selected.build.mode == 4 then
+					self.camera.body = self.selected.build.structure.body
+				end
+
 			elseif order == "playerMenu" then
 				if debugmode then
 					self.menu = true
@@ -141,6 +147,11 @@ function Player:buttonreleased(source, button)
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
 	if order == "build" then
 		self.selected:released(cursorX, cursorY)
+
+		-- TODO: Yikes part 2!
+		if self.selected.build == nil then
+			self.camera.body = self.ship.body
+		end
 	end
 end
 

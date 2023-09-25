@@ -32,6 +32,10 @@ clean:
 dep:
 	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display
 
+map:
+	dot -T png TaskMap.dot >TaskMap.png
+	display TaskMap.png
+
 luacheck:
 	find src -name '*.lua' -not -path 'src/vendor/*' -exec luacheck --no-unused-args {} +
 

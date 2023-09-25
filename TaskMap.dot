@@ -1,0 +1,42 @@
+digraph {
+	rankdir="LR";
+	node [shape=box];
+	
+	
+	cd  [label = "Construction\nDrones"];
+	cd1 [label = "Clean Out\nUserDataRework\nFile"];
+	cd2 [label = "Annex Not\nTop Down"];
+	cd3 [label = "Clamp Part"];
+	cd4 [label = "Drone Construstion\nCabaility Tracking"];
+	cd5 [label = "Active Blueprint"];
+	cd6 [label = "Construction\nDrone Logic"];
+	
+	{cd2 cd6} -> cd;
+	{cd1} -> cd2;
+	{cd3} -> cd4;
+	{cd5 cd4} -> cd6;
+	
+	
+	ui  [label = "Travel UI"];
+	ui1 [label = "Mini Map"];
+	ui2 [label = "Radar"];
+	ui3 [label = "Zoom Draw\nModes"];
+	ui4 [label = "CameraWidget"];
+	
+	{ui1 ui2} -> ui;
+	{ui3 ui4} -> ui1;
+	
+	
+	sh  [label = "Orgainic Sheilds"];
+	sh1 [label = "Shaders"];
+	sh2 [label = "Non-Circle OverSized\nFixture Prototype"];
+	
+	{sh1 sh2} -> sh;
+	
+	
+	fm  [label = "User Defineable\nFormations"];
+	fm1 [label = "Formation Save\nFiles"];
+	fm2 [label = "Default Formations"];
+	
+	{fm1 fm2} -> fm
+}

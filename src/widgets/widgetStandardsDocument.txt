@@ -1,0 +1,26 @@
+
+Rules
+- The handed of canvas doesn't persist. They only exist in the draw functions.
+	Width and height are stored and can change with a screen resize.
+	To avoid confilicting information with the stored Width and Height.
+
+
+Standard functions (plus proper order)
+	update
+	resize
+	draw
+	
+	
+	
+Discuss with Xord
+	KeyPressed
+	Pressed
+	MousePressed
+	mousemoved
+	wheelmoved
+	
+	cursorPressed
+	cursorReleased
+	menuPressed
+	
+	

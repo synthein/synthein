@@ -124,7 +124,7 @@ function Player:buttonpressed(source, button, debugmode)
 
 				-- TODO: Yikes, this is bad! It's just a proof
 				-- of concept. Delete or refactor.
-				if self.selected.build and self.selected.build.mode == 4 then
+				if self.selected.build and self.selected.build.structure then
 					self.camera.body = self.selected.build.structure.body
 				end
 

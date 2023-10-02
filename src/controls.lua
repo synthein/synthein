@@ -72,6 +72,10 @@ Controls.released = {
 }
 
 Controls.menu = {
+	up         = "menuUp"
+	down       = "menuDown"
+	left       = "menuLeft"
+	right      = "menuRight"
 	confirm    = "confirm",
 	cancel     = "cancel",
 	playerMenu = "playerMenu",

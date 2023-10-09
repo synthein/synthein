@@ -16,6 +16,8 @@ local WidgetBox = class()
 function WidgetBox:__create(width, height)
 	self.dimensions = {width, height}
 	self.widgets = {}
+	
+	self.highlighted = 1
 end
 
 function WidgetBox:addWidget(widget, position, scaleTable)
@@ -24,6 +26,8 @@ function WidgetBox:addWidget(widget, position, scaleTable)
 	frame.postion = position
 	frame.scaleTable = gernerateScaleTable(unpack(scaleTable))
 	frame.visable = true
+	
+	table.insert(self.widgets, frame)
 end
 
 function WidgetBox:within(cursorX, cursorY)
@@ -44,7 +48,7 @@ function WidgetBox:within(cursorX, cursorY)
 			local within = 0 <= x and x <= srcWidth and 0 <= y and y <= srcWidth
 			
 			if within and frame.visable then
-				return widget, x, y
+				return widget, x, y, i
 			end
 		end
 		
@@ -52,21 +56,39 @@ function WidgetBox:within(cursorX, cursorY)
 	end
 end
 
-function WidgetBox:keypressed(key)
+function WidgetBox:cursorpressed(button, cursorX, cursorY)
+	for widget, x, y, i in self.within(cursorX, cursorY) do
+		widget:cursorpressed(button, cursorX, cursorY)
+		self.highlighted = i
+	end
 end
 
-function WidgetBox:pressed()
+function WidgetBox:cursorreleased(button, cursorX, cursorY)
+	for widget, x, y, i in self.within(cursorX, cursorY) do
+		widget:cursorreleased(button, cursorX, cursorY)
+		self.highlighted = i
+	end
 end
 
+function WidgetBox:pressed(button)
+	local frame = self.widgets[self.highlighted]
+	if frame then	
+		frame.widget:pressed(button)
+	end
+end
 
---TODO this is just a sample function
-function WidgetBox:mousemoved(cursorX, cursorY)
-	for widget, x, y in self.within(cursorX, cursorY) do
-		widget:mousemoved(x, y)
+function WidgetBox:released(button)
+	local frame = self.widgets[self.highlighted]
+	if frame then	
+		frame.widget:released(button)
 	end
 end
 
 function WidgetBox:wheelmoved(x, y)
+	local frame = self.widgets[self.highlighted]
+	if frame then	
+		frame.widget:wheelmoved(x, y)
+	end
 end
 
 function WidgetBox:update(dt)
@@ -76,9 +98,10 @@ function WidgetBox:update(dt)
 end
 
 function WidgetBox:Ressize()
+	--TODO populate this function
 end
 
-function WidgetBox:draw()
+function WidgetBox:draw(cursorX, cursorY)
 	--TODO cursor information
 
 	local width, height = unpack(self.dimensions)

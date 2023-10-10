@@ -15,10 +15,23 @@ end
 
 function Screen:arrange(screenWidth, screenHeight)
 	local n = #self.cameras
-	local screenArea = screenWidth * screenHeight
-	local cameraArea = screenArea / n
-	local columns = math.ceil(screenWidth/math.sqrt(cameraArea)-0.5)
-	local rows = math.ceil(n/columns)
+	local columns, rows = 1, 1
+	for i = 1, n do
+		if i > columns * rows then
+			if screenWidth / columns > screenHeight / rows then
+				columns = columns + 1
+			else
+				rows = rows + 1
+			end
+		end
+	end
+
+	if columns > rows then
+		columns = math.min(columns, math.ceil(n / rows))
+	else
+		rows = math.min(rows, math.ceil(n / columns))
+	end
+
 	local cameraWidth  = math.floor(screenWidth/columns)
 	local cameraHeight = math.floor(screenHeight/rows)
 	for i, camera in ipairs(self.cameras) do

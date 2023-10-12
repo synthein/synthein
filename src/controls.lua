@@ -21,7 +21,7 @@ end
 function Controls:test(mode, source, button)
 	for key, value in pairs(Controls[mode]) do
 		local control = self.bindings[key]
-		if control[1] == source and control[2] == button then
+		if control and control[1] == source and control[2] == button then
 			return value
 		end
 	end
@@ -72,10 +72,10 @@ Controls.released = {
 }
 
 Controls.menu = {
-	up         = "menuUp"
-	down       = "menuDown"
-	left       = "menuLeft"
-	right      = "menuRight"
+	up         = "menuUp",
+	down       = "menuDown",
+	left       = "menuLeft",
+	right      = "menuRight",
 	confirm    = "confirm",
 	cancel     = "cancel",
 	playerMenu = "playerMenu",
@@ -98,6 +98,10 @@ function Controls:__create(joystick)
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
 			cursor		= {joystick, "left"},
+			menuUp 	    = {joystick, "dpup"},
+			menuDown    = {joystick, "dpdown"},
+			menuLeft    = {joystick, "dpleft"},
+			menuRight   = {joystick, "dpright"},
 			confirm		= {joystick, "a"},
 			cancel		= {joystick, "b"}
 		}
@@ -116,6 +120,10 @@ function Controls:__create(joystick)
 			zoomOut		= {mouse, "-yWheel"},
 			zoomIn		= {mouse, "yWheel"},
 			cursor		= {mouse},
+			menuUp 	    = {keyboard, "w"},
+			menuDown    = {keyboard, "s"},
+			menuLeft    = {keyboard, "a"},
+			menuRight   = {keyboard, "d"},
 			confirm		= {mouse, 1},
 			cancel		= {keyboard, "escape"}
 		}

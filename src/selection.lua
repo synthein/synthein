@@ -141,6 +141,10 @@ function Selection:released(cursorX, cursorY)
 	end
 end
 
+function Selection:isBuildingOnStructure()
+	return self.build and self.build.structure
+end
+
 function Selection:draw(cursorX, cursorY)
 	local structure = self.structure
 	local part = self.part

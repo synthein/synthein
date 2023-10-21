@@ -145,10 +145,12 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:draw(debugmode)
-	if self.selected:isBuildingOnStructure() then
-		self.camera.body = self.selected.structure.body
-	else
-		self.camera.body = self.ship.body
+	if self.ship then
+		if self.selected:isBuildingOnStructure() then
+			self.camera.body = self.selected.structure.body
+		else
+			self.camera.body = self.ship.body
+		end
 	end
 
 	self.camera:drawPlayer(self, debugmode)

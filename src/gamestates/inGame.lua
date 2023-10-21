@@ -81,7 +81,7 @@ function InGame.load(scene, playerHostility, saveName)
 	world.physics:update(0)
 
 	if #players == 0 then
-		table.insert(players, Player.create(world, Controls.create(), nil, screen:createCamera()))
+		table.insert(players, Player.create(world, Controls(), nil, screen:createCamera()))
 	end
 
 	saveMenu = SaveMenu(nil, saveName)

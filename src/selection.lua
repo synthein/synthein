@@ -5,7 +5,6 @@ local vector = require("vector")
 
 local pointerImage = love.graphics.newImage("res/images/pointer.png")
 local pointerWidth = pointerImage:getWidth()
-local pointerWidth = pointerImage:getWidth()
 
 local Selection = {}
 Selection.__index = Selection

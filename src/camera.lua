@@ -17,6 +17,7 @@ function Camera.create()
 	self.zoomInt = 8
 	self:adjustZoom(0)
 	self.scissor = {x = 0, y = 0, width = 0, height = 0}
+	self.gameOver = false
 
 	self.graphics = {}
 	setmetatable(self.graphics, self)
@@ -283,28 +284,25 @@ end
 
 function Camera:drawPlayer(player, debugmode)
 	local compassAngle = 0
-	local gameOver = false
 	
 	--TODO this no longer makes sense
 	local body = self.body
 	if body then
-		if body:isDestroyed() then
+		if player.ship == nil then
 			self.body = nil
+			self.gameOver = true
 		else
 			self.x, self.y = body:getPosition()
 			self.angle = player.isCameraAngleFixed and 0 or body:getAngle()
 					
 			local point = {0,0}
-			if player.ship then
-				local leader = (player.ship.corePart or {}).leader
-				if leader then
-					point = leader:getLocation()
-				end
-				if player.ship.isDestroyed then
-					player.ship = nil
-				end
-			else
-				gameOver = true
+
+			local leader = (player.ship.corePart or {}).leader
+			if leader then
+				point = leader:getLocation()
+			end
+			if player.ship.isDestroyed then
+				player.ship = nil
 			end
 
 			compassAngle = math.atan2(self.x - point[1], self.y - point[2])
@@ -323,7 +321,7 @@ function Camera:drawPlayer(player, debugmode)
 	playerDrawPack.cursor = {x = player.cursorX, y = player.cursorY, image = player.cursor}
 	playerDrawPack.menu = player.menu
 	playerDrawPack.partSelector = player.partSelector
-	playerDrawPack.gameOver = gameOver
+	playerDrawPack.gameOver = self.gameOver
 	
 
 	love.graphics.setScissor(unpack(scissor))

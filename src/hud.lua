@@ -10,7 +10,6 @@ function Hud:__create()
 		0, 0,
 		150, 120,
 		{})
-	--self.formationSelector:set_reference_points("right", "top", "right", "top")
 	self.formationScaleTable = CanvasUtils.generateScaleTable("right", "top", "right", "top")
 	
 	self.selectedMenu = "formation"
@@ -26,7 +25,8 @@ end
 
 function Hud:keypressed(key)
 	if self.selectedMenu == "formation" then
-		local formationIndex = self.formationSelector:keypressed(key)
+		local formationIndex = self.formationSelector:pressed(key)
+		print("formationIndex ", formationIndex)
 		if formationIndex then
 			self.command.activeFormation = self.formationList[formationIndex]
 		end
@@ -34,9 +34,9 @@ function Hud:keypressed(key)
 end
 
 function Hud:pressed(order)
-	if self.selectedMenu == "formation" then
-		local formationIndex = self.formationSelector:pressed()
-		if formationIndex then
+	if self.selectedMenu then
+		local formationIndex = self.formationSelector:pressed(order)
+		if formationIndex and formationIndex ~= 0 then
 			self.command.activeFormation = self.formationList[formationIndex]
 		end
 	end
@@ -110,10 +110,7 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 	
 	local within, x, y = CanvasUtils.isWithin(
 		cursor.x, cursor.y, 0, 0, self.formationSelector.visableCanvas, canvas, self.formationScaleTable)
-	if within then
-		self.formationSelector:cursorHighlight(x, y)
-	end
-	local formationSelectorCanvas = self.formationSelector:draw(viewPort, cursor)
+	local formationSelectorCanvas = self.formationSelector:draw(viewPort, {x = x, y = y})
 	CanvasUtils.copyCanvas(formationSelectorCanvas, 0, 0, self.formationScaleTable, nil, canvas)
 	
 	love.graphics.draw(canvas, 0, 0)

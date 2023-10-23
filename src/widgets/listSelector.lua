@@ -81,9 +81,6 @@ function ListSelector:getButtonAt(x, y)
 	local index = 0
 	if 0 < x and x < width and 0 < y and y < height then
 		index = math.floor((y + self.scrollY) / self.size + 1)
-	--	self.hovering = true
-	--else
-	--	self.hovering = false
 	end
 	if index > #self.list then
 		index = 0
@@ -94,7 +91,6 @@ end
 
 function cursorpressed(key, cursor)
 	self.selected = self:getButtonAt(cursor.x, cursor.y)
-	--TODO add click
 	if key == "confirm" then
 		local s = self.selected
 		local len = #self.list

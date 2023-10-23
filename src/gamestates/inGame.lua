@@ -6,6 +6,7 @@ local Player = require("player")
 local SaveMenu = require("saveMenu")
 local SceneParser = require("sceneParser")
 local Screen = require("screen")
+local Settings = require("settings")
 local World = require("world/world")
 local console = require("console")
 local lume = require("vendor/lume")
@@ -84,7 +85,7 @@ function InGame.load(scene, playerHostility, saveName)
 		table.insert(players, Player.create(world, Controls(), nil, screen:createCamera()))
 	end
 
-	saveMenu = SaveMenu(nil, saveName)
+	saveMenu = SaveMenu(Settings.saveDir, saveName)
 	debugmode = Debug.create(world, players)
 	log = Log(debugmode)
 	console.init({

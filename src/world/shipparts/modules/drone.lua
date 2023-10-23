@@ -102,7 +102,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 				end
 
 				--TODO add spacing logic here.
-				if object.type() == "structure" then
+				if object.type == "structure" then
 					if teamHostility:test(self.team, object.team or 0) then
 						if not targetMSq or targetMSq > mSq then
 							shoot = true

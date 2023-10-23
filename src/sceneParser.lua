@@ -135,7 +135,7 @@ function SceneParser.saveScene(world)
 	end
 
 	for _, object in ipairs(world.objects) do
-		local type = object:type()
+		local type = object.type
 		local index = indexes[type]
 		references[object] = type .. tostring(index)
 		indexes[type] = index + 1
@@ -144,7 +144,7 @@ function SceneParser.saveScene(world)
 	for _, object in ipairs(world.objects) do
 		local data, appendix = object:getSaveData(references)
 		local string = ""
-			.. references[object] .. " = " .. object:type()
+			.. references[object] .. " = " .. object.type
 			.. "(" .. Parse.packLocation(object:getLocation()) .. ")"
 			.. Parse.packData(data) .. "\n"
 			.. (appendix and "{\n" .. appendix .. "\n}\n" or "")

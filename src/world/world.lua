@@ -207,7 +207,7 @@ function World:update(dt)
 		if object.isDestroyed == false then
 			local objectX, objectY = object.body:getPosition()
 
-			if object:type() == "structure" and object.corePart and
+			if object.type == "structure" and object.corePart and
 					object.corePart:getTeam() > 0 then
 				if objectX < nextBorders[1] then
 					nextBorders[1] = objectX

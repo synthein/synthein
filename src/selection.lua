@@ -44,7 +44,7 @@ function Selection:pressed(cursorX, cursorY, order)
 	local structure = self.world:getObject(cursorX, cursorY)
 	local part
 	if structure then part = structure:findPart(cursorX, cursorY) end
-	if structure and structure:type() == "structure" and part then
+	if structure and structure.type == "structure" and part then
 		local build = self.build
 		local team = structure.body:getUserData().team
 		if build then

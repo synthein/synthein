@@ -2,19 +2,43 @@ digraph {
 	rankdir="LR";
 	node [shape=box];
 	
+	subgraph Construction_Drones {
+		label = "ConstructionDrones"
+		cluster = true
+		
+		cd  [label = "Construction\nDrones"];
+		cd2 [label = "Annex Not\nTop Down"];
+		cd3 [label = "Conflicting Parts"]
+		cd4 [label = "Drone Construstion\nCabaility Tracking"];
+		cd5 [label = "Active Blueprint"];
+		cd6 [label = "Construction\nDrone Logic"];
+		cd7 [label = "Part Transfer"];
+		cd8 [label = "Annexee Move Into Position"];
+		
+		subgraph Clamp_Part {
+			label = "Clamp Part"
+			cluster = true
+			
+			cp  [label = "Clamp Part"];
+			cp1 [label = "Clamp Part Code File"];
+			cp2 [label = "Clamp Part Image"];
+			
+			cp1 -> cp;
+			cp2 -> cp;
+		}
+		
+		
+		cd2 -> cd;
+		cd6 -> cd;
+		cd1 -> cd2;
+		cd7 -> cd2;
+		cd8 -> cd2;
+		cp  -> cd4;
+		cd4 -> cd6;
+		cd5 -> cd6;
+		cd3 -> cd7;
+	}
 	
-	cd  [label = "Construction\nDrones"];
-	cd1 [label = "Clean Out\nUserDataRework\nFile"];
-	cd2 [label = "Annex Not\nTop Down"];
-	cd3 [label = "Clamp Part"];
-	cd4 [label = "Drone Construstion\nCabaility Tracking"];
-	cd5 [label = "Active Blueprint"];
-	cd6 [label = "Construction\nDrone Logic"];
-	
-	{cd2 cd6} -> cd;
-	{cd1} -> cd2;
-	{cd3} -> cd4;
-	{cd5 cd4} -> cd6;
 	
 	
 	ui  [label = "Travel UI"];

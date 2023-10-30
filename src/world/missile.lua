@@ -7,6 +7,8 @@ local lume = require("vendor/lume")
 
 local Missile = class(require("world/worldObjects"))
 
+Missile.type = "missile"
+
 function Missile:__create(worldInfo, location, data, appendix)
 	self.events = worldInfo.events
 
@@ -64,10 +66,6 @@ function Missile:postCreate(references)
 	local team, time = unpack(self.data)
 	self.team = team
 	self.timer.time = time
-end
-
-function Missile:type()
-	return "missile"
 end
 
 function Missile:getSaveData(references)

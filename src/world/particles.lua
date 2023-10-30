@@ -4,6 +4,8 @@ local Draw = require("world/draw")
 local Particles = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")
 
+Particles.type = "particles"
+
 function Particles:__create(worldInfo, location, data, appendix)
 	self.physicsShape = love.physics.newRectangleShape(40, 40)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
@@ -15,10 +17,6 @@ end
 
 function Particles:postCreate() --(references)
 	self.timer.time = self.data[1]
-end
-
-function Particles:type()
-	return "particles"
 end
 
 function Particles:getSaveData() --(references)

@@ -9,6 +9,9 @@ local Shield = require("world/shipparts/modules/shield")
 
 local Structure = class(require("world/worldObjects"))
 
+-- TODO: Remove Duplicate between user data
+Structure.type = "structure"
+
 function Structure:__create(worldInfo, location, data, appendix)
 	self.worldInfo = worldInfo
 	self.physics = worldInfo.physics
@@ -64,11 +67,8 @@ function Structure:__create(worldInfo, location, data, appendix)
 		end
 	}
 	local userData = setmetatable({}, userDataParent)
-	-- TODO Make a feild not a function
-	function userData.type()
-		return "structure"
-	end
 
+	userData.type = "structure"
 	userData.team = team
 
 	self.body:setUserData(userData)
@@ -85,11 +85,6 @@ function Structure:postCreate(references)
 	if self.corePart and self.corePart.postCreate then
 		self.corePart:postCreate(references)
 	end
-end
-
--- TODO: Remove Duplicate between user data
-function Structure:type()
-	return "structure"
 end
 
 function Structure:getSaveData(references)

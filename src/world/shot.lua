@@ -6,6 +6,8 @@ local vector = require("vector")
 local Shot = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")
 
+Shot.type = "shot"
+
 function Shot:__create(worldInfo, location, data, appendix)
 	local vx, vy = vector.components(25, location[3] + math.pi/2)
 	self.body:setLinearVelocity(location[4] + vx, location[5] + vy)
@@ -42,10 +44,6 @@ function Shot:postCreate(references)
 	local time = unpack(self.data)
 	self.timer.time = time
 	self.body:setLinearVelocity(self.startLocation[4], self.startLocation[5])
-end
-
-function Shot:type()
-	return "shot"
 end
 
 function Shot:getSaveData(references)

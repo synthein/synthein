@@ -11,6 +11,7 @@ a = require("world/shipparts/armorBlock"),
 s = require("world/shipparts/shieldBlock"),
 r = require("world/shipparts/repairBlock"),
 m = require("world/shipparts/missileLauncherBlock"),
+c = require("world/shipparts/clampBlock")
 }
 
 PartRegistry.allParts = {}

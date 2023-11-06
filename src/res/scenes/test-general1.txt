@@ -36,6 +36,11 @@ structure(6,2,0)[0]
 {
 m*
 }
+structure(8,2,0)[0]
+{
+c*
+}
+
 
 structure(4,-4,0)[1]
 {

@@ -1,6 +1,7 @@
 use mlua::prelude::LuaTable;
 use mlua::{Lua, Result};
 
+mod mathext;
 mod timer;
 mod world;
 
@@ -16,9 +17,11 @@ fn syntheinrust(lua: &Lua) -> Result<LuaTable> {
     modules.set("gun", gun::lua_module(lua)?)?;
     modules.set("heal", heal::lua_module(lua)?)?;
     modules.set("missileLauncher", missile_launcher::lua_module(lua)?)?;
-    shipparts.set("modules", modules)?;
-    exports.set("shipparts", shipparts)?;
 
+    shipparts.set("modules", modules)?;
+
+    exports.set("mathext", mathext::lua_module(lua)?)?;
+    exports.set("shipparts", shipparts)?;
     exports.set("timer", timer::lua_module(lua)?)?;
 
     Ok(exports)

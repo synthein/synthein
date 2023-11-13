@@ -1,9 +1,8 @@
 local Draw = require("world/draw")
 local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("syntheinrust").timer
+local mathext = require("syntheinrust").mathext
 local vector = require("vector")
-
-local lume = require("vendor/lume")
 
 local Missile = class(require("world/worldObjects"))
 
@@ -116,7 +115,7 @@ function Missile:update(dt)
 			local angleToTarget = (-self.body:getAngle() + angle + math.pi/2) % (2*math.pi) - math.pi
 			local angularVelocity = self.body:getAngularVelocity()
 
-			self.body:applyTorque(lume.clamp(10 * angleToTarget - 3 * angularVelocity, -self.torque, self.torque))
+			self.body:applyTorque(mathext.clamp(10 * angleToTarget - 3 * angularVelocity, -self.torque, self.torque))
 		end
 	end
 

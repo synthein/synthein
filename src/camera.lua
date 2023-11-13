@@ -1,7 +1,7 @@
 local Hud = require("hud")
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
-local lume = require("vendor/lume")
+local mathext = require("syntheinrust").mathext
 local vector = require("vector")
 
 local Camera = {}
@@ -193,7 +193,7 @@ function Camera:limitCursor(cursorX, cursorY)
 	local width = self.scissor.width
 	local height = self.scissor.height
 
-	return lume.clamp(cursorX, 0, width), lume.clamp(cursorY, 0, height)
+	return mathext.clamp(cursorX, 0, width), mathext.clamp(cursorY, 0, height)
 end
 
 function Camera:print(string, x, y)

@@ -63,4 +63,12 @@ digraph {
 	fm2 [label = "Default Formations"];
 	
 	{fm1 fm2} -> fm
+	
+	"Remove Enabled Functions"
+	"Remove Game State Parent Class"
+	"Add interface Test for Game State"
+	"Remove Stack Based Game State Transitions"
+	"Make Ship Editor A Widget"
+	"Make Formation Editor a Widget"
+	"Move Control Mapping to Main Rather than ingame"
 }

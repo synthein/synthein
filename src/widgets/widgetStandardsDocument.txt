@@ -6,10 +6,10 @@ Rules
 
 
 Standard functions (plus proper order)
-	cursorpressed
-	cursorreleased
-	pressed
-	released
+	cursorpressed(cursor, control)
+	cursorreleased(cursor, control)
+	pressed(control)
+	released(control)
 	wheelmoved
 	update
 	resize
@@ -17,3 +17,7 @@ Standard functions (plus proper order)
 	
 If cursor argument is not sufficent then add new function to cope with changes.
 
+The control argument will be bundled with each posible meaning
+		do control.menu or control.order to get the case specific meaning.
+
+	

@@ -81,6 +81,8 @@ Controls.menu = {
 	playerMenu = "playerMenu",
 }
 
+--TODO Bundle Comands that have the same mapping let the widgets separated them out.
+
 function Controls:__create(joystick)
 	local bindings
 	if joystick then

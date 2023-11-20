@@ -206,8 +206,9 @@ function World:update(dt)
 	for i, object in ipairs(self.objects) do
 		if object.isDestroyed == false then
 			local objectX, objectY = object.body:getPosition()
+			local objectType = object.body:getUserData().type
 
-			if object.type == "structure" and object.corePart and
+			if objectType == "structure" and object.corePart and
 					object.corePart:getTeam() > 0 then
 				if objectX < nextBorders[1] then
 					nextBorders[1] = objectX

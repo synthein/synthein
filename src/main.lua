@@ -3,7 +3,6 @@ local MainMenu = require("gamestates/mainMenu")
 local Settings = require("settings")
 local StackManager = require("stackManager")
 local console = require("console")
-local enabledFunctions = require("gamestates/enabledFunctions")
 local log = require("log")
 
 local state
@@ -18,14 +17,6 @@ Available flags:
 
 function love.load()
 	state = StackManager.create(MainMenu, "stackQueue")
-
-	local function getStateFunction(_, key)
-		if enabledFunctions[key] then
-			return state[key]
-		end
-	end
-
-	setmetatable(love, {__index = getStateFunction})
 
 	local i = 1
 	while arg[i] do
@@ -61,9 +52,77 @@ function love.load()
 end
 
 function love.keypressed(key)
+	--TODO Controls Map then pipe to state.pressed(control)
+
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 
 	state.keypressed(key)
+end
+
+function love.keyreleased()
+	--TODO Controls Map then pipe to state.released(control)
+
+	state.keyreleased(key)
+end
+
+function love.mousepressed(x, y, button)
+	--TODO Controls Map then pipe to state.cursorpressed(cursor, control)
+
+	state.mousepressed(x, y, button)
+end
+
+function love.mousereleased(x, y, button)
+	--TODO Controls Map then pipe to state.cursorreleased(cursor, control)
+
+	state.mousereleased(x, y, button)
+end
+
+function love.mousemoved(x, y)
+	state.mousemoved(x, y)
+end
+
+function love.wheelmoved(x, y)
+	state.wheelmoved(x, y)
+end
+
+function love.gamepadpressed(joystick, button)
+	--TODO Controls Map then pipe to state.pressed(control)
+
+	state.gamepadpressed(joystick, button)
+end
+
+function love.gamepadreleased(joystick, button)
+	--TODO Controls Map then pipe to state.released(control)
+
+	state.gamepadreleased(joystick, button)
+end
+
+function love.joystickpressed(joystick, button)
+	--TODO Controls Map then pipe to state.pressed(control)
+
+	state.joystickpressed(joystick, button)
+end
+
+function love.joystickreleased(joystick, button)
+	--TODO Controls Map then pipe to state.released(control)
+
+	state.joystickreleased(joystick, button)
+end
+
+function love.textinput(key)
+	state.textinput(key)
+end
+
+function love.update(dt)
+	state.update(dt)
+end
+
+function love.resize(w, h)
+	state.resize(w, h)
+end
+
+function love.draw()
+	state.draw()
 end
 
 function love.quit()

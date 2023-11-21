@@ -98,7 +98,7 @@ function FormationEditor.keypressed(key)
 
 			if button == "Main Menu" then
 				menuOpen = false
-				FormationEditor.stackQueue:pop()
+				setGameState("MainMenu")
 			elseif button == "Quit" then
 				love.event.quit()
 			end
@@ -156,7 +156,7 @@ function FormationEditor.mousepressed(x, y, mouseButton)
 
 			if button == "Main Menu" then
 				menuOpen = false
-				FormationEditor.stackQueue:pop()
+				setGameState("MainMenu")
 			elseif button == "Quit" then
 				love.event.quit()
 			end

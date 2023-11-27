@@ -9,9 +9,6 @@ local Shield = require("world/shipparts/modules/shield")
 
 local Structure = class(require("world/worldObjects"))
 
--- TODO: Remove Duplicate between user data
-Structure.type = "structure"
-
 function Structure:__create(worldInfo, location, data, appendix)
 	self.worldInfo = worldInfo
 	self.physics = worldInfo.physics

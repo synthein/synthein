@@ -173,7 +173,7 @@ function ShipEditor.mousepressed(x, y, mouseButton)
 				ShipEditor.loadMenu:reset()
 			elseif button == "Main Menu" then
 				menuOpen = false
-				ShipEditor.stackQueue:pop()
+				setGameState("MainMenu")
 			elseif button == "Quit" then
 				love.event.quit()
 			end

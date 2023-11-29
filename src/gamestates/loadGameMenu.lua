@@ -1,9 +1,8 @@
-local GameState = require("gamestates/gameState")
-local InGame = require("gamestates/inGame")
 local Menu = require("menu")
 local Settings = require("settings")
 local log = require("log")
 
+local GameState = require("gamestates/gameState")
 local LoadGameMenu = GameState()
 
 local saveNames = {}
@@ -36,7 +35,7 @@ end
 function LoadGameMenu.keypressed(key)
 	local loadGameChoice, back = LoadGameMenu.menu:keypressed(key)
 	if back then
-		LoadGameMenu.stackQueue:pop()
+		setGameState("MainMenu")
 	end
 
 	LoadGameMenu.LoadGame(loadGameChoice)
@@ -55,7 +54,7 @@ function LoadGameMenu.LoadGame(index)
 		return nil
 	end
 
-	LoadGameMenu.stackQueue:replace(InGame).load(love.filesystem.lines(fileName), {}, saveName)
+	setGameState("InGame", {love.filesystem.lines(fileName), {}, saveName})
 end
 
 function LoadGameMenu.resize(w, h)

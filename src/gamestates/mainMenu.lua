@@ -1,15 +1,14 @@
-local GameState = require("gamestates/gameState")
-local LoadGameMenu = require("gamestates/loadGameMenu")
 local Menu = require("menu")
-local NewGameMenu = require("gamestates/newGameMenu")
-local ShipEditor = require("gamestates/shipEditor")
-local FormationEditor = require("gamestates/formationEditor")
 local SyntheinVersion = require("version")
 
+
+local GameState = require("gamestates/gameState")
 local MainMenu = GameState()
 
-local buttons = {NewGameMenu, LoadGameMenu, ShipEditor, FormationEditor}
+local buttons = {"NewGameMenu", "LoadGameMenu", "ShipEditor", "FormationEditor"}
 local buttonNames = {"New Game", "Load Game", "Ship Editor", "Formation Editor"}
+
+--TODO xordspar0 is this if still nessasary?
 if love.graphics then
 	MainMenu.font = love.graphics.newFont(36)
 end
@@ -17,7 +16,7 @@ MainMenu.menu = Menu.create(250, 5, buttonNames)
 
 local function gotoState(state)
 	if state ~= nil then
-		MainMenu.stackQueue:push(buttons[state]).load()
+		setGameState(buttons[state], {})
 	end
 end
 

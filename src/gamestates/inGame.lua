@@ -29,7 +29,7 @@ local function pauseMenuAction(selection, back)
 		menuOpen = "Save"
 	elseif action == "Main Menu" then
 		menuOpen = false
-		InGame.stackQueue:pop()
+		setGameState("MainMenu")
 	elseif action == "Quit" then
 		love.event.quit()
 	end

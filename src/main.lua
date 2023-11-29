@@ -1,11 +1,31 @@
 require("class")
-local MainMenu = require("gamestates/mainMenu")
 local Settings = require("settings")
-local StackManager = require("stackManager")
 local console = require("console")
 local log = require("log")
 
+local gameStates = {
+	MainMenu = require("gamestates/mainMenu"),
+	InGame = require("gamestates/inGame"),
+	NewGameMenu = require("gamestates/newGameMenu"),
+	LoadGameMenu = require("gamestates/loadGameMenu"),
+	ShipEditor = require("gamestates/shipEditor"),
+	FormationEditor = require("gamestates/formationEditor"),
+}
+
 local state
+
+function setGameState(newState, args)
+	if type(newState) ~= "string" then
+		error("NewState is a " .. type(newState) .. " type not a string type.")
+	end
+	state = gameStates[newState]
+	if not state then
+		error("Trying to switch to non existent game state: " .. newState)
+	end
+	if args then 
+		state.load(unpack(args))
+	end
+end
 
 local usage =
 [[usage: synthein [FLAGS]
@@ -16,7 +36,7 @@ Available flags:
 	--help          Print this usage message.]]
 
 function love.load()
-	state = StackManager.create(MainMenu, "stackQueue")
+	setGameState("MainMenu")
 
 	local i = 1
 	while arg[i] do
@@ -35,8 +55,9 @@ function love.load()
 			if scene then
 				local fileName = string.format(Settings.scenesDir .. scene .. ".txt")
 
-				local InGame = require("gamestates/inGame")
-				MainMenu.stackQueue:push(InGame).load(love.filesystem.lines(fileName), {}, false)
+				setGameState(
+					"InGame",
+					{love.filesystem.lines(fileName), {}, false})
 			else
 				error(
 					"--scene must have an argument. You provided these arguments: "

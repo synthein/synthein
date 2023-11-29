@@ -1,8 +1,7 @@
-local GameState = require("gamestates/gameState")
-local InGame = require("gamestates/inGame")
 local Menu = require("menu")
 local Settings = require("settings")
 
+local GameState = require("gamestates/gameState")
 local NewGameMenu = GameState()
 
 local modes = {"Single Player", "COOP", "Allied", "VS"}
@@ -27,8 +26,9 @@ function NewGameMenu.NewGame(mode)
 	if scene then
 		local fileName = string.format(Settings.scenesDir .. scene .. ".txt")
 
-		local callList = NewGameMenu.stackQueue:replace(InGame)
-		callList.load(love.filesystem.lines(fileName), playerHostility, false)
+		setGameState(
+			"InGame",
+			{love.filesystem.lines(fileName), playerHostility, false})
 	end
 end
 
@@ -62,7 +62,7 @@ end
 
 function NewGameMenu.testButton(button, back)
 	if back then
-		NewGameMenu.stackQueue:pop()
+		setGameState("MainMenu")
 	end
 
 	NewGameMenu.NewGame(modes[button])

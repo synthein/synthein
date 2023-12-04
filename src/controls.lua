@@ -165,4 +165,81 @@ function Controls:__create(joystick)
 	end
 end
 
+Controls.map = {mouse = {}, keyboard = {}, joysticks = {}}
+
+function Controls.loadDefaultMap()
+	for i = 1,love.joystick.getJoystickCount() do
+		local joystickMap = {}
+		joystickMap.buttons = {
+			dpup          = {player = 0, ship = "forward",     menu = "up"     }
+			dpdown        = {player = 0, ship = "backward",    menu = "down"   }
+			dpleft        = {player = 0, ship = "left",        menu = "left"   }
+			dpright       = {player = 0, ship = "right",       menu = "right"  }
+			leftshoulder  = {player = 0, ship = "strafeLeft",  menu = nil      }
+			rightshoulder = {player = 0, ship = "strafeRight", menu = nil      }
+			a             = {player = 0, ship = "shoot",       menu = "confirm"}
+			b             = {player = 0, ship = "build",       menu = "cancel" }
+			x             = {player = 0, ship = "destroy",     menu = nil      }
+			y             = {player = 0, ship = "playerMenu",  menu = "cancel" }
+			start         = {player = 0, ship = "gameMenu",    menu = "cancel" }
+		}
+		
+		joystickMap.axis = {
+			left = {player = 0, ship = "cursor", menu = nil}
+		}
+		
+		table.insert(Controls.map.joysticks, joystickMap)
+	end
+	
+	Controls.map.keyboard = {
+		w      = {player = 0, ship = "forward",      menu = "up"    },
+		a      = {player = 0, ship = "backward",     menu = "down"  },
+		s      = {player = 0, ship = "left",         menu = "left"  },
+		d      = {player = 0, ship = "right",        menu = "right" },
+		q      = {player = 0, ship = "strafeLeft",   menu = nil     },
+		e      = {player = 0, ship = "strafeRight",  menu = nil     },
+		e      = {player = 0, ship = "strafeRight",  menu = nil     },
+		i      = {player = 0, ship = "playerMenu",   menu = nil     },
+		space  = {player = 0, ship = "shoot",        menu = nil     },
+		escape = {player = 0, ship = "gameMenu",     menu = "cancel"},
+	}
+	
+	Controls.map.mouse = {
+		buttons = {
+			{player = 0, ship = "build",    menu = "confirm"},
+			{player = 0, ship = "destroy",  menu = nil      },
+		},
+		cursor = {player = 0, ship = "cursor",  menu = nil},
+		wheel = {player = 0, ship = "zoom",  menu = "scroll"}
+	}
+end
+
+Controls.loadDefaultMap()
+
+function Controls.lookupKey(key)
+	return Controls.map.keyboard[key]
+end
+
+function Controls.lookupJoystickButton(joystick, button)
+	local id = joystick:getID()
+	return Controls.map.joysticks[id].buttons[button]
+end
+
+function Controls.lookupJoystickAxis(joystick, axis)
+	local id = joystick:getID()
+	return Controls.map.joysticks[id].axis[axis]
+end
+
+function Controls.lookupMouseButton(button)
+	return Controls.map.mouse.buttons[key]
+end
+
+function Controls.lookupMouseCursor()
+	return Controls.map.mouse.cursor
+end
+
+function Controls.lookupMouseWheel()
+	return Controls.map.mouse.wheel
+end
+
 return Controls

@@ -1,4 +1,4 @@
 #!/bin/sh
 
 make rust
-love src "$@"
+love src --debug "$@"

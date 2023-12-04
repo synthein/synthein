@@ -15,6 +15,7 @@ local vector = require("vector")
 local GameState = require("gamestates/gameState")
 local InGame = GameState()
 
+local log = Log()
 local paused = false
 local eventTime = 0
 local second = 0
@@ -39,7 +40,7 @@ end
 
 local menu = Menu.create(225, 5, pauseMenu.buttons)
 
-local world, players, screen, saveMenu, debugmode, log
+local world, players, screen, saveMenu, debugmode
 function InGame.load(scene, playerHostility, saveName)
 	if saveName then
 		for line in scene do
@@ -87,7 +88,6 @@ function InGame.load(scene, playerHostility, saveName)
 
 	saveMenu = SaveMenu(Settings.saveDir, saveName)
 	debugmode = Debug.create(world, players)
-	log = Log(debugmode)
 	console.init({
 		players = players,
 		world = world,
@@ -107,7 +107,7 @@ function InGame.textinput(key)
 end
 
 function InGame.keypressed(key)
-	if key == "f12" then debugmode.on = not debugmode.on end
+	if key == "f12" then debugmode:toggle() end
 
 	if menuOpen == "Pause" then
 		pauseMenuAction(menu:keypressed(key))

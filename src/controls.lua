@@ -1,6 +1,6 @@
 local Log = require("log")
 
-local log = Log({on = true})
+local log = Log()
 local mouse = love.mouse
 local keyboard = love.keyboard
 

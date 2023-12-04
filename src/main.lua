@@ -1,5 +1,6 @@
 require("class")
 local Settings = require("settings")
+local Controls = require("controls")
 local console = require("console")
 local log = require("log")
 
@@ -37,6 +38,8 @@ Available flags:
 
 function love.load()
 	setGameState("MainMenu")
+	
+	Controls.loadDefaultMap()
 
 	local i = 1
 	while arg[i] do

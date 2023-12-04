@@ -1,9 +1,10 @@
 local Log = require("log")
 local StructureParser = require("world/structureParser")
+local Settings = require("settings")
 
 local Debug = {}
 
-local log = Log({on = true})
+local log = Log()
 
 function Debug.create(world, players)
 	local self = setmetatable({}, {__index = Debug})
@@ -12,6 +13,11 @@ function Debug.create(world, players)
 	self.on = false
 	self.spawn = false
 	return self
+end
+
+function Debug:toggle()
+	self.on = not self.on
+	Settings.debug = self.on
 end
 
 function Debug:getSpawn()

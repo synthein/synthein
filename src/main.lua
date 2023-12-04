@@ -33,6 +33,7 @@ local usage =
 Available flags:
 	--test          Run the test suite.
 	--scene=NAME    Bypass all menus and jump straight into a scene
+	--debug         Enable debug logs
 	--help          Print this usage message.]]
 
 function love.load()
@@ -63,6 +64,8 @@ function love.load()
 					"--scene must have an argument. You provided these arguments: "
 					.. table.concat(arg, " "))
 			end
+		elseif arg[i] == "--debug" then
+			Settings.debug = true
 		elseif arg[i] == "--help" then
 			print(usage)
 			love.event.quit()

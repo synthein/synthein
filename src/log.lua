@@ -1,7 +1,8 @@
+local Settings = require("settings")
+
 local Log = class()
 
-function Log:__create(debugmode)
-  self.debugmode = debugmode or {}
+function Log:__create()
 end
 
 local function texpand(t)
@@ -35,7 +36,7 @@ function Log:info(message, ...)
 end
 
 function Log:debug(message, ...)
-  if self.debugmode.on then out("DEBUG " .. message, ...) end
+  if Settings.debug then out("DEBUG " .. message, ...) end
 end
 
 return Log

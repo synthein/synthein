@@ -44,39 +44,35 @@ end
 
 gridTable:index(0, 0, {0, generateCanvas(StructureParser.blueprintUnpack("p*\n"))})
 
-function FormationEditor.update(dt)
-	FormationEditor.menu:update(dt)
+function FormationEditor.cursorreleased()
 end
 
-function FormationEditor.draw()
-	local centerX = love.graphics.getWidth()/2
-	local centerY = love.graphics.getHeight()/2
+function FormationEditor.pressed(control)
+	if menuOpen then
+		if control.menu == "cancel" then
+			menuOpen = false
+		end
 
-	local function f(ship, inputs, x, y)
-		local angle, canvas, cX, cY = unpack(ship)
-		love.graphics.draw(
-			canvas,
-			centerX + (x - focusX) * 20,
-			centerY + (y + focusY) * 20,
-			angle * math.pi / 2,
-			1, 1, cX, cY, 0, 0)
-	end
+		if menuOpen == "State" then
+			local button = FormationEditor.menu:keypressed(key)
+			button = buttonNames[button]
 
-	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
-
-	love.graphics.print(
-		"wsad: Move around\n" ..
-		"qe: Rotate Ship\n" ..
-		"space: Add Ship\n" ..
-		"r: Remove Ship\n" ..
-		"f: Part Menu\n",
-		5, 5)
-
-	love.graphics.setColor(1,1,1)
-	if menuOpen == "State" then
-		FormationEditor.menu:draw()
-	elseif menuOpen == "Parts" then
-		FormationEditor.partSelector:draw()
+			if button == "Main Menu" then
+				menuOpen = false
+				setGameState("MainMenu")
+			elseif button == "Quit" then
+				love.event.quit()
+			end
+		elseif menuOpen == "Parts" then
+			if controls.ship == "playerMenu" then
+				menuOpen = false
+			end
+			local button = FormationEditor.partSelector:keypressed(key)
+			if button then
+				menuOpen = false
+			end
+		end
+		return
 	end
 end
 
@@ -145,6 +141,42 @@ function FormationEditor.keypressed(key)
 		if focusX ~= 0 or focusY ~= 0 then
 			gridTable:index(focusX,  -focusY, false, true)
 		end
+	end
+end
+
+function FormationEditor.update(dt)
+	FormationEditor.menu:update(dt)
+end
+
+function FormationEditor.draw()
+	local centerX = love.graphics.getWidth()/2
+	local centerY = love.graphics.getHeight()/2
+
+	local function f(ship, inputs, x, y)
+		local angle, canvas, cX, cY = unpack(ship)
+		love.graphics.draw(
+			canvas,
+			centerX + (x - focusX) * 20,
+			centerY + (y + focusY) * 20,
+			angle * math.pi / 2,
+			1, 1, cX, cY, 0, 0)
+	end
+
+	gridTable:loop(f, {}, false)--(f, inputs, addSelf)f(object, inputs, x, y)
+
+	love.graphics.print(
+		"wsad: Move around\n" ..
+		"qe: Rotate Ship\n" ..
+		"space: Add Ship\n" ..
+		"r: Remove Ship\n" ..
+		"i: Part Menu\n",
+		5, 5)
+
+	love.graphics.setColor(1,1,1)
+	if menuOpen == "State" then
+		FormationEditor.menu:draw()
+	elseif menuOpen == "Parts" then
+		FormationEditor.partSelector:draw()
 	end
 end
 

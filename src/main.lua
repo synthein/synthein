@@ -79,37 +79,35 @@ function love.load()
 end
 
 function love.keypressed(key)
-	--TODO Controls Map then pipe to state.pressed(control)
-
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 
-	state.keypressed(key)
+	local control = Controls.lookupKey(key)
+	state.pressed(control)
 end
 
 function love.keyreleased()
-	--TODO Controls Map then pipe to state.released(control)
-
-	state.keyreleased(key)
+	local control = Controls.lookupKey(key)
+	state.released(control)
 end
 
 function love.mousepressed(x, y, button)
-	--TODO Controls Map then pipe to state.cursorpressed(cursor, control)
-
-	state.mousepressed(x, y, button)
+	local control = Controls.lookupMouseButton(button)
+	state.cursorpressed({x = x, y = y}, control)
 end
 
 function love.mousereleased(x, y, button)
-	--TODO Controls Map then pipe to state.cursorreleased(cursor, control)
-
-	state.mousereleased(x, y, button)
+	local control = Controls.lookupMouseButton(button)
+	state.cursorreleased(cursor, control)
 end
 
 function love.mousemoved(x, y)
-	state.mousemoved(x, y)
+	local control = Controls.lookupMouseCursor()
+	state.mousemoved({x = x, y = y}, control)
 end
 
 function love.wheelmoved(x, y)
-	state.wheelmoved(x, y)
+	local control = Controls.lookupMouseWheel()
+	state.wheelmoved({x, y}, control)
 end
 
 function love.gamepadpressed(joystick, button)
@@ -125,13 +123,15 @@ function love.gamepadreleased(joystick, button)
 end
 
 function love.joystickpressed(joystick, button)
-	--TODO Controls Map then pipe to state.pressed(control)
+	local control = Controls.lookupJoystickButton(joystick, button)
+	state.pressed(control)
 
 	state.joystickpressed(joystick, button)
 end
 
 function love.joystickreleased(joystick, button)
-	--TODO Controls Map then pipe to state.released(control)
+	local control = Controls.lookupJoystickButton(joystick, button)
+	state.released(control)
 
 	state.joystickreleased(joystick, button)
 end
@@ -141,6 +141,10 @@ function love.textinput(key)
 end
 
 function love.update(dt)
+	--TODO Axis control inputs
+	--TODO Compouned cursors
+	--TODO ???? Controls.lookupJoystickAxis(joystick, axis)
+	
 	state.update(dt)
 end
 

@@ -171,17 +171,17 @@ function Controls.loadDefaultMap()
 	for i = 1,love.joystick.getJoystickCount() do
 		local joystickMap = {}
 		joystickMap.buttons = {
-			dpup          = {player = 0, ship = "forward",     menu = "up"     }
-			dpdown        = {player = 0, ship = "backward",    menu = "down"   }
-			dpleft        = {player = 0, ship = "left",        menu = "left"   }
-			dpright       = {player = 0, ship = "right",       menu = "right"  }
-			leftshoulder  = {player = 0, ship = "strafeLeft",  menu = nil      }
-			rightshoulder = {player = 0, ship = "strafeRight", menu = nil      }
-			a             = {player = 0, ship = "shoot",       menu = "confirm"}
-			b             = {player = 0, ship = "build",       menu = "cancel" }
-			x             = {player = 0, ship = "destroy",     menu = nil      }
-			y             = {player = 0, ship = "playerMenu",  menu = "cancel" }
-			start         = {player = 0, ship = "gameMenu",    menu = "cancel" }
+			dpup          = {player = 0, ship = "forward",     menu = "up"     },
+			dpdown        = {player = 0, ship = "backward",    menu = "down"   },
+			dpleft        = {player = 0, ship = "left",        menu = "left"   },
+			dpright       = {player = 0, ship = "right",       menu = "right"  },
+			leftshoulder  = {player = 0, ship = "strafeLeft",  menu = nil      },
+			rightshoulder = {player = 0, ship = "strafeRight", menu = nil      },
+			a             = {player = 0, ship = "shoot",       menu = "confirm"},
+			b             = {player = 0, ship = "build",       menu = "cancel" },
+			x             = {player = 0, ship = "destroy",     menu = nil      },
+			y             = {player = 0, ship = "playerMenu",  menu = "cancel" },
+			start         = {player = 0, ship = "gameMenu",    menu = "cancel" },
 		}
 		
 		joystickMap.axis = {
@@ -214,8 +214,6 @@ function Controls.loadDefaultMap()
 	}
 end
 
-Controls.loadDefaultMap()
-
 function Controls.lookupKey(key)
 	return Controls.map.keyboard[key]
 end
@@ -231,7 +229,7 @@ function Controls.lookupJoystickAxis(joystick, axis)
 end
 
 function Controls.lookupMouseButton(button)
-	return Controls.map.mouse.buttons[key]
+	return Controls.map.mouse.buttons[button]
 end
 
 function Controls.lookupMouseCursor()
@@ -241,5 +239,7 @@ end
 function Controls.lookupMouseWheel()
 	return Controls.map.mouse.wheel
 end
+
+--TODO gamepads ???
 
 return Controls

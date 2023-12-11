@@ -20,6 +20,15 @@ local function gotoState(state)
 	end
 end
 
+function MainMenu.cursorpressed(cursor, control)
+	if control.menu == "confirm" then
+		gotoState(MainMenu.menu:getButtonAt(cursor.x, cursor.y))
+	end
+end
+
+function MainMenu.cursorreleased(cursor, control)
+end
+
 function MainMenu.update(dt)
 	MainMenu.menu:update(dt)
 end
@@ -65,8 +74,8 @@ function MainMenu.resize(w, h)
 	MainMenu.menu:resize(w, h)
 end
 
-function MainMenu.mousemoved(x, y)
-	MainMenu.menu:mousemoved(x, y)
+function MainMenu.mousemoved(cursor, control)
+	MainMenu.menu:mousemoved(cursor.x, cursor.y)
 end
 
 function MainMenu.wheelmoved(x, y)

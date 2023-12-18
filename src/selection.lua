@@ -1,10 +1,6 @@
 local StructureMath = require("world/structureMath")
 local Building = require("building")
-local CircleMenu = require("circleMenu")
 local vector = require("vector")
-
-local pointerImage = love.graphics.newImage("res/images/pointer.png")
-local pointerWidth = pointerImage:getWidth()
 
 local Selection = {}
 Selection.__index = Selection
@@ -23,16 +19,6 @@ function Selection.create(world, team)
 	self.assign = nil
 
 	return self
-end
-
-local function getPartSide(structure, partLocation, cursorX, cursorY)
-	local cursorX, cursorY = structure.body:getLocalPoint(cursorX, cursorY)
-	local netX , netY = cursorX - partLocation[1], cursorY - partLocation[2]
-	local netXSq, netYSq = netX * netX, netY * netY
-
-	local a = netXSq > netYSq and 1 or 0
-	local b = netY - netX < 0 and 2 or 0
-	return 1 + a + b, netXSq <= .25 and netYSq <= .25
 end
 
 local function angleToIndex(angle, length)
@@ -106,7 +92,7 @@ function Selection:released(cursorX, cursorY)
 	local part = self.part
 	if structure and part then
 		local l = part.location
-		local partSide, withinPart = getPartSide(structure, l, cursorX, cursorY)
+		local partSide, withinPart = StructureMath.getPartSide(structure, l, cursorX, cursorY)
 		local build = self.build
 		if not withinPart then
 			if build then

@@ -1,5 +1,7 @@
 local CanvasUtils = require("widgets/canvasUtils")
+local CircleMenu = require("circleMenu")
 local ListSelector = require("widgets/listSelector")
+local StructureMath = require("world/structureMath")
 local vector = require("vector")
 
 local Hud = class()
@@ -75,14 +77,14 @@ local function drawCompass(viewPort, compassAngle)
 	)
 end
 
-local function drawSelection(selection, cursorX, cursorY)
+local function drawSelection(selection, cursor)
 	local structure = selection.structure
 	local part = selection.part
 	local build = selection.build
 	if structure and part then
 		local location = part.location
 		local partX, partY = unpack(location)
-		local partSide = getPartSide(structure, location, cursorX, cursorY)
+		local partSide = StructureMath.getPartSide(structure, location, cursor.x, cursor.y)
 		local body = structure.body
 		local angle -- Body angle if building else 0
 
@@ -104,7 +106,7 @@ local function drawSelection(selection, cursorX, cursorY)
 			angle = 0
 			local x, y = body:getWorldPoints(partX, partY)
 			strength, lables = part:getMenu()
-			local newAngle = vector.angle(cursorX - x, cursorY - y)
+			local newAngle = vector.angle(cursor.x - x, cursor.y - y)
 			local index = angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2
@@ -125,22 +127,22 @@ local function drawSelection(selection, cursorX, cursorY)
 			local angle = body:getAngle()
 
 			love.graphics.draw(
-				pointerImage,
+				cursor.image,
 				x, y, angle,
 				1/20, 1/20,
-				pointerWidth/2, pointerWidth/2)
+				2, 2)
 		end
 	end
-	local assign = self.assign
+	local assign = selection.assign
 	if assign then
 		local body = assign.modules.hull.fixture:getBody()
 		local x, y  = body:getPosition()
 		local angle = body:getAngle()
 		love.graphics.draw(
-			pointerImage,
+			cursor.image,
 			x, y, angle,
 			1/20, 1/20,
-			pointerWidth/2, pointerWidth/2)
+			2, 2)
 	end
 end
 
@@ -154,7 +156,7 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 	if playerDrawPack.selection then
 		-- TODO: At what point do the cursor coordinates need to be world
 		-- coordinates?
-		drawSelection(playerDrawPack.selection, playerDrawPack.cursor.x, playerDrawPack.cursor.y)
+		drawSelection(playerDrawPack.selection, playerDrawPack.cursor)
 	end
 
 	-- Draw the cursor.

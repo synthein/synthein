@@ -315,7 +315,7 @@ function Camera:drawPlayer(player, debugmode)
 	playerDrawPack.menu = player.menu
 	playerDrawPack.partSelector = player.partSelector
 	playerDrawPack.gameOver = self.gameOver
-	playerDrawPack.selection = player.selection
+	playerDrawPack.selection = player.selected
 
 	love.graphics.setScissor(unpack(scissor))
 

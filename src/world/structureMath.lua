@@ -78,4 +78,15 @@ function StructureMath.precalcAnnex(structureVector, annexeeVector)
 	--return
 end
 --]]
+
+function StructureMath.getPartSide(structure, partLocation, cursorX, cursorY)
+	local cursorX, cursorY = structure.body:getLocalPoint(cursorX, cursorY)
+	local netX , netY = cursorX - partLocation[1], cursorY - partLocation[2]
+	local netXSq, netYSq = netX * netX, netY * netY
+
+	local a = netXSq > netYSq and 1 or 0
+	local b = netY - netX < 0 and 2 or 0
+	return 1 + a + b, netXSq <= .25 and netYSq <= .25
+end
+
 return StructureMath

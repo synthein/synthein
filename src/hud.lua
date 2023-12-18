@@ -6,6 +6,8 @@ local vector = require("vector")
 
 local Hud = class()
 
+local halfCursorWidth = 2
+
 function Hud:__create()
 	self.formationSelector = ListSelector(
 		40,
@@ -130,7 +132,7 @@ local function drawSelection(selection, cursor)
 				cursor.image,
 				x, y, angle,
 				1/20, 1/20,
-				2, 2)
+				halfCursorWidth, halfCursorWidth)
 		end
 	end
 	local assign = selection.assign
@@ -142,7 +144,7 @@ local function drawSelection(selection, cursor)
 			cursor.image,
 			x, y, angle,
 			1/20, 1/20,
-			2, 2)
+			halfCursorWidth, halfCursorWidth)
 	end
 end
 
@@ -161,7 +163,7 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 
 	-- Draw the cursor.
 	local cursor = playerDrawPack.cursor
-	love.graphics.draw(cursor.image, cursor.x - 2, cursor.y - 2)
+	love.graphics.draw(cursor.image, cursor.x - halfCursorWidth, cursor.y - halfCursorWidth)
 
 	local screenWidth = viewPort.width
 	local screenHeight = viewPort.height

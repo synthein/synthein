@@ -13,6 +13,29 @@ local gameStates = {
 	FormationEditor = require("gamestates/formationEditor"),
 }
 
+local state_functions = {
+	"load",
+	"pressed",
+	"cursorpressed",
+	"cursorreleased",
+	"mousemoved",
+	"wheelmoved",
+	"pressed",
+	"released",
+	"textinput",
+	"update",
+	"resize",
+	"draw",
+}
+
+for stateName, gameState in pairs(gameStates) do
+	for _, functionName in ipairs(state_functions) do
+		if not gameState[functionName] then
+			error(stateName .. " is missing function: " .. functionName)
+		end
+	end
+end
+
 local state
 
 function setGameState(newState, args)

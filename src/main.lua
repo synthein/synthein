@@ -15,13 +15,12 @@ local gameStates = {
 
 local state_functions = {
 	"load",
-	"pressed",
 	"cursorpressed",
 	"cursorreleased",
-	"mousemoved",
-	"wheelmoved",
 	"pressed",
 	"released",
+	"mousemoved",
+	"wheelmoved",
 	"textinput",
 	"update",
 	"resize",

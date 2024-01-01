@@ -18,20 +18,40 @@ function LoadGameMenu.load()
 	end
 end
 
-function LoadGameMenu.update(dt)
-	LoadGameMenu.menu.buttons = {}
-	for _, fileName in pairs(saveFiles) do
-		local buttonName = string.gsub(fileName, ".txt", "")
-		table.insert(LoadGameMenu.menu.buttons, buttonName)
-	end
-
-	LoadGameMenu.menu:update(dt)
+function LoadGameMenu.cursorpressed(cursor, control)
 end
 
-function LoadGameMenu.draw()
-	LoadGameMenu.menu:draw()
+function LoadGameMenu.cursorreleased(cursor, control)
 end
 
+function LoadGameMenu.pressed(control)
+end
+
+function LoadGameMenu.released(control)
+end
+
+--[[
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+--]]
 function LoadGameMenu.keypressed(key)
 	local loadGameChoice, back = LoadGameMenu.menu:keypressed(key)
 	if back then
@@ -57,16 +77,30 @@ function LoadGameMenu.LoadGame(index)
 	setGameState("InGame", {love.filesystem.lines(fileName), {}, saveName})
 end
 
-function LoadGameMenu.resize(w, h)
-	LoadGameMenu.menu:resize(w, h)
-end
-
 function LoadGameMenu.mousemoved(x, y)
 	LoadGameMenu.menu:mousemoved(x, y)
 end
 
 function LoadGameMenu.wheelmoved(x, y)
 	LoadGameMenu.menu:wheelmoved(x, y)
+end
+
+function LoadGameMenu.update(dt)
+	LoadGameMenu.menu.buttons = {}
+	for _, fileName in pairs(saveFiles) do
+		local buttonName = string.gsub(fileName, ".txt", "")
+		table.insert(LoadGameMenu.menu.buttons, buttonName)
+	end
+
+	LoadGameMenu.menu:update(dt)
+end
+
+function LoadGameMenu.resize(w, h)
+	LoadGameMenu.menu:resize(w, h)
+end
+
+function LoadGameMenu.draw()
+	LoadGameMenu.menu:draw()
 end
 
 return LoadGameMenu

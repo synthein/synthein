@@ -32,6 +32,54 @@ function NewGameMenu.NewGame(mode)
 	end
 end
 
+function NewGameMenu.cursorpressed(cursor, control)
+end
+
+function NewGameMenu.cursorreleased(cursor, control)
+end
+
+function NewGameMenu.pressed(control)
+end
+
+function NewGameMenu.released(control)
+end
+
+--[[
+
+function .cursorpressed(cursor, control)
+end
+
+function .cursorreleased(cursor, control)
+end
+
+function .pressed(control)
+end
+
+function .released(control)
+end
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+
+--]]
 function NewGameMenu.update(dt)
 	NewGameMenu.menu:update(dt)
 end

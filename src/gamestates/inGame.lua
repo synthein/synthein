@@ -96,6 +96,52 @@ function InGame.load(scene, playerHostility, saveName)
 	})
 end
 
+function InGame.cursorpressed(cursor, control)
+end
+
+function InGame.cursorreleased(cursor, control)
+end
+
+function InGame.pressed(control)
+end
+
+function InGame.released(control)
+end
+
+--[[
+function .cursorpressed(cursor, control)
+end
+
+function .cursorreleased(cursor, control)
+end
+
+function .pressed(control)
+end
+
+function .released(control)
+end
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+--]]
 function InGame.resize(w, h)
 	screen:arrange(w, h)
 end

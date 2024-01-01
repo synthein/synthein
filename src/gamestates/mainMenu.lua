@@ -29,6 +29,46 @@ end
 function MainMenu.cursorreleased(cursor, control)
 end
 
+function MainMenu.pressed(control)
+end
+
+function MainMenu.released(control)
+end
+
+--[[
+function .cursorpressed(cursor, control)
+end
+
+function .cursorreleased(cursor, control)
+end
+
+function .pressed(control)
+end
+
+function .released(control)
+end
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+--]]
 function MainMenu.update(dt)
 	MainMenu.menu:update(dt)
 end

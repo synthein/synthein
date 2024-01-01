@@ -24,6 +24,43 @@ local focusY = 0
 
 local selectedPart = "b"
 
+
+function ShipEditor.cursorpressed(cursor, control)
+end
+
+function ShipEditor.cursorreleased(cursor, control)
+end
+
+function ShipEditor.pressed(control)
+end
+
+function ShipEditor.released(control)
+end
+
+--[[
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+
+--]]
 function ShipEditor.update(dt)
 	if menuOpen == "State" then
 		ShipEditor.menu:update(dt)

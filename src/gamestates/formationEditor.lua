@@ -44,7 +44,10 @@ end
 
 gridTable:index(0, 0, {0, generateCanvas(StructureParser.blueprintUnpack("p*\n"))})
 
-function FormationEditor.cursorreleased()
+function FormationEditor.cursorpressed(cursor, control)
+end
+
+function FormationEditor.cursorreleased(cursor, control)
 end
 
 function FormationEditor.pressed(control)
@@ -76,6 +79,33 @@ function FormationEditor.pressed(control)
 	end
 end
 
+function FormationEditor.released(control)
+end
+
+--[[
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+
+--]]
 function FormationEditor.keypressed(key)
 	if menuOpen then
 		if key == "escape" then

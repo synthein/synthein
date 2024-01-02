@@ -311,6 +311,7 @@ function Camera:drawPlayer(player, debugmode)
 	
 	local playerDrawPack = {}
 	playerDrawPack.compassAngle = compassAngle
+	playerDrawPack.camera = {x = self.x, y = self.y, self.scissor.width, self.scissor.height}
 	playerDrawPack.cursor = {x = player.cursorX, y = player.cursorY, image = player.cursor}
 	playerDrawPack.menu = player.menu
 	playerDrawPack.partSelector = player.partSelector

@@ -79,7 +79,7 @@ local function drawCompass(viewPort, compassAngle)
 	)
 end
 
-local function drawSelection(selection, cursor)
+local function drawSelection(selection, camera, cursor)
 	local structure = selection.structure
 	local part = selection.part
 	local build = selection.build
@@ -130,8 +130,8 @@ local function drawSelection(selection, cursor)
 
 			love.graphics.draw(
 				cursor.image,
-				x, y, angle,
-				1/20, 1/20,
+				camera.x+x, camera.y+y, angle,
+				1, 1,
 				halfCursorWidth, halfCursorWidth)
 		end
 	end
@@ -142,8 +142,8 @@ local function drawSelection(selection, cursor)
 		local angle = body:getAngle()
 		love.graphics.draw(
 			cursor.image,
-			x, y, angle,
-			1/20, 1/20,
+			camera.x+x, camera.y+y, angle,
+			1, 1,
 			halfCursorWidth, halfCursorWidth)
 	end
 end
@@ -156,9 +156,7 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 
 	drawCompass(viewPort, playerDrawPack.compassAngle)
 	if playerDrawPack.selection then
-		-- TODO: At what point do the cursor coordinates need to be world
-		-- coordinates?
-		drawSelection(playerDrawPack.selection, playerDrawPack.cursor)
+		drawSelection(playerDrawPack.selection, playerDrawPack.camera, playerDrawPack.cursor)
 	end
 
 	-- Draw the cursor.

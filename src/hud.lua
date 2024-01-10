@@ -79,7 +79,7 @@ local function drawCompass(viewPort, compassAngle)
 	)
 end
 
-local function drawSelection(selection, camera, cursor)
+local function drawSelection(selection, camera, cursor, zoom)
 	local structure = selection.structure
 	local part = selection.part
 	local build = selection.build
@@ -127,10 +127,12 @@ local function drawSelection(selection, camera, cursor)
 			local l = StructureMath.addDirectionVector(vec, vec[3], .5)
 			local x, y = body:getWorldPoint(l[1], l[2])
 			local angle = body:getAngle()
+			local screenX = camera.width/2 + (x - camera.x) * zoom
+			local screenY = camera.height/2 + (y - camera.y) * -zoom
 
 			love.graphics.draw(
 				cursor.image,
-				camera.x+x, camera.y+y, angle,
+				screenX, screenY, -angle,
 				1, 1,
 				halfCursorWidth, halfCursorWidth)
 		end
@@ -140,9 +142,12 @@ local function drawSelection(selection, camera, cursor)
 		local body = assign.modules.hull.fixture:getBody()
 		local x, y  = body:getPosition()
 		local angle = body:getAngle()
+		local screenX = camera.width/2 + (x - camera.x) * zoom
+		local screenY = camera.height/2 + (y - camera.y) * -zoom
+
 		love.graphics.draw(
 			cursor.image,
-			camera.x+x, camera.y+y, angle,
+			screenX, screenY, -angle,
 			1, 1,
 			halfCursorWidth, halfCursorWidth)
 	end
@@ -156,7 +161,7 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 
 	drawCompass(viewPort, playerDrawPack.compassAngle)
 	if playerDrawPack.selection then
-		drawSelection(playerDrawPack.selection, playerDrawPack.camera, playerDrawPack.cursor)
+		drawSelection(playerDrawPack.selection, playerDrawPack.camera, playerDrawPack.cursor, playerDrawPack.zoom)
 	end
 
 	-- Draw the cursor.

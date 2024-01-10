@@ -76,6 +76,71 @@ function FormationEditor.pressed(control)
 			end
 		end
 		return
+	else
+		if controls.ship == "gameMenu" then
+			menuOpen = "State"
+		elseif controls.ship == "playerMenu" then
+			menuOpen = "Parts"
+		elseif controls.ship == "forward" then
+			focusY = focusY - 1
+		elseif controls.ship == "backward" then
+			focusY = focusY + 1
+		elseif controls.ship == "left" then
+			focusX = focusX - 1
+		elseif controls.ship == "right" then
+			focusX = focusX + 1
+		elseif controls.ship == "shoot" then
+		elseif controls.ship ==  then
+			
+--[[
+		w      = {player = 0, ship = "forward",      menu = "up"    },
+		a      = {player = 0, ship = "backward",     menu = "down"  },
+		s      = {player = 0, ship = "left",         menu = "left"  },
+		d      = {player = 0, ship = "right",        menu = "right" },
+		q      = {player = 0, ship = "strafeLeft",   menu = nil     },
+		e      = {player = 0, ship = "strafeRight",  menu = nil     },
+		i      = {player = 0, ship = "playerMenu",   menu = nil     },
+		space  = {player = 0, ship = "shoot",        menu = nil     },
+		escape = {player = 0, ship = "gameMenu",     menu = "cancel"},
+		
+		
+
+	if key == "escape" then
+		menuOpen = "State"
+	elseif key == "f" then
+		menuOpen = "Parts"
+	elseif key == "w" then
+		focusY = focusY + 1
+	elseif key == "a" then
+		focusX = focusX - 1
+	elseif key == "s" then
+		focusY = focusY + 1
+	elseif key == "d" then
+		focusX = focusX - 1
+	elseif key == "q" then
+		if focusX ~= 0 or focusY ~= 0 then
+			local t = gridTable:index(focusX, -focusY)
+			if t then
+				t[1] = (t[1] + 3) % 4
+			end
+		end
+	elseif key == "e" then
+		if focusX ~= 0 or focusY ~= 0 then
+			local t = gridTable:index(focusX, -focusY)
+			if t then
+				t[1] = (t[1] + 1) % 4
+			end
+		end
+	elseif key == "space" then
+		if focusX ~= 0 or focusY ~= 0 then
+			gridTable:index(focusX,  -focusY, {0, generateCanvas(simpleShip)})
+		end
+	elseif key == "r" then
+		if focusX ~= 0 or focusY ~= 0 then
+			gridTable:index(focusX,  -focusY, false, true)
+		end
+	end
+--]]
 	end
 end
 

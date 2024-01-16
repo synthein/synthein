@@ -21,7 +21,8 @@ function Selection.create(world, team)
 	return self
 end
 
-local function angleToIndex(angle, length)
+-- TODO: Move this to CircleMenu?
+function Selection.angleToIndex(angle, length)
 	local index = math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
 	return index
 end
@@ -109,7 +110,7 @@ function Selection:released(cursorX, cursorY)
 				local x, y = body:getWorldPoints(l[1], l[2])
 				local strength = part:getMenu()
 				local newAngle = vector.angle(cursorX - x, cursorY - y)
-				local index = angleToIndex(newAngle, #strength)
+				local index = Selection.angleToIndex(newAngle, #strength)
 				local option = self.part:runMenu(index, body)
 				if option == "assign" then
 					self.assign = self.part

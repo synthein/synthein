@@ -277,7 +277,7 @@ end
 
 function Camera:drawPlayer(player, debugmode)
 	local compassAngle = 0
-	
+
 	--TODO this no longer makes sense
 	local body = self.body
 	if body then
@@ -287,7 +287,7 @@ function Camera:drawPlayer(player, debugmode)
 		else
 			self.x, self.y = body:getPosition()
 			self.angle = player.isCameraAngleFixed and 0 or body:getAngle()
-					
+
 			local point = {0,0}
 
 			local leader = (player.ship.corePart or {}).leader
@@ -308,7 +308,7 @@ function Camera:drawPlayer(player, debugmode)
 	local viewPort = {}
 	viewPort.width = scissor.width
 	viewPort.height = scissor.height
-	
+
 	local playerDrawPack = {}
 	playerDrawPack.compassAngle = compassAngle
 	playerDrawPack.camera = {x = self.x, y = self.y, width = self.scissor.width, height = self.scissor.height}
@@ -327,13 +327,23 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.rotate(self.angle)
 	love.graphics.scale(self.zoom, -self.zoom)
 	love.graphics.translate(- self.x, - self.y)
-	
+
 	self:drawWorldObjects(player, debugmode)
+
+	--Set translation for hud elements that point to world objects
+	love.graphics.origin()
+	love.graphics.translate(scissor.x, scissor.y)
+	love.graphics.translate(scissor.width/2, scissor.height/2)
+	love.graphics.rotate(self.angle)
+	love.graphics.scale(self.zoom, -self.zoom)
+	love.graphics.translate(- self.x, - self.y)
+
+	self.hud:drawLabels(playerDrawPack, viewPort)
 
 	--Set translation for hud
 	love.graphics.origin()
 	love.graphics.translate(scissor.x, scissor.y)
-	
+
 	--Draw shields
 	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
 	local drawPoints = love.graphics.points
@@ -341,9 +351,9 @@ function Camera:drawPlayer(player, debugmode)
 		drawPoints(unpack(list))
 	end
 	love.graphics.setColor(1, 1, 1, 1)
-	
+
 	self.hud:draw(playerDrawPack, viewPort)
-	
+
 	--Reset graphics translation
 	love.graphics.origin()
 

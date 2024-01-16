@@ -1,6 +1,7 @@
 local CanvasUtils = require("widgets/canvasUtils")
 local CircleMenu = require("circleMenu")
 local ListSelector = require("widgets/listSelector")
+local Selection = require("selection")
 local StructureMath = require("world/structureMath")
 local vector = require("vector")
 
@@ -15,7 +16,7 @@ function Hud:__create()
 		150, 120,
 		{})
 	self.formationScaleTable = CanvasUtils.generateScaleTable("right", "top", "right", "top")
-	
+
 	self.selectedMenu = "formation"
 	return self
 end
@@ -79,7 +80,7 @@ local function drawCompass(viewPort, compassAngle)
 	)
 end
 
-local function drawSelection(selection, camera, cursor, zoom)
+local function drawSelection(selection, cursor, zoom)
 	local structure = selection.structure
 	local part = selection.part
 	local build = selection.build
@@ -90,7 +91,7 @@ local function drawSelection(selection, camera, cursor, zoom)
 		local body = structure.body
 		local angle -- Body angle if building else 0
 
-		local strength, lables
+		local strength, labels
 		if build then
 			angle = body:getAngle()
 			local indexReverse = {1, 4, 3, 2}
@@ -107,16 +108,16 @@ local function drawSelection(selection, camera, cursor, zoom)
 		else
 			angle = 0
 			local x, y = body:getWorldPoints(partX, partY)
-			strength, lables = part:getMenu()
+			strength, labels = part:getMenu()
 			local newAngle = vector.angle(cursor.x - x, cursor.y - y)
-			local index = angleToIndex(newAngle, #strength)
+			local index = Selection.angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2
 			end
 		end
 		if strength then
 			local x, y = body:getWorldPoints(partX, partY)
-			CircleMenu.draw(x, y, angle, 1, strength, lables)
+			CircleMenu.draw(x, y, angle, 1, strength, labels)
 		end
 	end
 	if build then
@@ -127,13 +128,11 @@ local function drawSelection(selection, camera, cursor, zoom)
 			local l = StructureMath.addDirectionVector(vec, vec[3], .5)
 			local x, y = body:getWorldPoint(l[1], l[2])
 			local angle = body:getAngle()
-			local screenX = camera.width/2 + (x - camera.x) * zoom
-			local screenY = camera.height/2 + (y - camera.y) * -zoom
 
 			love.graphics.draw(
 				cursor.image,
-				screenX, screenY, -angle,
-				1, 1,
+				x, y, angle,
+				1/zoom, 1/zoom,
 				halfCursorWidth, halfCursorWidth)
 		end
 	end
@@ -142,27 +141,27 @@ local function drawSelection(selection, camera, cursor, zoom)
 		local body = assign.modules.hull.fixture:getBody()
 		local x, y  = body:getPosition()
 		local angle = body:getAngle()
-		local screenX = camera.width/2 + (x - camera.x) * zoom
-		local screenY = camera.height/2 + (y - camera.y) * -zoom
 
 		love.graphics.draw(
 			cursor.image,
-			screenX, screenY, -angle,
-			1, 1,
+			x, y, angle,
+			1/zoom, 1/zoom,
 			halfCursorWidth, halfCursorWidth)
 	end
 end
 
+function Hud:drawLabels(playerDrawPack)
+	if playerDrawPack.selection then
+		drawSelection(playerDrawPack.selection, playerDrawPack.cursor, playerDrawPack.zoom)
+	end
+end
 
-function Hud:draw(playerDrawPack, viewPort, compassAngle)
+function Hud:draw(playerDrawPack, viewPort)
 	if playerDrawPack.menu then
 		playerDrawPack.partSelector:draw()
 	end
 
 	drawCompass(viewPort, playerDrawPack.compassAngle)
-	if playerDrawPack.selection then
-		drawSelection(playerDrawPack.selection, playerDrawPack.camera, playerDrawPack.cursor, playerDrawPack.zoom)
-	end
 
 	-- Draw the cursor.
 	local cursor = playerDrawPack.cursor
@@ -178,8 +177,8 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 		0, 0,
 		screenWidth, screenHeight
 	)
-	
-	
+
+
 	if playerDrawPack.gameOver then
 		local previousFont = love.graphics.getFont()
 		local font = love.graphics.newFont(20)
@@ -187,14 +186,14 @@ function Hud:draw(playerDrawPack, viewPort, compassAngle)
 		love.graphics.print("Game Over", 10, screenHeight - 30, 0, 1, 1, 0, 0, 0, 0)
 		love.graphics.setFont(previousFont)
 	end
-	
+
 	local canvas = love.graphics.newCanvas(viewPort.width, viewPort.height)
-	
+
 	local within, x, y = CanvasUtils.isWithin(
 		cursor.x, cursor.y, 0, 0, self.formationSelector.visableCanvas, canvas, self.formationScaleTable)
 	local formationSelectorCanvas = self.formationSelector:draw(viewPort, {x = x, y = y})
 	CanvasUtils.copyCanvas(formationSelectorCanvas, 0, 0, self.formationScaleTable, nil, canvas)
-	
+
 	love.graphics.draw(canvas, 0, 0)
 end
 

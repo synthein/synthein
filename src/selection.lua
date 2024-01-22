@@ -1,5 +1,6 @@
 local StructureMath = require("world/structureMath")
 local Building = require("building")
+local CircleMenu = require("circleMenu")
 local vector = require("vector")
 
 local Selection = {}
@@ -19,12 +20,6 @@ function Selection.create(world, team)
 	self.assign = nil
 
 	return self
-end
-
--- TODO: Move this to CircleMenu?
-function Selection.angleToIndex(angle, length)
-	local index = math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
-	return index
 end
 
 function Selection:pressed(cursorX, cursorY, order)
@@ -110,7 +105,7 @@ function Selection:released(cursorX, cursorY)
 				local x, y = body:getWorldPoints(l[1], l[2])
 				local strength = part:getMenu()
 				local newAngle = vector.angle(cursorX - x, cursorY - y)
-				local index = Selection.angleToIndex(newAngle, #strength)
+				local index = CircleMenu.angleToIndex(newAngle, #strength)
 				local option = self.part:runMenu(index, body)
 				if option == "assign" then
 					self.assign = self.part

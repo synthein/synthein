@@ -1,7 +1,6 @@
 local CanvasUtils = require("widgets/canvasUtils")
 local CircleMenu = require("circleMenu")
 local ListSelector = require("widgets/listSelector")
-local Selection = require("selection")
 local StructureMath = require("world/structureMath")
 local vector = require("vector")
 
@@ -110,7 +109,7 @@ local function drawSelection(selection, cursor, zoom)
 			local x, y = body:getWorldPoints(partX, partY)
 			strength, labels = part:getMenu()
 			local newAngle = vector.angle(cursor.x - x, cursor.y - y)
-			local index = Selection.angleToIndex(newAngle, #strength)
+			local index = CircleMenu.angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2
 			end

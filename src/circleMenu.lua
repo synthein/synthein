@@ -15,8 +15,7 @@ function CircleMenu.indexToAngle(index, division, startAngle)
 end
 
 function CircleMenu.angleToIndex(angle, length)
-	local index = math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
-	return index
+	return math.floor(((-angle/math.pi + 0.5) * length + 1)/2 % length + 1)
 end
 
 function CircleMenu.draw(x, y, angle, size, strength, labels)

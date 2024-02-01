@@ -113,8 +113,7 @@ function ShipEditor.pressed(control)
 	if control.editor == "stateMenu" then
 		menuOpen = "State"
 	elseif control.editor == "pallet" then
-		print("Pallet currently disabled needs controls update")
-		--menuOpen = "Parts"
+		menuOpen = "Parts"
 	elseif control.editor == "up" then
 		focusY = focusY - 1
 	elseif control.editor == "down" then
@@ -166,15 +165,14 @@ end
 
 --]]
 
---function .mousemoved(cursor, control)
-function ShipEditor.mousemoved(x, y)
+function ShipEditor.mousemoved(cursor, control)
 	if menuOpen == "State" then
-		ShipEditor.menu:mousemoved(x, y)
+		ShipEditor.menu:mousemoved(unpack(cursor))
 	elseif menuOpen == "Save" then
 	elseif menuOpen == "Load" then
-		ShipEditor.loadMenu:mousemoved(x, y)
+		ShipEditor.loadMenu:mousemoved(unpack(cursor))
 	elseif menuOpen == "Parts" then
-		ShipEditor.partSelector:mousemoved(x, y)
+		ShipEditor.partSelector:mousemoved(cursor)
 	else
 	end
 end

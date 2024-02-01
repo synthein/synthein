@@ -192,18 +192,20 @@ function Controls.loadDefaultMap()
 	end
 	
 	Controls.map.keyboard = {
-		w      = {player = 0, ship = "forward",      editor = "up",        menu = "up"    },
-		s      = {player = 0, ship = "backward",     editor = "down",      menu = "down"  },
-		a      = {player = 0, ship = "left",         editor = "left",      menu = "left"  },
-		d      = {player = 0, ship = "right",        editor = "right",     menu = "right" },
-		q      = {player = 0, ship = "strafeLeft",   editor = "ccw",       menu = nil     },
-		e      = {player = 0, ship = "strafeRight",  editor = "cw",        menu = nil     },
-		i      = {player = 0, ship = "playerMenu",   editor = nil,         menu = nil     },
-		f      = {player = 0, ship = nil,            editor = "pallet",    menu = nil     },
-		r      = {player = 0, ship = nil,            editor = "remove",    menu = nil     },
-		space  = {player = 0, ship = "shoot",        editor = "add",       menu = nil     },
-		escape = {player = 0, ship = "gameMenu",     editor = "stateMenu", menu = "cancel"},
+		w      = {player = 0, ship = "forward",      editor = "up",        menu = "up"     },
+		s      = {player = 0, ship = "backward",     editor = "down",      menu = "down"   },
+		a      = {player = 0, ship = "left",         editor = "left",      menu = "left"   },
+		d      = {player = 0, ship = "right",        editor = "right",     menu = "right"  },
+		q      = {player = 0, ship = "strafeLeft",   editor = "ccw",       menu = nil      },
+		e      = {player = 0, ship = "strafeRight",  editor = "cw",        menu = nil      },
+		i      = {player = 0, ship = "playerMenu",   editor = nil,         menu = nil      },
+		f      = {player = 0, ship = nil,            editor = "pallet",    menu = nil      },
+		r      = {player = 0, ship = nil,            editor = "remove",    menu = nil      },
+		space  = {player = 0, ship = "shoot",        editor = "add",       menu = nil      },
+		escape = {player = 0, ship = "gameMenu",     editor = "stateMenu", menu = "cancel" },
 	}
+	
+	Controls.map.keyboard["return"] = {player = 0, ship = nil, editor = nil, menu = "confirm"}
 	
 	Controls.map.mouse = {
 		buttons = {
@@ -216,7 +218,6 @@ function Controls.loadDefaultMap()
 end
 
 function Controls.lookupKey(key)
-	
 	return Controls.map.keyboard[key]
 end
 

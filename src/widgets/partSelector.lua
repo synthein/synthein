@@ -24,7 +24,9 @@ function PartSelector.create(y)
 	return self
 end
 
-function PartSelector:getButtonAt(x, y)
+function PartSelector:getButtonAt(cursor)
+	local x = cursor.x
+	local y = cursor.y
 	local partSelectorCenter = love.graphics.getWidth() / 2
 	if x > partSelectorCenter - width / 2 and
 		x < partSelectorCenter + width / 2 and
@@ -41,9 +43,36 @@ end
 
 --[[
 
-function ShipEditor.pressed(control)
+function PartSelector:pressed(x, y)
+	local index = self:getButtonAt(x, y)
+	if index then
+		return PartRegistry.noncoreParts[index]
+	end
 end
-
+--]]
+	
+function PartSelector:pressed(control)
+	if control.menu == "up" then
+		if self.selectedButton > columns then
+			self.selectedButton = self.selectedButton - columns
+		end
+	elseif control.menu == "down"  then
+		if self.selectedButton < maxParts + 1 - columns then
+			self.selectedButton = self.selectedButton + columns
+		end
+	elseif control.menu == "left"  then
+		if self.selectedButton > 1 then
+			self.selectedButton = self.selectedButton - 1
+		end
+	elseif control.menu == "right"  then
+		if self.selectedButton < maxParts then
+			self.selectedButton = self.selectedButton + 1
+		end
+	elseif control.menu == "confirm" then
+		return PartRegistry.noncoreParts[self.selectedButton]
+	end
+end
+--[[
 function ShipEditor.released(control)
 end
 
@@ -68,43 +97,15 @@ end
 function .textinput(key)
 end
 
-function PartSelector:keypressed(key)
-	if key == "up" or key == "w" then
-		if self.selectedButton > columns then
-			self.selectedButton = self.selectedButton - columns
-		end
-	elseif key == "down" or key == "s"  then
-		if self.selectedButton < maxParts + 1 - columns then
-			self.selectedButton = self.selectedButton + columns
-		end
-	elseif key == "left" or key == "a"  then
-		if self.selectedButton > 1 then
-			self.selectedButton = self.selectedButton - 1
-		end
-	elseif key == "right" or key == "d"  then
-		if self.selectedButton < maxParts then
-			self.selectedButton = self.selectedButton + 1
-		end
-	elseif key == "return" or key == "space"  then
-		return PartRegistry.noncoreParts[self.selectedButton]
-	end
-end
-
-function PartSelector:mousemoved(x, y)
-	local index = self:getButtonAt(x, y)
+--]]
+function PartSelector:mousemoved(cursor)
+	local index = self:getButtonAt(cursor)
 	if index then
 		self.selectedButton = index
 	end
 end
-
+--[[
 function PartSelector:wheelmoved(_, y) --(x, y)
-end
-
-function PartSelector:pressed(x, y)
-	local index = self:getButtonAt(x, y)
-	if index then
-		return PartRegistry.noncoreParts[index]
-	end
 end
 
 --]]

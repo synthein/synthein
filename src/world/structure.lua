@@ -1,12 +1,13 @@
-local Engine = require("world/shipparts/modules/engine")
 local GridTable = require("gridTable")
-local Gun = require("syntheinrust").shipparts.modules.gun
 local Location = require("world/location")
-local MissileLauncher = require("syntheinrust").shipparts.modules.missileLauncher
-local Shield = require("world/shipparts/modules/shield")
 local StructureMath = require("world/structureMath")
 local StructureParser = require("world/structureParser")
 local log = require("log")
+
+local Engine = require("world/shipparts/modules/engine")
+local Gun = require("syntheinrust").shipparts.modules.gun
+local MissileLauncher = require("syntheinrust").shipparts.modules.missileLauncher
+local Shield = require("world/shipparts/modules/shield")
 
 local Structure = class(require("world/worldObjects"))
 

@@ -1,4 +1,5 @@
 local Menu = require("menu")
+local ListSelector = require("widgets/listSelector")
 local SaveMenu = require("saveMenu")
 local LoadMenu = require("loadMenu")
 local PartSelector = require("widgets/partSelector")
@@ -24,35 +25,37 @@ local focusY = 0
 
 local selectedPart = "b"
 
+local function handleMenuButton(button)
+	if button == "Save Blueprint" then
+		menuOpen = "Save"
+		ShipEditor.saveMenu:resetName()
+	elseif button == "Load Blueprint" then
+		menuOpen = "Load"
+		ShipEditor.loadMenu:reset()
+	elseif button == "Main Menu" then
+		menuOpen = false
+		setGameState("MainMenu")
+	elseif button == "Quit" then
+		love.event.quit()
+	end
+end
 
 function ShipEditor.cursorpressed(cursor, control)
 	if menuOpen == "State" then
-		if mouseButton == 1 then
-			local button = ShipEditor.menu:pressed(x, y)
-
-			if button == "Save Blueprint" then
-				menuOpen = "Save"
-				ShipEditor.saveMenu:resetName()
-			elseif button == "Load Blueprint" then
-				menuOpen = "Load"
-				ShipEditor.loadMenu:reset()
-			elseif button == "Main Menu" then
-				menuOpen = false
-				setGameState("MainMenu")
-			elseif button == "Quit" then
-				love.event.quit()
-			end
+		if control.menu == "confirm" then
+			local button = ShipEditor.menu:pressed(cursor.x, cursor.y)
+			handleMenuButton(button)
 		end
 	elseif menuOpen == "Save" then
 		menuOpen = false
 	elseif menuOpen == "Load" then
-		local file = ShipEditor.loadMenu:pressed(x, y)
+		local file = ShipEditor.loadMenu:pressed(cursor.x, cursor.y)
 		if file then
 			gridTable = StructureParser.blueprintUnpack(love.filesystem.read(file))
 			menuOpen = false
 		end
 	elseif menuOpen == "Parts" then
-		local part = ShipEditor.partSelector:pressed(x, y)
+		local part = ShipEditor.partSelector:cursorpressed(cursor, control)
 		if part then
 			menuOpen = false
 			selectedPart = part
@@ -67,23 +70,15 @@ end
 
 function ShipEditor.pressed(control)
 	if menuOpen then
-		if key == "escape" then
+		if control.menu == "cancel" then
 			menuOpen = false
 		end
 
-		if menuOpen == "Parts" then
-			if key == "f" then
-				menuOpen = false
-			end
-		end
-
 		if menuOpen == "State" then
-			local button = ShipEditor.menu:keypressed(key)
-
-			--TODO add menu selection code here
-			-- mabye create a function for handling both key and mosue presses
+			local button = ShipEditor.menu:keypressed(control)
+			handleMenuButton(button)
 		elseif menuOpen == "Save" then
-			if key == "return" then
+			if control == "confirm" then
 				Success, Message = ShipEditor.saveMenu:saveFile(
 					StructureParser.blueprintPack(gridTable))
 				if not Success then
@@ -101,10 +96,14 @@ function ShipEditor.pressed(control)
 				menuOpen = false
 			end
 		elseif menuOpen == "Parts" then
-			local button = ShipEditor.partSelector:pressed(control)
-			if button then
+			if control.editor == "pallet" then
 				menuOpen = false
-				selectedPart = button
+			else
+				local button = ShipEditor.partSelector:pressed(control)
+				if button then
+					menuOpen = false
+					selectedPart = button
+				end
 			end
 		end
 		return
@@ -167,7 +166,7 @@ end
 
 function ShipEditor.mousemoved(cursor, control)
 	if menuOpen == "State" then
-		ShipEditor.menu:mousemoved(unpack(cursor))
+		ShipEditor.menu:mousemoved(cursor.x, cursor.y)
 	elseif menuOpen == "Save" then
 	elseif menuOpen == "Load" then
 		ShipEditor.loadMenu:mousemoved(unpack(cursor))

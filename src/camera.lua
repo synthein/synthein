@@ -309,10 +309,12 @@ function Camera:drawPlayer(player, debugmode)
 	viewPort.width = scissor.width
 	viewPort.height = scissor.height
 
+	local cursorWorldX, cursorWorldY = player.camera:getWorldCoords(player.cursorX, player.cursorY)
+
 	local playerDrawPack = {}
 	playerDrawPack.compassAngle = compassAngle
 	playerDrawPack.camera = {x = self.x, y = self.y, width = self.scissor.width, height = self.scissor.height}
-	playerDrawPack.cursor = {x = player.cursorX, y = player.cursorY, image = player.cursor}
+	playerDrawPack.cursor = {x = player.cursorX, y = player.cursorY, worldX = cursorWorldX, worldY = cursorWorldY, image = player.cursor}
 	playerDrawPack.menu = player.menu
 	playerDrawPack.partSelector = player.partSelector
 	playerDrawPack.gameOver = self.gameOver

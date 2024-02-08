@@ -86,15 +86,16 @@ local function drawSelection(selection, cursor, zoom)
 	if structure and part then
 		local location = part.location
 		local partX, partY = unpack(location)
-		local partSide = StructureMath.getPartSide(structure, location, cursor.x, cursor.y)
 		local body = structure.body
 		local angle -- Body angle if building else 0
 
 		local strength, labels
 		if build then
 			angle = body:getAngle()
-			local indexReverse = {1, 4, 3, 2}
 			strength = {}
+			local x, y = body:getWorldPoints(partX, partY)
+			local newAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
+			local partSide = CircleMenu.angleToIndex(newAngle, 4)
 			local l = {partX, partY}
 			for i = 1,4 do
 				l[3] = i
@@ -102,13 +103,13 @@ local function drawSelection(selection, cursor, zoom)
 				local connectable = not partB and connection
 				local highlight = i == partSide
 				local brightness = highlight and 2 or 1
-				strength[indexReverse[i]] = connectable and brightness or 0
+				strength[i] = connectable and brightness or 0
 			end
 		else
 			angle = 0
 			local x, y = body:getWorldPoints(partX, partY)
 			strength, labels = part:getMenu()
-			local newAngle = vector.angle(cursor.x - x, cursor.y - y)
+			local newAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
 			local index = CircleMenu.angleToIndex(newAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2

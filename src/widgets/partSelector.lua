@@ -41,15 +41,14 @@ function PartSelector:getButtonAt(cursor)
 	end
 end
 
---[[
-
-function PartSelector:pressed(x, y)
-	local index = self:getButtonAt(x, y)
-	if index then
-		return PartRegistry.noncoreParts[index]
+function PartSelector:cursorpressed(cursor, control)
+	if control.menu == "confirm" then
+		local index = self:getButtonAt(cursor)
+		if index then
+			return PartRegistry.noncoreParts[index]
+		end
 	end
 end
---]]
 	
 function PartSelector:pressed(control)
 	if control.menu == "up" then
@@ -76,12 +75,6 @@ end
 function ShipEditor.released(control)
 end
 
-function .mousemoved(cursor, control)
-end
-
-function .wheelmoved(cursor, control)
-end
-
 function .gamepadpressed(joystick, button)
 end
 
@@ -106,6 +99,9 @@ function PartSelector:mousemoved(cursor)
 end
 --[[
 function PartSelector:wheelmoved(_, y) --(x, y)
+end
+
+function .wheelmoved(cursor, control)
 end
 
 --]]

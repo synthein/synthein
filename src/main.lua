@@ -140,7 +140,7 @@ end
 function love.wheelmoved(x, y)
 	local control = Controls.lookupMouseWheel()
 	if control then
-		state.wheelmoved({x, y}, control)
+		state.wheelmoved({x = x, y = y}, control)
 	end
 end
 

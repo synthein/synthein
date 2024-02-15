@@ -138,7 +138,7 @@ function Structure:removePart(part)
 
 	local x, y = unpack(part.location)
 	self.gridTable:index(x, y, nil, true)
-	part:removeFixtures(body)
+	part:removeFixtures()
 	if part.isShield then self.shield:removePart(part) end
 
 --	for i,fixture in ipairs(self.body:getFixtureList()) do

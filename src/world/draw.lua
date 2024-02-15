@@ -1,5 +1,3 @@
-local Location = require("world/location")
-
 local lume = require("vendor/lume")
 
 local Draw = {}
@@ -37,32 +35,6 @@ function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight
 			x, y, angle,
 			imageData.drawWidth, imageData.drawHeight,
 			imageData.offsetWidth, imageData.offsetHeight)
-	end
-end
-
--- TODO Why is this function used? Use or Delete
-function Draw.createPartDrawImageFunction(imageName)
-	local imageData = {}
-
-	return function(self, fixture, scaleByHealth)
-		if scaleByHealth then
-			local c = self:getScaledHealth()
-			love.graphics.setColor(1, c, c, 1)
-		else
-			love.graphics.setColor(1, 1, 1, 1)
-		end
-
-		imageData = setup(Draw.loadImage(imageName), 1, 1)
-
-		--This line is untested
-		local x, y, angle = Location.bodyPoint3(fixture, self.location)
-
-		love.graphics.draw(
-			imageData.image,
-			x, y, angle,
-			imageData.drawWidth, imageData.drawHeight,
-			imageData.offsetWidth, imageData.offsetHeight
-		)
 	end
 end
 

@@ -218,8 +218,8 @@ function InGame.mousereleased(x, y, button)
 	end
 end
 
-function InGame.mousemoved(x, y)
-	menu:mousemoved(x, y)
+function InGame.mousemoved(cursor)
+	menu:mousemoved(cursor.x, cursor.y)
 end
 
 function InGame.joystickreleased(joystick, button)

@@ -57,7 +57,7 @@ function Player:handleInput()
 
 	cursorX, cursorY = controls:getCursorPosition(cursorX, cursorY)
 	cursorX, cursorY = self.camera:limitCursor(cursorX, cursorY)
-	self.partSelector:mousemoved(cursorX, cursorY)
+	self.partSelector:mousemoved({x = cursorX, y = cursorY})
 
 	self.cursorX, self.cursorY = cursorX, cursorY
 

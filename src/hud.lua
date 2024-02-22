@@ -87,15 +87,15 @@ local function drawSelection(selection, cursor, zoom)
 		local location = part.location
 		local partX, partY = unpack(location)
 		local body = structure.body
-		local angle -- Body angle if building else 0
+		local menuRotation -- Body angle if building else 0
 
 		local strength, labels
 		if build then
-			angle = body:getAngle()
+			menuRotation = body:getAngle()
 			strength = {}
 			local x, y = body:getWorldPoints(partX, partY)
-			local newAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
-			local partSide = CircleMenu.angleToIndex(newAngle, 4)
+			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
+			local partSide = CircleMenu.angleToIndex(-menuRotation + menuToCursorAngle, 4)
 			local l = {partX, partY}
 			for i = 1,4 do
 				l[3] = i
@@ -106,18 +106,18 @@ local function drawSelection(selection, cursor, zoom)
 				strength[i] = connectable and brightness or 0
 			end
 		else
-			angle = 0
+			menuRotation = 0
 			local x, y = body:getWorldPoints(partX, partY)
 			strength, labels = part:getMenu()
-			local newAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
-			local index = CircleMenu.angleToIndex(newAngle, #strength)
+			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
+			local index = CircleMenu.angleToIndex(menuToCursorAngle, #strength)
 			if strength[index] == 1 then
 				strength[index] = 2
 			end
 		end
 		if strength then
 			local x, y = body:getWorldPoints(partX, partY)
-			CircleMenu.draw(x, y, angle, 1, strength, labels)
+			CircleMenu.draw(x, y, menuRotation, 1, strength, labels)
 		end
 	end
 	if build then

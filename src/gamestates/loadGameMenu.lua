@@ -9,6 +9,18 @@ local saveNames = {}
 local saveFiles = {}
 LoadGameMenu.menu = Menu.create(250, 5, saveNames)
 
+function LoadGameMenu.LoadGame(index)
+	local saveName = saveNames[index]
+	local fileName = Settings.saveDir .. saveFiles[index]
+
+	if not love.filesystem.getInfo(fileName, "file") then
+		log.err("Failed to load game: File %s does not exist", fileName)
+		return nil
+	end
+
+	setGameState("InGame", {love.filesystem.lines(fileName), {}, saveName})
+end
+
 function LoadGameMenu.load()
 	saveNames = {}
 	saveFiles = love.filesystem.getDirectoryItems("saves")
@@ -19,12 +31,23 @@ function LoadGameMenu.load()
 end
 
 function LoadGameMenu.cursorpressed(cursor, control)
+	LoadGameMenu.LoadGame(LoadGameMenu.menu:getButtonAt(cursor.x, cursor.y))
 end
 
 function LoadGameMenu.cursorreleased(cursor, control)
 end
 
 function LoadGameMenu.pressed(control)
+	if control.menu == "cancel" then
+		setGameState("MainMenu")
+		return
+	end
+
+	local loadGameChoice = LoadGameMenu.menu:keypressed(control)
+	if loadGameChoice then
+	print(loadGameChoice)
+		LoadGameMenu.LoadGame(loadGameChoice)
+	end
 end
 
 function LoadGameMenu.released(control)
@@ -52,33 +75,8 @@ end
 function .textinput(key)
 end
 --]]
-function LoadGameMenu.keypressed(key)
-	local loadGameChoice, back = LoadGameMenu.menu:keypressed(key)
-	if back then
-		setGameState("MainMenu")
-	end
-
-	LoadGameMenu.LoadGame(loadGameChoice)
-end
-
-function LoadGameMenu.mousepressed(x, y, mouseButton)
-	LoadGameMenu.LoadGame(LoadGameMenu.menu:getButtonAt(x, y))
-end
-
-function LoadGameMenu.LoadGame(index)
-	local saveName = saveNames[index]
-	local fileName = Settings.saveDir .. saveFiles[index]
-
-	if not love.filesystem.getInfo(fileName, "file") then
-		log.err("Failed to load game: File %s does not exist", fileName)
-		return nil
-	end
-
-	setGameState("InGame", {love.filesystem.lines(fileName), {}, saveName})
-end
-
-function LoadGameMenu.mousemoved(x, y)
-	LoadGameMenu.menu:mousemoved(x, y)
+function LoadGameMenu.mousemoved(cursor)
+	LoadGameMenu.menu:mousemoved(cursor.x, cursor.y)
 end
 
 function LoadGameMenu.wheelmoved(x, y)

@@ -93,12 +93,13 @@ local function drawSelection(selection, cursor, zoom)
 		if build then
 			menuRotation = body:getAngle()
 			strength = {}
+			local indexReverse = {1, 4, 3, 2}
 			local x, y = body:getWorldPoints(partX, partY)
 			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
 			local partSide = CircleMenu.angleToIndex(-menuRotation + menuToCursorAngle, 4)
 			local l = {partX, partY}
 			for i = 1,4 do
-				l[3] = i
+				l[3] = indexReverse[i]
 				local _, partB, connection = structure:testEdge(l)
 				local connectable = not partB and connection
 				local highlight = i == partSide

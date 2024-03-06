@@ -238,11 +238,11 @@ function InGame.gamepadpressed(joystick, button)
 	end
 end
 
-function InGame.wheelmoved(x, y)
+function InGame.wheelmoved(travel, control)
 	for _, player in ipairs(players) do
-		if y > 0 then
+		if travel.y > 0 then
 			player:buttonpressed(love.mouse, "yWheel")
-		elseif y < 0 then
+		elseif travel.y < 0 then
 			player:buttonpressed(love.mouse, "-yWheel")
 		end
 	end

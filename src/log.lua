@@ -21,8 +21,20 @@ end
 
 local function out(message, ...)
   local processed = {}
-  for i, v in pairs({...}) do
-    processed[i] = type(v) == "table" and texpand(v) or v
+
+  for i=1,select('#', ...) do
+    local oldval = select(i, ...)
+    local newval
+
+    if type(oldval) == "table" then
+      newval = texpand(oldval)
+    elseif type(oldval) == "nil" then
+      newval = "nil"
+    else
+      newval = oldval
+    end
+
+    processed[i] = newval
   end
   io.stderr:write(os.date() .. " " .. string.format(message, unpack(processed)) .. "\n")
 end

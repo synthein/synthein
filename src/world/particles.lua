@@ -7,7 +7,8 @@ local PhysicsReferences = require("world/physicsReferences")
 Particles.type = "particles"
 
 function Particles:__create(worldInfo, location, data, appendix)
-	self.physicsShape = love.physics.newRectangleShape(40, 40)
+	self.body:setUserData({type = "particles"})
+	self.physicsShape = love.physics.newRectangleShape(2, 2)
 	self.fixture = love.physics.newFixture(self.body, self.physicsShape)
 	self.fixture:setUserData(self)
 	PhysicsReferences.setFixtureType(self.fixture, "visual")

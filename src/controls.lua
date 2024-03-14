@@ -201,6 +201,9 @@ function Controls.loadDefaultMap()
 		i      = {player = 0, ship = "playerMenu",   editor = nil,         menu = nil      },
 		f      = {player = 0, ship = nil,            editor = "pallet",    menu = nil      },
 		r      = {player = 0, ship = nil,            editor = "remove",    menu = nil      },
+		h      = {player = 0, ship = "health",       editor = nil,         menu = nil      },
+		p      = {player = 0, ship = "pause",        editor = nil,         menu = nil      },
+		f5     = {player = 0, ship = "cameraRotate", editor = nil,         menu = nil      },
 		space  = {player = 0, ship = "shoot",        editor = "add",       menu = nil      },
 		escape = {player = 0, ship = "gameMenu",     editor = "stateMenu", menu = "cancel" },
 	}

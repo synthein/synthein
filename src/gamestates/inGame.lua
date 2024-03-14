@@ -103,6 +103,14 @@ function InGame.cursorreleased(cursor, control)
 end
 
 function InGame.pressed(control)
+	if menuOpen then
+	else
+		if control.ship == "gameMenu" then
+			menuOpen = "Pause"
+		elseif control.ship == "pause" then
+			paused = not paused
+		end
+	end
 end
 
 function InGame.released(control)
@@ -170,10 +178,6 @@ function InGame.keypressed(key)
 	else
 		for _, player in ipairs(players) do
 			player:buttonpressed(love.keyboard, key, debugmode.on)
-		end
-
-		if key == "p" or key == "pause" then
-			paused = not paused
 		end
 
 		if debugmode.on then

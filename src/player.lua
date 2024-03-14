@@ -73,6 +73,14 @@ function Player:handleInput()
 	end
 end
 
+function Player:pressed(control)
+	if self.menu then
+		
+	else
+		
+	end
+end
+
 function Player:buttonpressed(source, button, debugmode)
 	if button == "h" then self.showHealth = not self.showHealth end
 	if button == "f5" then self.isCameraAngleFixed = not self.isCameraAngleFixed end

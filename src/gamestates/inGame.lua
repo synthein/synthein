@@ -103,12 +103,34 @@ function InGame.cursorreleased(cursor, control)
 end
 
 function InGame.pressed(control)
-	if menuOpen then
+	if control.ship == "debug" then debugmode:toggle() end
+	
+	if menuOpen == "Pause" then
+		pauseMenuAction(menu:keypressed(key))
+	elseif menuOpen == "Save" then
+		if key == "return" then
+			local ok, message = saveMenu:saveFile(SceneParser.saveScene(world))
+			if not ok then
+				log.error("Failed to save the game: " .. message)
+			end
+			menuOpen = false
+		else
+			saveMenu:keypressed(key)
+		end
 	else
 		if control.ship == "gameMenu" then
 			menuOpen = "Pause"
 		elseif control.ship == "pause" then
 			paused = not paused
+		end
+		
+		local player = players[control.player]
+		if player then
+			player:pressed(control) -- TODO Anylize old call player:buttonpressed(love.keyboard, key, debugmode.on)
+		end
+		
+		if debugmode.on then
+			debugmode:keyboard(key)
 		end
 	end
 end
@@ -158,34 +180,6 @@ function InGame.textinput(key)
 	if menuOpen == "Save" then
 		saveMenu:textinput(key)
 	end
-end
-
-function InGame.keypressed(key)
-	if key == "f12" then debugmode:toggle() end
-
-	if menuOpen == "Pause" then
-		pauseMenuAction(menu:keypressed(key))
-	elseif menuOpen == "Save" then
-		if key == "return" then
-			local ok, message = saveMenu:saveFile(SceneParser.saveScene(world))
-			if not ok then
-				log.error("Failed to save the game: " .. message)
-			end
-			menuOpen = false
-		else
-			saveMenu:keypressed(key)
-		end
-	else
-		for _, player in ipairs(players) do
-			player:buttonpressed(love.keyboard, key, debugmode.on)
-		end
-
-		if debugmode.on then
-			debugmode:keyboard(key)
-		end
-	end
-
-	return InGame
 end
 
 function InGame.keyreleased(key)

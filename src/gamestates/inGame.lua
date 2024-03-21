@@ -96,19 +96,15 @@ function InGame.load(scene, playerHostility, saveName)
 	})
 end
 
-function InGame.resize(w, h)
-	screen:arrange(w, h)
+function InGame.cursorpressed(cursor, control)
 end
 
-function InGame.textinput(key)
-	if menuOpen == "Save" then
-		saveMenu:textinput(key)
-	end
+function InGame.cursorreleased(cursor, control)
 end
 
-function InGame.keypressed(key)
-	if key == "f12" then debugmode:toggle() end
-
+function InGame.pressed(control)
+	if control.ship == "debug" then debugmode:toggle() end
+	
 	if menuOpen == "Pause" then
 		pauseMenuAction(menu:keypressed(key))
 	elseif menuOpen == "Save" then
@@ -122,20 +118,68 @@ function InGame.keypressed(key)
 			saveMenu:keypressed(key)
 		end
 	else
-		for _, player in ipairs(players) do
-			player:buttonpressed(love.keyboard, key, debugmode.on)
-		end
-
-		if key == "p" or key == "pause" then
+		if control.ship == "gameMenu" then
+			menuOpen = "Pause"
+		elseif control.ship == "pause" then
 			paused = not paused
 		end
-
+		
+		local player = players[control.player]
+		if player then
+			player:pressed(control) -- TODO Anylize old call player:buttonpressed(love.keyboard, key, debugmode.on)
+		end
+		
 		if debugmode.on then
 			debugmode:keyboard(key)
 		end
 	end
+end
 
-	return InGame
+function InGame.released(control)
+end
+
+--[[
+function .cursorpressed(cursor, control)
+end
+
+function .cursorreleased(cursor, control)
+end
+
+function .pressed(control)
+end
+
+function .released(control)
+end
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+--]]
+function InGame.resize(w, h)
+	screen:arrange(w, h)
+end
+
+function InGame.textinput(key)
+	if menuOpen == "Save" then
+		saveMenu:textinput(key)
+	end
 end
 
 function InGame.keyreleased(key)
@@ -172,8 +216,8 @@ function InGame.mousereleased(x, y, button)
 	end
 end
 
-function InGame.mousemoved(x, y)
-	menu:mousemoved(x, y)
+function InGame.mousemoved(cursor)
+	menu:mousemoved(cursor.x, cursor.y)
 end
 
 function InGame.joystickreleased(joystick, button)
@@ -192,11 +236,11 @@ function InGame.gamepadpressed(joystick, button)
 	end
 end
 
-function InGame.wheelmoved(x, y)
+function InGame.wheelmoved(travel, control)
 	for _, player in ipairs(players) do
-		if y > 0 then
+		if travel.y > 0 then
 			player:buttonpressed(love.mouse, "yWheel")
-		elseif y < 0 then
+		elseif travel.y < 0 then
 			player:buttonpressed(love.mouse, "-yWheel")
 		end
 	end

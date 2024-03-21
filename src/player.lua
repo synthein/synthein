@@ -58,7 +58,7 @@ function Player:handleInput()
 
 	cursorX, cursorY = controls:getCursorPosition(cursorX, cursorY)
 	cursorX, cursorY = self.camera:limitCursor(cursorX, cursorY)
-	self.partSelector:mousemoved(cursorX, cursorY)
+	self.partSelector:mousemoved({x = cursorX, y = cursorY})
 
 	self.cursorX, self.cursorY = cursorX, cursorY
 
@@ -74,9 +74,20 @@ function Player:handleInput()
 	end
 end
 
+function Player:pressed(control)
+print("player pressed", control.ship)
+	if self.menu then
+		
+	else
+		if control.ship == "health" then
+			self.showHealth = not self.showHealth
+		elseif control.ship == "cameraRotate" then
+			self.isCameraAngleFixed = not self.isCameraAngleFixed
+		end
+	end
+end
+
 function Player:buttonpressed(source, button, debugmode)
-	if button == "h" then self.showHealth = not self.showHealth end
-	if button == "f5" then self.isCameraAngleFixed = not self.isCameraAngleFixed end
 
 	local menuButton = self.controls:test("menu", source, button)
 	local order = self.controls:test("pressed", source, button)

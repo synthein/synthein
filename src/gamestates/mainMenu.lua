@@ -20,6 +20,55 @@ local function gotoState(state)
 	end
 end
 
+function MainMenu.cursorpressed(cursor, control)
+	if control.menu == "confirm" then
+		gotoState(MainMenu.menu:getButtonAt(cursor.x, cursor.y))
+	end
+end
+
+function MainMenu.cursorreleased(cursor, control)
+end
+
+function MainMenu.pressed(control)
+end
+
+function MainMenu.released(control)
+end
+
+--[[
+function .cursorpressed(cursor, control)
+end
+
+function .cursorreleased(cursor, control)
+end
+
+function .pressed(control)
+end
+
+function .released(control)
+end
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+--]]
 function MainMenu.update(dt)
 	MainMenu.menu:update(dt)
 end
@@ -65,8 +114,8 @@ function MainMenu.resize(w, h)
 	MainMenu.menu:resize(w, h)
 end
 
-function MainMenu.mousemoved(x, y)
-	MainMenu.menu:mousemoved(x, y)
+function MainMenu.mousemoved(cursor, control)
+	MainMenu.menu:mousemoved(cursor.x, cursor.y)
 end
 
 function MainMenu.wheelmoved(x, y)

@@ -74,16 +74,19 @@ function Player:handleInput()
 end
 
 function Player:pressed(control)
+print("player pressed", control.ship)
 	if self.menu then
 		
 	else
-		
+		if control.ship == "health" then
+			self.showHealth = not self.showHealth
+		elseif control.ship == "cameraRotate" then
+			self.isCameraAngleFixed = not self.isCameraAngleFixed
+		end
 	end
 end
 
 function Player:buttonpressed(source, button, debugmode)
-	if button == "h" then self.showHealth = not self.showHealth end
-	if button == "f5" then self.isCameraAngleFixed = not self.isCameraAngleFixed end
 
 	local menuButton = self.controls:test("menu", source, button)
 	local order = self.controls:test("pressed", source, button)

@@ -41,6 +41,10 @@ function love.conf(t)
 			love.window = stub()
 			love.graphics = stub()
 			love.audio = stub()
+
+			love.errorhandler = function(msg)
+				print(debug.traceback("Error: " .. tostring(msg), 3))
+			end
 		end
 	end
 end

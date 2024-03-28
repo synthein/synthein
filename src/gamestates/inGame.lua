@@ -25,13 +25,12 @@ local pauseMenu = {}
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 
 local function pauseMenuAction(selection, back)
-	local action = pauseMenu.buttons[selection]
-	if action == "Save" then
+	if selection == "Save" then
 		menuOpen = "Save"
-	elseif action == "Main Menu" then
+	elseif selection == "Main Menu" then
 		menuOpen = false
 		setGameState("MainMenu")
-	elseif action == "Quit" then
+	elseif selection == "Quit" then
 		love.event.quit()
 	end
 
@@ -106,7 +105,14 @@ function InGame.pressed(control)
 	if control.ship == "debug" then debugmode:toggle() end
 	
 	if menuOpen == "Pause" then
-		pauseMenuAction(menu:keypressed(key))
+		if control.menu == "cancel" then
+			menuOpen = nil
+		else
+			local menuAction = menu:keypressed(control)
+			if menuAction then
+				pauseMenuAction(menuAction)
+			end
+		end
 	elseif menuOpen == "Save" then
 		if key == "return" then
 			local ok, message = saveMenu:saveFile(SceneParser.saveScene(world))

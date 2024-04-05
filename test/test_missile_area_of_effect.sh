@@ -3,7 +3,7 @@
 extra_args="$1"
 output="$2"
 
-love src $extra_args --scene test-missile2 > "$output" 2>/dev/null <<EOF
+love src $extra_args --scene test-missile2 > "$output" <<EOF
 return #world.objects
 sleep(2)
 return #world.objects

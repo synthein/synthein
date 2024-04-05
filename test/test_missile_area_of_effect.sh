@@ -15,9 +15,9 @@ output_after=$(sed -n 2p "$output")
 
 if ! [ "$output_before" -eq 16 ]; then
 	printf "FAILED: expected %s = 16\n" "$output_before"
-	return 1
+	exit 1
 fi
 if ! [ "$output_after" -eq 11 ]; then
 	printf "FAILED: expected %s = 11\n" "$output_after"
-	return 1
+	exit 1
 fi

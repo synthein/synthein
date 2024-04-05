@@ -6,6 +6,6 @@ find src/res/scenes -name '*.txt' | sed -E 's|.*/([[:alnum:]_-]+).txt|\1|' | whi
 	if ! echo "quit()" | love src $extra_args --scene "$scene"
 	then
 		printf "FAILED: scene %s crashed\n" "$scene"
-		return 1
+		exit 1
 	fi
 done

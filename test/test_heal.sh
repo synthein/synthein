@@ -16,5 +16,5 @@ EOF
 actual=$(cat "$output")
 if ! [ "$actual" -gt 1 ]; then
 	printf "FAILED: expected %s > 1\n" "$actual"
-	return 1
+	exit 1
 fi

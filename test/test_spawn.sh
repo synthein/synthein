@@ -17,5 +17,5 @@ output_after=$(sed -n 2p "$output")
 
 if ! [ "$output_after" -gt "$output_before" ]; then
 	printf "FAILED: expected %s > %s\n" "$output_after" "$output_before"
-	return 1
+	exit 1
 fi

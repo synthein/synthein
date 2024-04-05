@@ -73,15 +73,54 @@ function Player:handleInput()
 	end
 end
 
-function Player:pressed(control)
-print("player pressed", control.ship)
+function Player:cursorpressed(cursor, control, debugmodeEnabled)
 	if self.menu then
+		if control.menu == "cancel" then
+			self.menu = nil
+		else
+			
+		end
 		
 	else
 		if control.ship == "health" then
 			self.showHealth = not self.showHealth
 		elseif control.ship == "cameraRotate" then
 			self.isCameraAngleFixed = not self.isCameraAngleFixed
+		end
+		
+		self.camera.hud:pressed(control)
+	end
+end
+
+function Player:pressed(control, debugmodeEnabled)
+print("player pressed", control.ship)
+	if self.menu then
+		if control.menu == "cancel" or  control.ship == "playerMenu" then
+			self.menu = nil
+		elseif control.menu == "confirm" then
+			local part = self.partSelector:pressed(control)
+			if part then
+				local camera = self.camera
+				self.world.info.create(
+					"structure",
+					{camera.x, camera.y + 5},
+					PartRegistry.createPart(part))
+			end
+			self.menu = nil
+		end
+	else
+		if control.ship then
+			if control.ship == "playerMenu" then
+				if debugmodeEnabled then
+					self.menu = true
+				end
+			elseif control.ship == "health" then
+				self.showHealth = not self.showHealth
+			elseif control.ship == "cameraRotate" then
+				self.isCameraAngleFixed = not self.isCameraAngleFixed
+			end
+		elseif control.menu then
+			self.camera.hud:pressed(control)
 		end
 	end
 end

@@ -96,6 +96,10 @@ function InGame.load(scene, playerHostility, saveName)
 end
 
 function InGame.cursorpressed(cursor, control)
+	local player = players[control.player]
+	if player then
+		player:cursorpressed(cursor, control, debugmode.on)
+	end
 end
 
 function InGame.cursorreleased(cursor, control)
@@ -132,7 +136,7 @@ function InGame.pressed(control)
 		
 		local player = players[control.player]
 		if player then
-			player:pressed(control) -- TODO Anylize old call player:buttonpressed(love.keyboard, key, debugmode.on)
+			player:pressed(control, debugmode.on) -- TODO Anylize old call player:buttonpressed(love.keyboard, key, debugmode.on)
 		end
 		
 		if debugmode.on then

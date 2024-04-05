@@ -103,7 +103,9 @@ end
 function cursorreleased(key, cursor)
 end
 
-function ListSelector:pressed(key)
+function ListSelector:pressed(control)
+	local key = control.menu
+
 	local s = self.selected
 	local len = #self.list
 	if len ~= 0 then
@@ -113,7 +115,7 @@ function ListSelector:pressed(key)
 		elseif key == "down" then
 			s = s + 1
 			if s > len then s = s - len end
-		elseif key == "return" or key == "build" then
+		elseif key == "confirm" then
 			if s <= len and s > 0 then
 				return s
 			end

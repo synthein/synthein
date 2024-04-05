@@ -16,5 +16,5 @@ num_objects_after=$(sed -n 2p "$output")
 if ! [ "$num_objects_before" -eq 2 -a "$num_objects_after" -eq 4 ]; then
 	printf "FAILED: expected 2 objects before disconnect (actual: %s) " "$num_objects_before"
 	printf "and 4 objects after (actual: %s)\n" "$num_objects_after"
-	return 1
+	exit 1
 fi

@@ -43,7 +43,7 @@ function love.conf(t)
 			love.audio = stub()
 
 			love.errorhandler = function(msg)
-				print(debug.traceback("Error: " .. tostring(msg), 3))
+				io.stderr:write(debug.traceback("Error: " .. tostring(msg), 3))
 			end
 		end
 	end

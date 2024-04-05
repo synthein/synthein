@@ -9,6 +9,8 @@ local Missile = class(require("world/worldObjects"))
 Missile.type = "missile"
 
 function Missile:__create(worldInfo, location, data, appendix)
+	self.body:setUserData({type = "missile"})
+
 	self.events = worldInfo.events
 
 	self.thrust = 10

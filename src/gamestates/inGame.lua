@@ -103,6 +103,10 @@ function InGame.cursorpressed(cursor, control)
 end
 
 function InGame.cursorreleased(cursor, control)
+	local player = players[control.player]
+	if player then
+		player:cursorreleased(cursor, control)
+	end
 end
 
 function InGame.pressed(control)

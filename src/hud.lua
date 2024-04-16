@@ -36,6 +36,16 @@ function Hud:keypressed(key)
 	end
 end
 
+function Hud:cursorpressed(cursor, control)
+print("hud cursor control")
+	--[[if self.selectedMenu then
+		local formationIndex = self.formationSelector:pressed(control)
+		if formationIndex and formationIndex ~= 0 then
+			self.command.activeFormation = self.formationList[formationIndex]
+		end
+	end]]
+end
+
 function Hud:pressed(control)
 	if self.selectedMenu then
 		local formationIndex = self.formationSelector:pressed(control)

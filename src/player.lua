@@ -86,9 +86,29 @@ function Player:cursorpressed(cursor, control, debugmodeEnabled)
 			self.showHealth = not self.showHealth
 		elseif control.ship == "cameraRotate" then
 			self.isCameraAngleFixed = not self.isCameraAngleFixed
+			
+		elseif control.ship == "build" or control.ship == "destroy" then
+				local cursorX, cursorY = self.camera:getWorldCoords(
+					self.cursorX,
+					self.cursorY)
+				self.selected:cursorpressed({x = cursorX, y = cursorY}, control)
+
 		end
 		
-		self.camera.hud:pressed(control)
+		self.camera.hud:cursorpressed(cursor, control)
+	end
+end
+
+function Player:cursorreleased(cursor, control, debugmodeEnabled)
+	if self.menu then
+	else
+		if control.ship == "build" or control.ship == "destroy" then
+				local cursorX, cursorY = self.camera:getWorldCoords(
+					self.cursorX,
+					self.cursorY)
+				self.selected:cursorreleased({x = cursorX, y = cursorY}, control)
+
+		end
 	end
 end
 

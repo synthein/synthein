@@ -84,7 +84,6 @@ function Selection:cursorpressed(cursor, control)
 end
 
 function Selection:cursorreleased(cursor, control)
-print("selection released")
 	local structure = self.structure
 	local part = self.part
 	if structure and part then

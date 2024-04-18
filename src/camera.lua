@@ -4,6 +4,8 @@ local Settings = require("settings")
 local mathext = require("syntheinrust").mathext
 local vector = require("vector")
 
+local lume = require("vendor/lume")
+
 local Camera = {}
 Camera.__index = Camera
 
@@ -14,6 +16,7 @@ function Camera.create()
 	self.x = 0
 	self.y = 0
 	self.angle = 0
+	self.animationPercent = 1
 	self.zoomInt = 8
 	self:adjustZoom(0)
 	self.scissor = {x = 0, y = 0, width = 0, height = 0}
@@ -25,6 +28,11 @@ function Camera.create()
 	self.hud = Hud()
 	
 	return self
+end
+
+function Camera:setTarget(target)
+	self.body = target
+	self.animationPercent = 0
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
@@ -285,8 +293,12 @@ function Camera:drawPlayer(player, debugmode)
 			self.body = nil
 			self.gameOver = true
 		else
-			self.x, self.y = body:getPosition()
-			self.angle = player.isCameraAngleFixed and 0 or body:getAngle()
+			local newX, newY = body:getPosition()
+			local newAngle = player.isCameraAngleFixed and 0 or body:getAngle()
+			self.x = lume.lerp(self.x, newX, self.animationPercent)
+			self.y = lume.lerp(self.y, newY, self.animationPercent)
+			self.angle = lume.lerp(self.angle, newAngle, self.animationPercent)
+			self.animationPercent = self.animationPercent + 0.1
 
 			local point = {0,0}
 

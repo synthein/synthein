@@ -19,6 +19,8 @@ function Selection.create(world, team)
 
 	self.assign = nil
 
+	self.buildingOnStructureListeners = {}
+
 	return self
 end
 
@@ -40,6 +42,7 @@ function Selection:pressed(cursorX, cursorY, order)
 							self.part = nil
 							self.build = nil
 						end
+						self:signalBuildingOnStructure()
 					end
 				end
 			elseif order == "destroy" then
@@ -122,8 +125,15 @@ function Selection:released(cursorX, cursorY)
 	end
 end
 
-function Selection:isBuildingOnStructure()
-	return self.build and self.build.structure
+function Selection:whenBuildingOnStructure(func)
+	table.insert(self.buildingOnStructureListeners, func)
+	-- return self.build and self.build.structure
+end
+
+function Selection:signalBuildingOnStructure()
+	for _, func in ipairs(self.buildingOnStructureListeners) do
+		func()
+	end
 end
 
 return Selection

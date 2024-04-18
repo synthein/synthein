@@ -149,10 +149,8 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:draw(debugmode)
-	-- if self.ship then
-	-- 	else
-	-- 		self.camera:setTarget(self.ship.body)
-	-- 	end
+	-- if self.ship and not self.selected:isBuildingOnStructure() then
+	-- 	self.camera:setTarget(self.ship.body)
 	-- end
 
 	self.camera:drawPlayer(self, debugmode)

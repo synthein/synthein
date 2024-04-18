@@ -125,9 +125,12 @@ function Selection:released(cursorX, cursorY)
 	end
 end
 
+function Selection:isBuildingOnStructure()
+	return self.build and self.build.structure
+end
+
 function Selection:whenBuildingOnStructure(func)
 	table.insert(self.buildingOnStructureListeners, func)
-	-- return self.build and self.build.structure
 end
 
 function Selection:signalBuildingOnStructure()

@@ -37,13 +37,13 @@ function Hud:keypressed(key)
 end
 
 function Hud:cursorpressed(cursor, control)
-print("hud cursor control")
-	--[[if self.selectedMenu then
+	--TODO checking for which feature the mouse is over before passing on the function call.
+	if self.selectedMenu then
 		local formationIndex = self.formationSelector:pressed(control)
 		if formationIndex and formationIndex ~= 0 then
 			self.command.activeFormation = self.formationList[formationIndex]
 		end
-	end]]
+	end
 end
 
 function Hud:pressed(control)

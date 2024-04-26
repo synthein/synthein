@@ -10,7 +10,7 @@ local FormationEditor = GameState()
 
 local buttonNames = {"Main Menu", "Quit"}
 FormationEditor.menu = Menu.create(250, 5, buttonNames)
-FormationEditor.partSelector = PartSelector.create(250, 5, {"Test"})
+FormationEditor.partSelector = PartSelector.create(250)
 
 local menuOpen = false
 local gridTable = GridTable()

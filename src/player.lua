@@ -1,4 +1,3 @@
-local Controls = require("controls")
 local Selection = require("selection")
 local PartSelector = require("widgets/partSelector")
 local PartRegistry = require("world/shipparts/partRegistry")
@@ -14,12 +13,12 @@ function Player.create(world, controls, ship, camera)
 	self.controls = controls
 	self.ship = ship
 	self.camera = camera
-	
-	
+
+
 	if ship then
 		self.camera.body = ship.body
-		self.selected = Selection.create(world, self.ship.corePart:getTeam(), self.camera)
-		
+		self.selected = Selection.create(world, self.ship.corePart:getTeam())
+
 		local corePart = ship.corePart
 		if corePart then
 			self.camera.hud:setCommand(corePart:getCommand())
@@ -30,7 +29,7 @@ function Player.create(world, controls, ship, camera)
 	self.menuOpen = false
 	self.closeMenu = false
 	self.openMenu = false
-	self.partSelector = PartSelector.create(250, 5, {"Test"})
+	self.partSelector = PartSelector.create(250)
 
 	self.selection = nil
 	self.cancelKeyDown = false

@@ -24,6 +24,10 @@ function Player.create(world, controls, ship, camera)
 			self.camera:setTarget(self.selected.structure.body)
 		end)
 
+		self.selected:whenDoneBuildingOnStructure(function()
+			self.camera:setTarget(self.ship.body)
+		end)
+
 		local corePart = ship.corePart
 		if corePart then
 			self.camera.hud:setCommand(corePart:getCommand())
@@ -149,10 +153,6 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:draw(debugmode)
-	-- if self.ship and not self.selected:isBuildingOnStructure() then
-	-- 	self.camera:setTarget(self.ship.body)
-	-- end
-
 	self.camera:drawPlayer(self, debugmode)
 end
 

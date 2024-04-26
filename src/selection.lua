@@ -20,6 +20,7 @@ function Selection.create(world, team)
 	self.assign = nil
 
 	self.buildingOnStructureListeners = {}
+	self.doneBuildingOnStructureListeners = {}
 
 	return self
 end
@@ -99,6 +100,7 @@ function Selection:released(cursorX, cursorY)
 					build:setSide(partSide)
 					if build.mode == 5 then
 						self.build = nil
+						self:signalDoneBuildingOnStructure()
 					end
 				else
 					self.build = nil
@@ -135,6 +137,16 @@ end
 
 function Selection:signalBuildingOnStructure()
 	for _, func in ipairs(self.buildingOnStructureListeners) do
+		func()
+	end
+end
+
+function Selection:whenDoneBuildingOnStructure(func)
+	table.insert(self.doneBuildingOnStructureListeners, func)
+end
+
+function Selection:signalDoneBuildingOnStructure()
+	for _, func in ipairs(self.doneBuildingOnStructureListeners) do
 		func()
 	end
 end

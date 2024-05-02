@@ -97,8 +97,25 @@ end
 
 function InGame.cursorpressed(cursor, control)
 	local player = players[control.player]
-	if player then
-		player:cursorpressed(cursor, control, debugmode.on)
+	
+	
+	if menuOpen == "Pause" then
+		if control.menu == "cancel" then
+			menuOpen = nil
+		elseif control.menu == "confirm" then
+			local menuAction = menu:pressed(cursor.x, cursor.y)
+			if menuAction then
+				pauseMenuAction(menuAction)
+			end
+		end
+	elseif menuOpen == "Save" then
+		if control.menu == "cancel" then
+			menuOpen = nil
+		end
+	else
+		if player then
+			player:cursorpressed(cursor, control, debugmode.on)
+		end
 	end
 end
 
@@ -122,14 +139,16 @@ function InGame.pressed(control)
 			end
 		end
 	elseif menuOpen == "Save" then
-		if key == "return" then
+		if control.menu == "cancel" then
+			menuOpen = nil
+		elseif control.menu == "backspace" then
+			saveMenu:keypressed("backspace")
+		elseif control.menu == "confirm" then
 			local ok, message = saveMenu:saveFile(SceneParser.saveScene(world))
 			if not ok then
 				log.error("Failed to save the game: " .. message)
 			end
 			menuOpen = false
-		else
-			saveMenu:keypressed(key)
 		end
 	else
 		if control.ship == "gameMenu" then

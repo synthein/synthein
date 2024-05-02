@@ -39,45 +39,33 @@ function PartSelector:getButtonAt(x, y)
 	end
 end
 
-function PartSelector:update(dt)
+--[[
+
+function ShipEditor.pressed(control)
 end
 
-function PartSelector:draw()
-	love.graphics.push("all")
-	local x = love.graphics.getWidth() / 2 - width / 2
-	local y = self.y
+function ShipEditor.released(control)
+end
 
-	love.graphics.setColor(0.8, 0.8, 0.8)
-	love.graphics.rectangle(
-		"fill",
-		x-border, y-border,
-		width + border*2, height + border*2)
+function .mousemoved(cursor, control)
+end
 
-	local stencilFunction = function()
-		love.graphics.rectangle(
-			"fill",
-			x-border, y-border,
-			width + border*2, height + border*2)
-	end
+function .wheelmoved(cursor, control)
+end
 
-	love.graphics.stencil(stencilFunction, "replace", 1)
-    love.graphics.setStencilTest("greater", 0)
+function .gamepadpressed(joystick, button)
+end
 
-	for i, k in ipairs(PartRegistry.noncoreParts) do
-		im = i-1
-		imageX = im % columns
-		imageY = (im - imageX) / columns
-		imageX = imageX * 30 + x
-		imageY = imageY * 30 + y
+function .gamepadreleased(joystick, button)
+end
 
-		love.graphics.setColor(1, 1, 1)
-		if i == self.selectedButton then
-			love.graphics.rectangle("fill", imageX + 3, imageY + 3, 24, 24)
-		end
-		love.graphics.draw(PartRegistry.partsList[PartRegistry.noncoreParts[i]].image, imageX + 5, imageY + 5)
-	end
+function .joystickpressed(joystick, button)
+end
 
-	love.graphics.pop()
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
 end
 
 function PartSelector:keypressed(key)
@@ -117,6 +105,49 @@ function PartSelector:pressed(x, y)
 	if index then
 		return PartRegistry.noncoreParts[index]
 	end
+end
+
+--]]
+
+function PartSelector:update(dt)
+end
+
+function PartSelector:draw()
+	love.graphics.push("all")
+	local x = love.graphics.getWidth() / 2 - width / 2
+	local y = self.y
+
+	love.graphics.setColor(0.8, 0.8, 0.8)
+	love.graphics.rectangle(
+		"fill",
+		x-border, y-border,
+		width + border*2, height + border*2)
+
+	local stencilFunction = function()
+		love.graphics.rectangle(
+			"fill",
+			x-border, y-border,
+			width + border*2, height + border*2)
+	end
+
+	love.graphics.stencil(stencilFunction, "replace", 1)
+    love.graphics.setStencilTest("greater", 0)
+
+	for i, k in ipairs(PartRegistry.noncoreParts) do
+		im = i-1
+		imageX = im % columns
+		imageY = (im - imageX) / columns
+		imageX = imageX * 30 + x
+		imageY = imageY * 30 + y
+
+		love.graphics.setColor(1, 1, 1)
+		if i == self.selectedButton then
+			love.graphics.rectangle("fill", imageX + 3, imageY + 3, 24, 24)
+		end
+		love.graphics.draw(PartRegistry.partsList[PartRegistry.noncoreParts[i]].image, imageX + 5, imageY + 5)
+	end
+
+	love.graphics.pop()
 end
 
 return PartSelector

@@ -216,6 +216,7 @@ function Controls.loadDefaultMap()
 end
 
 function Controls.lookupKey(key)
+	
 	return Controls.map.keyboard[key]
 end
 

@@ -104,32 +104,44 @@ function love.keypressed(key)
 	if key == "f11" then love.window.setFullscreen(not love.window.getFullscreen(), "desktop") end
 
 	local control = Controls.lookupKey(key)
-	state.pressed(control)
+	if control then
+		state.pressed(control)
+	end
 end
 
 function love.keyreleased()
 	local control = Controls.lookupKey(key)
-	state.released(control)
+	if control then
+		state.released(control)
+	end
 end
 
 function love.mousepressed(x, y, button)
 	local control = Controls.lookupMouseButton(button)
-	state.cursorpressed({x = x, y = y}, control)
+	if control then
+		state.cursorpressed({x = x, y = y}, control)
+	end
 end
 
 function love.mousereleased(x, y, button)
 	local control = Controls.lookupMouseButton(button)
-	state.cursorreleased(cursor, control)
+	if control then
+		state.cursorreleased(cursor, control)
+	end
 end
 
 function love.mousemoved(x, y)
 	local control = Controls.lookupMouseCursor()
-	state.mousemoved({x = x, y = y}, control)
+	if control then
+		state.mousemoved({x = x, y = y}, control)
+	end
 end
 
 function love.wheelmoved(x, y)
 	local control = Controls.lookupMouseWheel()
-	state.wheelmoved({x, y}, control)
+	if control then
+		state.wheelmoved({x, y}, control)
+	end
 end
 
 function love.gamepadpressed(joystick, button)
@@ -146,14 +158,18 @@ end
 
 function love.joystickpressed(joystick, button)
 	local control = Controls.lookupJoystickButton(joystick, button)
-	state.pressed(control)
+	if control then
+		state.pressed(control)
+	end
 
 	state.joystickpressed(joystick, button)
 end
 
 function love.joystickreleased(joystick, button)
 	local control = Controls.lookupJoystickButton(joystick, button)
-	state.released(control)
+	if control then
+		state.released(control)
+	end
 
 	state.joystickreleased(joystick, button)
 end

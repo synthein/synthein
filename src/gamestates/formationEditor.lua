@@ -10,7 +10,9 @@ local FormationEditor = GameState()
 
 local buttonNames = {"Main Menu", "Quit"}
 FormationEditor.menu = Menu.create(250, 5, buttonNames)
-FormationEditor.partSelector = PartSelector.create(250)
+
+--TODO replace with ship selector
+--FormationEditor.partSelector = PartSelector.create(250)
 
 local menuOpen = false
 local gridTable = GridTable()
@@ -66,81 +68,54 @@ function FormationEditor.pressed(control)
 			elseif button == "Quit" then
 				love.event.quit()
 			end
-		elseif menuOpen == "Parts" then
-			if controls.ship == "playerMenu" then
+		--TODO replace with ship selector
+		--[[elseif menuOpen == "Parts" then
+			if control.editor == "pallet" then
 				menuOpen = false
 			end
 			local button = FormationEditor.partSelector:keypressed(key)
 			if button then
 				menuOpen = false
-			end
+			end]]
 		end
 		return
 	else
-		if controls.ship == "gameMenu" then
+		if control.editor == "gameMenu" then
 			menuOpen = "State"
-		elseif controls.ship == "playerMenu" then
-			menuOpen = "Parts"
-		elseif controls.ship == "forward" then
+		elseif control.editor == "pallet" then
+			--TODO replace with ship selector
+			--menuOpen = "Parts"
+		elseif control.editor == "up" then
 			focusY = focusY - 1
-		elseif controls.ship == "backward" then
+		elseif control.editor == "down" then
 			focusY = focusY + 1
-		elseif controls.ship == "left" then
+		elseif control.editor == "left" then
 			focusX = focusX - 1
-		elseif controls.ship == "right" then
+		elseif control.editor == "right" then
 			focusX = focusX + 1
-		elseif controls.ship == "shoot" then
-		elseif controls.ship ==  then
-			
---[[
-		w      = {player = 0, ship = "forward",      menu = "up"    },
-		a      = {player = 0, ship = "backward",     menu = "down"  },
-		s      = {player = 0, ship = "left",         menu = "left"  },
-		d      = {player = 0, ship = "right",        menu = "right" },
-		q      = {player = 0, ship = "strafeLeft",   menu = nil     },
-		e      = {player = 0, ship = "strafeRight",  menu = nil     },
-		i      = {player = 0, ship = "playerMenu",   menu = nil     },
-		space  = {player = 0, ship = "shoot",        menu = nil     },
-		escape = {player = 0, ship = "gameMenu",     menu = "cancel"},
-		
-		
-
-	if key == "escape" then
-		menuOpen = "State"
-	elseif key == "f" then
-		menuOpen = "Parts"
-	elseif key == "w" then
-		focusY = focusY + 1
-	elseif key == "a" then
-		focusX = focusX - 1
-	elseif key == "s" then
-		focusY = focusY + 1
-	elseif key == "d" then
-		focusX = focusX - 1
-	elseif key == "q" then
-		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX, -focusY)
-			if t then
-				t[1] = (t[1] + 3) % 4
+		elseif control.editor == "ccw" then
+			if focusX ~= 0 or focusY ~= 0 then
+				local t = gridTable:index(focusX, -focusY)
+				if t then
+					t[1] = (t[1] + 3) % 4
+				end
+			end
+		elseif control.editor == "cw" then
+			if focusX ~= 0 or focusY ~= 0 then
+				local t = gridTable:index(focusX, -focusY)
+				if t then
+					t[1] = (t[1] + 1) % 4
+				end
+			end
+		elseif control.editor == "add" then
+			if focusX ~= 0 or focusY ~= 0 then
+				gridTable:index(focusX,  -focusY, {0, generateCanvas(simpleShip)})
+			end
+		elseif control.editor == "remove" then
+			if focusX ~= 0 or focusY ~= 0 then
+				gridTable:index(focusX,  -focusY, false, true)
 			end
 		end
-	elseif key == "e" then
-		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX, -focusY)
-			if t then
-				t[1] = (t[1] + 1) % 4
-			end
-		end
-	elseif key == "space" then
-		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(focusX,  -focusY, {0, generateCanvas(simpleShip)})
-		end
-	elseif key == "r" then
-		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(focusX,  -focusY, false, true)
-		end
-	end
---]]
 	end
 end
 
@@ -171,73 +146,6 @@ function .textinput(key)
 end
 
 --]]
-function FormationEditor.keypressed(key)
-	if menuOpen then
-		if key == "escape" then
-			menuOpen = false
-		end
-
-		if menuOpen == "Parts" then
-			if key == "f" then
-				menuOpen = false
-			end
-		end
-
-		if menuOpen == "State" then
-			local button = FormationEditor.menu:keypressed(key)
-			button = buttonNames[button]
-
-			if button == "Main Menu" then
-				menuOpen = false
-				setGameState("MainMenu")
-			elseif button == "Quit" then
-				love.event.quit()
-			end
-		elseif menuOpen == "Parts" then
-			local button = FormationEditor.partSelector:keypressed(key)
-			if button then
-				menuOpen = false
-			end
-		end
-		return
-	end
-
-	if key == "escape" then
-		menuOpen = "State"
-	elseif key == "f" then
-		menuOpen = "Parts"
-	elseif key == "w" then
-		focusY = focusY + 1
-	elseif key == "a" then
-		focusX = focusX - 1
-	elseif key == "s" then
-		focusY = focusY + 1
-	elseif key == "d" then
-		focusX = focusX - 1
-	elseif key == "q" then
-		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX, -focusY)
-			if t then
-				t[1] = (t[1] + 3) % 4
-			end
-		end
-	elseif key == "e" then
-		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX, -focusY)
-			if t then
-				t[1] = (t[1] + 1) % 4
-			end
-		end
-	elseif key == "space" then
-		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(focusX,  -focusY, {0, generateCanvas(simpleShip)})
-		end
-	elseif key == "r" then
-		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(focusX,  -focusY, false, true)
-		end
-	end
-end
 
 function FormationEditor.update(dt)
 	FormationEditor.menu:update(dt)
@@ -270,8 +178,9 @@ function FormationEditor.draw()
 	love.graphics.setColor(1,1,1)
 	if menuOpen == "State" then
 		FormationEditor.menu:draw()
-	elseif menuOpen == "Parts" then
-		FormationEditor.partSelector:draw()
+	--elseif menuOpen == "Parts" then
+	--TODO replace with ship selector
+		--FormationEditor.partSelector:draw()
 	end
 end
 
@@ -289,12 +198,13 @@ function FormationEditor.mousepressed(x, y, mouseButton)
 			end
 		end
 
-	elseif menuOpen == "Parts" then
-		local part = FormationEditor.partSelector:pressed(x, y)
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
+		--[[local part = FormationEditor.partSelector:pressed(x, y)
 		if part then
 			menuOpen = false
 			selectedPart = part
-		end
+		end]]
 	else
 
 	end
@@ -303,7 +213,8 @@ end
 function FormationEditor.resize(w, h)
 	if menuOpen == "State" then
 		FormationEditor.menu:resize(w, h)
-	elseif menuOpen == "Parts" then
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
 	else
 	end
 end
@@ -311,8 +222,9 @@ end
 function FormationEditor.mousemoved(x, y)
 	if menuOpen == "State" then
 		FormationEditor.menu:mousemoved(x, y)
-	elseif menuOpen == "Parts" then
-		FormationEditor.partSelector:mousemoved(x, y)
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
+		--FormationEditor.partSelector:mousemoved(x, y)
 	else
 	end
 end
@@ -320,7 +232,8 @@ end
 function FormationEditor.wheelmoved(x, y)
 	if menuOpen == "State" then
 		FormationEditor.menu:wheelmoved(x, y)
-	elseif menuOpen == "Parts" then
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
 	else
 	end
 end

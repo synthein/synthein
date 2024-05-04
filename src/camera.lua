@@ -283,6 +283,14 @@ function Camera:drawWorldObjects(player, debugmode)
 	player.shieldPoints = player.camera:testPoints(testPointFunctions)
 end
 
+local function shortestPath(angle, newAngle)
+	local angleDiff = newAngle - angle
+	if angleDiff > math.pi then
+		angleDiff = angleDiff - 2*math.pi
+	end
+	return angle + angleDiff
+end
+
 function Camera:drawPlayer(player, debugmode)
 	local compassAngle = 0
 
@@ -294,7 +302,8 @@ function Camera:drawPlayer(player, debugmode)
 			self.gameOver = true
 		else
 			local newX, newY = body:getPosition()
-			local newAngle = player.isCameraAngleFixed and 0 or body:getAngle()
+			local newAngle = player.isCameraAngleFixed and 0 or body:getAngle() % (2*math.pi)
+			newAngle = shortestPath(self.angle, newAngle)
 			self.x = lume.lerp(self.x, newX, self.animationPercent)
 			self.y = lume.lerp(self.y, newY, self.animationPercent)
 			self.angle = lume.lerp(self.angle, newAngle, self.animationPercent)

@@ -10,7 +10,9 @@ local FormationEditor = GameState()
 
 local buttonNames = {"Main Menu", "Quit"}
 FormationEditor.menu = Menu.create(250, 5, buttonNames)
-FormationEditor.partSelector = PartSelector.create(250)
+
+--TODO replace with ship selector
+--FormationEditor.partSelector = PartSelector.create(250)
 
 local menuOpen = false
 local gridTable = GridTable()
@@ -44,6 +46,107 @@ end
 
 gridTable:index(0, 0, {0, generateCanvas(StructureParser.blueprintUnpack("p*\n"))})
 
+function FormationEditor.cursorpressed(cursor, control)
+end
+
+function FormationEditor.cursorreleased(cursor, control)
+end
+
+function FormationEditor.pressed(control)
+	if menuOpen then
+		if control.menu == "cancel" then
+			menuOpen = false
+		end
+
+		if menuOpen == "State" then
+			local button = FormationEditor.menu:keypressed(key)
+			button = buttonNames[button]
+
+			if button == "Main Menu" then
+				menuOpen = false
+				setGameState("MainMenu")
+			elseif button == "Quit" then
+				love.event.quit()
+			end
+		--TODO replace with ship selector
+		--[[elseif menuOpen == "Parts" then
+			if control.editor == "pallet" then
+				menuOpen = false
+			end
+			local button = FormationEditor.partSelector:keypressed(key)
+			if button then
+				menuOpen = false
+			end]]
+		end
+		return
+	else
+		if control.editor == "gameMenu" then
+			menuOpen = "State"
+		elseif control.editor == "pallet" then
+			--TODO replace with ship selector
+			--menuOpen = "Parts"
+		elseif control.editor == "up" then
+			focusY = focusY - 1
+		elseif control.editor == "down" then
+			focusY = focusY + 1
+		elseif control.editor == "left" then
+			focusX = focusX - 1
+		elseif control.editor == "right" then
+			focusX = focusX + 1
+		elseif control.editor == "ccw" then
+			if focusX ~= 0 or focusY ~= 0 then
+				local t = gridTable:index(focusX, -focusY)
+				if t then
+					t[1] = (t[1] + 3) % 4
+				end
+			end
+		elseif control.editor == "cw" then
+			if focusX ~= 0 or focusY ~= 0 then
+				local t = gridTable:index(focusX, -focusY)
+				if t then
+					t[1] = (t[1] + 1) % 4
+				end
+			end
+		elseif control.editor == "add" then
+			if focusX ~= 0 or focusY ~= 0 then
+				gridTable:index(focusX,  -focusY, {0, generateCanvas(simpleShip)})
+			end
+		elseif control.editor == "remove" then
+			if focusX ~= 0 or focusY ~= 0 then
+				gridTable:index(focusX,  -focusY, false, true)
+			end
+		end
+	end
+end
+
+function FormationEditor.released(control)
+end
+
+--[[
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+
+--]]
+
 function FormationEditor.update(dt)
 	FormationEditor.menu:update(dt)
 end
@@ -69,82 +172,15 @@ function FormationEditor.draw()
 		"qe: Rotate Ship\n" ..
 		"space: Add Ship\n" ..
 		"r: Remove Ship\n" ..
-		"f: Part Menu\n",
+		"i: Part Menu\n",
 		5, 5)
 
 	love.graphics.setColor(1,1,1)
 	if menuOpen == "State" then
 		FormationEditor.menu:draw()
-	elseif menuOpen == "Parts" then
-		FormationEditor.partSelector:draw()
-	end
-end
-
-function FormationEditor.keypressed(key)
-	if menuOpen then
-		if key == "escape" then
-			menuOpen = false
-		end
-
-		if menuOpen == "Parts" then
-			if key == "f" then
-				menuOpen = false
-			end
-		end
-
-		if menuOpen == "State" then
-			local button = FormationEditor.menu:keypressed(key)
-			button = buttonNames[button]
-
-			if button == "Main Menu" then
-				menuOpen = false
-				setGameState("MainMenu")
-			elseif button == "Quit" then
-				love.event.quit()
-			end
-		elseif menuOpen == "Parts" then
-			local button = FormationEditor.partSelector:keypressed(key)
-			if button then
-				menuOpen = false
-			end
-		end
-		return
-	end
-
-	if key == "escape" then
-		menuOpen = "State"
-	elseif key == "f" then
-		menuOpen = "Parts"
-	elseif key == "w" then
-		focusY = focusY + 1
-	elseif key == "a" then
-		focusX = focusX - 1
-	elseif key == "s" then
-		focusY = focusY + 1
-	elseif key == "d" then
-		focusX = focusX - 1
-	elseif key == "q" then
-		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX, -focusY)
-			if t then
-				t[1] = (t[1] + 3) % 4
-			end
-		end
-	elseif key == "e" then
-		if focusX ~= 0 or focusY ~= 0 then
-			local t = gridTable:index(focusX, -focusY)
-			if t then
-				t[1] = (t[1] + 1) % 4
-			end
-		end
-	elseif key == "space" then
-		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(focusX,  -focusY, {0, generateCanvas(simpleShip)})
-		end
-	elseif key == "r" then
-		if focusX ~= 0 or focusY ~= 0 then
-			gridTable:index(focusX,  -focusY, false, true)
-		end
+	--elseif menuOpen == "Parts" then
+	--TODO replace with ship selector
+		--FormationEditor.partSelector:draw()
 	end
 end
 
@@ -162,12 +198,13 @@ function FormationEditor.mousepressed(x, y, mouseButton)
 			end
 		end
 
-	elseif menuOpen == "Parts" then
-		local part = FormationEditor.partSelector:pressed(x, y)
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
+		--[[local part = FormationEditor.partSelector:pressed(x, y)
 		if part then
 			menuOpen = false
 			selectedPart = part
-		end
+		end]]
 	else
 
 	end
@@ -176,7 +213,8 @@ end
 function FormationEditor.resize(w, h)
 	if menuOpen == "State" then
 		FormationEditor.menu:resize(w, h)
-	elseif menuOpen == "Parts" then
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
 	else
 	end
 end
@@ -184,8 +222,9 @@ end
 function FormationEditor.mousemoved(x, y)
 	if menuOpen == "State" then
 		FormationEditor.menu:mousemoved(x, y)
-	elseif menuOpen == "Parts" then
-		FormationEditor.partSelector:mousemoved(x, y)
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
+		--FormationEditor.partSelector:mousemoved(x, y)
 	else
 	end
 end
@@ -193,7 +232,8 @@ end
 function FormationEditor.wheelmoved(x, y)
 	if menuOpen == "State" then
 		FormationEditor.menu:wheelmoved(x, y)
-	elseif menuOpen == "Parts" then
+	--elseif menuOpen == "Parts" then
+		--TODO replace with ship selector
 	else
 	end
 end

@@ -30,16 +30,25 @@ end
 function Hud:keypressed(key)
 	if self.selectedMenu == "formation" then
 		local formationIndex = self.formationSelector:pressed(key)
-		print("formationIndex ", formationIndex)
 		if formationIndex then
 			self.command.activeFormation = self.formationList[formationIndex]
 		end
 	end
 end
 
-function Hud:pressed(order)
+function Hud:cursorpressed(cursor, control)
+	--TODO checking for which feature the mouse is over before passing on the function call.
 	if self.selectedMenu then
-		local formationIndex = self.formationSelector:pressed(order)
+		local formationIndex = self.formationSelector:pressed(control)
+		if formationIndex and formationIndex ~= 0 then
+			self.command.activeFormation = self.formationList[formationIndex]
+		end
+	end
+end
+
+function Hud:pressed(control)
+	if self.selectedMenu then
+		local formationIndex = self.formationSelector:pressed(control)
 		if formationIndex and formationIndex ~= 0 then
 			self.command.activeFormation = self.formationList[formationIndex]
 		end

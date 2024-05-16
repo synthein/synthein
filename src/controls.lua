@@ -169,48 +169,58 @@ Controls.map = {mouse = {}, keyboard = {}, joysticks = {}}
 
 function Controls.loadDefaultMap()
 	for i = 1,love.joystick.getJoystickCount() do
+		local player = i + 1
 		local joystickMap = {}
 		joystickMap.buttons = {
-			dpup          = {player = 0, ship = "forward",     menu = "up"     },
-			dpdown        = {player = 0, ship = "backward",    menu = "down"   },
-			dpleft        = {player = 0, ship = "left",        menu = "left"   },
-			dpright       = {player = 0, ship = "right",       menu = "right"  },
-			leftshoulder  = {player = 0, ship = "strafeLeft",  menu = nil      },
-			rightshoulder = {player = 0, ship = "strafeRight", menu = nil      },
-			a             = {player = 0, ship = "shoot",       menu = "confirm"},
-			b             = {player = 0, ship = "build",       menu = "cancel" },
-			x             = {player = 0, ship = "destroy",     menu = nil      },
-			y             = {player = 0, ship = "playerMenu",  menu = "cancel" },
-			start         = {player = 0, ship = "gameMenu",    menu = "cancel" },
+			dpup          = {player = player, ship = "forward",     editor = "up",        menu = "up"     },
+			dpdown        = {player = player, ship = "backward",    editor = "down",      menu = "down"   },
+			dpleft        = {player = player, ship = "left",        editor = "left",      menu = "left"   },
+			dpright       = {player = player, ship = "right",       editor = "right",     menu = "right"  },
+			leftshoulder  = {player = player, ship = "strafeLeft",  editor = "ccw",       menu = nil      },
+			rightshoulder = {player = player, ship = "strafeRight", editor = "cw",        menu = nil      },
+			a             = {player = player, ship = "shoot",       editor = "add",       menu = "confirm"},
+			b             = {player = player, ship = "build",       editor = "remove",    menu = "cancel" },
+			x             = {player = player, ship = "destroy",     editor = "pallet",    menu = nil      },
+			y             = {player = player, ship = "playerMenu",  editor = nil,         menu = "cancel" },
+			start         = {player = player, ship = "gameMenu",    editor = "stateMenu", menu = "cancel" },
 		}
 		
 		joystickMap.axis = {
-			left = {player = 0, ship = "cursor", menu = nil}
+			left = {player = player, ship = "cursor", editor = nil, menu = nil}
 		}
 		
 		table.insert(Controls.map.joysticks, joystickMap)
 	end
 	
 	Controls.map.keyboard = {
-		w      = {player = 0, ship = "forward",      menu = "up"    },
-		a      = {player = 0, ship = "backward",     menu = "down"  },
-		s      = {player = 0, ship = "left",         menu = "left"  },
-		d      = {player = 0, ship = "right",        menu = "right" },
-		q      = {player = 0, ship = "strafeLeft",   menu = nil     },
-		e      = {player = 0, ship = "strafeRight",  menu = nil     },
-		e      = {player = 0, ship = "strafeRight",  menu = nil     },
-		i      = {player = 0, ship = "playerMenu",   menu = nil     },
-		space  = {player = 0, ship = "shoot",        menu = nil     },
-		escape = {player = 0, ship = "gameMenu",     menu = "cancel"},
+		w         = {player = 1, ship = "forward",      editor = "up",        menu = "up"       },
+		s         = {player = 1, ship = "backward",     editor = "down",      menu = "down"     },
+		a         = {player = 1, ship = "left",         editor = "left",      menu = "left"     },
+		d         = {player = 1, ship = "right",        editor = "right",     menu = "right"    },
+		q         = {player = 1, ship = "strafeLeft",   editor = "ccw",       menu = nil        },
+		e         = {player = 1, ship = "strafeRight",  editor = "cw",        menu = nil        },
+		i         = {player = 1, ship = "playerMenu",   editor = nil,         menu = nil        },
+		f         = {player = 1, ship = nil,            editor = "pallet",    menu = nil        },
+		r         = {player = 1, ship = nil,            editor = "remove",    menu = nil        },
+		h         = {player = 1, ship = "health",       editor = nil,         menu = nil        },
+		p         = {player = 1, ship = "pause",        editor = nil,         menu = nil        },
+		f5        = {player = 1, ship = "cameraRotate", editor = nil,         menu = nil        },
+		space     = {player = 1, ship = "shoot",        editor = "add",       menu = nil        },
+		escape    = {player = 1, ship = "gameMenu",     editor = "stateMenu", menu = "cancel"   },
+		f11       = {player = 1, ship = "fullsceen",    editor = nil,         menu = nil        },
+		f12       = {player = 1, ship = "debug",        editor = nil,         menu = nil        },
+		backspace = {player = 1, ship = nil,            editor = nil,         menu = "backspace"},
 	}
+	
+	Controls.map.keyboard["return"] = {player = 1, ship = nil, editor = nil, menu = "confirm"}
 	
 	Controls.map.mouse = {
 		buttons = {
-			{player = 0, ship = "build",    menu = "confirm"},
-			{player = 0, ship = "destroy",  menu = nil      },
+			{player = 1, ship = "build",    editor = "add",    menu = "confirm"},
+			{player = 1, ship = "destroy",  editor = "remove", menu = nil      },
 		},
-		cursor = {player = 0, ship = "cursor",  menu = nil},
-		wheel = {player = 0, ship = "zoom",  menu = "scroll"}
+		cursor = {player = 1, ship = "cursor",  editor = "cursor", menu = nil},
+		wheel = {player = 1, ship = "zoom",     editor = "zoom",   menu = "scroll"}
 	}
 end
 

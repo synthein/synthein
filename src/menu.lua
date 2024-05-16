@@ -146,22 +146,22 @@ function Menu:resize(_, h) --(w, h)
 	self.visibleHeight = h - self.y
 end
 
-function Menu:keypressed(key)
-	if key == "up" then
+function Menu:keypressed(control)
+	if control.menu == "up" then
 		if self.selectedButton == nil then
 			self.selectedButton = #self.buttons
 		elseif self.selectedButton > 1 then
 			self.selectedButton = self.selectedButton - 1
 		end
-	elseif key == "down" then
+	elseif control.menu == "down" then
 		if self.selectedButton == nil then
 			self.selectedButton = 1
 		elseif self.selectedButton < #self.buttons then
 			self.selectedButton = self.selectedButton + 1
 		end
-	elseif key == "return" then
-		return self.selectedButton
-	elseif key == "escape" then
+	elseif control.menu == "confirm" then
+		return self.buttons[self.selectedButton]
+	elseif control.menu == "cancel" then
 		return nil, true
 	end
 end

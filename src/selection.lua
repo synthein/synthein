@@ -25,15 +25,15 @@ function Selection.create(world, team)
 	return self
 end
 
-function Selection:pressed(cursorX, cursorY, order)
-	local structure = self.world:getObject(cursorX, cursorY)
+function Selection:cursorpressed(cursor, control)
+	local structure = self.world:getObject(cursor.x, cursor.y)
 	local part
-	if structure then part = structure:findPart(cursorX, cursorY) end
+	if structure then part = structure:findPart(cursor.x, cursor.y) end
 	if structure and structure.type == "structure" and part then
 		local build = self.build
 		local team = structure.body:getUserData().team
 		if build then
-			if order == "build" then
+			if control.ship  == "build" then
 				if build.mode == 3 then
 					if team == 0 or team == self.team then
 						self.structure = structure
@@ -46,7 +46,7 @@ function Selection:pressed(cursorX, cursorY, order)
 						self:signalBuildingOnStructure()
 					end
 				end
-			elseif order == "destroy" then
+			elseif control.ship == "destroy" then
 				self.structure = nil
 				self.part = nil
 				self.build = nil
@@ -55,7 +55,7 @@ function Selection:pressed(cursorX, cursorY, order)
 			self.assign.leader = structure
 			self.assign = nil
 		else
-			if order == "build" then
+			if control.ship == "build" then
 				if team ~= 0 then
 					local corePart = structure.corePart
 					if corePart == part then
@@ -70,7 +70,7 @@ function Selection:pressed(cursorX, cursorY, order)
 					self.structure = structure
 					self.part = part
 				end
-			elseif order == "destroy" then
+			elseif control.ship == "destroy" then
 				local corePart = structure.corePart
 				if team == 0 or (team == self.team and part ~= corePart) then
 					structure:disconnectPart(part.location)
@@ -79,7 +79,7 @@ function Selection:pressed(cursorX, cursorY, order)
 		end
 
 	else
-		if order == "destroy" then
+		if control.ship == "destroy" then
 			self.structure = nil
 			self.part = nil
 			self.build = nil
@@ -87,12 +87,12 @@ function Selection:pressed(cursorX, cursorY, order)
 	end
 end
 
-function Selection:released(cursorX, cursorY)
+function Selection:cursorreleased(cursor, control)
 	local structure = self.structure
 	local part = self.part
 	if structure and part then
 		local l = part.location
-		local partSide, withinPart = StructureMath.getPartSide(structure, l, cursorX, cursorY)
+		local partSide, withinPart = StructureMath.getPartSide(structure, l, cursor.x, cursor.y)
 		local build = self.build
 		if not withinPart then
 			if build then
@@ -109,7 +109,7 @@ function Selection:released(cursorX, cursorY)
 				local body = structure.body
 				local x, y = body:getWorldPoints(l[1], l[2])
 				local strength = part:getMenu()
-				local newAngle = vector.angle(cursorX - x, cursorY - y)
+				local newAngle = vector.angle(cursor.x - x, cursor.y - y)
 				local index = CircleMenu.angleToIndex(newAngle, #strength)
 				local option = self.part:runMenu(index, body)
 				if option == "assign" then

@@ -25,13 +25,12 @@ local pauseMenu = {}
 pauseMenu.buttons = {"Save", "Main Menu", "Quit"}
 
 local function pauseMenuAction(selection, back)
-	local action = pauseMenu.buttons[selection]
-	if action == "Save" then
+	if selection == "Save" then
 		menuOpen = "Save"
-	elseif action == "Main Menu" then
+	elseif selection == "Main Menu" then
 		menuOpen = false
 		setGameState("MainMenu")
-	elseif action == "Quit" then
+	elseif selection == "Quit" then
 		love.event.quit()
 	end
 
@@ -56,6 +55,9 @@ function InGame.load(scene, playerHostility, saveName)
 	world = World(playerHostility)
 
 	screen = Screen()
+	
+	--In case a controller was plugged in after love was started.
+	Controls.loadDefaultMap()
 
 	local playerShips, maxTeam = SceneParser.loadScene(scene, world, {0,0,0,0,0,0})
 	-- TODO: Instead of creating players here, we should create one
@@ -96,6 +98,116 @@ function InGame.load(scene, playerHostility, saveName)
 	})
 end
 
+function InGame.cursorpressed(cursor, control)
+	local player = players[control.player]
+	
+	
+	if menuOpen == "Pause" then
+		if control.menu == "cancel" then
+			menuOpen = nil
+		elseif control.menu == "confirm" then
+			local menuAction = menu:pressed(cursor.x, cursor.y)
+			if menuAction then
+				pauseMenuAction(menuAction)
+			end
+		end
+	elseif menuOpen == "Save" then
+		if control.menu == "cancel" then
+			menuOpen = nil
+		end
+	else
+		if player then
+			player:cursorpressed(cursor, control, debugmode.on)
+		end
+	end
+end
+
+function InGame.cursorreleased(cursor, control)
+	local player = players[control.player]
+	if player then
+		player:cursorreleased(cursor, control)
+	end
+end
+
+function InGame.pressed(control)
+	if control.ship == "debug" then debugmode:toggle() end
+	
+	if menuOpen == "Pause" then
+		if control.menu == "cancel" then
+			menuOpen = nil
+		else
+			local menuAction = menu:keypressed(control)
+			if menuAction then
+				pauseMenuAction(menuAction)
+			end
+		end
+	elseif menuOpen == "Save" then
+		if control.menu == "cancel" then
+			menuOpen = nil
+		elseif control.menu == "backspace" then
+			saveMenu:keypressed("backspace")
+		elseif control.menu == "confirm" then
+			local ok, message = saveMenu:saveFile(SceneParser.saveScene(world))
+			if not ok then
+				log.error("Failed to save the game: " .. message)
+			end
+			menuOpen = false
+		end
+	else
+		if control.ship == "gameMenu" then
+			menuOpen = "Pause"
+		elseif control.ship == "pause" then
+			paused = not paused
+		end
+		
+		local player = players[control.player]
+		if player then
+			player:pressed(control, debugmode.on) -- TODO Anylize old call player:buttonpressed(love.keyboard, key, debugmode.on)
+		end
+		
+		if debugmode.on then
+			debugmode:keyboard(key)
+		end
+	end
+end
+
+function InGame.released(control)
+end
+
+--[[
+function .cursorpressed(cursor, control)
+end
+
+function .cursorreleased(cursor, control)
+end
+
+function .pressed(control)
+end
+
+function .released(control)
+end
+
+function .mousemoved(cursor, control)
+end
+
+function .wheelmoved(cursor, control)
+end
+
+function .gamepadpressed(joystick, button)
+end
+
+function .gamepadreleased(joystick, button)
+end
+
+function .joystickpressed(joystick, button)
+end
+
+function .joystickreleased(joystick, button)
+end
+
+function .textinput(key)
+end
+--]]
 function InGame.resize(w, h)
 	screen:arrange(w, h)
 end
@@ -104,38 +216,6 @@ function InGame.textinput(key)
 	if menuOpen == "Save" then
 		saveMenu:textinput(key)
 	end
-end
-
-function InGame.keypressed(key)
-	if key == "f12" then debugmode:toggle() end
-
-	if menuOpen == "Pause" then
-		pauseMenuAction(menu:keypressed(key))
-	elseif menuOpen == "Save" then
-		if key == "return" then
-			local ok, message = saveMenu:saveFile(SceneParser.saveScene(world))
-			if not ok then
-				log.error("Failed to save the game: " .. message)
-			end
-			menuOpen = false
-		else
-			saveMenu:keypressed(key)
-		end
-	else
-		for _, player in ipairs(players) do
-			player:buttonpressed(love.keyboard, key, debugmode.on)
-		end
-
-		if key == "p" or key == "pause" then
-			paused = not paused
-		end
-
-		if debugmode.on then
-			debugmode:keyboard(key)
-		end
-	end
-
-	return InGame
 end
 
 function InGame.keyreleased(key)
@@ -172,8 +252,8 @@ function InGame.mousereleased(x, y, button)
 	end
 end
 
-function InGame.mousemoved(x, y)
-	menu:mousemoved(x, y)
+function InGame.mousemoved(cursor)
+	menu:mousemoved(cursor.x, cursor.y)
 end
 
 function InGame.joystickreleased(joystick, button)
@@ -192,11 +272,11 @@ function InGame.gamepadpressed(joystick, button)
 	end
 end
 
-function InGame.wheelmoved(x, y)
+function InGame.wheelmoved(travel, control)
 	for _, player in ipairs(players) do
-		if y > 0 then
+		if travel.y > 0 then
 			player:buttonpressed(love.mouse, "yWheel")
-		elseif y < 0 then
+		elseif travel.y < 0 then
 			player:buttonpressed(love.mouse, "-yWheel")
 		end
 	end

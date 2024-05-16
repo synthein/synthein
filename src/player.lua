@@ -151,6 +151,10 @@ function Player:buttonreleased(source, button)
 	end
 end
 
+function Player:update(dt)
+	self.camera:update(dt)
+end
+
 function Player:draw(debugmode)
 	self.camera:drawPlayer(self, debugmode)
 end

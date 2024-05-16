@@ -16,7 +16,8 @@ function Camera.create()
 	self.x = 0
 	self.y = 0
 	self.angle = 0
-	self.animationPercent = 1
+	self.animationElapsed = 10
+	self.animationDuration = 10
 	self.zoomInt = 8
 	self:adjustZoom(0)
 	self.scissor = {x = 0, y = 0, width = 0, height = 0}
@@ -32,7 +33,7 @@ end
 
 function Camera:setTarget(target)
 	self.body = target
-	self.animationPercent = 0
+	self.animationElapsed = 0
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
@@ -291,6 +292,14 @@ local function shortestPath(angle, newAngle)
 	return angle + angleDiff
 end
 
+function Camera:update(dt)
+	if self.animationElapsed < self.animationDuration then
+		self.animationElapsed = self.animationElapsed + dt
+	else
+		self.animationElapsed = self.animationDuration
+	end
+end
+
 function Camera:drawPlayer(player, debugmode)
 	local compassAngle = 0
 
@@ -303,11 +312,11 @@ function Camera:drawPlayer(player, debugmode)
 		else
 			local newX, newY = body:getPosition()
 			local newAngle = player.isCameraAngleFixed and 0 or body:getAngle() % (2*math.pi)
+			local animationPercent = self.animationElapsed/self.animationDuration
 			newAngle = shortestPath(self.angle, newAngle)
-			self.x = lume.lerp(self.x, newX, self.animationPercent)
-			self.y = lume.lerp(self.y, newY, self.animationPercent)
-			self.angle = lume.lerp(self.angle, newAngle, self.animationPercent)
-			self.animationPercent = self.animationPercent + 0.1
+			self.x = lume.lerp(self.x, newX, animationPercent)
+			self.y = lume.lerp(self.y, newY, animationPercent)
+			self.angle = lume.lerp(self.angle, newAngle, animationPercent)
 
 			local point = {0,0}
 

@@ -215,6 +215,7 @@ function InGame.update(dt)
 		player.menuOpen = menuOpen
 
 		player:handleInput()
+		player:update(dt)
 	end
 
 	if closeMenu then

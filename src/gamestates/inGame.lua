@@ -55,6 +55,9 @@ function InGame.load(scene, playerHostility, saveName)
 	world = World(playerHostility)
 
 	screen = Screen()
+	
+	--In case a controller was plugged in after love was started.
+	Controls.loadDefaultMap()
 
 	local playerShips, maxTeam = SceneParser.loadScene(scene, world, {0,0,0,0,0,0})
 	-- TODO: Instead of creating players here, we should create one

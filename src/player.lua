@@ -57,7 +57,7 @@ function Player:handleInput()
 
 	cursorX, cursorY = controls:getCursorPosition(cursorX, cursorY)
 	cursorX, cursorY = self.camera:limitCursor(cursorX, cursorY)
-	self.partSelector:mousemoved(cursorX, cursorY)
+	self.partSelector:mousemoved({x = cursorX, y = cursorY})
 
 	self.cursorX, self.cursorY = cursorX, cursorY
 
@@ -73,9 +73,79 @@ function Player:handleInput()
 	end
 end
 
+function Player:cursorpressed(cursor, control, debugmodeEnabled)
+	if self.menu then
+		if control.menu == "cancel" then
+			self.menu = nil
+		else
+			
+		end
+		
+	else
+		if control.ship == "health" then
+			self.showHealth = not self.showHealth
+		elseif control.ship == "cameraRotate" then
+			self.isCameraAngleFixed = not self.isCameraAngleFixed
+			
+		elseif control.ship == "build" or control.ship == "destroy" then
+				local cursorX, cursorY = self.camera:getWorldCoords(
+					self.cursorX,
+					self.cursorY)
+				self.selected:cursorpressed({x = cursorX, y = cursorY}, control)
+
+		end
+		
+		self.camera.hud:cursorpressed(cursor, control)
+	end
+end
+
+function Player:cursorreleased(cursor, control, debugmodeEnabled)
+	if self.menu then
+	else
+		if control.ship == "build" or control.ship == "destroy" then
+				local cursorX, cursorY = self.camera:getWorldCoords(
+					self.cursorX,
+					self.cursorY)
+				self.selected:cursorreleased({x = cursorX, y = cursorY}, control)
+
+		end
+	end
+end
+
+function Player:pressed(control, debugmodeEnabled)
+print("player pressed", control.ship)
+	if self.menu then
+		if control.menu == "cancel" or  control.ship == "playerMenu" then
+			self.menu = nil
+		elseif control.menu == "confirm" then
+			local part = self.partSelector:pressed(control)
+			if part then
+				local camera = self.camera
+				self.world.info.create(
+					"structure",
+					{camera.x, camera.y + 5},
+					PartRegistry.createPart(part))
+			end
+			self.menu = nil
+		end
+	else
+		if control.ship then
+			if control.ship == "playerMenu" then
+				if debugmodeEnabled then
+					self.menu = true
+				end
+			elseif control.ship == "health" then
+				self.showHealth = not self.showHealth
+			elseif control.ship == "cameraRotate" then
+				self.isCameraAngleFixed = not self.isCameraAngleFixed
+			end
+		elseif control.menu then
+			self.camera.hud:pressed(control)
+		end
+	end
+end
+
 function Player:buttonpressed(source, button, debugmode)
-	if button == "h" then self.showHealth = not self.showHealth end
-	if button == "f5" then self.isCameraAngleFixed = not self.isCameraAngleFixed end
 
 	local menuButton = self.controls:test("menu", source, button)
 	local order = self.controls:test("pressed", source, button)

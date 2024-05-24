@@ -1,6 +1,7 @@
 local Hud = require("hud")
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
+local log = require("log")
 local mathext = require("syntheinrust").mathext
 local vector = require("vector")
 
@@ -315,6 +316,9 @@ function Camera:drawPlayer(player, debugmode)
 		end
 	end
 
+	local startTime, endTime, duration
+	startTime = love.timer.getTime( )
+	
 	local scissor = self.scissor
 
 	local viewPort = {}
@@ -343,6 +347,13 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.translate(- self.x, - self.y)
 
 	self:drawWorldObjects(player, debugmode)
+	
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.01 then
+		log:error("Drawing World Objects took too long: " .. duration)
+	end
 
 	--Set translation for hud elements that point to world objects
 	love.graphics.origin()
@@ -353,6 +364,13 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.translate(- self.x, - self.y)
 
 	self.hud:drawLabels(playerDrawPack, viewPort)
+	
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.001 then
+		log:error("Drawing Hud Labels took too long: " .. duration)
+	end
 
 	--Set translation for hud
 	love.graphics.origin()
@@ -367,6 +385,13 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.setColor(1, 1, 1, 1)
 
 	self.hud:draw(playerDrawPack, viewPort)
+	
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.001 then
+		log:error("Drawing Hud took too long: " .. duration)
+	end
 
 	--Reset graphics translation
 	love.graphics.origin()

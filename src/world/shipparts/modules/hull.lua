@@ -11,7 +11,7 @@ function Hull:__create(imageFunction, maxHealth)--, connectableSides)
 
 	local userData = {}
 
-	userData.draw = function(userdata, fixture, scaleByHealth)
+	userData.draw = function(userdata, fixture, scaleByHealth, drawMode)
 		if scaleByHealth then
 			local c = userData:getScaledHealth()
 			love.graphics.setColor(1, c, c, 1)
@@ -22,7 +22,7 @@ function Hull:__create(imageFunction, maxHealth)--, connectableSides)
 		local l = userData.location
 		local x, y, angle = Location.fixturePoint3(fixture, l[1], l[2])
 		angle = angle + (l[3] - 1) * math.pi / 2
-		imageFunction(x, y, angle)
+		imageFunction(x, y, angle, drawMode)
 	end
 
 	function userData.collision(fixture, otherFixture, sqVelocity, pointVelocity)

@@ -253,12 +253,24 @@ function Camera:drawWorldObjects(player, debugmode)
 
 	local a, b, c, d = player.camera:getAABB()
 	player.world.physics:queryBoundingBox(a, b, c, d, callback)
+	
+	
+	local drawMode
+	if self.zoom < 0.1 then
+		drawMode = 4
+	elseif self.zoom < 1 then
+		drawMode = 3
+	elseif self.zoom < 10 then
+		drawMode = 2
+	else
+		drawMode = 1
+	end
 
 	for _, category in ipairs(drawOrder) do
 		local categoryNumber = PhysicsReferences.categories[category]
 		for _, fixture in ipairs(fixtureList[categoryNumber]) do
 			local object = fixture:getUserData()
-			if object.draw then object:draw(fixture, player.showHealth) end
+			if object.draw then object:draw(fixture, player.showHealth, drawMode) end
 			if debugmode then
 				debugDraw(fixture)
 			end

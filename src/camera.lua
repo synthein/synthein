@@ -1,10 +1,9 @@
+local Animation = require("animation")
 local Hud = require("hud")
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
 local mathext = require("syntheinrust").mathext
 local vector = require("vector")
-
-local lume = require("vendor/lume")
 
 local Camera = {}
 Camera.__index = Camera
@@ -16,8 +15,6 @@ function Camera.create()
 	self.x = 0
 	self.y = 0
 	self.angle = 0
-	self.animationElapsed = 10
-	self.animationDuration = 10
 	self.zoomInt = 8
 	self:adjustZoom(0)
 	self.scissor = {x = 0, y = 0, width = 0, height = 0}
@@ -32,8 +29,15 @@ function Camera.create()
 end
 
 function Camera:setTarget(target)
+	local duration = 1
+
+	local x, y = self.body:getPosition()
+	local angle = self.body:getAngle()
 	self.body = target
-	self.animationElapsed = 0
+
+	self.xanim = Animation(x, target:getX(), duration, "linear")
+	self.yanim = Animation(y, target:getY(), duration, "linear")
+	self.aanim = Animation(angle, target:getAngle(), duration, "linear")
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
@@ -292,11 +296,46 @@ local function shortestPath(angle, newAngle)
 	return angle + angleDiff
 end
 
-function Camera:update(dt)
-	if self.animationElapsed < self.animationDuration then
-		self.animationElapsed = self.animationElapsed + dt
-	else
-		self.animationElapsed = self.animationDuration
+function Camera:update(player, dt)
+	if self.body then
+		local newX, newY = self.body:getPosition()
+		local newAngle = shortestPath(
+			self.angle,
+			player.isCameraAngleFixed and 0 or body:getAngle() % (2*math.pi)
+		)
+
+		if self.xanim then
+			self.xanim.dest = newX
+			self.x = self.xanim:step(dt)
+
+			if self.xanim:isDone() then
+				self.xanim = nil
+			end
+		else
+			self.x = newX
+		end
+
+		if self.yanim then
+			self.yanim.dest = newY
+			self.y = self.yanim:step(dt)
+
+			if self.yanim:isDone() then
+				self.yanim = nil
+			end
+		else
+			self.y = newY
+		end
+
+		if self.aanim then
+			self.aanim.dest = newAngle
+			self.angle = self.aanim:step(dt)
+
+			if self.aanim:isDone() then
+				self.aanim = nil
+			end
+		else
+			self.angle = newAngle
+		end
 	end
 end
 
@@ -310,14 +349,6 @@ function Camera:drawPlayer(player, debugmode)
 			self.body = nil
 			self.gameOver = true
 		else
-			local newX, newY = body:getPosition()
-			local newAngle = player.isCameraAngleFixed and 0 or body:getAngle() % (2*math.pi)
-			local animationPercent = self.animationElapsed/self.animationDuration
-			newAngle = shortestPath(self.angle, newAngle)
-			self.x = lume.lerp(self.x, newX, animationPercent)
-			self.y = lume.lerp(self.y, newY, animationPercent)
-			self.angle = lume.lerp(self.angle, newAngle, animationPercent)
-
 			local point = {0,0}
 
 			local leader = (player.ship.corePart or {}).leader

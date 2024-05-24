@@ -222,7 +222,7 @@ function Player:buttonreleased(source, button)
 end
 
 function Player:update(dt)
-	self.camera:update(dt)
+	self.camera:update(self, dt)
 end
 
 function Player:draw(debugmode)

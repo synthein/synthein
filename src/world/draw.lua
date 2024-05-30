@@ -50,13 +50,21 @@ function Draw.createDrawBlockFunction(image)
 	local offsetWidth  =  imageWidthPx  / 2
 	local offsetHeight =  imageHeightPx / 2
 
-	return function(x, y, angle)
-			love.graphics.draw(
-				image,
-				x, y, angle,
-				drawWidth, drawHeight,
-				offsetWidth, offsetHeight
-			)
+	return function(x, y, angle, drawMode)
+			if drawMode == 4 then
+				love.graphics.circle( "fill", x, y, 50 )
+			elseif drawMode == 3 then
+				love.graphics.circle( "fill", x, y, 5 )
+			elseif drawMode == 2 then
+				love.graphics.rectangle( "fill", x-0.5, y-0.5, 1, 1)
+			else
+				love.graphics.draw(
+					image,
+					x, y, angle,
+					drawWidth, drawHeight,
+					offsetWidth, offsetHeight
+				)
+			end
 		end
 end
 

@@ -121,7 +121,6 @@ function Player:cursorreleased(cursor, control, debugmodeEnabled)
 end
 
 function Player:pressed(control, debugmodeEnabled)
-print("player pressed", control.ship)
 	if self.menu then
 		if control.menu == "cancel" or  control.ship == "playerMenu" then
 			self.menu = nil

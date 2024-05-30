@@ -1,7 +1,8 @@
 local Animation = class()
 
-local funcs = {}
-function funcs.linear(s, d, r) return (d-s)*r + s end
+local funcs = {
+  linear = function(s, d, r) return (d-s)*r + s end
+}
 
 function Animation:__create(start, dest, duration, func)
   self.start = start

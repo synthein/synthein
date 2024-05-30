@@ -30,14 +30,11 @@ end
 
 function Camera:setTarget(target)
 	local duration = 1
-
 	local x, y = self.body:getPosition()
 	local angle = self.body:getAngle()
-	self.body = target
 
-	self.xanim = Animation(x, target:getX(), duration, "linear")
-	self.yanim = Animation(y, target:getY(), duration, "linear")
-	self.aanim = Animation(angle, target:getAngle(), duration, "linear")
+	self.body = target
+	self.pan = Animation({x, y, angle}, {target:getX(), target:getY(), target:getAngle()}, duration, "linear")
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
@@ -316,37 +313,12 @@ function Camera:update(player, dt)
 			player.isCameraAngleFixed and 0 or body:getAngle() % (2*math.pi)
 		)
 
-		if self.xanim then
-			self.xanim.dest = newX
-			self.x = self.xanim:step(dt)
+		if self.pan then
+			self.x, self.y, self.angle = self.pan:step(dt, {newX, newY, newAngle})
 
-			if self.xanim:isDone() then
-				self.xanim = nil
+			if self.pan:isDone() then
+				self.pan = nil
 			end
-		else
-			self.x = newX
-		end
-
-		if self.yanim then
-			self.yanim.dest = newY
-			self.y = self.yanim:step(dt)
-
-			if self.yanim:isDone() then
-				self.yanim = nil
-			end
-		else
-			self.y = newY
-		end
-
-		if self.aanim then
-			self.aanim.dest = newAngle
-			self.angle = self.aanim:step(dt)
-
-			if self.aanim:isDone() then
-				self.aanim = nil
-			end
-		else
-			self.angle = newAngle
 		end
 	end
 end

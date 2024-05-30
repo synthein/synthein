@@ -1,3 +1,4 @@
+local Animation = require("animation")
 local Hud = require("hud")
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
@@ -25,6 +26,15 @@ function Camera.create()
 	self.hud = Hud()
 	
 	return self
+end
+
+function Camera:setTarget(target)
+	local duration = 1
+	local x, y = self.body:getPosition()
+	local angle = self.body:getAngle()
+
+	self.body = target
+	self.pan = Animation({x, y, angle}, {target:getX(), target:getY(), target:getAngle()}, duration, "linear")
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
@@ -287,6 +297,32 @@ function Camera:drawWorldObjects(player, debugmode)
 	player.shieldPoints = player.camera:testPoints(testPointFunctions)
 end
 
+local function shortestPath(angle, newAngle)
+	local angleDiff = newAngle - angle
+	if angleDiff > math.pi then
+		angleDiff = angleDiff - 2*math.pi
+	end
+	return angle + angleDiff
+end
+
+function Camera:update(player, dt)
+	if self.body then
+		local newX, newY = self.body:getPosition()
+		local newAngle = shortestPath(
+			self.angle,
+			player.isCameraAngleFixed and 0 or body:getAngle() % (2*math.pi)
+		)
+
+		if self.pan then
+			self.x, self.y, self.angle = self.pan:step(dt, {newX, newY, newAngle})
+
+			if self.pan:isDone() then
+				self.pan = nil
+			end
+		end
+	end
+end
+
 function Camera:drawPlayer(player, debugmode)
 	local compassAngle = 0
 
@@ -297,9 +333,6 @@ function Camera:drawPlayer(player, debugmode)
 			self.body = nil
 			self.gameOver = true
 		else
-			self.x, self.y = body:getPosition()
-			self.angle = player.isCameraAngleFixed and 0 or body:getAngle()
-
 			local point = {0,0}
 
 			local leader = (player.ship.corePart or {}).leader

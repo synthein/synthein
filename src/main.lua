@@ -179,11 +179,17 @@ function love.textinput(key)
 end
 
 function love.update(dt)
+	local startTime = love.timer.getTime( )
 	--TODO Axis control inputs
 	--TODO Compouned cursors
 	--TODO ???? Controls.lookupJoystickAxis(joystick, axis)
 	
 	state.update(dt)
+	local endTime = love.timer.getTime( )
+	local duration = endTime - startTime
+	if duration > 0.01 then
+		log:error("Update took too long: " .. duration)
+	end
 end
 
 function love.resize(w, h)
@@ -191,7 +197,13 @@ function love.resize(w, h)
 end
 
 function love.draw()
+	local startTime = love.timer.getTime( )
 	state.draw()
+	local endTime = love.timer.getTime( )
+	local duration = endTime - startTime
+	if duration > 0.01 then
+		log:error("Drawing took too long: " .. duration)
+	end
 end
 
 function love.quit()

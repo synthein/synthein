@@ -5,6 +5,13 @@ local Log = class()
 function Log:__create()
 end
 
+Log.levels = {
+  ERROR = 1,
+  WARN  = 2,
+  INFO  = 3,
+  DEBUG = 4
+}
+
 local function texpand(t)
   local str = "{"
   local num_items = 0
@@ -19,7 +26,11 @@ local function texpand(t)
   return str .. "}"
 end
 
-local function out(message, ...)
+local function out(minimumSeverity, message, ...)
+  if Log.levels[Settings.logLevel] < minimumSeverity then
+    return
+  end
+
   local processed = {}
 
   for i=1,select('#', ...) do
@@ -40,19 +51,19 @@ local function out(message, ...)
 end
 
 function Log:error(message, ...)
-  out("ERR " .. message, ...)
+  out(1, "ERROR " .. message, ...)
 end
 
 function Log:warn(message, ...)
-  out("WARN " .. message, ...)
+  out(2, "WARN  " .. message, ...)
 end
 
 function Log:info(message, ...)
-  out("INFO " .. message, ...)
+  out(3, "INFO  " .. message, ...)
 end
 
 function Log:debug(message, ...)
-  if Settings.debug then out("DEBUG " .. message, ...) end
+  out(4, "DEBUG " .. message, ...)
 end
 
 return Log

@@ -35,7 +35,7 @@ function love.conf(t)
 	t.modules.thread = true              -- Enable the thread module (boolean)
 
 	for _, flag in ipairs(arg) do
-		if flag == "--unit-tests" or flag == "--headless" then
+		if flag == "--unit-tests" or flag == "--headless" or flag == "--help" then
 			local stub = require("tests/stub")
 			t.window, t.modules.window, t.modules.graphics, t.modules.audio = false, false, false, false
 			love.window = stub()
@@ -45,6 +45,8 @@ function love.conf(t)
 			love.errorhandler = function(msg)
 				io.stderr:write(debug.traceback("Error: " .. tostring(msg), 3))
 			end
+
+			break
 		end
 	end
 end

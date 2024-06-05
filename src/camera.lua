@@ -163,7 +163,7 @@ function Camera:testPoints(testFunctions)
 				pointList[l+1] = y
 				l = l + 2
 				if l >= 250 then
-					table.insert(drawPoints, pointList)
+					table_insert(drawPoints, pointList)
 					pointList = {}
 					l = 1
 				end
@@ -237,6 +237,11 @@ local function debugDraw(fixture)
 end
 
 function Camera:drawWorldObjects(player, debugmode)
+
+	local startTime, endTime, duration
+	startTime = love.timer.getTime( )
+	
+
 	local drawOrder = {
 		"visual",
 		"projectiles",
@@ -277,6 +282,13 @@ function Camera:drawWorldObjects(player, debugmode)
 		drawMode = 1
 	end
 
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.0001 then
+		log:error("Drawing World Objects setup tasks took too long: " .. duration)
+	end
+
 	for _, category in ipairs(drawOrder) do
 		local categoryNumber = PhysicsReferences.categories[category]
 		for _, fixture in ipairs(fixtureList[categoryNumber]) do
@@ -288,6 +300,12 @@ function Camera:drawWorldObjects(player, debugmode)
 		end
 	end
 
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.0004 then
+		log:error("Drawing World Objects main loop took too long: " .. duration)
+	end
 
 	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
 
@@ -296,6 +314,15 @@ function Camera:drawWorldObjects(player, debugmode)
 		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
 	end
 	player.shieldPoints = player.camera:testPoints(testPointFunctions)
+	
+	
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.0005 then
+		log:error("Drawing World Objects shields took too long: " .. duration)
+	end
+
 end
 
 local function shortestPath(angle, newAngle)
@@ -384,7 +411,7 @@ function Camera:drawPlayer(player, debugmode)
 	endTime = love.timer.getTime( )
 	duration = endTime - startTime
 	startTime = endTime
-	if duration > 0.01 then
+	if duration > 0.001 then
 		log:warn("Drawing World Objects took too long: " .. duration)
 	end
 

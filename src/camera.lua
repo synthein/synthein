@@ -286,7 +286,7 @@ function Camera:drawWorldObjects(player, debugmode)
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.0001 then
-		log:error("Drawing World Objects setup tasks took too long: " .. duration)
+		log:warn("Drawing World Objects setup tasks took too long: " .. duration)
 	end
 
 	for _, category in ipairs(drawOrder) do
@@ -304,7 +304,7 @@ function Camera:drawWorldObjects(player, debugmode)
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.0004 then
-		log:error("Drawing World Objects main loop took too long: " .. duration)
+		log:warn("Drawing World Objects main loop took too long: " .. duration)
 	end
 
 	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
@@ -320,7 +320,7 @@ function Camera:drawWorldObjects(player, debugmode)
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.0005 then
-		log:error("Drawing World Objects shields took too long: " .. duration)
+		log:warn("Drawing World Objects shields took too long: " .. duration)
 	end
 
 end

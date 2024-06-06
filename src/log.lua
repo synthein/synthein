@@ -43,6 +43,10 @@ function Log:error(message, ...)
   out("ERR " .. message, ...)
 end
 
+function Log:warn(message, ...)
+  out("WARN " .. message, ...)
+end
+
 function Log:info(message, ...)
   out("INFO " .. message, ...)
 end

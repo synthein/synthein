@@ -7,6 +7,7 @@ local PartSelector = require("widgets/partSelector")
 local GridTable = require("gridTable")
 local PartRegistry = require("world/shipparts/partRegistry")
 local StructureParser = require("world/structureParser")
+local log = require("log")
 
 local GameState = require("gamestates/gameState")
 local ShipEditor = GameState()
@@ -79,11 +80,10 @@ function ShipEditor.pressed(control)
 			handleMenuButton(button)
 		elseif menuOpen == "Save" then
 			if control == "confirm" then
-				Success, Message = ShipEditor.saveMenu:saveFile(
+				local ok, message = ShipEditor.saveMenu:saveFile(
 					StructureParser.blueprintPack(gridTable))
-				if not Success then
-					print("shipEditor save file ERROR:")
-					print(Message)
+				if not ok then
+					log:error("shipEditor failed to save: %s", message)
 				end
 				menuOpen = false
 			else

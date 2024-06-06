@@ -385,7 +385,7 @@ function Camera:drawPlayer(player, debugmode)
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.01 then
-		log:error("Drawing World Objects took too long: " .. duration)
+		log:warn("Drawing World Objects took too long: " .. duration)
 	end
 
 	--Set translation for hud elements that point to world objects
@@ -402,7 +402,7 @@ function Camera:drawPlayer(player, debugmode)
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.001 then
-		log:error("Drawing Hud Labels took too long: " .. duration)
+		log:warn("Drawing Hud Labels took too long: " .. duration)
 	end
 
 	--Set translation for hud
@@ -423,7 +423,7 @@ function Camera:drawPlayer(player, debugmode)
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.001 then
-		log:error("Drawing Hud took too long: " .. duration)
+		log:warn("Drawing Hud took too long: " .. duration)
 	end
 
 	--Reset graphics translation

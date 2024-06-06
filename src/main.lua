@@ -54,49 +54,58 @@ local usage =
 [[usage: synthein [FLAGS]
 
 Available flags:
-	--test          Run the test suite.
-	--scene=NAME    Bypass all menus and jump straight into a scene
-	--debug         Enable debug logs
-	--help          Print this usage message.]]
+	--test             Run the test suite.
+	--scene=NAME       Bypass all menus and jump straight into a scene.
+	--log-level=LEVEL  Show logs with LEVEL severity or higher. ERROR, WARN, INFO, or DEBUG
+	--debug            Enable debug mode. Implies --log-level=DEBUG.
+	--help             Print this usage message.]]
 
 function love.load()
 	setGameState("MainMenu")
-	
+
 	Controls.loadDefaultMap()
 
-	local i = 1
-	while arg[i] do
-		if arg[i] == "--unit-tests" then
+	for _, argn in ipairs(arg) do
+		if argn == "--unit-tests" then
 			require("tests")
 			love.event.quit()
-		elseif arg[i]:match("^--scene") then
-			local scene = nil
-			if arg[i] == "--scene" then
-				scene = arg[i+1]
-				i = i + 1
-			else
-				scene = arg[i]:match("^--scene=(%g+)")
-			end
+
+		elseif argn:match("^%-%-scene") then
+			local scene = argn:match("^%-%-scene=(%g+)")
 
 			if scene then
 				local fileName = string.format(Settings.scenesDir .. scene .. ".txt")
 
-				setGameState(
-					"InGame",
-					{love.filesystem.lines(fileName), {}, false})
+				setGameState("InGame", {love.filesystem.lines(fileName), {}, false})
 			else
 				error(
 					"--scene must have an argument. You provided these arguments: "
 					.. table.concat(arg, " "))
 			end
-		elseif arg[i] == "--debug" then
+
+		elseif argn:match("^%-%-log%-level") then
+			local level = argn:match("^%-%-log%-level=(%g+)")
+
+			if level then
+				if log.levels[level] then
+					Settings.logLevel = level
+				else
+					error("Invalid log level '" .. level .. "'")
+				end
+			else
+				error(
+					"--log-level must have an argument. You provided these arguments: "
+					.. table.concat(arg, " "))
+			end
+
+		elseif argn == "--debug" then
+			Settings.logLevel = "DEBUG"
 			Settings.debug = true
-		elseif arg[i] == "--help" then
+
+		elseif argn == "--help" then
 			print(usage)
 			love.event.quit()
 		end
-
-		i = i + 1
 	end
 end
 

@@ -188,7 +188,7 @@ function love.update(dt)
 	local endTime = love.timer.getTime( )
 	local duration = endTime - startTime
 	if duration > 0.01 then
-		log:error("Update took too long: " .. duration)
+		log:warn("Update took too long: " .. duration)
 	end
 end
 
@@ -202,7 +202,7 @@ function love.draw()
 	local endTime = love.timer.getTime( )
 	local duration = endTime - startTime
 	if duration > 0.01 then
-		log:error("Drawing took too long: " .. duration)
+		log:warn("Drawing took too long: " .. duration)
 	end
 end
 

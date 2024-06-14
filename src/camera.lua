@@ -347,6 +347,8 @@ function Camera:update(player, dt)
 			if self.pan:isDone() then
 				self.pan = nil
 			end
+		else
+			self.x, self.y, self.angle = newX, newY, newAngle
 		end
 	end
 end

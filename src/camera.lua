@@ -25,7 +25,7 @@ function Camera.create()
 	setmetatable(self.graphics, self)
 
 	self.hud = Hud()
-	
+
 	return self
 end
 
@@ -101,14 +101,12 @@ function Camera:getAABB()
 	end
 
 	return minX, minY, maxX, maxY
-		
 end
 
 -- Make sure the correct transforms are active
 function Camera:getAllPoints()
 	local scissor = self.scissor
 	local pointTable = {}
-	local table_insert = table.insert
 	local inverseTransform = love.graphics.inverseTransformPoint
 	local xdx, xdy, ydx, ydy
 	local p00x, p00y = inverseTransform(0, 0)
@@ -150,7 +148,6 @@ function Camera:testPoints(testFunctions)
 	local pointList = {}
 	local l = 1
 	for y = 0, ye do
-		local row = {}
 		for x = 0, xe do
 			local result
 			for _, test in ipairs(testFunctions) do
@@ -240,7 +237,7 @@ function Camera:drawWorldObjects(player, debugmode)
 
 	local startTime, endTime, duration
 	startTime = love.timer.getTime( )
-	
+
 
 	local drawOrder = {
 		"visual",
@@ -269,8 +266,8 @@ function Camera:drawWorldObjects(player, debugmode)
 
 	local a, b, c, d = player.camera:getAABB()
 	player.world.physics:queryBoundingBox(a, b, c, d, callback)
-	
-	
+
+
 	local drawMode
 	if self.zoom < 0.1 then
 		drawMode = 4
@@ -314,8 +311,8 @@ function Camera:drawWorldObjects(player, debugmode)
 		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
 	end
 	player.shieldPoints = player.camera:testPoints(testPointFunctions)
-	
-	
+
+
 	endTime = love.timer.getTime( )
 	duration = endTime - startTime
 	startTime = endTime
@@ -380,7 +377,7 @@ function Camera:drawPlayer(player, debugmode)
 
 	local startTime, endTime, duration
 	startTime = love.timer.getTime( )
-	
+
 	local scissor = self.scissor
 
 	local viewPort = {}
@@ -399,7 +396,7 @@ function Camera:drawPlayer(player, debugmode)
 	playerDrawPack.selection = player.selected
 	playerDrawPack.zoom = self.zoom
 
-	love.graphics.setScissor(unpack(scissor))
+	love.graphics.setScissor(table.unpack(scissor))
 
 	--Set translation for world objects
 	love.graphics.translate(scissor.x, scissor.y)
@@ -409,7 +406,7 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.translate(- self.x, - self.y)
 
 	self:drawWorldObjects(player, debugmode)
-	
+
 	endTime = love.timer.getTime( )
 	duration = endTime - startTime
 	startTime = endTime
@@ -426,7 +423,7 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.translate(- self.x, - self.y)
 
 	self.hud:drawLabels(playerDrawPack, viewPort)
-	
+
 	endTime = love.timer.getTime( )
 	duration = endTime - startTime
 	startTime = endTime
@@ -442,12 +439,12 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
 	local drawPoints = love.graphics.points
 	for _, list in ipairs(player.shieldPoints) do
-		drawPoints(unpack(list))
+		drawPoints(table.unpack(list))
 	end
 	love.graphics.setColor(1, 1, 1, 1)
 
 	self.hud:draw(playerDrawPack, viewPort)
-	
+
 	endTime = love.timer.getTime( )
 	duration = endTime - startTime
 	startTime = endTime

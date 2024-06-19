@@ -338,7 +338,7 @@ function Camera:update(player, dt)
 		local newX, newY = self.body:getPosition()
 		local newAngle = shortestPath(
 			self.angle,
-			player.isCameraAngleFixed and 0 or body:getAngle() % (2*math.pi)
+			player.isCameraAngleFixed and 0 or self.body:getAngle() % (2*math.pi)
 		)
 
 		if self.pan then

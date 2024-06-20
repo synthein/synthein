@@ -396,7 +396,7 @@ function Camera:drawPlayer(player, debugmode)
 	playerDrawPack.selection = player.selected
 	playerDrawPack.zoom = self.zoom
 
-	love.graphics.setScissor(table.unpack(scissor))
+	love.graphics.setScissor(unpack(scissor))
 
 	--Set translation for world objects
 	love.graphics.translate(scissor.x, scissor.y)
@@ -439,7 +439,7 @@ function Camera:drawPlayer(player, debugmode)
 	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
 	local drawPoints = love.graphics.points
 	for _, list in ipairs(player.shieldPoints) do
-		drawPoints(table.unpack(list))
+		drawPoints(unpack(list))
 	end
 	love.graphics.setColor(1, 1, 1, 1)
 

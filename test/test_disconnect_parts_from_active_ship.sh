@@ -3,7 +3,7 @@
 extra_args="$1"
 output="$2"
 
-love src $extra_args --scene test-disconnect-parts-from-active-ship > "$output" <<EOF
+love src $extra_args --scene=test-disconnect-parts-from-active-ship > "$output" <<EOF
 return #world.objects
 world.objects[2]:disconnectPart({1,-1})
 return #world.objects

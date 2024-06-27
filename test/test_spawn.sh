@@ -3,7 +3,7 @@
 extra_args="$1"
 output="$2"
 
-love src $extra_args --scene startScene > "$output" <<EOF
+love src $extra_args --scene=startScene > "$output" <<EOF
 return #world.objects
 debugmode.on = true
 debugmode.spawn = true

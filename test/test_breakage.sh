@@ -3,7 +3,7 @@
 extra_args="$1"
 output="$2"
 
-love src $extra_args --scene test-breakage > "$output" <<EOF
+love src $extra_args --scene=test-breakage > "$output" <<EOF
 return #world.objects
 sleep(2)
 return #world.objects

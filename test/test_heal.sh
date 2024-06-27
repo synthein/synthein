@@ -3,7 +3,7 @@
 extra_args="$1"
 output="$2"
 
-love src $extra_args --scene test-general1 > "$output" 2>/dev/null <<EOF
+love src $extra_args --scene=test-general1 > "$output" 2>/dev/null <<EOF
 players[1].ship.corePart.modules.hull.health = 1
 timer = players[1].ship.corePart.modules.heal.timer
 timer.time = 0.1

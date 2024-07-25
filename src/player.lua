@@ -44,7 +44,6 @@ function Player.create(world, controls, ship, camera)
 	self.selectionKeyDown = false
 	self.isBuilding = false
 	self.isRemoving = false
-	self.isCameraAngleFixed = true
 	self.partX = nil
 	self.partY = nil
 	self.cursorX = 0
@@ -93,7 +92,7 @@ function Player:cursorpressed(cursor, control, debugmodeEnabled)
 		if control.ship == "health" then
 			self.showHealth = not self.showHealth
 		elseif control.ship == "cameraRotate" then
-			self.isCameraAngleFixed = not self.isCameraAngleFixed
+			self.camera.angleFixed = not self.camera.angleFixed
 			
 		elseif control.ship == "build" or control.ship == "destroy" then
 				local cursorX, cursorY = self.camera:getWorldCoords(
@@ -144,7 +143,7 @@ function Player:pressed(control, debugmodeEnabled)
 			elseif control.ship == "health" then
 				self.showHealth = not self.showHealth
 			elseif control.ship == "cameraRotate" then
-				self.isCameraAngleFixed = not self.isCameraAngleFixed
+				self.camera.angleFixed = not self.camera.angleFixed
 			end
 		elseif control.menu then
 			self.camera.hud:pressed(control)

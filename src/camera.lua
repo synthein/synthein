@@ -16,6 +16,7 @@ function Camera.create()
 	self.x = 0
 	self.y = 0
 	self.angle = 0
+	self.angleFixed = true
 	self.zoomInt = 8
 	self:adjustZoom(0)
 	self.scissor = {x = 0, y = 0, width = 0, height = 0}
@@ -32,7 +33,7 @@ end
 function Camera:setTarget(target)
 	local duration = 1
 	local x, y = self.body:getPosition()
-	local angle = self.body:getAngle()
+	local angle = self.angleFixed and 0 or self.body:getAngle()
 
 	self.body = target
 	self.pan = Animation({x, y, angle}, {target:getX(), target:getY(), target:getAngle()}, duration, "linear")
@@ -335,7 +336,7 @@ function Camera:update(player, dt)
 		local newX, newY = self.body:getPosition()
 		local newAngle = shortestPath(
 			self.angle,
-			player.isCameraAngleFixed and 0 or self.body:getAngle() % (2*math.pi)
+			self.angleFixed and 0 or self.body:getAngle() % (2*math.pi)
 		)
 
 		if self.pan then

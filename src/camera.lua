@@ -35,7 +35,7 @@ function Camera:setTarget(target)
 	local angle = self.body:getAngle()
 
 	self.body = target
-	self.pan = Animation({x, y, angle}, {target:getX(), target:getY(), target:getAngle()}, duration, "linear")
+	self.pan = Animation({x, y, angle}, {target:getX(), target:getY(), target:getAngle()}, duration, "easeout")
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)

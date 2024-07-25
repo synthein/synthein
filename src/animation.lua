@@ -1,7 +1,8 @@
 local Animation = class()
 
 local funcs = {
-  linear = function(s, d, r) return (d-s)*r + s end
+  linear  = function(s, d, t) return (d-s)*t + s end,
+  easeout = function(s, d, t) return (s-d)*t*t + 2*(d-s)*t + s end,
 }
 
 function Animation:__create(start, dest, duration, func)

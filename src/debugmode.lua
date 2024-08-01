@@ -68,26 +68,24 @@ end
 function Debug:update(dt)
 end
 
-function Debug:keyboard(key)
+function Debug:keyboard(control)
 	--local world = Debug.world
 	--local physics = world.physics
 --	for i, player in ipairs(Debug.players) do
 
-		if key == "n" then
+		if control.ship == "debugSpawn" then
 			self.spawn = true
 
-		elseif love.keyboard.isDown("lctrl", "rctrl") then
+		elseif control.ship == "debugSave" then
 			-- Export the player's ship.
-			if key == "s" then
-				for i, player in ipairs(self.players) do
-					local filename = "playerShip"..i..".txt"
-					local shipData = StructureParser.shipPack(player.ship, true)
-					local ok, err = love.filesystem.write(filename, shipData)
-					if ok then
-						log:debug("Wrote %s/%s", love.filesystem.getSaveDirectory(), filename)
-					else
-						log:error(err)
-					end
+			for i, player in ipairs(self.players) do
+				local filename = "playerShip"..i..".txt"
+				local shipData = StructureParser.shipPack(player.ship, true)
+				local ok, err = love.filesystem.write(filename, shipData)
+				if ok then
+					log:debug("Wrote %s/%s", love.filesystem.getSaveDirectory(), filename)
+				else
+					log:error(err)
 				end
 			end
 		end

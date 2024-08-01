@@ -184,14 +184,14 @@ function Controls.loadDefaultMap()
 			y             = {player = player, ship = "playerMenu",  editor = nil,         menu = "cancel" },
 			start         = {player = player, ship = "gameMenu",    editor = "stateMenu", menu = "cancel" },
 		}
-		
+
 		joystickMap.axis = {
 			left = {player = player, ship = "cursor", editor = nil, menu = nil}
 		}
-		
+
 		table.insert(Controls.map.joysticks, joystickMap)
 	end
-	
+
 	Controls.map.keyboard = {
 		w         = {player = 1, ship = "forward",      editor = "up",        menu = "up"       },
 		s         = {player = 1, ship = "backward",     editor = "down",      menu = "down"     },
@@ -210,10 +210,13 @@ function Controls.loadDefaultMap()
 		f11       = {player = 1, ship = "fullsceen",    editor = nil,         menu = nil        },
 		f12       = {player = 1, ship = "debug",        editor = nil,         menu = nil        },
 		backspace = {player = 1, ship = nil,            editor = nil,         menu = "backspace"},
+
+		n         = {player = 1, ship = "debugSpawn",   editor = nil,         menu = nil        },
+		["ctrl+s"]= {player = 1, ship = "debugSave",    editor = nil,         menu = nil        },
 	}
-	
+
 	Controls.map.keyboard["return"] = {player = 1, ship = nil, editor = nil, menu = "confirm"}
-	
+
 	Controls.map.mouse = {
 		buttons = {
 			{player = 1, ship = "build",    editor = "add",    menu = "confirm"},
@@ -225,6 +228,12 @@ function Controls.loadDefaultMap()
 end
 
 function Controls.lookupKey(key)
+	if key
+	 and love.keyboard.isDown("lctrl")
+	 or  love.keyboard.isDown("rctrl") then
+		key = "ctrl+" .. key
+	end
+
 	return Controls.map.keyboard[key]
 end
 

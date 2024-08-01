@@ -55,7 +55,7 @@ function InGame.load(scene, playerHostility, saveName)
 	world = World(playerHostility)
 
 	screen = Screen()
-	
+
 	--In case a controller was plugged in after love was started.
 	Controls.loadDefaultMap()
 
@@ -131,7 +131,7 @@ end
 
 function InGame.pressed(control)
 	if control.ship == "debug" then debugmode:toggle() end
-	
+
 	if menuOpen == "Pause" then
 		if control.menu == "cancel" then
 			menuOpen = nil
@@ -159,14 +159,14 @@ function InGame.pressed(control)
 		elseif control.ship == "pause" then
 			paused = not paused
 		end
-		
+
 		local player = players[control.player]
 		if player then
 			player:pressed(control, debugmode.on) -- TODO Anylize old call player:buttonpressed(love.keyboard, key, debugmode.on)
 		end
-		
+
 		if debugmode.on then
-			debugmode:keyboard(key)
+			debugmode:keyboard(control)
 		end
 	end
 end
@@ -364,7 +364,7 @@ function InGame.update(dt)
 						for _, ship in ipairs(ships) do
 							world:addObject(ship)
 						end
-						log:info("Spawned scene " .. scene)
+						log:error("Spawned scene " .. scene)
 					end
 				end
 			end

@@ -364,7 +364,7 @@ function InGame.update(dt)
 						for _, ship in ipairs(ships) do
 							world:addObject(ship)
 						end
-						log:error("Spawned scene " .. scene)
+						log:info("Spawned scene " .. scene)
 					end
 				end
 			end

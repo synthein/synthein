@@ -205,6 +205,8 @@ function love.resize(w, h)
 	state.resize(w, h)
 end
 
+drawTimes = {}
+drawTimesCap = 300
 function love.draw()
 	local startTime = love.timer.getTime( )
 	state.draw()
@@ -213,6 +215,12 @@ function love.draw()
 	if duration > 0.01 then
 		log:warn("Drawing took too long: " .. duration)
 	end
+
+	if #drawTimes == drawTimesCap then
+		table.remove(drawTimes, 1)
+	end
+
+	table.insert(drawTimes, duration)
 end
 
 function love.quit()

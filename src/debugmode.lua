@@ -26,10 +26,19 @@ function Debug:getSpawn()
 	return value
 end
 
+function Debug:getFrameTime()
+	local sum = 0
+	local count = 0
+
+	for i, t in ipairs(drawTimes) do
+		sum = sum + t
+		count = i
+	end
+
+	return sum / count
+end
+
 function Debug:draw()
-	love.graphics.print(
-		string.format("%3d", love.timer.getFPS()),
-		love.graphics.getWidth() - 20, 0)
 	for _, player in ipairs(self.players) do
 		if player and player.camera then
 			-- Gather debug data
@@ -63,6 +72,13 @@ function Debug:draw()
 			)
 		end
 	end
+
+	love.graphics.print(
+		string.format("%07.4f", love.timer.getFPS()),
+		0, love.graphics.getHeight() - 28)
+	love.graphics.print(
+		string.format("%07.4f", self:getFrameTime()),
+		0, love.graphics.getHeight() - 14)
 end
 
 function Debug:update(dt)

@@ -76,7 +76,7 @@ function Debug:draw()
 	local chartWidth = #drawTimes
 	for i, t in ipairs(drawTimes) do
 		local y = math.floor(love.graphics.getHeight() - t*1000)
-		love.graphics.points(chartWidth - i + 1, y)
+		love.graphics.points(i, y)
 	end
 
 	love.graphics.print(

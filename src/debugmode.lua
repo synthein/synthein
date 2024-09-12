@@ -73,12 +73,18 @@ function Debug:draw()
 		end
 	end
 
+	local chartWidth = #drawTimes
+	for i, t in ipairs(drawTimes) do
+		local y = math.floor(love.graphics.getHeight() - t*1000)
+		love.graphics.points(i, y)
+	end
+
 	love.graphics.print(
 		string.format("%07.4f", love.timer.getFPS()),
-		0, love.graphics.getHeight() - 28)
+		chartWidth, love.graphics.getHeight() - 28)
 	love.graphics.print(
 		string.format("%07.4f", self:getFrameTime()),
-		0, love.graphics.getHeight() - 14)
+		chartWidth, love.graphics.getHeight() - 14)
 end
 
 function Debug:update(dt)

@@ -40,7 +40,7 @@ end
 local menu = Menu.create(225, 5, pauseMenu.buttons)
 
 local world, players, screen, saveMenu, debugmode
-function InGame.load(scene, playerHostility, saveName)
+function InGame.load(scene, playerHostility, saveName, debuginfo)
 	if saveName then
 		for line in scene do
 			local match = string.match(line, "teamhostility = (.*)")
@@ -89,7 +89,7 @@ function InGame.load(scene, playerHostility, saveName)
 	end
 
 	saveMenu = SaveMenu(Settings.saveDir, saveName)
-	debugmode = Debug.create(world, players)
+	debugmode = Debug.create(world, players, debuginfo.drawTimeLogger)
 	console.init({
 		players = players,
 		world = world,

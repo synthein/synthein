@@ -36,6 +36,9 @@ map:
 	dot -T png TaskMap.dot >TaskMap.png
 	display TaskMap.png
 
+analyzeDrawTimes:
+	love tools/analyzeDrawTimes
+
 luacheck:
 	find src -name '*.lua' -not -path 'src/vendor/*' -exec luacheck --no-unused-args {} +
 
@@ -43,4 +46,4 @@ test:
 	printf '\n' | love src --unit-tests
 	test/init.sh
 
-.PHONY: appimage check clean dep love luacheck macos rust test windows
+.PHONY: analyzeDrawTimes appimage check clean dep love luacheck macos rust test windows

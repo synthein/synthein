@@ -1,6 +1,7 @@
 require("class")
 local Settings = require("settings")
 local Controls = require("controls")
+local DrawTimeLogger = require("drawTimeLogger")
 local console = require("console")
 local log = require("log")
 
@@ -36,6 +37,7 @@ for stateName, gameState in pairs(gameStates) do
 end
 
 local state
+local drawTimeLogger = DrawTimeLogger.create(300, "draw-times.log")
 
 function setGameState(newState, args)
 	if type(newState) ~= "string" then
@@ -45,7 +47,8 @@ function setGameState(newState, args)
 	if not state then
 		error("Trying to switch to non existent game state: " .. newState)
 	end
-	if args then 
+	if args then
+		table.insert(args, {drawTimeLogger = drawTimeLogger})
 		state.load(unpack(args))
 	end
 end
@@ -205,8 +208,6 @@ function love.resize(w, h)
 	state.resize(w, h)
 end
 
-drawTimes = {}
-drawTimesCap = 300
 function love.draw()
 	local startTime = love.timer.getTime( )
 	state.draw()
@@ -216,11 +217,7 @@ function love.draw()
 		log:warn("Drawing took too long: " .. duration)
 	end
 
-	if #drawTimes == drawTimesCap then
-		table.remove(drawTimes, 1)
-	end
-
-	table.insert(drawTimes, duration)
+	drawTimeLogger:insert(duration)
 end
 
 function love.quit()

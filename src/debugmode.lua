@@ -6,12 +6,13 @@ local Debug = {}
 
 local log = Log()
 
-function Debug.create(world, players)
+function Debug.create(world, players, drawTimeLogger)
 	local self = setmetatable({}, {__index = Debug})
 	self.world = world
 	self.players = players
 	self.on = false
 	self.spawn = false
+	self.drawTimeLogger = drawTimeLogger
 	return self
 end
 
@@ -26,16 +27,8 @@ function Debug:getSpawn()
 	return value
 end
 
-function Debug:getFrameTime()
-	local sum = 0
-	local count = 0
-
-	for i, t in ipairs(drawTimes) do
-		sum = sum + t
-		count = i
-	end
-
-	return sum / count
+function Debug:update(dt)
+	self.drawTimeLogger:update()
 end
 
 function Debug:draw()
@@ -73,8 +66,8 @@ function Debug:draw()
 		end
 	end
 
-	local chartWidth = #drawTimes
-	for i, t in ipairs(drawTimes) do
+	local chartWidth = #self.drawTimeLogger.times
+	for i, t in ipairs(self.drawTimeLogger.times) do
 		local y = math.floor(love.graphics.getHeight() - t*1000)
 		love.graphics.points(i, y)
 	end
@@ -83,11 +76,8 @@ function Debug:draw()
 		string.format("%07.4f", love.timer.getFPS()),
 		chartWidth, love.graphics.getHeight() - 28)
 	love.graphics.print(
-		string.format("%07.4f", self:getFrameTime()),
+		string.format("%07.4f", self.drawTimeLogger:average()),
 		chartWidth, love.graphics.getHeight() - 14)
-end
-
-function Debug:update(dt)
 end
 
 function Debug:keyboard(control)

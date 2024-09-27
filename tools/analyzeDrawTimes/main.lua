@@ -7,6 +7,7 @@ local nBuckets = 20
 local lastLoad = 0
 local times = {}
 local max
+local font = love.graphics.setNewFont(10)
 
 local function reload()
   times = {}
@@ -52,7 +53,6 @@ function love.draw()
   end
 
   -- Draw bars
-  local font = love.graphics.getFont()
   for i = 1, nBuckets do
     local v = buckets[i] or 0
     local w = chartWidth / nBuckets

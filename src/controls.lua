@@ -84,7 +84,6 @@ Controls.menu = {
 --TODO Bundle Comands that have the same mapping let the widgets separated them out.
 
 function Controls:__create(joystick)
-	local bindings
 	if joystick then
 		self.bindings = {
 			forward 	= {joystick, "dpup"},
@@ -146,7 +145,7 @@ function Controls:__create(joystick)
 		return
 	end
 
-	ok, result = pcall(chunk)
+	local ok, result = pcall(chunk)
 	if not ok then
 		log:error("Failed to read key bindings: %s", result)
 		return

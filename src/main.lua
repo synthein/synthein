@@ -121,7 +121,7 @@ function love.keypressed(key)
 	end
 end
 
-function love.keyreleased()
+function love.keyreleased(key)
 	local control = Controls.lookupKey(key)
 	if control then
 		state.released(control)
@@ -138,7 +138,7 @@ end
 function love.mousereleased(x, y, button)
 	local control = Controls.lookupMouseButton(button)
 	if control then
-		state.cursorreleased(cursor, control)
+		state.cursorreleased({x = x, y = y}, control)
 	end
 end
 
@@ -195,7 +195,7 @@ function love.update(dt)
 	--TODO Axis control inputs
 	--TODO Compouned cursors
 	--TODO ???? Controls.lookupJoystickAxis(joystick, axis)
-	
+
 	state.update(dt)
 	local endTime = love.timer.getTime( )
 	local duration = endTime - startTime

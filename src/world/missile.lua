@@ -2,7 +2,7 @@ local Draw = require("world/draw")
 local PhysicsReferences = require("world/physicsReferences")
 local Timer = require("syntheinrust").timer
 local mathext = require("syntheinrust").mathext
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 
 local Missile = class(require("world/worldObjects"))
 

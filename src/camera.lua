@@ -4,7 +4,7 @@ local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
 local log = require("log")
 local mathext = require("syntheinrust").mathext
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 
 local Camera = {}
 Camera.__index = Camera

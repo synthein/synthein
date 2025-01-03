@@ -1,5 +1,5 @@
 use mlua::prelude::{LuaError, LuaFunction, LuaTable, LuaValue};
-use mlua::{FromLua, Lua, Result, ToLua, AnyUserData};
+use mlua::{AnyUserData, FromLua, Lua, Result, ToLua};
 
 pub struct Controls<'lua> {
     pub gun: bool,
@@ -51,7 +51,47 @@ impl<'lua> FromLua<'lua> for ModuleInputs<'lua> {
     }
 }
 
-pub type Location = [f64; 3];
+pub struct Location(pub f64, pub f64, pub f64, pub f64, pub f64, pub f64);
+
+impl<'lua> FromLua<'lua> for Location {
+    fn from_lua(value: LuaValue<'lua>, _: &'lua Lua) -> Result<Self> {
+        match value {
+            LuaValue::Table(table) => {
+                let vec = table.sequence_values().collect::<Result<Vec<_>>>()?;
+                match vec.len() {
+                    3 => Ok(Location(vec[0], vec[1], vec[2], 0.0, 0.0, 0.0)),
+                    6 => Ok(Location(vec[0], vec[1], vec[2], vec[3], vec[4], vec[5])),
+                    _ => Err(LuaError::FromLuaConversionError {
+                        from: "table",
+                        to: "Location",
+                        message: Some(format!(
+                            "expected table of length 3 or 6, got {}",
+                            vec.len()
+                        )),
+                    }),
+                }
+            }
+            _ => Err(LuaError::FromLuaConversionError {
+                from: value.type_name(),
+                to: "Location",
+                message: Some("expected table".to_string()),
+            }),
+        }
+    }
+}
+
+impl<'lua> ToLua<'lua> for Location {
+    fn to_lua(self, lua: &'lua Lua) -> Result<LuaValue<'lua>> {
+        let t = lua.create_table()?;
+        t.push(self.0)?;
+        t.push(self.1)?;
+        t.push(self.2)?;
+        t.push(self.3)?;
+        t.push(self.4)?;
+        t.push(self.5)?;
+        Ok(LuaValue::Table(t))
+    }
+}
 
 pub struct WorldEvent {
     pub event_type: String,

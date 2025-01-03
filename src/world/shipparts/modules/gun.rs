@@ -30,7 +30,7 @@ impl Module for Gun {
                 self.charged = false;
                 Some(WorldEvent {
                     event_type: "shot".to_string(),
-                    location: [0.0, 0.0, 1.0],
+                    location: Location(0.0, 0.0, 1.0, 0.0, 0.0, 0.0),
                     data: 1.0,
                 })
             }

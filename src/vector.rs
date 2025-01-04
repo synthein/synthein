@@ -40,7 +40,7 @@ pub fn add(a: Location, b: Location) -> Location {
     l.2 = b.2;
 
     (l.3, l.4) = rotate(b.3, b.4, b.5);
-    l.5 = b.5; // XXX: Lua code has a conditional here
+    l.5 = b.5;
 
     l.0 = l.0 + a.0;
     l.1 = l.1 + a.1;

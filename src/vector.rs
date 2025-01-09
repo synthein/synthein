@@ -35,19 +35,26 @@ pub fn rotate(x: f64, y: f64, angle: f64) -> (f64, f64) {
 }
 
 pub fn add(a: Location, b: Location) -> Location {
-    let mut l = Location(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    (l.0, l.1) = rotate(b.0, b.1, b.2);
-    l.2 = b.2;
+    let mut l = Location {
+        x: 0.0,
+        y: 0.0,
+        angle: 0.0,
+        x_velocity: 0.0,
+        y_velocity: 0.0,
+        angle_velocity: 0.0,
+    };
+    (l.x, l.y) = rotate(b.x, b.y, b.angle);
+    l.angle = b.angle;
 
-    (l.3, l.4) = rotate(b.3, b.4, b.5);
-    l.5 = b.5;
+    (l.x_velocity, l.y_velocity) = rotate(b.x_velocity, b.y_velocity, b.angle_velocity);
+    l.angle_velocity = b.angle_velocity;
 
-    l.0 = l.0 + a.0;
-    l.1 = l.1 + a.1;
-    l.2 = l.2 + a.2;
-    l.3 = l.3 + a.3;
-    l.4 = l.4 + a.4;
-    l.5 = l.5 + a.5;
+    l.x = l.x + a.x;
+    l.y = l.y + a.y;
+    l.angle = l.angle + a.angle;
+    l.x_velocity = l.x_velocity + a.x_velocity;
+    l.y_velocity = l.y_velocity + a.y_velocity;
+    l.angle_velocity = l.angle_velocity + a.angle_velocity;
 
     l
 }

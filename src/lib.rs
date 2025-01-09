@@ -3,6 +3,7 @@ use mlua::{Lua, Result};
 
 mod mathext;
 mod timer;
+mod vector;
 mod world;
 
 use world::shipparts::modules::lua_interfaces::*;
@@ -23,6 +24,7 @@ fn syntheinrust(lua: &Lua) -> Result<LuaTable> {
     exports.set("mathext", mathext::lua_module(lua)?)?;
     exports.set("shipparts", shipparts)?;
     exports.set("timer", timer::lua_module(lua)?)?;
+    exports.set("vector", vector::lua_module(lua)?)?;
 
     Ok(exports)
 }

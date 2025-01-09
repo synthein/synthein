@@ -1,4 +1,4 @@
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 local Location = require("world/location")
 local StructureMath = require("world/structureMath")
 

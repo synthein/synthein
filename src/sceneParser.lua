@@ -1,4 +1,4 @@
-local Vector = require("vector")
+local vector = require("syntheinrust").vector
 
 -- SceneParser serializes and deserializes scenes and ships as strings.
 local Parse = require("parse")
@@ -80,7 +80,7 @@ function SceneParser.loadScene(sceneLines, world, location, inputs)
 					ifShipString = true
 				end
 
-				local l = Vector.add(location, Parse.parseNumbers(locationString))
+				local l = vector.add(location, Parse.parseNumbers(locationString))
 
 				local data = {}
 				for var in string.gmatch(dataString, varStr) do

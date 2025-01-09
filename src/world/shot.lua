@@ -1,7 +1,7 @@
 local Draw = require("world/draw")
 local Timer = require("syntheinrust").timer
 
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 
 local Shot = class(require("world/worldObjects"))
 local PhysicsReferences = require("world/physicsReferences")

@@ -2,7 +2,7 @@ local CanvasUtils = require("widgets/canvasUtils")
 local CircleMenu = require("circleMenu")
 local ListSelector = require("widgets/listSelector")
 local StructureMath = require("world/structureMath")
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 
 local Hud = class()
 

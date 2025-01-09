@@ -1,7 +1,7 @@
 local StructureMath = require("world/structureMath")
 local Building = require("building")
 local CircleMenu = require("circleMenu")
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 
 local Selection = {}
 Selection.__index = Selection

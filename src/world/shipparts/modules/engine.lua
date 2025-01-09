@@ -1,5 +1,5 @@
 local StructureMath = require("world/structureMath")
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 
 local Engine = class()
 

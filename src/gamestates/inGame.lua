@@ -10,7 +10,7 @@ local Settings = require("settings")
 local World = require("world/world")
 local console = require("console")
 local lume = require("vendor/lume")
-local vector = require("vector")
+local vector = require("syntheinrust").vector
 
 local GameState = require("gamestates/gameState")
 local InGame = GameState()

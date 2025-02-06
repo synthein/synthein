@@ -73,10 +73,10 @@ function Debug:draw()
 	end
 
 	love.graphics.print(
-		string.format("%07.4f", love.timer.getFPS()),
+		string.format("%07.3f fps", love.timer.getFPS()),
 		chartWidth, love.graphics.getHeight() - 28)
 	love.graphics.print(
-		string.format("%07.4f", self.drawTimeLogger:average()),
+		string.format("%07.3f ms", self.drawTimeLogger:average() * 1000),
 		chartWidth, love.graphics.getHeight() - 14)
 end
 

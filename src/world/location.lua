@@ -49,8 +49,8 @@ function Location.fixturePoint6(fixture, px, py)
 end
 
 function Location.createBody(physics, mode, l)
-	x, y, a, vX, vY, vA = unpack(l)
-	local body = love.physics.newBody(physics, l[1], l[2], mode)
+	local x, y, a, vX, vY, vA = unpack(l)
+	local body = love.physics.newBody(physics, x, y, mode)
 
 	if not a then return body end
 	body:setAngle(a)

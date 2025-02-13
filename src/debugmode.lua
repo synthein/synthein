@@ -28,7 +28,6 @@ function Debug:getSpawn()
 end
 
 function Debug:update(dt)
-	self.drawTimeLogger:update()
 end
 
 function Debug:draw()
@@ -71,6 +70,8 @@ function Debug:draw()
 		local y = math.floor(love.graphics.getHeight() - t*1000)
 		love.graphics.points(i, y)
 	end
+
+	self.drawTimeLogger:log()
 
 	love.graphics.print(
 		string.format("%07.3f fps", love.timer.getFPS()),

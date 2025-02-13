@@ -37,7 +37,7 @@ for stateName, gameState in pairs(gameStates) do
 end
 
 local state
-local drawTimeLogger = DrawTimeLogger.create(300, "draw-times.log")
+local drawTimeLogger = DrawTimeLogger.create(300, love.filesystem.getSaveDirectory(), "/draw-times.log")
 
 function setGameState(newState, args)
 	if type(newState) ~= "string" then

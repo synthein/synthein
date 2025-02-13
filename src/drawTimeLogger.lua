@@ -1,14 +1,20 @@
+local log = require("log")
+
 local DrawTimeLogger = {}
 
-function DrawTimeLogger.create(capacity, logfile)
+function DrawTimeLogger.create(capacity, logdir, logfile)
   local self = {}
 	setmetatable(self, {__index = DrawTimeLogger})
 
   self.times = {}
   self.capacity = capacity
   self.frameCount = 0
-  self.logfile = logfile
-  love.filesystem.write(logfile, "")
+
+	local err
+  self.logfile, err = love.filesystem.newFile(logfile, "w")
+	if err then
+		log:error("failed to open draw time log file: %s", err)
+	end
 
   return self
 end
@@ -26,10 +32,12 @@ function DrawTimeLogger:log()
 	self.frameCount = self.frameCount + 1
 
 	if self.frameCount % interval == 0 then
-		love.filesystem.append(
-			self.logfile,
+		local ok, err = self.logfile:write(
 			table.concat(self.times, "\n", #self.times-interval + 1, #self.times) .. "\n"
 		)
+		if not ok then
+			log:error("failed to log draw times: %s", err)
+		end
 	end
 end
 

@@ -1,11 +1,11 @@
 local InGame = require("gamestates/inGame")
-local Screen = require("screen")
+
+local stub = require("tests/stub")
 
 local t = {}
 
 function t.test_screen_resize_should_not_crash()
-	local screen = Screen()
-	InGame.load("test-general1", {}, false)
+	InGame.load("test-general1", {}, false, stub())
 	InGame.resize(100, 100)
 end
 

@@ -64,7 +64,7 @@ function Shield:createFixture()
 		data = function()
 			local x, y = body:getWorldPoints(cx, cy)
 			local radius = minf(self.health, radius)
-			return {x, y}, radius
+			return {x, y}, radius, body:getUserData().team
 		end,
 		draw = function() end,
 	})

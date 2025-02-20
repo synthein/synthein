@@ -72,6 +72,7 @@ function Camera.create()
 				number rim = edge * edge;
 				number rim2 = rim * rim;
 				number rim4 = rim2 * rim2;
+				number rim8 = rim4 * rim4;
 				number fixed_color = 0;
 				if(delta < 0 && delta > (-5* radius)){
 					fixed_color = 1;
@@ -83,7 +84,14 @@ function Camera.create()
 				//return vec4(1, rim*rim, rim*rim, edge);
 				//return vec4(rim, 1, rim*rim, edge);
 				//return vec4(0, 1, 0, edge);
-				return vec4(rim*rim*0.5, rim*0.5, 0.5, edge * rm);
+				
+				//return vec4(1-rim, 1.5*(rim)*(1-(rim2)), rim4 * 1, edge * (2 + rm)/3);
+				
+				
+				return vec4(0.75-rim2*0.5, 0, 0, edge * (2 + rm)/3);
+				
+				
+				//return vec4(rim*rim*0.5, rim*0.5, 0.5, edge * rm);
 			}
 			else
 			{
@@ -98,6 +106,99 @@ function Camera.create()
 	self.shieldShader:send("to_world_tran", {50, 200}) 
 	self.shieldShader:send("to_world_rot", {{1, 0}, {0, 1}}) 
 
+	self.shieldStrengthShader = love.graphics.newShader[[
+		extern number point_count;
+		extern vec2 points[1000];
+		extern number strengths[1000];
+		extern number teams[1000];
+		
+		extern vec2 screen_center_tran;
+		extern mat2 to_world_rot;
+		extern vec2 to_world_tran;
+		
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+			
+			vec2 world_coords = to_world_rot * (screen_coords - screen_center_tran) + to_world_tran;
+			
+			number a = 0;
+			number b = 0;
+			number c = 0;
+			number a_team = 0;
+			number b_team = 0;
+			number c_team = 0;
+			
+			for (int i = 0; i < point_count; i += 1)
+			{
+				vec2 offset = world_coords - points[i];
+				number r = offset.x * offset.x + offset.y * offset.y;
+				
+				number new_strength = (strengths[i] / sqrt(r) - 1);
+				
+				number new_team = teams[i];
+				
+				if(new_strength > a)
+				{
+					if(new_team != a_team || new_team == 0 || new_team == 1)
+					{
+						b = a;
+						b_team = a_team;
+					}
+					
+					a = new_strength;
+					a_team = teams[i];
+				}
+				else if (new_strength > b)
+				{
+					if(new_team != a_team || new_team == 0 || new_team == 1)
+					{
+						b = new_strength;
+						b_team = teams[i];
+					}
+				}
+			}
+			
+			
+			if(a > 0)
+			{
+				number base_line = 1 - a + (noise1(world_coords[0]) + noise1(world_coords[1]));
+				if(a_team == b_team && a_team != 0 && a_team == 1)
+				{
+					return vec4(0, 0, 1, base_line);
+				}
+				else
+				{
+					return vec4(0, 0, 1, base_line + b);
+				}
+			}
+			
+			return vec4(0, 0, 0, 0);
+		}
+	]]
+	
+	self.shieldColorShader = love.graphics.newShader[[
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+			
+			
+			if(pixel[1] == 1 && pixel[0] == 1)
+			{
+				return vec4(1, 0, 0, 1);
+			}
+			
+			
+			if(pixel[1] > 0)
+			{
+				number delta = pixel[1] - pixel[0];
+				number fill = (1-8*delta);
+			
+				return vec4(0, 0, 1, fill);
+			}
+			
+			return vec4(0, 0, 0, 0);
+		}
+	]]
+	
 	return self
 end
 
@@ -505,9 +606,90 @@ function Camera:drawPlayer(player, debugmode)
 		log:warn("Drawing Hud Labels took too long: " .. duration)
 	end
 
+
+
+
+	local sc_x = scissor.x + scissor.width/2
+	local sc_y = scissor.y + scissor.height/2
+
+	local camera_sin = math.sin(self.angle)
+	local camera_cos = math.cos(self.angle)
+
+	local rotation = {
+		{camera_cos / self.zoom, camera_sin / self.zoom},
+		{camera_sin / self.zoom, -camera_cos / self.zoom}
+	}
+	
+
+
+
+
+
+
+
+
+
+
+
+	shieldCanvas = love.graphics.newCanvas(scissor.width, scissor.height)
+	love.graphics.origin()
+	
+	love.graphics.setShader(self.shieldStrengthShader)
+	self.shieldStrengthShader:send("screen_center_tran", {sc_x, sc_y})
+	self.shieldStrengthShader:send("to_world_rot", rotation)
+	self.shieldStrengthShader:send("to_world_tran", {self.x, self.y})
+	
+	local points = {}
+	local strengths = {}
+	local teams = {}
+	
+	for i, shield_data in ipairs(self.shieldData) do
+		table.insert(points, shield_data[1])
+		table.insert(strengths, shield_data[2])
+		table.insert(teams, shield_data[3])
+	end
+	
+	self.shieldStrengthShader:send("point_count", #points)
+	self.shieldStrengthShader:send("points", unpack(points))
+	self.shieldStrengthShader:send("strengths", unpack(strengths))
+	self.shieldStrengthShader:send("teams", unpack(teams))
+	love.graphics.setCanvas(shieldCanvas)
+	love.graphics.rectangle( "fill", 0, 0, scissor.width, scissor.height)
+	
+	--for i, shield_data in ipairs(self.shieldData) do
+		--newShieldCanvas = love.graphics.newCanvas(scissor.width, scissor.height)
+		--love.graphics.setCanvas(newShieldCanvas)
+		
+		
+		--local shield_position = shield_data[1]
+		--local pt_x = shield_position[1]
+		--local pt_y = shield_position[2]
+		
+		--self.shieldStrengthShader:send("point", {pt_x, pt_y})
+		--self.shieldStrengthShader:send("strength", shield_data[2], 5)
+	
+    	--love.graphics.draw(shieldCanvas, 0,0)
+    	
+    	--shieldCanvas = newShieldCanvas
+	--end
+	
+	--shieldImage = love.graphics.newCanvas(scissor.width, scissor.height)
+	--love.graphics.setCanvas(shieldImage)
+	--love.graphics.setShader(self.shieldColorShader)
+    --love.graphics.draw(shieldCanvas, 0,0)
+	
+
+	love.graphics.setShader()
+	love.graphics.setCanvas()
 	--Set translation for hud
 	love.graphics.origin()
 	love.graphics.translate(scissor.x, scissor.y)
+	
+	
+	love.graphics.setColor(1, 1, 1, 0.5)
+    love.graphics.draw(shieldCanvas, 0,0)
+    --love.graphics.draw(shieldImage, 0,0)
+	love.graphics.setColor(1, 1, 1, 1)
 	
 	local sh_x, sh_y = 0, 0
 	
@@ -517,17 +699,6 @@ function Camera:drawPlayer(player, debugmode)
 		sh_y = -self.zoom * (shield_data[2] - self.y)
 		
 	end
-	
-	local sc_x = scissor.x + scissor.width/2
-	local sc_y = scissor.y + scissor.height/2
-
-	local camera_sin = math.sin(self.angle)
-	local camera_cos = math.cos(self.angle)
-
-	local rotation = {
-		{camera_cos, camera_sin},
-		{-camera_sin, camera_cos}
-	}
 	
 	self.shieldShader:send("seed", math.random())
 	self.shieldShader:send("radius", 100)
@@ -539,9 +710,9 @@ function Camera:drawPlayer(player, debugmode)
 		self.shieldShader:send("radius", self.zoom * self.shieldData[1][2])
 	end
 	
-	love.graphics.setShader(self.shieldShader) --draw something here
-	love.graphics.rectangle( "fill", 0, 0, scissor.width, scissor.height)
-	love.graphics.setShader()
+	--love.graphics.setShader(self.shieldShader) --draw something here
+	--love.graphics.rectangle( "fill", 0, 0, scissor.width, scissor.height)
+	--love.graphics.setShader()
 --[[
 	--Draw shields
 	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)

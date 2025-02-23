@@ -66,11 +66,9 @@ function Debug:draw()
 	end
 
 	local chartWidth = #self.drawTimeLogger.times
-	local times = self.drawTimeLogger.times
-	for i = chartWidth, 1, -1 do
-		local t = times[i]
+	for x, t in ipairs(self.drawTimeLogger.times) do
 		local y = math.floor(love.graphics.getHeight() - t*1000)
-		love.graphics.points(i, y)
+		love.graphics.points(chartWidth-x, y)
 	end
 
 	self.drawTimeLogger:log()

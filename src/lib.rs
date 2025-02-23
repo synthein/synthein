@@ -1,6 +1,7 @@
 use mlua::prelude::LuaTable;
 use mlua::{Lua, Result};
 
+mod draw_time_logger;
 mod mathext;
 mod timer;
 mod vector;
@@ -25,6 +26,7 @@ fn syntheinrust(lua: &Lua) -> Result<LuaTable> {
     exports.set("shipparts", shipparts)?;
     exports.set("timer", timer::lua_module(lua)?)?;
     exports.set("vector", vector::lua_module(lua)?)?;
+    exports.set("draw_time_logger", draw_time_logger::lua_module(lua)?)?;
 
     Ok(exports)
 }

@@ -61,6 +61,11 @@ function Shield:createFixture()
 				return (dx * dx) + (dy * dy) < rsq
 			end
 		end,
+		data = function()
+			local x, y = body:getWorldPoints(cx, cy)
+			local radius = minf(self.health, radius)
+			return {x, y}, radius, body:getUserData().team
+		end,
 		draw = function() end,
 	})
 end
@@ -82,19 +87,6 @@ function Shield:test(fixture)
 	local dx = fixtureX - x
 	local dy = fixtureY - y
 	return (dx * dx) + (dy * dy) < radius * radius
-end
-
---Potentially obsolete
-function Shield:draw()
-	local x, y = self.body:getWorldPoints(unpack(self.center))
-	local radius = math.min(math.sqrt(5 * self.health), self.radius)
-
-	if radius < 1 then return end
-
-	local r, g, b, a = love.graphics.getColor()
-	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
-	love.graphics.circle("fill", x, y, radius)
-	love.graphics.setColor(r, g, b, a)
 end
 
 function Shield:update(dt)

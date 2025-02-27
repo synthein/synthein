@@ -27,6 +27,155 @@ function Camera.create()
 
 	self.hud = Hud()
 
+	self.shieldShader = love.graphics.newShader[[
+		extern number radius;
+		extern number seed;
+		
+		//extern vec2 to_world_trans[];
+		
+		extern vec2 screen_center_tran;
+		extern mat2 to_world_rot;
+		extern vec2 to_world_tran;
+		
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+			
+			//vec2 to_world_tran;
+			//to_world_tran.x = 0;
+			//to_world_tran.y = 0;
+			
+			//if(to_world_trans.length() > 0)
+			//{
+			//	to_world_tran = to_world_trans[0];
+			//}
+			
+			vec2 world_coords = to_world_rot * (screen_coords - screen_center_tran) - to_world_tran;
+			
+			number r = world_coords.x * world_coords.x + world_coords.y * world_coords.y;
+			number limit = radius * radius;
+			number delta = (r - limit);
+			
+			int si = int(seed * 256);
+			int sx = int(screen_coords.x) + si;
+			int sy = int(screen_coords.y) + si;
+			//int num = ((si*si*si + 51)*sy*sy + 79) * sx + 17;
+			//int num = si*si*si*si + 7*sy*sy*sy + 37*sx*sx + 17;
+			int num = 7*sy*sy*sy + 37*sx*sx + 17;
+			int dim = 256;
+			
+			int random = num - dim * (num/dim);
+			number rm = float(random)/128 + 0.5;
+			
+			if(r < limit){
+				number c = r/limit;
+				number edge = c*c;
+				number rim = edge * edge;
+				number rim2 = rim * rim;
+				number rim4 = rim2 * rim2;
+				number rim8 = rim4 * rim4;
+				number fixed_color = 0;
+				if(delta < 0 && delta > (-5* radius)){
+					fixed_color = 1;
+				}
+				
+				//return vec4(1, rim4, rim4, edge);
+				//return vec4(rim4, 1* 0.5, 0, edge);
+				//return vec4(0, 1* 0.5, rim4* 0.5, edge);
+				//return vec4(1, rim*rim, rim*rim, edge);
+				//return vec4(rim, 1, rim*rim, edge);
+				//return vec4(0, 1, 0, edge);
+				
+				//return vec4(1-rim, 1.5*(rim)*(1-(rim2)), rim4 * 1, edge * (2 + rm)/3);
+				
+				
+				return vec4(0.75-rim2*0.5, 0, 0, edge * (2 + rm)/3);
+				
+				
+				//return vec4(rim*rim*0.5, rim*0.5, 0.5, edge * rm);
+			}
+			else
+			{
+				return vec4(0,0.0,0.0,0);//clear
+			}
+		}
+	]]
+
+	-- transform screen coords to worlds cords
+	--p00x + x * xdx + y * ydx, p00y + x * xdy + y * ydy
+	self.shieldShader:send("radius", 100)
+	self.shieldShader:send("to_world_tran", {50, 200}) 
+	self.shieldShader:send("to_world_rot", {{1, 0}, {0, 1}}) 
+
+	self.shieldStrengthShader = love.graphics.newShader[[
+		extern number point_count;
+		extern vec2 points[1000];
+		extern number strengths[1000];
+		extern number teams[1000];
+		
+		extern vec2 screen_center_tran;
+		extern mat2 to_world_rot;
+		extern vec2 to_world_tran;
+		
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+			
+			vec2 world_coords = to_world_rot * (screen_coords - screen_center_tran) + to_world_tran;
+			
+			number a = 0;
+			number b = 0;
+			number c = 0;
+			number a_team = 0;
+			number b_team = 0;
+			number c_team = 0;
+			
+			for (int i = 0; i < point_count; i += 1)
+			{
+				vec2 offset = world_coords - points[i];
+				number r = offset.x * offset.x + offset.y * offset.y;
+				
+				number new_strength = (strengths[i] / sqrt(r) - 1);
+				
+				number new_team = teams[i];
+				
+				if(new_strength > a)
+				{
+					if(new_team != a_team || new_team == 0 || new_team == -1)
+					{
+						b = a;
+						b_team = a_team;
+					}
+					
+					a = new_strength;
+					a_team = teams[i];
+				}
+				else if (new_strength > b)
+				{
+					if(new_team != a_team || new_team == 0 || new_team == -1)
+					{
+						b = new_strength;
+						b_team = teams[i];
+					}
+				}
+			}
+			
+			
+			if(a > 0)
+			{
+				number base_line = 0.75 - a/2;
+				if(a_team == b_team && a_team != 0 && a_team != -1)
+				{
+					return vec4(0, 0, 1, base_line);
+				}
+				else
+				{
+					return vec4(0, 0, 1, base_line + b/2);
+				}
+			}
+			
+			return vec4(0, 0, 0, 0);
+		}
+	]]
+	
 	return self
 end
 
@@ -130,48 +279,6 @@ function Camera:getAllPoints()
 	return pointTable
 end
 
--- Make sure the correct transforms are active
-function Camera:testPoints(testFunctions)
-	local scissor = self.scissor
-	local table_insert = table.insert
-	local inverseTransform = love.graphics.inverseTransformPoint
-	local xdx, xdy, ydx, ydy
-	local p00x, p00y = inverseTransform(0, 0)
-	local p10x, p10y = inverseTransform(1, 0)
-	local p01x, p01y = inverseTransform(0, 1)
-	xdx = p10x - p00x
-	xdy = p10y - p00y
-	ydx = p01x - p00x
-	ydy = p01y - p00y
-	local ye = scissor.height - 1
-	local xe = scissor.width - 1
-	local drawPoints = {}
-	local pointList = {}
-	local l = 1
-	for y = 0, ye do
-		for x = 0, xe do
-			local result
-			for _, test in ipairs(testFunctions) do
-				result = result or test(
-					p00x + x * xdx + y * ydx, p00y + x * xdy + y * ydy)
-			end
-
-			if result then
-				pointList[l] = x
-				pointList[l+1] = y
-				l = l + 2
-				if l >= 250 then
-					table_insert(drawPoints, pointList)
-					pointList = {}
-					l = 1
-				end
-			end
-		end
-	end
-
-	return drawPoints
-end
-
 function Camera:adjustZoom(step)
 
 	self.zoomInt = self.zoomInt + step
@@ -269,6 +376,13 @@ function Camera:drawWorldObjects(player, debugmode)
 	player.world.physics:queryBoundingBox(a, b, c, d, callback)
 
 
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.001 then
+		log:warn("Drawing World Objects setup tasks took too long: " .. duration)
+	end
+
 	local drawMode
 	if self.zoom < 0.1 then
 		drawMode = 4
@@ -278,13 +392,6 @@ function Camera:drawWorldObjects(player, debugmode)
 		drawMode = 2
 	else
 		drawMode = 1
-	end
-
-	endTime = love.timer.getTime( )
-	duration = endTime - startTime
-	startTime = endTime
-	if duration > 0.0001 then
-		log:warn("Drawing World Objects setup tasks took too long: " .. duration)
 	end
 
 	for _, category in ipairs(drawOrder) do
@@ -308,17 +415,17 @@ function Camera:drawWorldObjects(player, debugmode)
 	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
 
 	local testPointFunctions = {}
+	local shieldData = {}
 	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
-		table.insert(testPointFunctions, shieldFixture:getUserData().testPoint())
+		table.insert(shieldData, {shieldFixture:getUserData():data()})
 	end
-	player.shieldPoints = player.camera:testPoints(testPointFunctions)
-
+	self.shieldData = shieldData
 
 	endTime = love.timer.getTime( )
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.0005 then
-		log:warn("Drawing World Objects shields took too long: " .. duration)
+		log:warn("Shield information gathering took too long: " .. duration)
 	end
 
 end
@@ -411,7 +518,7 @@ function Camera:drawPlayer(player, debugmode)
 	endTime = love.timer.getTime( )
 	duration = endTime - startTime
 	startTime = endTime
-	if duration > 0.001 then
+	if duration > 0.015 then
 		log:warn("Drawing World Objects took too long: " .. duration)
 	end
 
@@ -432,18 +539,60 @@ function Camera:drawPlayer(player, debugmode)
 		log:warn("Drawing Hud Labels took too long: " .. duration)
 	end
 
+
+	local scale = {scissor.x + scissor.width/2, scissor.y + scissor.height/2}
+
+	local camera_sin = math.sin(self.angle)
+	local camera_cos = math.cos(self.angle)
+
+	local rotation = {
+		{camera_cos / self.zoom, camera_sin / self.zoom},
+		{camera_sin / self.zoom, -camera_cos / self.zoom}
+	}
+	
+	shieldCanvas = love.graphics.newCanvas(scissor.width, scissor.height)
+	love.graphics.origin()
+	love.graphics.setShader(self.shieldStrengthShader)
+	
+	self.shieldStrengthShader:send("screen_center_tran", scale)
+	self.shieldStrengthShader:send("to_world_rot", rotation)
+	self.shieldStrengthShader:send("to_world_tran", {self.x, self.y})
+	
+	local points = {}
+	local strengths = {}
+	local teams = {}
+	for i, shield_data in ipairs(self.shieldData) do
+		table.insert(points, shield_data[1])
+		table.insert(strengths, shield_data[2])
+		table.insert(teams, shield_data[3])
+	end
+	
+	self.shieldStrengthShader:send("point_count", #points)
+	self.shieldStrengthShader:send("points", unpack(points))
+	self.shieldStrengthShader:send("strengths", unpack(strengths))
+	self.shieldStrengthShader:send("teams", unpack(teams))
+	
+	love.graphics.setCanvas(shieldCanvas)
+	love.graphics.rectangle( "fill", 0, 0, scissor.width, scissor.height)
+	
+
+	endTime = love.timer.getTime( )
+	duration = endTime - startTime
+	startTime = endTime
+	if duration > 0.001 then
+		log:warn("Drawing Shields took too long: " .. duration)
+	end
+
+	love.graphics.setShader()
+	love.graphics.setCanvas()
 	--Set translation for hud
 	love.graphics.origin()
 	love.graphics.translate(scissor.x, scissor.y)
+	
 
-	--Draw shields
-	love.graphics.setColor(31/255, 63/255, 143/255, 95/255)
-	local drawPoints = love.graphics.points
-	for _, list in ipairs(player.shieldPoints) do
-		drawPoints(unpack(list))
-	end
 	love.graphics.setColor(1, 1, 1, 1)
-
+    love.graphics.draw(shieldCanvas, 0,0)
+    
 	self.hud:draw(playerDrawPack, viewPort)
 
 	endTime = love.timer.getTime( )

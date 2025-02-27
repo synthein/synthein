@@ -1,8 +1,8 @@
 anchor = structure(0,0,0)[1]
 {
-b1r1b1
+s1r1s1
 b1n*b1
-b1s1b1
+s1b1s1
 }
 player = structure(0,5,0)[1, anchor]
 {

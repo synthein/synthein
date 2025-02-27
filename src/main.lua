@@ -213,7 +213,7 @@ function love.draw()
 	state.draw()
 	local endTime = love.timer.getTime( )
 	local duration = endTime - startTime
-	if duration > 0.01 then
+	if duration > 0.02 then
 		log:warn("Drawing took too long: " .. duration)
 	end
 

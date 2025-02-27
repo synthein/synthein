@@ -1,9 +1,10 @@
 require("class")
 local Settings = require("settings")
 local Controls = require("controls")
-local DrawTimeLogger = require("drawTimeLogger")
 local console = require("console")
 local log = require("log")
+
+local DrawTimeLogger = require("syntheinrust").draw_time_logger
 
 local gameStates = {
 	MainMenu = require("gamestates/mainMenu"),
@@ -37,7 +38,7 @@ for stateName, gameState in pairs(gameStates) do
 end
 
 local state
-local drawTimeLogger = DrawTimeLogger.create(300, love.filesystem.getSaveDirectory(), "/draw-times.log")
+local drawTimeLogger = DrawTimeLogger.new(300, love.filesystem.getSaveDirectory(), "draw-times.log")
 
 function setGameState(newState, args)
 	if type(newState) ~= "string" then

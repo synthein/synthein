@@ -94,6 +94,8 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 				local mSq = (dx * dx) + (dy * dy)
 				local mVSq = (dvx * dvx) + (dvy * dvy)
+				
+				-- CollisionMetric ~ path alignment / time to collision
 				local collisionMeteric = -(dx * dvx + dy * dvy) / mSq
 
 				-- 0.2 is somewhat arbitrary it can be used to create a threshhold
@@ -114,10 +116,11 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 					local combinedX = invDodgeMeteric * directX + (1-invDodgeMeteric) * dodgeX
 					local combinedY = invDodgeMeteric * directY + (1-invDodgeMeteric) * dodgeY
 					
-					sepX = sepX + combinedX * collisionMultiplier * collisionMeteric
-					sepY = sepY + combinedY * collisionMultiplier * collisionMeteric
+					local scaleFactor = collisionMultiplier * collisionMetric
+					sepX = sepX + combinedX * scaleFactor
+					sepY = sepY + combinedY * scaleFactor
 				end
-
+				
 				--TODO add spacing logic here.
 				if object.type == "structure" then
 					if teamHostility:test(self.team, object.team or 0) then
@@ -260,16 +263,16 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	local orders = {}
 
 	local pidX = rdx + 2 * rvx
-	if 1 < pidX then
+	if 0.5 < pidX then
 		table.insert(orders, "strafeRight")
-	elseif -1 > pidX then
+	elseif -0.5 > pidX then
 		table.insert(orders, "strafeLeft")
 	end
 
 	local pidY = rdy + 2 * rvy
-	if 1 < pidY then
+	if 0.5 < pidY then
 		table.insert(orders, "forward")
-	elseif -1 > pidY then
+	elseif -0.5 > pidY then
 		table.insert(orders, "back")
 	end
 

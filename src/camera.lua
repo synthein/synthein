@@ -567,10 +567,13 @@ function Camera:drawPlayer(player, debugmode)
 		table.insert(teams, shield_data[3])
 	end
 	
-	self.shieldStrengthShader:send("point_count", #points)
-	self.shieldStrengthShader:send("points", unpack(points))
-	self.shieldStrengthShader:send("strengths", unpack(strengths))
-	self.shieldStrengthShader:send("teams", unpack(teams))
+	local point_count = #points
+	self.shieldStrengthShader:send("point_count", point_count)
+	if point_count > 0 then
+		self.shieldStrengthShader:send("points", unpack(points))
+		self.shieldStrengthShader:send("strengths", unpack(strengths))
+		self.shieldStrengthShader:send("teams", unpack(teams))
+	end
 	
 	love.graphics.setCanvas(shieldCanvas)
 	love.graphics.rectangle( "fill", 0, 0, scissor.width, scissor.height)

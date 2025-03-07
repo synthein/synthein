@@ -49,12 +49,12 @@ pub fn add(a: Location, b: Location) -> Location {
     (l.x_velocity, l.y_velocity) = rotate(b.x_velocity, b.y_velocity, b.angle_velocity);
     l.angle_velocity = b.angle_velocity;
 
-    l.x = l.x + a.x;
-    l.y = l.y + a.y;
-    l.angle = l.angle + a.angle;
-    l.x_velocity = l.x_velocity + a.x_velocity;
-    l.y_velocity = l.y_velocity + a.y_velocity;
-    l.angle_velocity = l.angle_velocity + a.angle_velocity;
+    l.x += a.x;
+    l.y += a.y;
+    l.angle += a.angle;
+    l.x_velocity += a.x_velocity;
+    l.y_velocity += a.y_velocity;
+    l.angle_velocity += a.angle_velocity;
 
     l
 }

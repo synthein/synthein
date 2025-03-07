@@ -384,23 +384,35 @@ function Camera:drawWorldObjects(player, debugmode)
 	end
 
 	local drawMode
-	if self.zoom < 0.1 then
+	if self.zoom < 0.08 then
 		drawMode = 4
-	elseif self.zoom < 1 then
+	elseif self.zoom < 0.8 then
 		drawMode = 3
-	elseif self.zoom < 10 then
+	elseif self.zoom < 8 then
 		drawMode = 2
 	else
 		drawMode = 1
 	end
+	
+	local maxDrawMode = { 
+		visual = 2,
+		projectiles = 2,
+		missile = 2,
+		general = 10,
+		shield = 2
+	}
 
 	for _, category in ipairs(drawOrder) do
 		local categoryNumber = PhysicsReferences.categories[category]
-		for _, fixture in ipairs(fixtureList[categoryNumber]) do
-			local object = fixture:getUserData()
-			if object.draw then object:draw(fixture, player.showHealth, drawMode) end
-			if debugmode then
-				debugDraw(fixture)
+		if maxDrawMode[category] >= drawMode then
+			for _, fixture in ipairs(fixtureList[categoryNumber]) do
+				local object = fixture:getUserData()
+				if object.draw then
+					object:draw(fixture, player.showHealth, drawMode)
+				end
+				if debugmode then
+					debugDraw(fixture)
+				end
 			end
 		end
 	end

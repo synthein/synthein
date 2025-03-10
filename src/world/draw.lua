@@ -1,15 +1,13 @@
-local lume = require("vendor/lume")
-
 local Draw = {}
 
 function Draw.loadImage(imageName)
 	return love.graphics.newImage("res/images/"..imageName..".png")
 end
 
-local setup = lume.memoize(function(image, objectWidth, objectHeight)
+function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight)
 	local imageData = {}
 
-	imageData.image = image
+	imageData.image = Draw.loadImage(imageName)
 	local imageWidthPx, imageHeightPx = imageData.image:getDimensions()
 
 	imageData.drawWidth    =  objectWidth   / imageWidthPx
@@ -17,15 +15,7 @@ local setup = lume.memoize(function(image, objectWidth, objectHeight)
 	imageData.offsetWidth  =  imageWidthPx  / 2
 	imageData.offsetHeight =  imageHeightPx / 2
 
-	return imageData
-end)
-
-function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight)
-	local imageData = {}
-
 	return function(self, fixture)
-		imageData = setup(Draw.loadImage(imageName), objectWidth, objectHeight)
-
 		local body = fixture:getBody()
 		local x, y = body:getPosition()
 		local angle = body:getAngle()

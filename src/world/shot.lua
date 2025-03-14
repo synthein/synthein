@@ -29,7 +29,7 @@ function Shot:__create(worldInfo, location, data, appendix)
 				self.firstContact = false --this is needed because of bullet body physics
 			end
 		end,
-		draw = Draw.createObjectDrawImageFunction("shot", .1, .5),
+		draw = Shot.draw,
 		damage = function() self:destroy() end,
 	})
 
@@ -58,5 +58,7 @@ function Shot:update(dt)
 
 	return {}
 end
+
+Shot.draw = Draw.createObjectDrawImageFunction("shot", .1, .5)
 
 return Shot

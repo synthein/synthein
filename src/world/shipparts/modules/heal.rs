@@ -14,7 +14,7 @@ impl Module for Heal {
             let hull: LuaTable = lua.registry_value(&self.hull).unwrap();
             let user_data: LuaTable = hull.get("userData").unwrap();
             let repair: LuaFunction = user_data.get("repair").unwrap();
-            repair.call::<i32, ()>(1).unwrap();
+            repair.call::<()>(1).unwrap();
         }
 
         None
@@ -22,7 +22,7 @@ impl Module for Heal {
 }
 
 impl UserData for Heal {
-    fn add_fields<'lua, F: UserDataFields<'lua, Heal>>(fields: &mut F) {
+    fn add_fields<F: UserDataFields<Heal>>(fields: &mut F) {
         fields.add_field_method_get("timer", |_, this| Ok(this.timer));
         fields.add_field_method_set("timer", |_, this, timer| {
             this.timer = timer;
@@ -30,7 +30,7 @@ impl UserData for Heal {
         });
     }
 
-    fn add_methods<'lua, M: UserDataMethods<'lua, Heal>>(methods: &mut M) {
+    fn add_methods<M: UserDataMethods<Heal>>(methods: &mut M) {
         methods.add_method_mut("update", |lua, this, (inputs, location)| {
             Ok(Heal::update(this, lua, inputs, location))
         });

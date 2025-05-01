@@ -1,7 +1,7 @@
 use crate::timer::Timer;
 use crate::world::shipparts::modules::heal::Heal;
 use mlua::prelude::LuaTable;
-use mlua::{Lua, Result, ToLua};
+use mlua::{IntoLua, Lua, Result};
 
 pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
     let exports = lua.create_table()?;
@@ -17,7 +17,7 @@ pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
                 },
                 hull: lua.create_registry_value(hull)?,
             }
-            .to_lua(lua)
+            .into_lua(lua)
         })?,
     )?;
     exports.set_metatable(Some(metatable));

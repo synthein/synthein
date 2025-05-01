@@ -3,7 +3,7 @@ use std::io::Write;
 use std::path::Path;
 
 use mlua::prelude::LuaTable;
-use mlua::{Lua, Result, ToLua, UserData, UserDataFields, UserDataMethods};
+use mlua::{IntoLua, Lua, Result, UserData, UserDataFields, UserDataMethods};
 
 pub struct DrawTimeLogger {
     pub times: Vec<f64>,
@@ -76,11 +76,11 @@ impl DrawTimeLogger {
 }
 
 impl UserData for DrawTimeLogger {
-    fn add_fields<'lua, F: UserDataFields<'lua, Self>>(fields: &mut F) {
+    fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
         fields.add_field_method_get("times", |_, this| Ok(this.times.clone()));
     }
 
-    fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {
+    fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
         methods.add_method_mut("insert", |_, this, duration: f64| {
             this.insert(duration);
             Ok(())
@@ -102,7 +102,7 @@ pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
         "new",
         lua.create_function(
             |lua: &Lua, (capacity, logdir, logfile): (usize, String, String)| {
-                new(capacity, logdir, logfile)?.to_lua(lua)
+                new(capacity, logdir, logfile)?.into_lua(lua)
             },
         )?,
     )?;

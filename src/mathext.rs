@@ -1,4 +1,4 @@
-use mlua::prelude::{LuaTable};
+use mlua::prelude::LuaTable;
 use mlua::{Lua, Result};
 
 pub fn lua_module(lua: &Lua) -> Result<LuaTable> {

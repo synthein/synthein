@@ -1,7 +1,7 @@
 use crate::timer::Timer;
 use crate::world::shipparts::modules::missile_launcher::{process, MissileLauncher};
 use mlua::prelude::{LuaTable, LuaValue};
-use mlua::{Lua, Result, ToLua};
+use mlua::{IntoLua, Lua, Result};
 
 pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
     let exports = lua.create_table()?;
@@ -21,7 +21,7 @@ pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
                     time: 1.0,
                 },
             }
-            .to_lua(lua)
+            .into_lua(lua)
         })?,
     )?;
     exports.set_metatable(Some(metatable));

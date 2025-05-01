@@ -20,7 +20,7 @@ impl Module for Gun {
             None
         } else if inputs.controls.gun {
             // Check if there is a part one block in front of the gun.
-            let part_exists = match inputs.get_part.call::<_, bool>((location, [0, 1])) {
+            let part_exists = match inputs.get_part.call::<bool>((location, [0, 1])) {
                 Ok(part) => part,
                 Err(error) => panic!("failed to look up part: {:?}", error),
             };
@@ -48,7 +48,7 @@ impl Module for Gun {
 }
 
 impl UserData for Gun {
-    fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {
+    fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
         methods.add_method_mut(
             "update",
             |lua, this, (inputs, location): (ModuleInputs, Location)| {

@@ -21,7 +21,7 @@ impl Module for MissileLauncher {
             None
         } else if inputs.controls.missile_launcher {
             // Check if there is a part one block in front of the gun.
-            let part = match inputs.get_part.call::<_, LuaValue>((location, [0, 1])) {
+            let part = match inputs.get_part.call::<LuaValue>((location, [0, 1])) {
                 Ok(part) => part,
                 Err(error) => panic!("failed to look up part: {:?}", error),
             };
@@ -49,7 +49,7 @@ impl Module for MissileLauncher {
 }
 
 impl UserData for MissileLauncher {
-    fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {
+    fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
         methods.add_method_mut(
             "update",
             |lua, this, (inputs, location): (ModuleInputs, Location)| {

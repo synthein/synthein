@@ -134,6 +134,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	if target and capabilities.combat then
 		local dpx = target[1] - droneX
 		local dpy = target[2] - droneY
+		local dpmSq = dpx * dpx + dpy * dpy
 		local dvx = target[4] - droneXV
 		local dvy = target[5] - droneYV
 		local dvm = math.sqrt(dvx * dvx + dvy * dvy)
@@ -145,7 +146,8 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 		if shoot then
 			if -projectileSpeed < leadOffset and
-				leadOffset < projectileSpeed then
+				leadOffset < projectileSpeed and
+				dpmSq < 400 then
 				angle = angle - math.asin(leadOffset/projectileSpeed)
 			else
 				shoot = false

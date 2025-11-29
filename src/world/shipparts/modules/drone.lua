@@ -84,21 +84,38 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 			local object = body:getUserData()
 			-- Look for structures.
 			if object then
-				local  dx,  dy = body:getPosition()
-				local dvx, dvy = body:getLinearVelocity()
+				local  bx,  by = body:getPosition()
+				local bvx, bvy = body:getLinearVelocity()
 
-				dx = dx - droneX
-				dy = dy - droneY
-				dvx = dvx - droneXV
-				dvy = dvy - droneYV
+				local dx = bx - droneX
+				local dy = by - droneY
+				local dvx = bvx - droneXV
+				local dvy = bvy - droneYV
 
 				local mSq = (dx * dx) + (dy * dy)
-				local collisionMetric = (dx * dvx + dy * dvy) / mSq
+				local mVSq = (dvx * dvx) + (dvy * dvy)
+				local collisionMeteric = -(dx * dvx + dy * dvy) / mSq
 
-				-- 0 is somewhat arbitrary it can be used to create a threshhold
-				if collisionMetric < 0 then
-					sepX = sepX + dx * collisionMultiplier * collisionMetric
-					sepY = sepY + dy * collisionMultiplier * collisionMetric
+				-- 0.2 is somewhat arbitrary it can be used to create a threshhold
+				if collisionMeteric > 0.2 then
+					local directX = - dx
+					local directY = - dy
+					
+					local dodgeX = -dvy
+					local dodgeY = dvx
+					
+					if dx*dvy < dy*dvx then
+						dodgeX = -dodgeX
+						dodgeY = -dodgeY
+					end
+					
+					local invDodgeMeteric = 25 / (mVSq + 25)
+					
+					local combinedX = invDodgeMeteric * directX + (1-invDodgeMeteric) * dodgeX
+					local combinedY = invDodgeMeteric * directY + (1-invDodgeMeteric) * dodgeY
+					
+					sepX = sepX + combinedX * collisionMultiplier * collisionMeteric
+					sepY = sepY + combinedY * collisionMultiplier * collisionMeteric
 				end
 
 				--TODO add spacing logic here.

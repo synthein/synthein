@@ -23,7 +23,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 	--Cordination Logic
 	local destination
-	local leaderFollow
+	local leaderFollow = true
 	if self.follow then
 		if leader then
 			leaderBody = leader.body

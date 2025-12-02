@@ -19,7 +19,7 @@ function Camera.create()
 	self.angleFixed = true
 	self.zoomInt = 8
 	self:adjustZoom(0)
-	self.scissor = {x = 0, y = 0, width = 0, height = 0}
+	self.scissor = { x = 0, y = 0, width = 0, height = 0 }
 	self.gameOver = false
 
 	self.graphics = {}
@@ -27,34 +27,34 @@ function Camera.create()
 
 	self.hud = Hud()
 
-	self.shieldShader = love.graphics.newShader[[
+	self.shieldShader = love.graphics.newShader [[
 		extern number radius;
 		extern number seed;
-		
+
 		//extern vec2 to_world_trans[];
-		
+
 		extern vec2 screen_center_tran;
 		extern mat2 to_world_rot;
 		extern vec2 to_world_tran;
-		
+
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-			
+
 			//vec2 to_world_tran;
 			//to_world_tran.x = 0;
 			//to_world_tran.y = 0;
-			
+
 			//if(to_world_trans.length() > 0)
 			//{
 			//	to_world_tran = to_world_trans[0];
 			//}
-			
+
 			vec2 world_coords = to_world_rot * (screen_coords - screen_center_tran) - to_world_tran;
-			
+
 			number r = world_coords.x * world_coords.x + world_coords.y * world_coords.y;
 			number limit = radius * radius;
 			number delta = (r - limit);
-			
+
 			int si = int(seed * 256);
 			int sx = int(screen_coords.x) + si;
 			int sy = int(screen_coords.y) + si;
@@ -62,10 +62,10 @@ function Camera.create()
 			//int num = si*si*si*si + 7*sy*sy*sy + 37*sx*sx + 17;
 			int num = 7*sy*sy*sy + 37*sx*sx + 17;
 			int dim = 256;
-			
+
 			int random = num - dim * (num/dim);
 			number rm = float(random)/128 + 0.5;
-			
+
 			if(r < limit){
 				number c = r/limit;
 				number edge = c*c;
@@ -77,20 +77,20 @@ function Camera.create()
 				if(delta < 0 && delta > (-5* radius)){
 					fixed_color = 1;
 				}
-				
+
 				//return vec4(1, rim4, rim4, edge);
 				//return vec4(rim4, 1* 0.5, 0, edge);
 				//return vec4(0, 1* 0.5, rim4* 0.5, edge);
 				//return vec4(1, rim*rim, rim*rim, edge);
 				//return vec4(rim, 1, rim*rim, edge);
 				//return vec4(0, 1, 0, edge);
-				
+
 				//return vec4(1-rim, 1.5*(rim)*(1-(rim2)), rim4 * 1, edge * (2 + rm)/3);
-				
-				
+
+
 				return vec4(0.75-rim2*0.5, 0, 0, edge * (2 + rm)/3);
-				
-				
+
+
 				//return vec4(rim*rim*0.5, rim*0.5, 0.5, edge * rm);
 			}
 			else
@@ -103,40 +103,40 @@ function Camera.create()
 	-- transform screen coords to worlds cords
 	--p00x + x * xdx + y * ydx, p00y + x * xdy + y * ydy
 	self.shieldShader:send("radius", 100)
-	self.shieldShader:send("to_world_tran", {50, 200}) 
-	self.shieldShader:send("to_world_rot", {{1, 0}, {0, 1}}) 
+	self.shieldShader:send("to_world_tran", { 50, 200 })
+	self.shieldShader:send("to_world_rot", { { 1, 0 }, { 0, 1 } })
 
-	self.shieldStrengthShader = love.graphics.newShader[[
+	self.shieldStrengthShader = love.graphics.newShader [[
 		extern number point_count;
-		extern vec2 points[1000];
-		extern number strengths[1000];
-		extern number teams[1000];
-		
+		extern vec2 points[100];
+		extern number strengths[100];
+		extern number teams[100];
+
 		extern vec2 screen_center_tran;
 		extern mat2 to_world_rot;
 		extern vec2 to_world_tran;
-		
+
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-			
+
 			vec2 world_coords = to_world_rot * (screen_coords - screen_center_tran) + to_world_tran;
-			
+
 			number a = 0;
 			number b = 0;
 			number c = 0;
 			number a_team = 0;
 			number b_team = 0;
 			number c_team = 0;
-			
+
 			for (int i = 0; i < point_count; i += 1)
 			{
 				vec2 offset = world_coords - points[i];
 				number r = offset.x * offset.x + offset.y * offset.y;
-				
+
 				number new_strength = (strengths[i] / sqrt(r) - 1);
-				
+
 				number new_team = teams[i];
-				
+
 				if(new_strength > a)
 				{
 					if(new_team != a_team || new_team == 0 || new_team == -1)
@@ -144,7 +144,7 @@ function Camera.create()
 						b = a;
 						b_team = a_team;
 					}
-					
+
 					a = new_strength;
 					a_team = teams[i];
 				}
@@ -157,8 +157,8 @@ function Camera.create()
 					}
 				}
 			}
-			
-			
+
+
 			if(a > 0)
 			{
 				number base_line = 0.75 - a/2;
@@ -171,11 +171,11 @@ function Camera.create()
 					return vec4(0, 0, 1, base_line + b/2);
 				}
 			}
-			
+
 			return vec4(0, 0, 0, 0);
 		}
 	]]
-	
+
 	return self
 end
 
@@ -185,22 +185,22 @@ function Camera:setTarget(target)
 	local angle = self.angleFixed and 0 or self.body:getAngle()
 
 	self.body = target
-	self.pan = Animation({x, y, angle}, {target:getX(), target:getY(), target:getAngle()}, duration, "easeout")
+	self.pan = Animation({ x, y, angle }, { target:getX(), target:getY(), target:getAngle() }, duration, "easeout")
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
 	local scissor = self.scissor
 	local xoffset, yoffset = vector.rotate(
-		(cursorX - scissor.width/2  - scissor.x) / self.zoom,
-		-(cursorY - scissor.height/2 - scissor.y) / self.zoom,
+		(cursorX - scissor.width / 2 - scissor.x) / self.zoom,
+		-(cursorY - scissor.height / 2 - scissor.y) / self.zoom,
 		self.angle)
 	return self.x + xoffset, self.y + yoffset
 end
 
 function Camera:getScreenCoords(worldX, worldY, a, b)
 	local scissor = self.scissor
-	local x =  self.zoom * (worldX - self.x) + scissor.x + scissor.width/2
-	local y = -self.zoom * (worldY - self.y) + scissor.y + scissor.height/2
+	local x = self.zoom * (worldX - self.x) + scissor.x + scissor.width / 2
+	local y = -self.zoom * (worldY - self.y) + scissor.y + scissor.height / 2
 	a = self.zoom * a
 	b = self.zoom * b
 	return x, y, a, b
@@ -209,15 +209,15 @@ end
 function Camera:getAABB()
 	-- Offset for the corners with the same x and y sign.
 	local xoffset1, yoffset1 = vector.rotate(
-		self.scissor.width /(2 * self.zoom),
-		self.scissor.height/(2 * self.zoom),
+		self.scissor.width / (2 * self.zoom),
+		self.scissor.height / (2 * self.zoom),
 		self.angle
 	)
 
 	-- Offset for the corners with the opposite x and y sign.
 	local xoffset2, yoffset2 = vector.rotate(
-		-self.scissor.width/(2 * self.zoom),
-		self.scissor.height/(2 * self.zoom),
+		-self.scissor.width / (2 * self.zoom),
+		self.scissor.height / (2 * self.zoom),
 		self.angle
 	)
 
@@ -271,38 +271,37 @@ function Camera:getAllPoints()
 	for y = 0, ye do
 		local row = {}
 		for x = 0, xe do
-			row[x+1] = {p00x + x * xdx + y * ydx, p00y + x * xdy + y * ydy}
+			row[x + 1] = { p00x + x * xdx + y * ydx, p00y + x * xdy + y * ydy }
 		end
-		pointTable[y+1] = row
+		pointTable[y + 1] = row
 	end
 
 	return pointTable
 end
 
 function Camera:adjustZoom(step)
-
 	self.zoomInt = self.zoomInt + step
 
-	local remainder = self.zoomInt%6
-	local exponential = (self.zoomInt - remainder)/6
+	local remainder = self.zoomInt % 6
+	local exponential = (self.zoomInt - remainder) / 6
 
 	self.zoom = 10 ^ exponential
 
 	if remainder == 1 then
 		self.zoom = self.zoom * 1.5 --10 ^ (1 / 6) = 1.47
 	elseif remainder == 2 then
-		self.zoom = self.zoom * 2   --10 ^ (2 / 6) = 2.15
+		self.zoom = self.zoom * 2 --10 ^ (2 / 6) = 2.15
 	elseif remainder == 3 then
-		self.zoom = self.zoom * 3   --10 ^ (3 / 6) = 3.16
+		self.zoom = self.zoom * 3 --10 ^ (3 / 6) = 3.16
 	elseif remainder == 4 then
-		self.zoom = self.zoom * 5   --10 ^ (4 / 6) = 4.64
+		self.zoom = self.zoom * 5 --10 ^ (4 / 6) = 4.64
 	elseif remainder == 5 then
-		self.zoom = self.zoom * 7   --10 ^ (5 / 6) = 6.81
+		self.zoom = self.zoom * 7 --10 ^ (5 / 6) = 6.81
 	end
 end
 
 function Camera:setScissor(x, y, width, height)
-	self.scissor = {x = x, y = y, width = width, height = height}
+	self.scissor = { x = x, y = y, width = width, height = height }
 end
 
 function Camera:limitCursor(cursorX, cursorY)
@@ -319,11 +318,10 @@ function Camera:print(string, x, y)
 	love.graphics.print(string, scissor.x + x, scissor.y + y)
 end
 
-
 local function debugDraw(fixture)
 	love.graphics.push("all")
 	love.graphics.setColor(0.5, 0.5, 0.5, 0.5)
-	love.graphics.setLineWidth(2/Settings.PARTSIZE)
+	love.graphics.setLineWidth(2 / Settings.PARTSIZE)
 
 	local shape = fixture:getShape()
 	local type = shape:getType()
@@ -342,9 +340,8 @@ local function debugDraw(fixture)
 end
 
 function Camera:drawWorldObjects(player, debugmode)
-
 	local startTime, endTime, duration
-	startTime = love.timer.getTime( )
+	startTime = love.timer.getTime()
 
 
 	local drawOrder = {
@@ -376,7 +373,7 @@ function Camera:drawWorldObjects(player, debugmode)
 	player.world.physics:queryBoundingBox(a, b, c, d, callback)
 
 
-	endTime = love.timer.getTime( )
+	endTime = love.timer.getTime()
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.001 then
@@ -393,8 +390,8 @@ function Camera:drawWorldObjects(player, debugmode)
 	else
 		drawMode = 1
 	end
-	
-	local maxDrawMode = { 
+
+	local maxDrawMode = {
 		visual = 2,
 		projectiles = 2,
 		missile = 2,
@@ -417,7 +414,7 @@ function Camera:drawWorldObjects(player, debugmode)
 		end
 	end
 
-	endTime = love.timer.getTime( )
+	endTime = love.timer.getTime()
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.0004 then
@@ -426,26 +423,24 @@ function Camera:drawWorldObjects(player, debugmode)
 
 	local shieldCategoryNumber = PhysicsReferences.categories["shield"]
 
-	local testPointFunctions = {}
 	local shieldData = {}
 	for _, shieldFixture in ipairs(fixtureList[shieldCategoryNumber]) do
-		table.insert(shieldData, {shieldFixture:getUserData():data()})
+		table.insert(shieldData, { shieldFixture:getUserData():data() })
 	end
 	self.shieldData = shieldData
 
-	endTime = love.timer.getTime( )
+	endTime = love.timer.getTime()
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.0005 then
 		log:warn("Shield information gathering took too long: " .. duration)
 	end
-
 end
 
 local function shortestPath(angle, newAngle)
 	local angleDiff = newAngle - angle
 	if angleDiff > math.pi then
-		angleDiff = angleDiff - 2*math.pi
+		angleDiff = angleDiff - 2 * math.pi
 	end
 	return angle + angleDiff
 end
@@ -455,11 +450,11 @@ function Camera:update(player, dt)
 		local newX, newY = self.body:getPosition()
 		local newAngle = shortestPath(
 			self.angle,
-			self.angleFixed and 0 or self.body:getAngle() % (2*math.pi)
+			self.angleFixed and 0 or self.body:getAngle() % (2 * math.pi)
 		)
 
 		if self.pan then
-			self.x, self.y, self.angle = self.pan:step(dt, {newX, newY, newAngle})
+			self.x, self.y, self.angle = self.pan:step(dt, { newX, newY, newAngle })
 
 			if self.pan:isDone() then
 				self.pan = nil
@@ -480,7 +475,7 @@ function Camera:drawPlayer(player, debugmode)
 			self.body = nil
 			self.gameOver = true
 		else
-			local point = {0,0}
+			local point = { 0, 0 }
 
 			local leader = (player.ship.corePart or {}).leader
 			if leader then
@@ -491,12 +486,12 @@ function Camera:drawPlayer(player, debugmode)
 			end
 
 			compassAngle = math.atan2(self.x - point[1], self.y - point[2])
-				+ math.pi/2 + self.angle
+					+ math.pi / 2 + self.angle
 		end
 	end
 
 	local startTime, endTime, duration
-	startTime = love.timer.getTime( )
+	startTime = love.timer.getTime()
 
 	local scissor = self.scissor
 
@@ -508,8 +503,9 @@ function Camera:drawPlayer(player, debugmode)
 
 	local playerDrawPack = {}
 	playerDrawPack.compassAngle = compassAngle
-	playerDrawPack.camera = {x = self.x, y = self.y, width = self.scissor.width, height = self.scissor.height}
-	playerDrawPack.cursor = {x = player.cursorX, y = player.cursorY, worldX = cursorWorldX, worldY = cursorWorldY, image = player.cursor}
+	playerDrawPack.camera = { x = self.x, y = self.y, width = self.scissor.width, height = self.scissor.height }
+	playerDrawPack.cursor = { x = player.cursorX, y = player.cursorY, worldX = cursorWorldX, worldY = cursorWorldY, image =
+	player.cursor }
 	playerDrawPack.menu = player.menu
 	playerDrawPack.partSelector = player.partSelector
 	playerDrawPack.gameOver = self.gameOver
@@ -520,14 +516,14 @@ function Camera:drawPlayer(player, debugmode)
 
 	--Set translation for world objects
 	love.graphics.translate(scissor.x, scissor.y)
-	love.graphics.translate(scissor.width/2, scissor.height/2)
+	love.graphics.translate(scissor.width / 2, scissor.height / 2)
 	love.graphics.rotate(self.angle)
 	love.graphics.scale(self.zoom, -self.zoom)
-	love.graphics.translate(- self.x, - self.y)
+	love.graphics.translate(-self.x, -self.y)
 
 	self:drawWorldObjects(player, debugmode)
 
-	endTime = love.timer.getTime( )
+	endTime = love.timer.getTime()
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.015 then
@@ -537,14 +533,14 @@ function Camera:drawPlayer(player, debugmode)
 	--Set translation for hud elements that point to world objects
 	love.graphics.origin()
 	love.graphics.translate(scissor.x, scissor.y)
-	love.graphics.translate(scissor.width/2, scissor.height/2)
+	love.graphics.translate(scissor.width / 2, scissor.height / 2)
 	love.graphics.rotate(self.angle)
 	love.graphics.scale(self.zoom, -self.zoom)
-	love.graphics.translate(- self.x, - self.y)
+	love.graphics.translate(-self.x, -self.y)
 
 	self.hud:drawLabels(playerDrawPack, viewPort)
 
-	endTime = love.timer.getTime( )
+	endTime = love.timer.getTime()
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.001 then
@@ -552,24 +548,24 @@ function Camera:drawPlayer(player, debugmode)
 	end
 
 
-	local scale = {scissor.x + scissor.width/2, scissor.y + scissor.height/2}
+	local scale = { scissor.x + scissor.width / 2, scissor.y + scissor.height / 2 }
 
 	local camera_sin = math.sin(self.angle)
 	local camera_cos = math.cos(self.angle)
 
 	local rotation = {
-		{camera_cos / self.zoom, camera_sin / self.zoom},
-		{camera_sin / self.zoom, -camera_cos / self.zoom}
+		{ camera_cos / self.zoom, camera_sin / self.zoom },
+		{ camera_sin / self.zoom, -camera_cos / self.zoom }
 	}
-	
-	shieldCanvas = love.graphics.newCanvas(scissor.width, scissor.height)
+
+	local shieldCanvas = love.graphics.newCanvas(scissor.width, scissor.height)
 	love.graphics.origin()
 	love.graphics.setShader(self.shieldStrengthShader)
-	
+
 	self.shieldStrengthShader:send("screen_center_tran", scale)
 	self.shieldStrengthShader:send("to_world_rot", rotation)
-	self.shieldStrengthShader:send("to_world_tran", {self.x, self.y})
-	
+	self.shieldStrengthShader:send("to_world_tran", { self.x, self.y })
+
 	local points = {}
 	local strengths = {}
 	local teams = {}
@@ -578,7 +574,7 @@ function Camera:drawPlayer(player, debugmode)
 		table.insert(strengths, shield_data[2])
 		table.insert(teams, shield_data[3])
 	end
-	
+
 	local point_count = #points
 	self.shieldStrengthShader:send("point_count", point_count)
 	if point_count > 0 then
@@ -586,12 +582,12 @@ function Camera:drawPlayer(player, debugmode)
 		self.shieldStrengthShader:send("strengths", unpack(strengths))
 		self.shieldStrengthShader:send("teams", unpack(teams))
 	end
-	
-	love.graphics.setCanvas(shieldCanvas)
-	love.graphics.rectangle( "fill", 0, 0, scissor.width, scissor.height)
-	
 
-	endTime = love.timer.getTime( )
+	love.graphics.setCanvas(shieldCanvas)
+	love.graphics.rectangle("fill", 0, 0, scissor.width, scissor.height)
+
+
+	endTime = love.timer.getTime()
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.001 then
@@ -603,14 +599,14 @@ function Camera:drawPlayer(player, debugmode)
 	--Set translation for hud
 	love.graphics.origin()
 	love.graphics.translate(scissor.x, scissor.y)
-	
+
 
 	love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(shieldCanvas, 0,0)
-    
+	love.graphics.draw(shieldCanvas, 0, 0)
+
 	self.hud:draw(playerDrawPack, viewPort)
 
-	endTime = love.timer.getTime( )
+	endTime = love.timer.getTime()
 	duration = endTime - startTime
 	startTime = endTime
 	if duration > 0.001 then

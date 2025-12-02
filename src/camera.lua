@@ -108,9 +108,9 @@ function Camera.create()
 
 	self.shieldStrengthShader = love.graphics.newShader [[
 		extern number point_count;
-		extern vec2 points[100];
-		extern number strengths[100];
-		extern number teams[100];
+		extern vec2 points[1000];
+		extern number strengths[1000];
+		extern number teams[1000];
 
 		extern vec2 screen_center_tran;
 		extern mat2 to_world_rot;
@@ -503,9 +503,19 @@ function Camera:drawPlayer(player, debugmode)
 
 	local playerDrawPack = {}
 	playerDrawPack.compassAngle = compassAngle
-	playerDrawPack.camera = { x = self.x, y = self.y, width = self.scissor.width, height = self.scissor.height }
-	playerDrawPack.cursor = { x = player.cursorX, y = player.cursorY, worldX = cursorWorldX, worldY = cursorWorldY, image =
-	player.cursor }
+	playerDrawPack.camera = {
+		x = self.x,
+		y = self.y,
+		width = self.scissor.width,
+		height = self.scissor.height,
+	}
+	playerDrawPack.cursor = {
+		x = player.cursorX,
+		y = player.cursorY,
+		worldX = cursorWorldX,
+		worldY = cursorWorldY,
+		image = player.cursor,
+	}
 	playerDrawPack.menu = player.menu
 	playerDrawPack.partSelector = player.partSelector
 	playerDrawPack.gameOver = self.gameOver

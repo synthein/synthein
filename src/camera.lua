@@ -181,11 +181,14 @@ end
 
 function Camera:setTarget(target)
 	local duration = 1
-	local x, y = self.body:getPosition()
-	local angle = self.angleFixed and 0 or self.body:getAngle()
 
 	self.body = target
-	self.pan = Animation({x, y, angle}, {target:getX(), target:getY(), target:getAngle()}, duration, "easeout")
+	self.pan = Animation(
+		{ self.x, self.y, self.angle },
+		{ target:getX(), target:getY(), target:getAngle() },
+		duration,
+		"easeout"
+	)
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)

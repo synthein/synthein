@@ -16,6 +16,8 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	--Spacing variables
 	local d = 15
 	local dsq = d * d
+	local shootd = 20
+	local shootdsq = shootd * shootd
 	local m = 1
 
 	-- Constant is calibrated subject to change
@@ -167,7 +169,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 		if shoot then
 			if -projectileSpeed < leadOffset and
 				leadOffset < projectileSpeed and
-				dpmSq < 400 then
+				dpmSq < shootdsq then
 				angle = angle - math.asin(leadOffset/projectileSpeed)
 			else
 				shoot = false

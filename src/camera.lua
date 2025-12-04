@@ -108,9 +108,9 @@ function Camera.create()
 
 	self.shieldStrengthShader = love.graphics.newShader[[
 		extern number point_count;
-		extern vec2 points[1000];
-		extern number strengths[1000];
-		extern number teams[1000];
+		extern vec2 points[100];
+		extern number strengths[100];
+		extern number teams[100];
 		
 		extern vec2 screen_center_tran;
 		extern mat2 to_world_rot;

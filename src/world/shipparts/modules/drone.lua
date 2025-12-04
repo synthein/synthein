@@ -97,11 +97,11 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 				local mSq = (dx * dx) + (dy * dy)
 				local mVSq = (dvx * dvx) + (dvy * dvy)
 				
-				-- CollisionMeteric ~ path alignment / time to collision
-				local collisionMeteric = -(dx * dvx + dy * dvy) / mSq
+				-- CollisionMetric ~ path alignment / time to collision
+				local collisionMetric = -(dx * dvx + dy * dvy) / mSq
 
 				-- 0.2 is somewhat arbitrary it can be used to create a threshhold
-				if collisionMeteric > 0.2 then
+				if collisionMetric > 0.2 then
 					local directX = - dx
 					local directY = - dy
 					
@@ -113,12 +113,12 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 						dodgeY = -dodgeY
 					end
 					
-					local invDodgeMeteric = 25 / (mVSq + 25)
+					local invDodgeMetric = 25 / (mVSq + 25)
 					
-					local combinedX = invDodgeMeteric * directX + (1-invDodgeMeteric) * dodgeX
-					local combinedY = invDodgeMeteric * directY + (1-invDodgeMeteric) * dodgeY
+					local combinedX = invDodgeMetric * directX + (1-invDodgeMetric) * dodgeX
+					local combinedY = invDodgeMetric * directY + (1-invDodgeMetric) * dodgeY
 					
-					local scaleFactor = collisionMultiplier * collisionMeteric
+					local scaleFactor = collisionMultiplier * collisionMetric
 					sepX = sepX + combinedX * scaleFactor
 					sepY = sepY + combinedY * scaleFactor
 				end

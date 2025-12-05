@@ -16,6 +16,8 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	--Spacing variables
 	local d = 15
 	local dsq = d * d
+	local shootd = 20
+	local shootdsq = shootd * shootd
 	local m = 1
 
 	-- Constant is calibrated subject to change
@@ -23,7 +25,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 	--Cordination Logic
 	local destination
-	local leaderFollow
+	local leaderFollow = true
 	if self.follow then
 		if leader then
 			leaderBody = leader.body
@@ -84,23 +86,43 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 			local object = body:getUserData()
 			-- Look for structures.
 			if object then
-				local  dx,  dy = body:getPosition()
-				local dvx, dvy = body:getLinearVelocity()
+				local  bx,  by = body:getPosition()
+				local bvx, bvy = body:getLinearVelocity()
 
-				dx = dx - droneX
-				dy = dy - droneY
-				dvx = dvx - droneXV
-				dvy = dvy - droneYV
+				local dx = bx - droneX
+				local dy = by - droneY
+				local dvx = bvx - droneXV
+				local dvy = bvy - droneYV
 
 				local mSq = (dx * dx) + (dy * dy)
-				local collisionMetric = (dx * dvx + dy * dvy) / mSq
+				local mVSq = (dvx * dvx) + (dvy * dvy)
+				
+				-- CollisionMetric ~ path alignment / time to collision
+				local collisionMetric = -(dx * dvx + dy * dvy) / mSq
 
-				-- 0 is somewhat arbitrary it can be used to create a threshhold
-				if collisionMetric < 0 then
-					sepX = sepX + dx * collisionMultiplier * collisionMetric
-					sepY = sepY + dy * collisionMultiplier * collisionMetric
+				-- 0.2 is somewhat arbitrary it can be used to create a threshhold
+				if collisionMetric > 0.2 then
+					local directX = - dx
+					local directY = - dy
+					
+					local dodgeX = -dvy
+					local dodgeY = dvx
+					
+					if dx*dvy < dy*dvx then
+						dodgeX = -dodgeX
+						dodgeY = -dodgeY
+					end
+					
+					local invDodgeMetric = 25 / (mVSq + 25)
+					
+					local combinedX = invDodgeMetric * directX + (1-invDodgeMetric) * dodgeX
+					local combinedY = invDodgeMetric * directY + (1-invDodgeMetric) * dodgeY
+					
+					local scaleFactor = collisionMultiplier * collisionMetric
+					sepX = sepX + combinedX * scaleFactor
+					sepY = sepY + combinedY * scaleFactor
 				end
-
+				
 				--TODO add spacing logic here.
 				if object.type == "structure" then
 					if teamHostility:test(self.team, object.team or 0) then
@@ -134,6 +156,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	if target and capabilities.combat then
 		local dpx = target[1] - droneX
 		local dpy = target[2] - droneY
+		local dpmSq = dpx * dpx + dpy * dpy
 		local dvx = target[4] - droneXV
 		local dvy = target[5] - droneYV
 		local dvm = math.sqrt(dvx * dvx + dvy * dvy)
@@ -145,7 +168,8 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 		if shoot then
 			if -projectileSpeed < leadOffset and
-				leadOffset < projectileSpeed then
+				leadOffset < projectileSpeed and
+				dpmSq < shootdsq then
 				angle = angle - math.asin(leadOffset/projectileSpeed)
 			else
 				shoot = false
@@ -241,16 +265,16 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 	local orders = {}
 
 	local pidX = rdx + 2 * rvx
-	if 1 < pidX then
+	if 0.5 < pidX then
 		table.insert(orders, "strafeRight")
-	elseif -1 > pidX then
+	elseif -0.5 > pidX then
 		table.insert(orders, "strafeLeft")
 	end
 
 	local pidY = rdy + 2 * rvy
-	if 1 < pidY then
+	if 0.5 < pidY then
 		table.insert(orders, "forward")
-	elseif -1 > pidY then
+	elseif -0.5 > pidY then
 		table.insert(orders, "back")
 	end
 

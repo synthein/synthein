@@ -9,7 +9,7 @@ local PhysicsReferences = require("world/physicsReferences")
 Shot.type = "shot"
 
 function Shot:__create(worldInfo, location, data, appendix)
-	local vx, vy = vector.components(25, location[3] + math.pi/2)
+	local vx, vy = vector.components(50, location[3] + math.pi/2)
 	self.body:setLinearVelocity(location[4] + vx, location[5] + vy)
 	self.body:setAngularVelocity(0)
 	self.body:setBullet(true)

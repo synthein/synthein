@@ -315,8 +315,9 @@ function InGame.update(dt)
 				if player.ship then
 					local timeVar = 1 - 50/(20 + eventTime)
 					if timeVar < 0 then timeVar = 0 end
-					local disVar = 1 - 50/(1 + vector.magnitude(
-								player.ship.body:getX(),player.ship.body:getY())/20)
+					local shipX, shipY = player.ship.body:getPosition()
+					local dsq = shipX * shipX + shipY * shipY
+					local disVar = 1 - 2/(1 + dsq/10000)
 					if disVar < 0 then disVar = 0 end
 					local veloVar = 1 - 20/(1 + vector.magnitude(
 								player.ship.body:getLinearVelocity()))

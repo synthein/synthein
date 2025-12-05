@@ -28,6 +28,15 @@ function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight
 	end
 end
 
+local plainBlockSize = 20
+local plainBlockScale = 1/plainBlockSize
+local plainBlockOffset = plainBlockSize/2
+local plainBlock = love.graphics.newCanvas(plainBlockSize, plainBlockSize)
+love.graphics.setCanvas(plainBlock)
+love.graphics.clear(1, 1, 1)
+love.graphics.setCanvas()
+
+
 function Draw.createDrawBlockFunction(image)
 	if not love.graphics then
 		return function(x, y, angle) end
@@ -46,7 +55,12 @@ function Draw.createDrawBlockFunction(image)
 			elseif drawMode == 3 then
 				love.graphics.circle( "fill", x, y, 5 )
 			elseif drawMode == 2 then
-				love.graphics.rectangle( "fill", x-0.5, y-0.5, 1, 1)
+				love.graphics.draw(
+					plainBlock,
+					x, y, angle,
+					plainBlockScale, plainBlockScale,
+					plainBlockOffset, plainBlockOffset
+				)
 			else
 				love.graphics.draw(
 					image,

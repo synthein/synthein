@@ -18,11 +18,13 @@ function Hull:__create(imageFunction, maxHealth)--, connectableSides)
 		else
 			love.graphics.setColor(1, 1, 1, 1)
 		end
+		
+		local team = fixture:getBody():getUserData().team
 
 		local l = userData.location
 		local x, y, angle = Location.fixturePoint3(fixture, l[1], l[2])
 		angle = angle + (l[3] - 1) * math.pi / 2
-		imageFunction(x, y, angle, drawMode)
+		imageFunction(x, y, angle, drawMode, team)
 	end
 
 	function userData.collision(fixture, otherFixture, sqVelocity, pointVelocity)

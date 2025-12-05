@@ -396,6 +396,7 @@ function Camera:drawWorldObjects(player, debugmode)
 	
 	local maxDrawMode = { 
 		visual = 2,
+		sensor = 2,
 		projectiles = 2,
 		missile = 2,
 		general = 10,

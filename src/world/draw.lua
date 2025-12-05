@@ -40,16 +40,10 @@ teamColors[ 2] = {0, 0, 1}
 local plainBlockSize = 20
 local plainBlockScale = 1/plainBlockSize
 local plainBlockOffset = plainBlockSize/2
-local plainBlocks = {}
-
-for key, color in pairs(teamColors) do
-	local plainBlock = love.graphics.newCanvas(plainBlockSize, plainBlockSize)
-	love.graphics.setCanvas(plainBlock)
-	love.graphics.clear(unpack(color))
-	love.graphics.setCanvas()
-	
-	plainBlocks[key] = plainBlock
-end
+local plainBlock = love.graphics.newCanvas(plainBlockSize, plainBlockSize)
+love.graphics.setCanvas(plainBlock)
+love.graphics.clear(1, 1, 1)
+love.graphics.setCanvas()
 
 
 function Draw.createDrawBlockFunction(image)
@@ -72,8 +66,9 @@ function Draw.createDrawBlockFunction(image)
 				love.graphics.setColor(unpack(teamColors[team]))
 				love.graphics.circle( "fill", x, y, 5 )
 			elseif drawMode == 2 then
+				love.graphics.setColor(unpack(teamColors[team]))
 				love.graphics.draw(
-					plainBlocks[team],
+					plainBlock,
 					x, y, angle,
 					plainBlockScale, plainBlockScale,
 					plainBlockOffset, plainBlockOffset

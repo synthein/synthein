@@ -37,15 +37,14 @@ function Camera.create()
 		extern mat2 to_world_rot;
 		extern vec2 to_world_tran;
 
-		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ) {
+			vec4 pixel = Texel(texture, texture_coords); //This is the current pixel color
 
 			//vec2 to_world_tran;
 			//to_world_tran.x = 0;
 			//to_world_tran.y = 0;
 
-			//if (to_world_trans.length() > 0)
-			//{
+			//if (to_world_trans.length() > 0) {
 			//	to_world_tran = to_world_trans[0];
 			//}
 
@@ -66,7 +65,7 @@ function Camera.create()
 			int random = num - dim * (num/dim);
 			number rm = float(random)/128 + 0.5;
 
-			if (r < limit){
+			if (r < limit) {
 				number c = r/limit;
 				number edge = c*c;
 				number rim = edge * edge;
@@ -74,7 +73,7 @@ function Camera.create()
 				number rim4 = rim2 * rim2;
 				number rim8 = rim4 * rim4;
 				number fixed_color = 0;
-				if (delta < 0 && delta > (-5* radius)){
+				if (delta < 0 && delta > (-5* radius)) {
 					fixed_color = 1;
 				}
 
@@ -92,9 +91,7 @@ function Camera.create()
 
 
 				//return vec4(rim*rim*0.5, rim*0.5, 0.5, edge * rm);
-			}
-			else
-			{
+			} else {
 				return vec4(0,0.0,0.0,0);//clear
 			}
 		}
@@ -116,8 +113,8 @@ self.shieldStrengthShader = love.graphics.newShader[[
 		extern mat2 to_world_rot;
 		extern vec2 to_world_tran;
 
-		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ) {
+			vec4 pixel = Texel(texture, texture_coords); //This is the current pixel color
 
 			vec2 world_coords = to_world_rot * (screen_coords - screen_center_tran) + to_world_tran;
 
@@ -128,8 +125,7 @@ self.shieldStrengthShader = love.graphics.newShader[[
 			number b_team = 0;
 			number c_team = 0;
 
-			for (int i = 0; i < point_count; i += 1)
-			{
+			for (int i = 0; i < point_count; i += 1) {
 				vec2 offset = world_coords - points[i];
 				number r = offset.x * offset.x + offset.y * offset.y;
 
@@ -137,10 +133,8 @@ self.shieldStrengthShader = love.graphics.newShader[[
 
 				number new_team = teams[i];
 
-				if (new_strength > a)
-				{
-					if (new_team != a_team || new_team == 0 || new_team == -1)
-					{
+				if (new_strength > a) {
+					if (new_team != a_team || new_team == 0 || new_team == -1) {
 						b = a;
 						b_team = a_team;
 					}
@@ -148,10 +142,8 @@ self.shieldStrengthShader = love.graphics.newShader[[
 					a = new_strength;
 					a_team = teams[i];
 				}
-				else if (new_strength > b)
-				{
-					if (new_team != a_team || new_team == 0 || new_team == -1)
-					{
+				else if (new_strength > b) {
+					if (new_team != a_team || new_team == 0 || new_team == -1) {
 						b = new_strength;
 						b_team = teams[i];
 					}
@@ -159,15 +151,11 @@ self.shieldStrengthShader = love.graphics.newShader[[
 			}
 
 
-			if (a > 0)
-			{
+			if (a > 0) {
 				number base_line = 0.75 - a/2;
-				if (a_team == b_team && a_team != 0 && a_team != -1)
-				{
+				if (a_team == b_team && a_team != 0 && a_team != -1) {
 					return vec4(0, 0, 1, base_line);
-				}
-				else
-				{
+				} else {
 					return vec4(0, 0, 1, base_line + b/2);
 				}
 			}

@@ -58,13 +58,10 @@ function Draw.createDrawBlockFunction(image)
 	local offsetWidth  =  imageWidthPx  / 2
 	local offsetHeight =  imageHeightPx / 2
 
-	return function(x, y, angle, drawMode, team)
-			if drawMode == 4 then
+	return function(x, y, angle, drawMode, team, zoom)
+			if drawMode == 3 then
 				love.graphics.setColor(unpack(teamColors[team]))
-				love.graphics.circle( "fill", x, y, 50 )
-			elseif drawMode == 3 then
-				love.graphics.setColor(unpack(teamColors[team]))
-				love.graphics.circle( "fill", x, y, 5 )
+				love.graphics.circle( "fill", x, y, 5 * (1 + 1/zoom))
 			elseif drawMode == 2 then
 				love.graphics.setColor(unpack(teamColors[team]))
 				love.graphics.draw(

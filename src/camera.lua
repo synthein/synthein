@@ -605,7 +605,7 @@ function Camera:drawPlayer(player, debugmode)
 
 
 	love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.draw(shieldCanvas, 0, 0)
+	love.graphics.draw(shieldCanvas, 0, 0)
 
 	self.hud:draw(playerDrawPack, viewPort)
 

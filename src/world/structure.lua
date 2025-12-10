@@ -20,6 +20,11 @@ function Structure:__create(worldInfo, location, data, appendix)
 	if appendix then
 		local player
 		shipTable, player = StructureParser.shipUnpack(appendix, data)
+		if not shipTable then
+			log:debug("Failed to parse ship. Layout:\n%s\n%s", appendix, debug.traceback())
+			self.isDestroyed = true
+			return
+		end
 		self.isPlayer = player
 	else
 		shipTable = data

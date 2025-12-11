@@ -72,6 +72,7 @@ function love.draw()
   local passedTimes = 0
   local median = 0
   local p95 = 0
+  local p99 = 0
   for i, samplesInBucket in ipairs(buckets) do
     heightOfTallestBar = math.max(heightOfTallestBar, samplesInBucket)
     passedTimes = passedTimes + (buckets[i] or 0)
@@ -80,6 +81,9 @@ function love.draw()
     end
     if (p95 == 0) and (passedTimes > nTimes * 0.95) then
       p95 = bucketLowerBound(i)
+    end
+    if (p99 == 0) and (passedTimes > nTimes * 0.99) then
+      p99 = bucketLowerBound(i)
     end
   end
 
@@ -112,8 +116,9 @@ function love.draw()
 
   -- Draw percentiles
   local percentiles = {
-    { label = "median", time = median},
-    { label = "p95", time = p95},
+    { label = "median", time = median },
+    { label = "p95", time = p95 },
+    { label = "p99", time = p99 },
   }
 
   for i, data in ipairs(percentiles) do

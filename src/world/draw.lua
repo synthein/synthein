@@ -28,6 +28,15 @@ function Draw.createObjectDrawImageFunction(imageName, objectWidth, objectHeight
 	end
 end
 
+local teamColors = {}
+teamColors[-4] = {1, 0, 1}
+teamColors[-3] = {1, 1, 0}
+teamColors[-2] = {0, 1, 0}
+teamColors[-1] = {1, 0.5, 0}
+teamColors[ 0] = {1, 1, 1}
+teamColors[ 1] = {1, 0, 0}
+teamColors[ 2] = {0, 0, 1}
+
 local plainBlockSize = 20
 local plainBlockScale = 1/plainBlockSize
 local plainBlockOffset = plainBlockSize/2
@@ -49,12 +58,15 @@ function Draw.createDrawBlockFunction(image)
 	local offsetWidth  =  imageWidthPx  / 2
 	local offsetHeight =  imageHeightPx / 2
 
-	return function(x, y, angle, drawMode)
+	return function(x, y, angle, drawMode, team)
 			if drawMode == 4 then
+				love.graphics.setColor(unpack(teamColors[team]))
 				love.graphics.circle( "fill", x, y, 50 )
 			elseif drawMode == 3 then
+				love.graphics.setColor(unpack(teamColors[team]))
 				love.graphics.circle( "fill", x, y, 5 )
 			elseif drawMode == 2 then
+				love.graphics.setColor(unpack(teamColors[team]))
 				love.graphics.draw(
 					plainBlock,
 					x, y, angle,

@@ -373,12 +373,11 @@ function Camera:drawWorldObjects(player, debugmode)
 		log:warn("Drawing World Objects setup tasks took too long: " .. duration)
 	end
 
+	local zoom = self.zoom
 	local drawMode
-	if self.zoom < 0.08 then
-		drawMode = 4
-	elseif self.zoom < 0.8 then
+	if zoom <= 2 then
 		drawMode = 3
-	elseif self.zoom < 8 then
+	elseif zoom < 8 then
 		drawMode = 2
 	else
 		drawMode = 1
@@ -399,7 +398,7 @@ function Camera:drawWorldObjects(player, debugmode)
 			for _, fixture in ipairs(fixtureList[categoryNumber]) do
 				local object = fixture:getUserData()
 				if object.draw then
-					object:draw(fixture, player.showHealth, drawMode)
+					object:draw(fixture, player.showHealth, drawMode, zoom)
 				end
 				if debugmode then
 					debugDraw(fixture)

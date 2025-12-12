@@ -2,7 +2,7 @@ local parse = {}
 
 function parse.parseNumbers(string)
 	local t = {}
-	for coord in string.gmatch(string, "[-0-9.]+") do
+	for coord in string.gmatch(string, "[-0-9.e]+") do
 		table.insert(t, tonumber(coord))
 	end
 	return t

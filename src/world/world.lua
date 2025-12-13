@@ -22,6 +22,7 @@ function World:__create(playerHostility)
 		World.preSolve, World.postSolve)
 
 	self.objects = {}
+	self.objectIndex = 1
 	local generalHostility = {}
 	generalHostility[0]  = false --corepartless structures
 	generalHostility[-1] = true  --pirates
@@ -136,13 +137,22 @@ function World.postSolve() --(fixtureA, fixtureB, coll, normalimpulse, tangentim
 	--print("postSolve")
 end
 
-function World:addObject(object, objectKey)
-	table.insert(self.objects, object)
+function World:addObject(object)
+	local index = self.objectIndex
+	self.objectIndex = index + 1
+	self.objects[index] = object
+	
+	object.body:getUserData().id = index
+end
+
+-- May add a free list at some point
+function World:removeObject(index)
+	self.objects[index] = nil
 end
 
 function World:spawnObject(type, location, data, appendix)
 	local object = World.objectTypes[type](self.info, location, data, appendix)
-	table.insert(self.objects, object)
+	self:addObject(object)
 
 	local body = object.body
 	local userData = body:getUserData()
@@ -194,16 +204,12 @@ function World:getObject(locationX, locationY)
 	return nil
 end
 
-function World:getObjects()
-	return self.objects
-end
-
 function World:update(dt)
 	self.physics:update(dt)
 
 	local nextBorders = {0, 0, 0, 0}
 
-	for i, object in ipairs(self.objects) do
+	for k, object in pairs(self.objects) do
 		if object.isDestroyed == false then
 			local objectX, objectY = object.body:getPosition()
 			local objectType = object.body:getUserData().type
@@ -233,7 +239,7 @@ function World:update(dt)
 		end
 
 		if object.isDestroyed == true then
-			table.remove(self.objects, i)
+			self:removeObject(k)
 		end
 	end
 
@@ -250,7 +256,7 @@ function World:update(dt)
 			log:error("Creating an object in the world failed: %s\nEvent generated at:%s",
 				result, generatedAt)
 		else
-			table.insert(self.objects, result)
+			self:addObject(result)
 		end
 	end
 	self.events.create = {}

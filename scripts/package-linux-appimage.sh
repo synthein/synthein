@@ -8,6 +8,7 @@ rust_lib=${root_dir}/src/syntheinrust.so
 app_dir=${build_dir}/synthein-${SYNTHEIN_VERSION}.AppDir
 build_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.AppImage
 love_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.love
+fused_binary_file=${build_dir}/synthein-${SYNTHEIN_VERSION}.bin
 
 . "${root_dir}/scripts/util.sh"
 
@@ -33,8 +34,12 @@ chmod +x appimagetool-x86_64.AppImage
 echo "Building AppImage package."
 cd "$app_dir"
 
-install -D "$love_file" usr/share/synthein/synthein.love
-install -D "$rust_lib" usr/syntheinrust.so # This is the only relative path LOVE checks.
+cat "${app_dir}/bin/love" "$love_file" > "$fused_binary_file"
+chmod +x "$fused_binary_file"
+rm "${app_dir}/bin/love"
+
+install -D "$fused_binary_file" bin/synthein
+install -D "$rust_lib" lib/lua/5.1/syntheinrust.so
 install -D "${root_dir}/package/synthein.desktop" usr/share/applications/synthein.desktop
 install -D "${root_dir}/package/synthein.png" usr/share/pixmaps/synthein.png
 rm love.desktop .DirIcon

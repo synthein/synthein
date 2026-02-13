@@ -74,14 +74,14 @@ impl Building {
         match self.mode {
             BuildingState::GettingAnnexeeSide => {
                 self.annexee_base_vector
-                    .ok_or(Err("???".into_lua_err()))?
+                    .ok_or("???".into_lua_err())?
                     .set("3", part_side)?;
                 self.mode = BuildingState::GettingStructure;
                 Ok(())
             }
             BuildingState::GettingStructureSide => {
                 self.structure_vector
-                    .ok_or(Err("???".into_lua_err()))?
+                    .ok_or("???".into_lua_err())?
                     .set("3", part_side)?;
 
                 if self.annexee.is_some()
@@ -90,7 +90,7 @@ impl Building {
                     && self.structure_vector.is_some()
                 {
                     self.structure
-                        .ok_or(Err("???".into_lua_err()))?
+                        .ok_or("???".into_lua_err())?
                         .get::<LuaFunction>("annex")?
                         .call((
                             self.annexee,
@@ -127,7 +127,7 @@ impl UserData for Building {
             },
         );
 
-        methods.add_method_mut("setSide", |_, this, (side): (f64)| {
+        methods.add_method_mut("setSide", |_, this, side: f64| {
             this.set_side(side)
         });
     }

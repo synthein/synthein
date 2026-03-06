@@ -1,13 +1,29 @@
-use mlua::prelude::{LuaError, LuaFunction, LuaTable};
-use mlua::{AnyUserData, IntoLua, Lua, ObjectLike, UserData, UserDataFields, UserDataMethods, ExternalError};
-use std::error::Error;
+use mlua::prelude::{LuaError, LuaFunction, LuaTable, LuaValue};
+use mlua::{
+    AnyUserData, ExternalError, IntoLua, Lua, ObjectLike, Result, UserData, UserDataFields,
+    UserDataMethods,
+};
 
+#[derive(Copy, Clone)]
 pub enum BuildingState {
     GettingAnnexee,
     GettingAnnexeeSide,
     GettingStructure,
     GettingStructureSide,
     Done,
+}
+
+impl IntoLua for BuildingState {
+    fn into_lua(self, lua: &Lua) -> Result<LuaValue> {
+        match self {
+            Self::GettingAnnexee => 1,
+            Self::GettingAnnexeeSide => 2,
+            Self::GettingStructure => 3,
+            Self::GettingStructureSide => 4,
+            Self::Done => 5,
+        }
+        .into_lua(lua)
+    }
 }
 
 pub struct Building {
@@ -19,7 +35,7 @@ pub struct Building {
     annexee_part: Option<LuaTable>,
     pub annexee_part_index: Option<f64>,
     annexee_base_vector: Option<LuaTable>,
-    pub body: Option<LuaTable>,
+    pub body: Option<AnyUserData>,
     pub mode: BuildingState,
 }
 
@@ -39,15 +55,16 @@ pub fn new() -> Building {
 }
 
 impl Building {
-    pub fn set_annexee(&mut self, structure: LuaTable, part: LuaTable) -> Result<(), LuaError> {
+    pub fn set_annexee(&mut self, structure: LuaTable, part: LuaTable) -> Result<()> {
         self.annexee_base_vector = part.clone().get("location")?;
-        self.body = part
+
+        let fixture = part
             .clone()
             .get::<LuaTable>("modules")?
             .get::<LuaTable>("hull")?
-            .get::<LuaTable>("fixture")?
-            .get::<LuaFunction>("getBody")?
-            .call(())?;
+            .get::<AnyUserData>("fixture")?;
+
+        self.body = fixture.get::<LuaFunction>("getBody")?.call(fixture)?;
 
         self.annexee = Some(structure);
         self.annexee_part = Some(part);
@@ -57,7 +74,7 @@ impl Building {
         Ok(())
     }
 
-    pub fn set_structure(&mut self, structure: LuaTable, part: LuaTable) -> Result<bool, LuaError> {
+    pub fn set_structure(&mut self, structure: LuaTable, part: LuaTable) -> Result<bool> {
         if self.annexee == Some(structure.clone()) {
             return Ok(true);
         }
@@ -70,19 +87,21 @@ impl Building {
         Ok(false)
     }
 
-    pub fn set_side(&mut self, part_side: f64) -> Result<(), LuaError> {
+    pub fn set_side(&mut self, part_side: f64) -> Result<()> {
         match self.mode {
             BuildingState::GettingAnnexeeSide => {
                 self.annexee_base_vector
+                    .as_ref()
                     .ok_or("???".into_lua_err())?
-                    .set("3", part_side)?;
+                    .set(3, part_side)?;
                 self.mode = BuildingState::GettingStructure;
                 Ok(())
             }
             BuildingState::GettingStructureSide => {
                 self.structure_vector
+                    .as_ref()
                     .ok_or("???".into_lua_err())?
-                    .set("3", part_side)?;
+                    .set(3, part_side)?;
 
                 if self.annexee.is_some()
                     && self.annexee_base_vector.is_some()
@@ -90,19 +109,23 @@ impl Building {
                     && self.structure_vector.is_some()
                 {
                     self.structure
+                        .clone()
                         .ok_or("???".into_lua_err())?
                         .get::<LuaFunction>("annex")?
                         .call((
-                            self.annexee,
-                            self.annexee_base_vector,
-                            self.structure_vector,
+                            self.structure.clone(),
+                            self.annexee.clone(),
+                            self.annexee_base_vector.clone(),
+                            self.structure_vector.clone(),
                         ))?
                 }
 
                 self.mode = BuildingState::Done;
                 Ok(())
             }
-            _ => Err("It is not valid to set a side when we're not looking for a side".into_lua_err()),
+            _ => Err(
+                "It is not valid to set a side when we're not looking for a side".into_lua_err(),
+            ),
         }
     }
 }
@@ -110,6 +133,7 @@ impl Building {
 impl UserData for Building {
     fn add_fields<F: UserDataFields<Self>>(fields: &mut F) {
         fields.add_field_method_get("structure", |_, this| Ok(this.structure.clone()));
+        fields.add_field_method_get("mode", |_, this| Ok(this.mode));
     }
 
     fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
@@ -127,13 +151,11 @@ impl UserData for Building {
             },
         );
 
-        methods.add_method_mut("setSide", |_, this, side: f64| {
-            this.set_side(side)
-        });
+        methods.add_method_mut("setSide", |_, this, side: f64| this.set_side(side));
     }
 }
 
-pub fn lua_module(lua: &Lua) -> Result<LuaTable, LuaError> {
+pub fn lua_module(lua: &Lua) -> Result<LuaTable> {
     let exports = lua.create_table()?;
 
     exports.set(

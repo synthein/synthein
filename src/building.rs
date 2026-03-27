@@ -1,4 +1,4 @@
-use mlua::prelude::{LuaError, LuaFunction, LuaTable, LuaValue};
+use mlua::prelude::{LuaFunction, LuaTable, LuaValue};
 use mlua::{
     AnyUserData, ExternalError, IntoLua, Lua, ObjectLike, Result, UserData, UserDataFields,
     UserDataMethods,

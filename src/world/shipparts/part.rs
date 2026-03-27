@@ -1,5 +1,5 @@
-use mlua::prelude::{LuaError, LuaFunction, LuaTable, LuaValue};
-use mlua::{AnyUserData, FromLua, IntoLua, Lua, Result};
+use mlua::prelude::{LuaError, LuaValue};
+use mlua::{FromLua, IntoLua, Lua, Result};
 
 #[derive(Clone)]
 pub struct Location {

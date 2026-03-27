@@ -92,12 +92,18 @@ impl Building {
     pub fn set_side(&mut self, part_side: f64) -> Result<()> {
         match self.mode {
             BuildingState::GettingAnnexeeSide => {
-                self.annexee_base_vector.as_mut().unwrap().orientation = part_side.floor() as i64;
+                self.annexee_base_vector.as_mut().ok_or("annexee_base_vector was None; it should have been set to some value already".into_lua_err())?.orientation = part_side.floor() as i64;
                 self.mode = BuildingState::GettingStructure;
                 Ok(())
             }
             BuildingState::GettingStructureSide => {
-                self.structure_vector.as_mut().unwrap().orientation = part_side.floor() as i64;
+                self.structure_vector
+                    .as_mut()
+                    .ok_or(
+                        "structure_vector was None; it should have been set to some value already"
+                            .into_lua_err(),
+                    )?
+                    .orientation = part_side.floor() as i64;
 
                 if self.annexee.is_some()
                     && self.annexee_base_vector.is_some()
@@ -106,7 +112,10 @@ impl Building {
                 {
                     self.structure
                         .clone()
-                        .ok_or("???".into_lua_err())?
+                        .ok_or(
+                            "structure was None; it should have been set to some value already"
+                                .into_lua_err(),
+                        )?
                         .get::<LuaFunction>("annex")?
                         .call((
                             self.structure.clone(),

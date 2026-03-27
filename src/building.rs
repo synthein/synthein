@@ -4,6 +4,8 @@ use mlua::{
     UserDataMethods,
 };
 
+use crate::world::shipparts::part::Location;
+
 #[derive(Copy, Clone)]
 pub enum BuildingState {
     GettingAnnexee,
@@ -30,11 +32,11 @@ pub struct Building {
     pub structure: Option<LuaTable>,
     structure_part: Option<LuaTable>,
     pub structure_part_index: Option<f64>,
-    structure_vector: Option<LuaTable>,
+    structure_vector: Option<Location>,
     pub annexee: Option<LuaTable>,
     annexee_part: Option<LuaTable>,
     pub annexee_part_index: Option<f64>,
-    annexee_base_vector: Option<LuaTable>,
+    annexee_base_vector: Option<Location>,
     pub body: Option<AnyUserData>,
     pub mode: BuildingState,
 }
@@ -56,7 +58,7 @@ pub fn new() -> Building {
 
 impl Building {
     pub fn set_annexee(&mut self, structure: LuaTable, part: LuaTable) -> Result<()> {
-        self.annexee_base_vector = part.clone().get("location")?;
+        self.annexee_base_vector = Some(part.clone().get::<Location>("location")?);
 
         let fixture = part
             .clone()
@@ -79,7 +81,7 @@ impl Building {
             return Ok(true);
         }
 
-        self.structure_vector = part.clone().get("location")?;
+        self.structure_vector = Some(part.clone().get::<Location>("location")?);
         self.structure = Some(structure);
         self.structure_part = Some(part);
         self.mode = BuildingState::GettingStructureSide;
@@ -90,18 +92,12 @@ impl Building {
     pub fn set_side(&mut self, part_side: f64) -> Result<()> {
         match self.mode {
             BuildingState::GettingAnnexeeSide => {
-                self.annexee_base_vector
-                    .as_ref()
-                    .ok_or("???".into_lua_err())?
-                    .set(3, part_side)?;
+                self.annexee_base_vector.as_mut().unwrap().orientation = part_side.floor() as i64;
                 self.mode = BuildingState::GettingStructure;
                 Ok(())
             }
             BuildingState::GettingStructureSide => {
-                self.structure_vector
-                    .as_ref()
-                    .ok_or("???".into_lua_err())?
-                    .set(3, part_side)?;
+                self.structure_vector.as_mut().unwrap().orientation = part_side.floor() as i64;
 
                 if self.annexee.is_some()
                     && self.annexee_base_vector.is_some()

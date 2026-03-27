@@ -17,8 +17,8 @@ windows: love
 	$(env) scripts/package-windows.sh
 
 rust:
-	cargo build --release
-	cp target/release/libsyntheinrust.so src/syntheinrust.so
+	cargo build
+	cp target/debug/libsyntheinrust.so src/syntheinrust.so
 
 # Maintenance commands
 check:

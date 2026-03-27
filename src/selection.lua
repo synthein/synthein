@@ -1,6 +1,6 @@
 local StructureMath = require("world/structureMath")
-local Building = require("building")
 local CircleMenu = require("circleMenu")
+local Building = require("syntheinrust").building
 local vector = require("syntheinrust").vector
 
 local Selection = {}
@@ -33,7 +33,7 @@ function Selection:cursorpressed(cursor, control)
 		local build = self.build
 		local team = structure.body:getUserData().team
 		if build then
-			if control.ship  == "build" then
+			if control.ship == "build" then
 				if build.mode == 3 then
 					if team == 0 or team == self.team then
 						self.structure = structure
@@ -77,7 +77,6 @@ function Selection:cursorpressed(cursor, control)
 				end
 			end
 		end
-
 	else
 		if control.ship == "destroy" then
 			self.structure = nil
@@ -96,7 +95,7 @@ function Selection:cursorreleased(cursor, control)
 		local build = self.build
 		if not withinPart then
 			if build then
-				if structure:testEdge({l[1], l[2], partSide}) then
+				if structure:testEdge({ l[1], l[2], partSide }) then
 					build:setSide(partSide)
 					if build.mode == 5 then
 						self.build = nil

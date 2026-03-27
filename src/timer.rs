@@ -1,5 +1,5 @@
 use mlua::prelude::{LuaNumber, LuaTable};
-use mlua::{IntoLua, FromLua, Lua, Result, UserData, UserDataFields, UserDataMethods};
+use mlua::{FromLua, IntoLua, Lua, Result, UserData, UserDataFields, UserDataMethods};
 
 #[derive(Copy, Clone, FromLua)]
 pub struct Timer {

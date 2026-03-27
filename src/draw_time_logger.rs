@@ -51,7 +51,7 @@ impl DrawTimeLogger {
     pub fn log(&mut self) {
         self.frame_num += 1;
 
-        if self.frame_num % INTERVAL == 0 {
+        if self.frame_num.is_multiple_of(INTERVAL) {
             if let Some(log_file) = &mut self.log_file {
                 if let Err(error) = log_file.write_all(
                     self.times

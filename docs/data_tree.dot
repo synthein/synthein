@@ -1,0 +1,42 @@
+digraph {
+	main [label = "main.lua"]
+	main -> gameStates
+	
+	gameStates -> MainMenu
+	gameStates -> InGame
+	gameStates -> NewGameMenu
+	gameStates -> LoadGameMenu
+	gameStates -> ShipEditor
+	gameStates -> FormationEditor
+
+	InGame -> Controls
+	InGame -> Debug
+	InGame -> Log
+	InGame -> Player
+	InGame -> SaveMenu
+	InGame -> SceneParser
+	InGame -> Screen
+	InGame -> Settings
+	InGame -> World
+	
+	Player -> ViewPort [label = "reference"]
+	
+	Screen -> ViewPort [label = "creation, reference"]
+	
+	ViewPort -> Hud
+	
+	Hud -> Camera
+	
+	World -> World_objectTypes
+	World -> World_objects
+	World -> Physics
+	
+	World_objectTypes [label = "World.objectTypes"]
+	
+	World_objects [label = "World.objects"]
+	World_objects -> Structure
+	World_objects -> Shot
+	World_objects -> Missile
+	World_objects -> Particles
+	
+}

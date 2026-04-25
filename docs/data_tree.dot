@@ -1,0 +1,54 @@
+digraph {
+	main [label = "main.lua"]
+	main -> gameStates
+	
+	gameStates -> MainMenu
+	gameStates -> InGame
+	gameStates -> NewGameMenu
+	gameStates -> LoadGameMenu
+	gameStates -> ShipEditor
+	gameStates -> FormationEditor
+
+	InGame -> Controls
+	InGame -> Debug
+	InGame -> Log
+	InGame -> Player
+	InGame -> SaveMenu
+	InGame -> SceneParser
+	InGame -> Screen
+	InGame -> Settings
+	InGame -> World
+	
+	Player -> ViewPort [label = "reference" color="green"]
+	Player -> Camera [label = "reference" color="red"]
+	Player -> Player_selected [color="red"]
+	
+	Player_selected [label = "Player.selected(Selection)"]
+	Player_selected -> Selection_build
+	
+	Selection_build [label = "Selection.build(Building)"]
+	
+	Screen -> ViewPort [label = "creation, reference" color="green"]
+	Screen -> Camera [label = "creation, reference" color="red"]
+	
+	ViewPort -> Hud [color="green"]
+	ViewPort -> Player_selected [color="blue"]
+	
+	Hud -> Camera [color="green"]
+	Hud -> Player_selected [color="blue"]
+	
+	Camera -> Hud [color="red"]
+	
+	World -> World_objectTypes
+	World -> World_objects
+	World -> Physics
+	
+	World_objectTypes [label = "World.objectTypes"]
+	
+	World_objects [label = "World.objects"]
+	World_objects -> Structure
+	World_objects -> Shot
+	World_objects -> Missile
+	World_objects -> Particles
+	
+}

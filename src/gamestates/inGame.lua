@@ -68,14 +68,14 @@ function InGame.load(scene, playerHostility, saveName, debuginfo)
 		if i == 1 then
 			table.insert(
 				players,
-				Player.create(world, Controls(), ship, screen:createCamera())
+				Player.create(world, Controls(), ship, screen:createViewPort())
 			)
 		else
 			local joystick = love.joystick.getJoysticks()[#players]
 			if joystick then
 				table.insert(
 					players,
-					Player.create(world, Controls(joystick), ship, screen:createCamera())
+					Player.create(world, Controls(joystick), ship, screen:createViewPort())
 				)
 			end
 		end
@@ -85,7 +85,7 @@ function InGame.load(scene, playerHostility, saveName, debuginfo)
 	world.physics:update(0)
 
 	if #players == 0 then
-		table.insert(players, Player.create(world, Controls(), nil, screen:createCamera()))
+		table.insert(players, Player.create(world, Controls(), nil, screen:createViewPort()))
 	end
 
 	saveMenu = SaveMenu(Settings.saveDir, saveName)
@@ -352,7 +352,7 @@ function InGame.update(dt)
 						end
 						local pV = {-uV[2], uV[1]}
 						local r = 2 * (math.random() - 0.5)
-						local m = 1000 / player.camera.zoom
+						local m = 1000 / player.viewPort.camera.zoom
 						if m < 100 then m = 100 end
 						local netV = {m * (uV[1] + r * pV[1]),
 									  m * (uV[2] + r * pV[2])}

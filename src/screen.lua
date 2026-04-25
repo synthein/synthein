@@ -1,20 +1,20 @@
-local Camera = require("camera")
+local ViewPort = require("viewPort")
 
 local Screen = class()
 
 function Screen:__create()
-	self.cameras = {}
+	self.viewPorts = {}
 end
 
-function Screen:createCamera()
-	local newCamera = Camera.create()
-	table.insert(self.cameras, newCamera)
+function Screen:createViewPort()
+	local newViewPort = ViewPort()
+	table.insert(self.viewPorts, newViewPort)
 	self:arrange(love.graphics.getWidth(), love.graphics.getHeight())
-	return newCamera
+	return newViewPort
 end
 
 function Screen:arrange(screenWidth, screenHeight)
-	local n = #self.cameras
+	local n = #self.viewPorts
 	local columns, rows = 1, 1
 	for i = 1, n do
 		if i > columns * rows then
@@ -32,13 +32,13 @@ function Screen:arrange(screenWidth, screenHeight)
 		rows = math.min(rows, math.ceil(n / columns))
 	end
 
-	local cameraWidth  = math.floor(screenWidth/columns)
-	local cameraHeight = math.floor(screenHeight/rows)
-	for i, camera in ipairs(self.cameras) do
+	local viewPortWidth  = math.floor(screenWidth/columns)
+	local viewPortHeight = math.floor(screenHeight/rows)
+	for i, viewPort in ipairs(self.viewPorts) do
 		local x = (i-1)%columns
 		local y = (i-x -1)/columns
-		camera:setScissor(x*cameraWidth, y*cameraHeight,
-						  cameraWidth, cameraHeight)
+		viewPort:setScissor(x*viewPortWidth, y*viewPortHeight,
+						  viewPortWidth, viewPortHeight)
 	end
 end
 

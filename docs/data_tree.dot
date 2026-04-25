@@ -19,7 +19,7 @@ digraph {
 	InGame -> Settings
 	InGame -> World
 	
-	Player -> ViewPort [label = "reference" color="green"]
+	Player -> ViewPort [label = "reference"]
 	Player -> Camera [label = "reference" color="red"]
 	Player -> Player_selected [color="red"]
 	
@@ -28,10 +28,10 @@ digraph {
 	
 	Selection_build [label = "Selection.build(Building)"]
 	
-	Screen -> ViewPort [label = "creation, reference" color="green"]
-	Screen -> Camera [label = "creation, reference" color="red"]
+	Screen -> ViewPort [label = "creation, reference"]
 	
 	ViewPort -> Hud [color="green"]
+	ViewPort -> Camera [color="red"]
 	ViewPort -> Player_selected [color="blue"]
 	
 	Hud -> Camera [color="green"]

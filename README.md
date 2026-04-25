@@ -50,13 +50,13 @@ To add a block to your ship or an AI ally's ship:
 
 Press F12 to toggle debug mode.
 
-During debug node, you can see more information about your ship and the game
+During debug mode, you can see more information about your ship and the game
 world. You can also spawn in a few different kinds of ships and ship parts.
 Press "I" to open a menu that lets you choose something to spawn.
 
 ## License
 
-Copyright (c) 2014-2022 Jordan Christiansen and Drake Halver
+Copyright (c) 2014-2026 Jordan Christiansen and randomguyeatspotato
 
 The code and assets of Synthein are distributed under the terms of the GPL v3,
 included in the LICENSE file.

@@ -5,14 +5,15 @@ local PartRegistry = require("world/shipparts/partRegistry")
 local Player = {}
 Player.__index = Player
 
-function Player.create(world, controls, ship, camera)
+function Player.create(world, controls, ship, viewPort)
 	local self = {}
 	setmetatable(self, Player)
 
 	self.world = world
 	self.controls = controls
 	self.ship = ship
-	self.camera = camera
+	self.viewPort = viewPort
+	self.camera = viewPort.camera
 
 
 	if ship then

@@ -9,7 +9,7 @@ pub struct DrawTimeLogger {
     pub times: Vec<f64>,
     pub capacity: usize,
     pub log_file: Option<fs::File>,
-    pub frame_num: u8,
+    pub frame_num: u64,
 }
 
 pub fn new(capacity: usize, logdir: String, logfile: String) -> Result<DrawTimeLogger> {
@@ -37,7 +37,7 @@ pub fn new(capacity: usize, logdir: String, logfile: String) -> Result<DrawTimeL
     })
 }
 
-const INTERVAL: u8 = 30;
+const INTERVAL: u64 = 30;
 
 impl DrawTimeLogger {
     pub fn insert(&mut self, duration: f64) {

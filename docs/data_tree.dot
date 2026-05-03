@@ -74,25 +74,87 @@ digraph {
 	
 	gridTable -> Parts
 	
-	Parts -> Fixture
+	PartRegistry -> Block
+	PartRegistry -> EngineBlock
+	PartRegistry -> GunBlock
+	PartRegistry -> DroneBlock
+	PartRegistry -> PlayerBlock
+	PartRegistry -> Anchor
+	PartRegistry -> ArmorBlock
+	PartRegistry -> ShieldBlock
+	PartRegistry -> RepairBlock
+	PartRegistry -> MissileLauncherBlock
+	PartRegistry -> ClampBlock
+	
+	Parts -> Block
+	Parts -> EngineBlock
 	Parts -> GunBlock
+	Parts -> DroneBlock
+	Parts -> PlayerBlock
+	Parts -> Anchor
+	Parts -> ArmorBlock
+	Parts -> ShieldBlock
+	Parts -> RepairBlock
+	Parts -> MissileLauncherBlock
+	Parts -> ClampBlock
+	
+	Block -> Part
+	Block -> Hull
+	
+	EngineBlock -> Part
+	EngineBlock -> Hull
 	
 	GunBlock -> Part
+	GunBlock -> Hull
 	GunBlock -> Gun
 	
 	Gun -> Module
 	Gun -> WorldEvent
 	
+	DroneBlock -> Part
+	DroneBlock -> Hull
+	
+	PlayerBlock -> Part
+	PlayerBlock -> Hull
+	
+	Anchor -> Part
+	Anchor -> Hull
+	
+	ArmorBlock -> Part
+	ArmorBlock -> Hull
+	
+	ShieldBlock -> Part
+	ShieldBlock -> Hull
+	
+	RepairBlock -> Part
+	RepairBlock -> Hull
+	
+	MissileLauncherBlock -> Part 
+	MissileLauncherBlock -> Hull
+	
+	ClampBlock -> Part
+	ClampBlock -> Hull
+	
+	Hull -> Fixture
+	Hull -> HullUserData
+	
 	Shot -> Body
 	Missile -> Body
 	Particles -> Body
+	
+	Physics -> Body
+	Physics -> Fixture
 	
 	Body -> Fixture [label = "pyhsics engine"]
 	Body -> Body_UserData
 	
 	Body_UserData -> Structure [label = "Annexing" color="red"]
+	Body_UserData -> Structure [label = "Disconnection Parts" color="red"]
 
 	Fixture -> Body [label = "pyhsics engine"]
 	Fixture -> Fixture_UserData
+	
+	Fixture_UserData -> HullUserData
+	
 	
 }

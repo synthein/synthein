@@ -18,10 +18,14 @@ digraph {
 	InGame -> Screen
 	InGame -> Settings
 	InGame -> World
+	InGame -> Camera [label = "spawning" color="red"]
+	InGame -> Structure [label = "spawning" color="red"]
+	
 	
 	Player -> ViewPort [label = "reference"]
 	Player -> Camera [label = "reference" color="red"]
 	Player -> Player_selected [color="red"]
+	Player -> Structure [label = "Player Ship"]
 	
 	Player_selected [label = "Player.selected(Selection)"]
 	Player_selected -> Selection_build
@@ -38,10 +42,18 @@ digraph {
 	Hud -> Player_selected [color="blue"]
 	
 	Camera -> Hud [color="red"]
+	Camera -> Body [label="reference point"]
 	
 	World -> World_objectTypes
 	World -> World_objects
 	World -> Physics
+	World -> worldInfo
+	
+	worldInfo -> worldInfo_physics
+	worldInfo -> worldInfo_create
+	
+	worldInfo_physics [label="worldInfo.physics"]
+	worldInfo_create [label="worldInfo.create"]
 	
 	World_objectTypes [label = "World.objectTypes"]
 	
@@ -50,5 +62,99 @@ digraph {
 	World_objects -> Shot
 	World_objects -> Missile
 	World_objects -> Particles
+	
+	Structure
+	Structure -> worldInfo
+	Structure -> worldInfo_physics
+	Structure -> worldInfo_create
+	Structure -> corePart
+	Structure -> gridTable
+	Structure -> Body
+	Structure -> Parts
+	
+	gridTable -> Parts
+	
+	PartRegistry -> Block
+	PartRegistry -> EngineBlock
+	PartRegistry -> GunBlock
+	PartRegistry -> DroneBlock
+	PartRegistry -> PlayerBlock
+	PartRegistry -> Anchor
+	PartRegistry -> ArmorBlock
+	PartRegistry -> ShieldBlock
+	PartRegistry -> RepairBlock
+	PartRegistry -> MissileLauncherBlock
+	PartRegistry -> ClampBlock
+	
+	Parts -> Block
+	Parts -> EngineBlock
+	Parts -> GunBlock
+	Parts -> DroneBlock
+	Parts -> PlayerBlock
+	Parts -> Anchor
+	Parts -> ArmorBlock
+	Parts -> ShieldBlock
+	Parts -> RepairBlock
+	Parts -> MissileLauncherBlock
+	Parts -> ClampBlock
+	
+	Block -> Part
+	Block -> Hull
+	
+	EngineBlock -> Part
+	EngineBlock -> Hull
+	
+	GunBlock -> Part
+	GunBlock -> Hull
+	GunBlock -> Gun
+	
+	Gun -> Module
+	Gun -> WorldEvent
+	
+	DroneBlock -> Part
+	DroneBlock -> Hull
+	
+	PlayerBlock -> Part
+	PlayerBlock -> Hull
+	
+	Anchor -> Part
+	Anchor -> Hull
+	
+	ArmorBlock -> Part
+	ArmorBlock -> Hull
+	
+	ShieldBlock -> Part
+	ShieldBlock -> Hull
+	
+	RepairBlock -> Part
+	RepairBlock -> Hull
+	
+	MissileLauncherBlock -> Part 
+	MissileLauncherBlock -> Hull
+	
+	ClampBlock -> Part
+	ClampBlock -> Hull
+	
+	Hull -> Fixture
+	Hull -> HullUserData
+	
+	Shot -> Body
+	Missile -> Body
+	Particles -> Body
+	
+	Physics -> Body
+	Physics -> Fixture
+	
+	Body -> Fixture [label = "pyhsics engine"]
+	Body -> Body_UserData
+	
+	Body_UserData -> Structure [label = "Annexing" color="red"]
+	Body_UserData -> Structure [label = "Disconnection Parts" color="red"]
+
+	Fixture -> Body [label = "pyhsics engine"]
+	Fixture -> Fixture_UserData
+	
+	Fixture_UserData -> HullUserData
+	
 	
 }

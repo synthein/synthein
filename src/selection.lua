@@ -2,7 +2,6 @@ local StructureMath = require("world/structureMath")
 local CircleMenu = require("circleMenu")
 local Building = require("syntheinrust").building
 local vector = require("syntheinrust").vector
-local log = require("log")
 
 local Selection = {}
 Selection.__index = Selection
@@ -30,12 +29,10 @@ function Selection:cursorpressed(cursor, control)
 	local structure = self.world:getObject(cursor.x, cursor.y)
 	local part
 	if structure then part = structure:findPart(cursor.x, cursor.y) end
-	log:info("cursor: %s, control: %s, structure: %s, part: %s", cursor, control, structure, part) -- debug
 	if structure and structure.type == "structure" and part then
 		local build = self.build
 		local team = structure.body:getUserData().team
 		if build then
-			log:info("already building")
 			if control.ship == "build" then
 				if build.mode == 3 then
 					if team == 0 or team == self.team then
@@ -50,18 +47,15 @@ function Selection:cursorpressed(cursor, control)
 					end
 				end
 			elseif control.ship == "destroy" then
-				log:info("cancel building")
 				self.structure = nil
 				self.part = nil
 				self.build = nil
 			end
 		elseif self.assign then
-			log:info("assign")
 			self.assign.leader = structure
 			self.assign = nil
 		else
 			if control.ship == "build" then
-				log:info("start building")
 				if team ~= 0 then
 					local corePart = structure.corePart
 					if corePart == part then
@@ -77,9 +71,7 @@ function Selection:cursorpressed(cursor, control)
 					self.part = part
 				end
 			elseif control.ship == "destroy" then
-				log:info("destroy")
 				local corePart = structure.corePart
-				log:info("team: %s, self.team: %s", team, self.team)
 				if team == 0 or (team == self.team and part ~= corePart) then
 					structure:disconnectPart(part.location)
 				end

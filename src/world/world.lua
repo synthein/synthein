@@ -193,7 +193,6 @@ function World:getObject(locationX, locationY)
 
 	local a = locationX
 	local b = locationY
-	log:info("%s", {self = self, physics = self.physics, a = a, b = b})
 	self.physics:queryBoundingBox(a, b, a, b, callback)
 
 	for _, object in ipairs(objects) do

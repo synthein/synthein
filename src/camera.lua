@@ -9,7 +9,7 @@ local vector = require("syntheinrust").vector
 local Camera = {}
 Camera.__index = Camera
 
-function Camera.create()
+function Camera.create(world, team)
 	local self = {}
 	setmetatable(self, Camera)
 
@@ -25,7 +25,7 @@ function Camera.create()
 	self.graphics = {}
 	setmetatable(self.graphics, self)
 
-	self.hud = Hud()
+	self.hud = Hud(world, team)
 
 	self.shieldShader = love.graphics.newShader[[
 		extern number radius;
@@ -502,7 +502,7 @@ function Camera:drawPlayer(player, debugmode)
 	playerDrawPack.menu = player.menu
 	playerDrawPack.partSelector = player.partSelector
 	playerDrawPack.gameOver = self.gameOver
-	playerDrawPack.selection = player.selected
+	playerDrawPack.selection = player.selection
 	playerDrawPack.zoom = self.zoom
 
 	love.graphics.setScissor(unpack(scissor))

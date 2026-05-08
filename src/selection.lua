@@ -2,6 +2,7 @@ local StructureMath = require("world/structureMath")
 local CircleMenu = require("circleMenu")
 local Building = require("syntheinrust").building
 local vector = require("syntheinrust").vector
+local log = require("log")
 
 local Selection = {}
 Selection.__index = Selection
@@ -29,10 +30,12 @@ function Selection:cursorpressed(cursor, control)
 	local structure = self.world:getObject(cursor.x, cursor.y)
 	local part
 	if structure then part = structure:findPart(cursor.x, cursor.y) end
+	log:info("cursor: %s, control: %s, structure: %s, part: %s", cursor, control, structure, part) -- debug
 	if structure and structure.type == "structure" and part then
 		local build = self.build
 		local team = structure.body:getUserData().team
 		if build then
+			log:info("already building")
 			if control.ship == "build" then
 				if build.mode == 3 then
 					if team == 0 or team == self.team then
@@ -47,15 +50,18 @@ function Selection:cursorpressed(cursor, control)
 					end
 				end
 			elseif control.ship == "destroy" then
+				log:info("cancel building")
 				self.structure = nil
 				self.part = nil
 				self.build = nil
 			end
 		elseif self.assign then
+			log:info("assign")
 			self.assign.leader = structure
 			self.assign = nil
 		else
 			if control.ship == "build" then
+				log:info("start building")
 				if team ~= 0 then
 					local corePart = structure.corePart
 					if corePart == part then
@@ -71,7 +77,9 @@ function Selection:cursorpressed(cursor, control)
 					self.part = part
 				end
 			elseif control.ship == "destroy" then
+				log:info("destroy")
 				local corePart = structure.corePart
+				log:info("team: %s, self.team: %s", team, self.team)
 				if team == 0 or (team == self.team and part ~= corePart) then
 					structure:disconnectPart(part.location)
 				end
@@ -123,6 +131,78 @@ function Selection:cursorreleased(cursor, control)
 				self.partSide = nil
 			end
 		end
+	end
+end
+
+function Selection:draw(cursor, zoom)
+	local structure = self.structure
+	local part = self.part
+	local build = self.build
+	if structure and part then
+		local location = part.location
+		local partX, partY = unpack(location)
+		local body = structure.body
+		local menuRotation -- Body angle if building else 0
+
+		local strength, labels
+		if build then
+			menuRotation = body:getAngle()
+			strength = {}
+			local indexReverse = {1, 4, 3, 2}
+			local x, y = body:getWorldPoints(partX, partY)
+			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
+			local partSide = CircleMenu.angleToIndex(-menuRotation + menuToCursorAngle, 4)
+			local l = {partX, partY}
+			for i = 1,4 do
+				l[3] = indexReverse[i]
+				local _, partB, connection = structure:testEdge(l)
+				local connectable = not partB and connection
+				local highlight = i == partSide
+				local brightness = highlight and 2 or 1
+				strength[i] = connectable and brightness or 0
+			end
+		else
+			menuRotation = 0
+			local x, y = body:getWorldPoints(partX, partY)
+			strength, labels = part:getMenu()
+			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
+			local index = CircleMenu.angleToIndex(menuToCursorAngle, #strength)
+			if strength[index] == 1 then
+				strength[index] = 2
+			end
+		end
+		if strength then
+			local x, y = body:getWorldPoints(partX, partY)
+			CircleMenu.draw(x, y, menuRotation, 1, strength, labels)
+		end
+	end
+	if build then
+
+		local body = build.body
+		local vec = build.annexeeBaseVector
+		if body and vec and build.mode > 2 then
+			local l = StructureMath.addDirectionVector(vec, vec[3], .5)
+			local x, y = body:getWorldPoint(l[1], l[2])
+			local angle = body:getAngle()
+
+			love.graphics.draw(
+				cursor.image,
+				x, y, angle,
+				1/zoom, 1/zoom,
+				halfCursorWidth, halfCursorWidth)
+		end
+	end
+	local assign = self.assign
+	if assign then
+		local body = assign.modules.hull.fixture:getBody()
+		local x, y  = body:getPosition()
+		local angle = body:getAngle()
+
+		love.graphics.draw(
+			cursor.image,
+			x, y, angle,
+			1/zoom, 1/zoom,
+			halfCursorWidth, halfCursorWidth)
 	end
 end
 

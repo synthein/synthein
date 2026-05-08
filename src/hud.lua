@@ -1,6 +1,7 @@
 local CanvasUtils = require("widgets/canvasUtils")
 local CircleMenu = require("circleMenu")
 local ListSelector = require("widgets/listSelector")
+local Selection = require("selection")
 local StructureMath = require("world/structureMath")
 local vector = require("syntheinrust").vector
 
@@ -8,13 +9,22 @@ local Hud = class()
 
 local halfCursorWidth = 2
 
-function Hud:__create()
+function Hud:__create(world, team, camera) -- TODO: Remove the circular reference between Hud and Camera
 	self.formationSelector = ListSelector(
 		40,
 		0, 0,
 		150, 120,
 		{})
 	self.formationScaleTable = CanvasUtils.generateScaleTable("right", "top", "right", "top")
+	self.selection = Selection.create(world, team)
+
+	self.selection:whenBuildingOnStructure(function()
+		camera:setTarget(self.selection.structure.body)
+	end)
+
+	self.selection:whenDoneBuildingOnStructure(function()
+		camera:resetTarget()
+	end)
 
 	self.selectedMenu = "formation"
 	return self
@@ -37,12 +47,27 @@ function Hud:keypressed(key)
 end
 
 function Hud:cursorpressed(cursor, control)
-	--TODO checking for which feature the mouse is over before passing on the function call.
+	-- TODO: pass in the cursor coordinates as screen coordinates, then transform to world coordinates only where needed
+	-- TODO: checking for which feature the mouse is over before passing on the function call.
 	if self.selectedMenu then
 		local formationIndex = self.formationSelector:pressed(control)
 		if formationIndex and formationIndex ~= 0 then
 			self.command.activeFormation = self.formationList[formationIndex]
 		end
+	end
+
+	if control.ship == "build" or control.ship == "destroy" then
+		-- local cursorX, cursorY = self.camera:getWorldCoords(cursor.x, cursor.y)
+		self.selection:cursorpressed(cursor, control)
+	end
+end
+
+function Hud:cursorreleased(cursor, control)
+	-- TODO: pass in the cursor coordinates as screen coordinates, then transform to world coordinates only where needed
+
+	if control.ship == "build" or control.ship == "destroy" then
+		-- local cursorX, cursorY = self.camera:getWorldCoords(cursor.x, cursor.y)
+		self.selection:cursorreleased(cursor, control)
 	end
 end
 
@@ -88,81 +113,9 @@ local function drawCompass(viewPort, compassAngle)
 	)
 end
 
-local function drawSelection(selection, cursor, zoom)
-	local structure = selection.structure
-	local part = selection.part
-	local build = selection.build
-	if structure and part then
-		local location = part.location
-		local partX, partY = unpack(location)
-		local body = structure.body
-		local menuRotation -- Body angle if building else 0
-
-		local strength, labels
-		if build then
-			menuRotation = body:getAngle()
-			strength = {}
-			local indexReverse = {1, 4, 3, 2}
-			local x, y = body:getWorldPoints(partX, partY)
-			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
-			local partSide = CircleMenu.angleToIndex(-menuRotation + menuToCursorAngle, 4)
-			local l = {partX, partY}
-			for i = 1,4 do
-				l[3] = indexReverse[i]
-				local _, partB, connection = structure:testEdge(l)
-				local connectable = not partB and connection
-				local highlight = i == partSide
-				local brightness = highlight and 2 or 1
-				strength[i] = connectable and brightness or 0
-			end
-		else
-			menuRotation = 0
-			local x, y = body:getWorldPoints(partX, partY)
-			strength, labels = part:getMenu()
-			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
-			local index = CircleMenu.angleToIndex(menuToCursorAngle, #strength)
-			if strength[index] == 1 then
-				strength[index] = 2
-			end
-		end
-		if strength then
-			local x, y = body:getWorldPoints(partX, partY)
-			CircleMenu.draw(x, y, menuRotation, 1, strength, labels)
-		end
-	end
-	if build then
-
-		local body = build.body
-		local vec = build.annexeeBaseVector
-		if body and vec and build.mode > 2 then
-			local l = StructureMath.addDirectionVector(vec, vec[3], .5)
-			local x, y = body:getWorldPoint(l[1], l[2])
-			local angle = body:getAngle()
-
-			love.graphics.draw(
-				cursor.image,
-				x, y, angle,
-				1/zoom, 1/zoom,
-				halfCursorWidth, halfCursorWidth)
-		end
-	end
-	local assign = selection.assign
-	if assign then
-		local body = assign.modules.hull.fixture:getBody()
-		local x, y  = body:getPosition()
-		local angle = body:getAngle()
-
-		love.graphics.draw(
-			cursor.image,
-			x, y, angle,
-			1/zoom, 1/zoom,
-			halfCursorWidth, halfCursorWidth)
-	end
-end
-
 function Hud:drawLabels(playerDrawPack)
-	if playerDrawPack.selection then
-		drawSelection(playerDrawPack.selection, playerDrawPack.cursor, playerDrawPack.zoom)
+	if self.selection then
+		self.selection:draw(playerDrawPack.cursor, playerDrawPack.zoom)
 	end
 end
 

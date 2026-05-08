@@ -20,27 +20,25 @@ digraph {
 	InGame -> World
 	InGame -> Camera [label = "spawning" color="red"]
 	InGame -> Structure [label = "spawning" color="red"]
-	
-	
+
+
 	Player -> ViewPort [label = "reference"]
 	Player -> Camera [label = "reference" color="red"]
-	Player -> Player_selected [color="red"]
 	Player -> Structure [label = "Player Ship"]
-	
-	Player_selected [label = "Player.selected(Selection)"]
-	Player_selected -> Selection_build
-	
+
+	Selection
+	Selection -> Selection_build
+
 	Selection_build [label = "Selection.build(Building)"]
-	
+
 	Screen -> ViewPort [label = "creation, reference"]
-	
+
 	ViewPort -> Hud [color="green"]
 	ViewPort -> Camera [color="red"]
-	ViewPort -> Player_selected [color="blue"]
-	
+
 	Hud -> Camera [color="green"]
-	Hud -> Player_selected [color="blue"]
-	
+	Hud -> Selection
+
 	Camera -> Hud [color="red"]
 	Camera -> Body [label="reference point"]
 	

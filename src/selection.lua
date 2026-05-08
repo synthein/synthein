@@ -126,6 +126,78 @@ function Selection:cursorreleased(cursor, control)
 	end
 end
 
+function Selection:draw(cursor, zoom)
+	local structure = self.structure
+	local part = self.part
+	local build = self.build
+	if structure and part then
+		local location = part.location
+		local partX, partY = unpack(location)
+		local body = structure.body
+		local menuRotation -- Body angle if building else 0
+
+		local strength, labels
+		if build then
+			menuRotation = body:getAngle()
+			strength = {}
+			local indexReverse = {1, 4, 3, 2}
+			local x, y = body:getWorldPoints(partX, partY)
+			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
+			local partSide = CircleMenu.angleToIndex(-menuRotation + menuToCursorAngle, 4)
+			local l = {partX, partY}
+			for i = 1,4 do
+				l[3] = indexReverse[i]
+				local _, partB, connection = structure:testEdge(l)
+				local connectable = not partB and connection
+				local highlight = i == partSide
+				local brightness = highlight and 2 or 1
+				strength[i] = connectable and brightness or 0
+			end
+		else
+			menuRotation = 0
+			local x, y = body:getWorldPoints(partX, partY)
+			strength, labels = part:getMenu()
+			local menuToCursorAngle = vector.angle(cursor.worldX - x, cursor.worldY - y)
+			local index = CircleMenu.angleToIndex(menuToCursorAngle, #strength)
+			if strength[index] == 1 then
+				strength[index] = 2
+			end
+		end
+		if strength then
+			local x, y = body:getWorldPoints(partX, partY)
+			CircleMenu.draw(x, y, menuRotation, 1, strength, labels)
+		end
+	end
+	if build then
+
+		local body = build.body
+		local vec = build.annexeeBaseVector
+		if body and vec and build.mode > 2 then
+			local l = StructureMath.addDirectionVector(vec, vec[3], .5)
+			local x, y = body:getWorldPoint(l[1], l[2])
+			local angle = body:getAngle()
+
+			love.graphics.draw(
+				cursor.image,
+				x, y, angle,
+				1/zoom, 1/zoom,
+				halfCursorWidth, halfCursorWidth)
+		end
+	end
+	local assign = self.assign
+	if assign then
+		local body = assign.modules.hull.fixture:getBody()
+		local x, y  = body:getPosition()
+		local angle = body:getAngle()
+
+		love.graphics.draw(
+			cursor.image,
+			x, y, angle,
+			1/zoom, 1/zoom,
+			halfCursorWidth, halfCursorWidth)
+	end
+end
+
 function Selection:isBuildingOnStructure()
 	return self.build and self.build.structure
 end

@@ -1,4 +1,3 @@
-local Selection = require("selection")
 local PartSelector = require("widgets/partSelector")
 local PartRegistry = require("world/shipparts/partRegistry")
 
@@ -17,17 +16,6 @@ function Player.create(world, controls, ship, viewPort)
 
 
 	if ship then
-		self.camera.body = ship.body
-		self.selected = Selection.create(world, self.ship.corePart:getTeam())
-
-		self.selected:whenBuildingOnStructure(function()
-			self.camera:setTarget(self.selected.structure.body)
-		end)
-
-		self.selected:whenDoneBuildingOnStructure(function()
-			self.camera:setTarget(self.ship.body)
-		end)
-
 		local corePart = ship.corePart
 		if corePart then
 			self.camera.hud:setCommand(corePart:getCommand())
@@ -40,9 +28,6 @@ function Player.create(world, controls, ship, viewPort)
 	self.openMenu = false
 	self.partSelector = PartSelector.create(250)
 
-	self.selection = nil
-	self.cancelKeyDown = false
-	self.selectionKeyDown = false
 	self.isBuilding = false
 	self.isRemoving = false
 	self.partX = nil
@@ -85,38 +70,25 @@ function Player:cursorpressed(cursor, control, debugmodeEnabled)
 	if self.menu then
 		if control.menu == "cancel" then
 			self.menu = nil
-		else
-			
 		end
-		
+
 	else
 		if control.ship == "health" then
 			self.showHealth = not self.showHealth
 		elseif control.ship == "cameraRotate" then
 			self.camera.angleFixed = not self.camera.angleFixed
-			
-		elseif control.ship == "build" or control.ship == "destroy" then
-				local cursorX, cursorY = self.camera:getWorldCoords(
-					self.cursorX,
-					self.cursorY)
-				self.selected:cursorpressed({x = cursorX, y = cursorY}, control)
-
 		end
-		
-		self.camera.hud:cursorpressed(cursor, control)
+
+		local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
+		self.camera.hud:cursorpressed({x = cursorX, y = cursorY}, control)
 	end
 end
 
 function Player:cursorreleased(cursor, control, debugmodeEnabled)
 	if self.menu then
 	else
-		if control.ship == "build" or control.ship == "destroy" then
-				local cursorX, cursorY = self.camera:getWorldCoords(
-					self.cursorX,
-					self.cursorY)
-				self.selected:cursorreleased({x = cursorX, y = cursorY}, control)
-
-		end
+		local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
+		self.camera.hud:cursorreleased({x = cursorX, y = cursorY}, control)
 	end
 end
 
@@ -177,28 +149,17 @@ function Player:buttonpressed(source, button, debugmode)
 			self.menu = nil
 		end
 	else
-		if menuButton == "cancel" then
-			if self.selection then
-				-- If selection mode is enabled, just leave selection mode.
-				self.selection = nil
-			else
-				-- If selection mode is not enabled, open the menu when the
-				-- cancel key is pressed.
-				self.openMenu = true
-			end
+		local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
+		self.camera.hud:cursorpressed({cursorX, cursorY}, order)
 
-			return
+		if menuButton == "cancel" then
+				self.openMenu = true
 		elseif not order then
 			self.camera.hud:keypressed(button)
 		else
 			self.camera.hud:pressed(order)
-			if order == "build" or order == "destroy" then
-				local cursorX, cursorY = self.camera:getWorldCoords(
-					self.cursorX,
-					self.cursorY)
-				self.selected:pressed(cursorX, cursorY, order)
 
-			elseif order == "playerMenu" then
+			if order == "playerMenu" then
 				if debugmode then
 					self.menu = true
 				end
@@ -213,11 +174,9 @@ end
 
 function Player:buttonreleased(source, button)
 	local order = self.controls:test("released", source, button)
-
 	local cursorX, cursorY = self.camera:getWorldCoords(self.cursorX, self.cursorY)
-	if order == "build" then
-		self.selected:released(cursorX, cursorY)
-	end
+
+	self.camera.hud:cursorreleased({cursorX, cursorY}, order)
 end
 
 function Player:update(dt)

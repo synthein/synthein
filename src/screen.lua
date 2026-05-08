@@ -6,8 +6,8 @@ function Screen:__create()
 	self.viewPorts = {}
 end
 
-function Screen:createViewPort(world, team)
-	local newViewPort = ViewPort(world, team)
+function Screen:createViewPort(world, team, defaultBody)
+	local newViewPort = ViewPort(world, team, defaultBody)
 	table.insert(self.viewPorts, newViewPort)
 	self:arrange(love.graphics.getWidth(), love.graphics.getHeight())
 	return newViewPort

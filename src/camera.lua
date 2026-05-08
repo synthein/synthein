@@ -9,10 +9,12 @@ local vector = require("syntheinrust").vector
 local Camera = {}
 Camera.__index = Camera
 
-function Camera.create(world, team)
+function Camera.create(world, team, defaultBody)
 	local self = {}
 	setmetatable(self, Camera)
 
+	self.defaultBody = defaultBody
+	self.body = defaultBody
 	self.x = 0
 	self.y = 0
 	self.angle = 0
@@ -25,7 +27,7 @@ function Camera.create(world, team)
 	self.graphics = {}
 	setmetatable(self.graphics, self)
 
-	self.hud = Hud(world, team)
+	self.hud = Hud(world, team, self)
 
 	self.shieldShader = love.graphics.newShader[[
 		extern number radius;
@@ -177,6 +179,10 @@ function Camera:setTarget(target)
 		duration,
 		"easeout"
 	)
+end
+
+function Camera:resetTarget()
+	self:setTarget(self.defaultBody)
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)

@@ -9,7 +9,7 @@ local Hud = class()
 
 local halfCursorWidth = 2
 
-function Hud:__create(world, team)
+function Hud:__create(world, team, camera) -- TODO: Remove the circular reference between Hud and Camera
 	self.formationSelector = ListSelector(
 		40,
 		0, 0,
@@ -17,6 +17,14 @@ function Hud:__create(world, team)
 		{})
 	self.formationScaleTable = CanvasUtils.generateScaleTable("right", "top", "right", "top")
 	self.selection = Selection.create(world, team)
+
+	self.selection:whenBuildingOnStructure(function()
+		camera:setTarget(self.selection.structure.body)
+	end)
+
+	self.selection:whenDoneBuildingOnStructure(function()
+		camera:resetTarget()
+	end)
 
 	self.selectedMenu = "formation"
 	return self

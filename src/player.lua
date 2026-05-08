@@ -16,17 +16,6 @@ function Player.create(world, controls, ship, viewPort)
 
 
 	if ship then
-		self.camera.body = ship.body
-
-		-- TODO: move to hud
-		-- self.selection:whenBuildingOnStructure(function()
-		-- 	self.camera:setTarget(self.selection.structure.body)
-		-- end)
-
-		-- self.selection:whenDoneBuildingOnStructure(function()
-		-- 	self.camera:setTarget(self.ship.body)
-		-- end)
-
 		local corePart = ship.corePart
 		if corePart then
 			self.camera.hud:setCommand(corePart:getCommand())

@@ -1,14 +1,12 @@
 local PartSelector = require("widgets/partSelector")
-local PartRegistry = require("world/shipparts/partRegistry")
 
 local Player = {}
 Player.__index = Player
 
-function Player.create(world, controls, ship, viewPort)
+function Player.create(controls, ship, viewPort)
 	local self = {}
 	setmetatable(self, Player)
 
-	self.world = world
 	self.controls = controls
 	self.ship = ship
 	self.viewPort = viewPort
@@ -99,11 +97,7 @@ function Player:pressed(control, debugmodeEnabled)
 		elseif control.menu == "confirm" then
 			local part = self.partSelector:pressed(control)
 			if part then
-				local camera = self.camera
-				self.world.info.create(
-					"structure",
-					{camera.x, camera.y + 5},
-					PartRegistry.createPart(part))
+				self.camera:spawnPart(part)
 			end
 			self.menu = nil
 		end
@@ -140,11 +134,7 @@ function Player:buttonpressed(source, button, debugmode)
 		elseif menuButton == "confirm" then
 			local part = self.partSelector:keypressed("return")
 			if part then
-				local camera = self.camera
-				self.world.info.create(
-					"structure",
-					{camera.x, camera.y + 5},
-					PartRegistry.createPart(part))
+				self.camera:spawnPart(part)
 			end
 			self.menu = nil
 		end

@@ -1,5 +1,6 @@
 local Animation = require("animation")
 local Hud = require("hud")
+local PartRegistry = require("world/shipparts/partRegistry")
 local PhysicsReferences = require("world/physicsReferences")
 local Settings = require("settings")
 local log = require("log")
@@ -13,6 +14,7 @@ function Camera.create(world, team, defaultBody)
 	local self = {}
 	setmetatable(self, Camera)
 
+	self.world = world
 	self.defaultBody = defaultBody
 	self.body = defaultBody
 	self.x = 0
@@ -183,6 +185,14 @@ end
 
 function Camera:resetTarget()
 	self:setTarget(self.defaultBody)
+end
+
+function Camera:spawnPart(part)
+	self.world.info.create(
+		"structure",
+		{self.x, self.y + 5},
+		PartRegistry.createPart(part)
+	)
 end
 
 function Camera:getWorldCoords(cursorX, cursorY)
@@ -368,9 +378,8 @@ function Camera:drawWorldObjects(player, debugmode)
 		return true
 	end
 
-	local a, b, c, d = player.camera:getAABB()
-	player.world.physics:queryBoundingBox(a, b, c, d, callback)
-
+	local a, b, c, d = self:getAABB()
+	self.world.physics:queryBoundingBox(a, b, c, d, callback)
 
 	endTime = love.timer.getTime()
 	duration = endTime - startTime

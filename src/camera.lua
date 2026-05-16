@@ -187,11 +187,11 @@ function Camera:resetTarget()
 	self:setTarget(self.defaultBody)
 end
 
-function Camera:spawnPart(part)
+function Camera:spawnPart(partChar)
 	self.world.info.create(
 		"structure",
 		{self.x, self.y + 5},
-		PartRegistry.createPart(part)
+		PartRegistry.createPart(partChar)
 	)
 end
 

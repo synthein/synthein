@@ -68,14 +68,14 @@ function InGame.load(scene, playerHostility, saveName, debuginfo)
 		if i == 1 then
 			table.insert(
 				players,
-				Player.create(world, Controls(), ship, screen:createViewPort(world, ship.body:getUserData().team, ship.body))
+				Player.create(Controls(), ship, screen:createViewPort(world, ship.body:getUserData().team, ship.body))
 			)
 		else
 			local joystick = love.joystick.getJoysticks()[#players]
 			if joystick then
 				table.insert(
 					players,
-					Player.create(world, Controls(joystick), ship, screen:createViewPort())
+					Player.create(Controls(joystick), ship, screen:createViewPort(world, ship.body:getUserData().team, ship.body))
 				)
 			end
 		end
@@ -85,7 +85,7 @@ function InGame.load(scene, playerHostility, saveName, debuginfo)
 	world.physics:update(0)
 
 	if #players == 0 then
-		table.insert(players, Player.create(world, Controls(), nil, screen:createViewPort()))
+		table.insert(players, Player.create(Controls(), nil, screen:createViewPort(world)))
 	end
 
 	saveMenu = SaveMenu(Settings.saveDir, saveName)

@@ -370,16 +370,15 @@ function Camera:drawWorldObjects(player, debugmode)
 		fixtureList[PhysicsReferences.categories[c]] = {}
 	end
 
-	local function callback(fixture)
-		local category = fixture:getFilterData()
-		if fixtureList[category] then
-			table.insert(fixtureList[category], fixture)
-		end
-		return true
-	end
-
 	local a, b, c, d = self:getAABB()
-	self.world.physics:queryBoundingBox(a, b, c, d, callback)
+	self.world.physics:queryBoundingBox(a, b, c, d, function(fixture)
+			local category = fixture:getFilterData()
+			if fixtureList[category] then
+				table.insert(fixtureList[category], fixture)
+			end
+			return true
+		end
+	)
 
 	endTime = love.timer.getTime()
 	duration = endTime - startTime

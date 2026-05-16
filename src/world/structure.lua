@@ -301,12 +301,12 @@ function Structure:splitOffParts(partList)
 	local basePart = partList[1]
 	local baseVector = basePart.location
 	local basePartFixture = basePart.modules["hull"].fixture
-	
+
 	local location = {Location.fixturePoint6(
 		basePartFixture, baseVector[1], baseVector[2])}
 	--Include the part orientation into the structures rotation.
 	location[3] = location[3] + StructureMath.directionToAngle(baseVector[3])
-	
+
 	--Invert base vector. Changes the sum into difference between vectors.
 	baseVector = StructureMath.subtractVectors({0,0,3}, baseVector)
 
@@ -323,18 +323,25 @@ function Structure:splitOffParts(partList)
 	self.createObject("structure", location, {parts = structure})
 end
 
-function Structure:fracture(location)
-	local x, y = unpack(location)
-	local part = self.gridTable:index(x, y)
-	--Remove destroyed part.
-	self:removePart(part)
+function Structure:fracture(locations)
+	local disconnectPoints = {}
 
-	--List adjacent grid points.
-	local points = StructureMath.adjacentPoints(part.location)
+	for _, location in ipairs(locations) do
+		local x, y = unpack(location)
+		local part = self.gridTable:index(x, y)
+		--Remove destroyed part.
+		self:removePart(part)
 
-	local clusters = self:testConnection(points)
+		--List adjacent grid points.
+		local points = StructureMath.adjacentPoints(part.location)
+
+		for _, point in ipairs(points) do
+			table.insert(disconnectPoints, point)
+		end
+	end
 
 	--Generate arguments for spawning new structures.
+	local clusters = self:testConnection(disconnectPoints)
 	for _, cluster in ipairs(clusters) do
 		self:splitOffParts(cluster)
 	end
@@ -443,27 +450,26 @@ function Structure:command(dt)
 		teamHostility = self.worldInfo.teamHostility
 	}
 
+	local destroyedPartLocations = {}
 	for i, part in ipairs(self.gridTable:loop()) do
 		local location = part.location
-		
 		local newObject, disconnect = part:update(moduleInputs, location)
 
 		if newObject then
 			create(newObject, location)
 		end
 		if disconnect then
-			--TODO Likely edge case bug destroy 2 blocks at the same time.
-			self:fracture(location)
+			table.insert(destroyedPartLocations, location)
 		end
 	end
 
-	return commands
+	self:fracture(destroyedPartLocations)
 end
 
 -- Handle commands
 -- Update each part
 function Structure:update(dt)
-	local partsInfo = self:command(dt)
+	self:command(dt)
 	self.shield:update(dt)
 end
 

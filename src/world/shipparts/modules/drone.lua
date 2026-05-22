@@ -39,9 +39,9 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 				else
 					self.assignment = command:getAssignment(id)
 				end
-				
+
 				local position = command:getPosition(self.assignment)
-				
+
 				--local fixedAngle = true
 				if fixedAngle then
 					destination = {Location.bodyCenter6(leaderBody)}
@@ -96,7 +96,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 
 				local mSq = (dx * dx) + (dy * dy)
 				local mVSq = (dvx * dvx) + (dvy * dvy)
-				
+
 				-- CollisionMetric ~ path alignment / time to collision
 				local collisionMetric = -(dx * dvx + dy * dvy) / mSq
 
@@ -104,25 +104,25 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 				if collisionMetric > 0.2 then
 					local directX = - dx
 					local directY = - dy
-					
+
 					local dodgeX = -dvy
 					local dodgeY = dvx
-					
+
 					if dx*dvy < dy*dvx then
 						dodgeX = -dodgeX
 						dodgeY = -dodgeY
 					end
-					
+
 					local invDodgeMetric = 25 / (mVSq + 25)
-					
+
 					local combinedX = invDodgeMetric * directX + (1-invDodgeMetric) * dodgeX
 					local combinedY = invDodgeMetric * directY + (1-invDodgeMetric) * dodgeY
-					
+
 					local scaleFactor = collisionMultiplier * collisionMetric
 					sepX = sepX + combinedX * scaleFactor
 					sepY = sepY + combinedY * scaleFactor
 				end
-				
+
 				--TODO add spacing logic here.
 				if object.type == "structure" then
 					if teamHostility:test(self.team, object.team or 0) then
@@ -188,7 +188,7 @@ function Drone:getOrders(worldInfo, leader, droneBody, bodyList, capabilities)
 			target[6] = 0
 			m = 1 - dsq/targetMSq
 		end
-	elseif self.repairFixture then
+	elseif self.repairFixture and capabilities.repair then
 		-- Move close to repair blocks
 		local fixture = self.repairFixture
 		local body = fixture:getBody()

@@ -4,6 +4,7 @@ use mlua::{Lua, Result};
 mod building;
 mod draw_time_logger;
 mod mathext;
+mod selection;
 mod timer;
 mod vector;
 mod world;
@@ -26,6 +27,7 @@ fn syntheinrust(lua: &Lua) -> Result<LuaTable> {
     exports.set("building", building::lua_module(lua)?)?;
     exports.set("draw_time_logger", draw_time_logger::lua_module(lua)?)?;
     exports.set("mathext", mathext::lua_module(lua)?)?;
+    exports.set("selection", selection::lua_module(lua)?)?;
     exports.set("shipparts", shipparts)?;
     exports.set("timer", timer::lua_module(lua)?)?;
     exports.set("vector", vector::lua_module(lua)?)?;

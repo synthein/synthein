@@ -31,7 +31,7 @@ function Selection:cursorpressed(cursor, control)
 	if structure then part = structure:findPart(cursor.x, cursor.y) end
 	if structure and structure.type == "structure" and part then
 		local build = self.build
-		local team = structure.body:getUserData().team
+		local team = structure.team
 		if build then
 			if control.ship == "build" then
 				if build.mode == 3 then

@@ -5,12 +5,13 @@ use mlua::{
 };
 
 use crate::world::shipparts::part::Location;
+use crate::world::types::Controls;
 
 // TODO: Replace f64 indexes with integers
 pub struct Selection {
     pub world: AnyUserData,
     pub team: f64,
-    build: Option<Building>,
+    building: Option<Building>,
     pub structure: Option<LuaTable>,
     pub structure_part_index: Option<f64>,
     building_on_structure_listeners: Vec<LuaFunction>,
@@ -26,7 +27,7 @@ pub fn new(world: AnyUserData, team: f64) -> Selection {
     Selection {
         world: world,
         team: team,
-        build: None,
+        building: None,
         structure: None,
         structure_part_index: None,
         building_on_structure_listeners: Vec::new(),
@@ -36,11 +37,16 @@ pub fn new(world: AnyUserData, team: f64) -> Selection {
 
 impl Selection {
     pub fn cursor_pressed(&mut self, cursor: Point, controls: Controls) -> Result<()> {
-        let structure: Option<LuaTable> = self.world.get::<LuaFunction>("getObject")?.call(cursor.x, cursor.y);
-        let mut part: Option<LuaTable> = None;
+        let clicked_structure: Option<LuaTable> = self.world
+            .get::<LuaFunction>("getObject")?.call::<Option<LuaTable>>((cursor.x, cursor.y))?
+            .filter(|clicked_object_user_data| clicked_object_user_data.get("type").is_ok_and(|type| type == "structure");
+        let clicked_part: Option<LuaTable> = clicked_structure.map(|clicked_structure| clicked_structure.get::<LuaFunction>("findPart")?.call((cursor.x, cursor.y)));
 
-        if structure.is_some_and(|structure| structure.get("type") == "structure") {
-            
+        if clicked_structure.is_some() && clicked_part.is_some() {
+            let clicked_structure_team = clicked_structure.get()
+            if self.building.is_some() {
+                if 
+            }
         } else {
             if controls.ship = 
         }

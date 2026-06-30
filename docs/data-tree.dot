@@ -26,10 +26,7 @@ digraph {
 	Player -> Camera [label = "reference" color="red"]
 	Player -> Structure [label = "Player Ship"]
 
-	Selection
-	Selection -> Selection_build
-
-	Selection_build [label = "Selection.build(Building)"]
+	Selection -> Building
 
 	Screen -> ViewPort [label = "creation, reference"]
 

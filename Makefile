@@ -32,8 +32,8 @@ clean:
 dep:
 	scripts/dependency-graph.lua --dot src/main.lua | dot -T png | display
 
-dataTree:
-	dot -T png docs/data_tree.dot | display
+data-tree:
+	dot -T png docs/data-tree.dot | display
 
 map:
 	dot -T png TaskMap.dot >TaskMap.png

@@ -58,7 +58,7 @@ function Camera.create(world, team, defaultBody)
 			number limit = radius * radius;
 			number delta = (r - limit);
 
-			int si = int(seed * 256);
+			int si = int(seed * 256.0);
 			int sx = int(screen_coords.x) + si;
 			int sy = int(screen_coords.y) + si;
 			//int num = ((si*si*si + 51)*sy*sy + 79) * sx + 17;
@@ -67,7 +67,7 @@ function Camera.create(world, team, defaultBody)
 			int dim = 256;
 
 			int random = num - dim * (num/dim);
-			number rm = float(random)/128 + 0.5;
+			number rm = float(random)/128.0 + 0.5;
 
 			if (r < limit) {
 				number c = r/limit;
@@ -76,9 +76,9 @@ function Camera.create(world, team, defaultBody)
 				number rim2 = rim * rim;
 				number rim4 = rim2 * rim2;
 				number rim8 = rim4 * rim4;
-				number fixed_color = 0;
-				if (delta < 0 && delta > (-5* radius)) {
-					fixed_color = 1;
+				number fixed_color = 0.0;
+				if (delta < 0.0 && delta > (-5.0 * radius)) {
+					fixed_color = 1.0;
 				}
 
 				//return vec4(1, rim4, rim4, edge);
@@ -91,7 +91,7 @@ function Camera.create(world, team, defaultBody)
 				//return vec4(1-rim, 1.5*(rim)*(1-(rim2)), rim4 * 1, edge * (2 + rm)/3);
 
 
-				return vec4(0.75-rim2*0.5, 0, 0, edge * (2 + rm)/3);
+				return vec4(0.75-rim2*0.5, 0, 0, edge * (2.0 + rm)/3.0);
 
 
 				//return vec4(rim*rim*0.5, rim*0.5, 0.5, edge * rm);
@@ -108,10 +108,10 @@ function Camera.create(world, team, defaultBody)
 	self.shieldShader:send("to_world_rot", {{1, 0}, {0, 1}})
 
 self.shieldStrengthShader = love.graphics.newShader[[
-		extern number point_count;
+		extern int point_count;
 		extern vec2 points[100];
 		extern number strengths[100];
-		extern number teams[100];
+		extern int teams[100];
 
 		extern vec2 screen_center_tran;
 		extern mat2 to_world_rot;
@@ -122,20 +122,20 @@ self.shieldStrengthShader = love.graphics.newShader[[
 
 			vec2 world_coords = to_world_rot * (screen_coords - screen_center_tran) + to_world_tran;
 
-			number a = 0;
-			number b = 0;
-			number c = 0;
-			number a_team = 0;
-			number b_team = 0;
-			number c_team = 0;
+			number a = 0.0;
+			number b = 0.0;
+			number c = 0.0;
+			int a_team = 0;
+			int b_team = 0;
+			int c_team = 0;
 
 			for (int i = 0; i < point_count; i += 1) {
 				vec2 offset = world_coords - points[i];
 				number r = offset.x * offset.x + offset.y * offset.y;
 
-				number new_strength = (strengths[i] / sqrt(r) - 1);
+				number new_strength = (strengths[i] / sqrt(r) - 1.0);
 
-				number new_team = teams[i];
+				int new_team = teams[i];
 
 				if (new_strength > a) {
 					if (new_team != a_team || new_team == 0 || new_team == -1) {
@@ -155,12 +155,12 @@ self.shieldStrengthShader = love.graphics.newShader[[
 			}
 
 
-			if (a > 0) {
-				number base_line = 0.75 - a/2;
+			if (a > 0.0) {
+				number base_line = 0.75 - a/2.0;
 				if (a_team == b_team && a_team != 0 && a_team != -1) {
 					return vec4(0, 0, 1, base_line);
 				} else {
-					return vec4(0, 0, 1, base_line + b/2);
+					return vec4(0, 0, 1, base_line + b/2.0);
 				}
 			}
 

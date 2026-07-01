@@ -24,7 +24,6 @@ fn syntheinrust(lua: &Lua) -> Result<LuaTable> {
 
     shipparts.set("modules", modules)?;
 
-    exports.set("building", building::lua_module(lua)?)?;
     exports.set("draw_time_logger", draw_time_logger::lua_module(lua)?)?;
     exports.set("mathext", mathext::lua_module(lua)?)?;
     exports.set("selection", selection::lua_module(lua)?)?;
